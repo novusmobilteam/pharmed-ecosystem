@@ -32,8 +32,11 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   /// Seçilen kabinin fiziksel çekmece kimlikleri — istasyon atamaları bununla süzülür.
   Set<int> _cabinSlotIds = const {};
 
+  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
+  List<DrawerGroup> _groups = const [];
+
   List<MedicineAssignment> _assignments = [];
-  final Set<int> _selectedUnitIds = {};
+  final AssignmentSelection _selection = AssignmentSelection();
   String _search = '';
 
   CensusMode get censusMode => _censusMode;
@@ -42,7 +45,8 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   // ── Getterlar ─────────────────────────────────────────────────────────
 
   List<MedicineAssignment> get assignments => _assignments;
-  Set<int> get selectedUnitIds => Set.unmodifiable(_selectedUnitIds);
+  Set<int> get selectedUnitIds => _selection.unitIds;
+  Set<int> get selectedSerumCellIds => _selection.serumCellIds;
   String get search => _search;
 
   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
@@ -58,17 +62,19 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     }).toList();
   }
 
-  List<MedicineAssignment> get selectedAssignments =>
-      _assignments.where((a) => _selectedUnitIds.contains(a.cabinDrawerId)).toList();
+  List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
 
-  bool get canStart => _selectedUnitIds.isNotEmpty;
+  bool get canStart => _selection.isNotEmpty;
 
-  Set<int> get _allUnitIds => _assignments.map((a) => a.cabinDrawerId).whereType<int>().toSet();
+  void _selectAll() => _selection
+    ..clear()
+    ..addAll(_assignments);
 
   // ── Akış ──────────────────────────────────────────────────────────────
 
   Future<void> init(CabinRouteContext ctx) {
-    _cabinSlotIds = {for (final g in ctx.cabinData?.groups ?? const <DrawerGroup>[]) ?g.slot.id};
+    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
+    _cabinSlotIds = {for (final g in _groups) ?g.slot.id};
     return _fetchAssignments();
   }
 
@@ -87,9 +93,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
           return slotId != null && _cabinSlotIds.contains(slotId);
         }).toList();
         _censusMode = CensusMode.byMedicine;
-        _selectedUnitIds
-          ..clear()
-          ..addAll(_allUnitIds);
+        _selectAll();
         notifyListeners();
       },
     );
@@ -104,11 +108,9 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     _censusMode = mode;
 
     if (mode == CensusMode.allCabin) {
-      _selectedUnitIds
-        ..clear()
-        ..addAll(_allUnitIds);
+      _selectAll();
     } else if (wasAllCabin) {
-      _selectedUnitIds.clear();
+      _selection.clear();
     }
     notifyListeners();
   }
@@ -120,27 +122,24 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
   void toggleUnit(int cabinDrawerId) {
     if (_censusMode == CensusMode.allCabin) return; // kilitli seçim
-    _selectedUnitIds.contains(cabinDrawerId)
-        ? _selectedUnitIds.remove(cabinDrawerId)
-        : _selectedUnitIds.add(cabinDrawerId);
+    final assignment = AssignmentSelection.unitAssignment(cabinDrawerId, _assignments);
+    if (assignment == null) return;
+    _selection.toggle(assignment);
+    notifyListeners();
+  }
+
+  /// Serum avadanlığı — normal gözle aynı kurallar.
+  void toggleSerumTray(int cellId) {
+    if (_censusMode == CensusMode.allCabin) return; // kilitli seçim
+    final assignment = AssignmentSelection.serumAssignment(cellId, _assignments);
+    if (assignment == null) return;
+    _selection.toggle(assignment);
     notifyListeners();
   }
 
   void toggleDrawer(DrawerGroup group) {
     if (_censusMode == CensusMode.allCabin) return;
-
-    final unitIdsInGroup = group.units.map((u) => u.id).whereType<int>().toSet();
-    final drawerUnitIds = _assignments
-        .map((a) => a.cabinDrawerId)
-        .whereType<int>()
-        .where(unitIdsInGroup.contains)
-        .toSet();
-    if (drawerUnitIds.isEmpty) return;
-
-    drawerUnitIds.every(_selectedUnitIds.contains)
-        ? _selectedUnitIds.removeAll(drawerUnitIds)
-        : _selectedUnitIds.addAll(drawerUnitIds);
-    notifyListeners();
+    if (_selection.toggleAll(AssignmentSelection.inGroup(group, _assignments))) notifyListeners();
   }
 
   void startCensus({
@@ -153,6 +152,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.census),
+      groups: _groups,
     );
 
     if (result.jobs.isEmpty) {

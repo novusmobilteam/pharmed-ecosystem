@@ -39,6 +39,7 @@ class CabinDrawerStageOverlay extends StatelessWidget {
     this.onRetryLid,
     this.onSkipLid,
     this.onAcknowledgeLidClosed,
+    this.isSerumTray = false,
   });
 
   final MasterDrawerStage stage;
@@ -56,6 +57,10 @@ class CabinDrawerStageOverlay extends StatelessWidget {
   final VoidCallback? onSkipLid;
   final VoidCallback? onAcknowledgeLidClosed;
 
+  /// Alt birim kübik kapak değil, kilitli serum avadanlığı — kapak
+  /// metinleri yerine avadanlık metinleri gösterilir.
+  final bool isSerumTray;
+
   static const _fade = Duration(milliseconds: 180);
 
   bool get _isVisible => isStopping || (stage is! MasterDrawerOpened && stage is! MasterDrawerLidClosed);
@@ -71,6 +76,7 @@ class CabinDrawerStageOverlay extends StatelessWidget {
             onRetryLid: onRetryLid,
             onSkipLid: onSkipLid,
             onAcknowledgeLidClosed: onAcknowledgeLidClosed,
+            isSerumTray: isSerumTray,
           )
         : null;
 
@@ -153,6 +159,7 @@ class _StageInfo {
     VoidCallback? onRetryLid,
     VoidCallback? onSkipLid,
     VoidCallback? onAcknowledgeLidClosed,
+    bool isSerumTray = false,
   }) {
     final l10n = context.l10n;
 
@@ -165,9 +172,12 @@ class _StageInfo {
       );
     }
 
-    // Çekmeceler arası geçiş ya da kuyruk bitişi — son işse "açılıyor" yanlış olur.
+    // Çekmeceler arası geçiş ya da kuyruk bitişi — son işin çekmecesi
+    // KAPANDIYSA "açılıyor" yanlış olur. Idle'da (kuyruk başı, kamera
+    // hazırlanırken) çekmece henüz açılmadı — tek job'lu kuyrukta da son iş
+    // olduğu için isLastJob'a bakılırsa yanlışlıkla "tamamlanıyor" gösterilir.
     if (stage is MasterDrawerIdle || stage is MasterDrawerClosed) {
-      return isLastJob
+      return isLastJob && stage is MasterDrawerClosed
           ? _StageInfo(
               kind: _StageKind.working,
               icon: PhosphorIcons.checkCircle(),
@@ -201,11 +211,23 @@ class _StageInfo {
         title: l10n.masterDrawer_status_waitingPullTitle,
         subtitle: l10n.masterDrawer_status_waitingPullSubtitle,
       ),
+      MasterDrawerOpeningLid() when isSerumTray => _StageInfo(
+        kind: _StageKind.working,
+        icon: PhosphorIcons.lockOpen(),
+        title: l10n.masterDrawer_tray_openingTitle,
+        subtitle: l10n.masterDrawer_tray_openingSubtitle,
+      ),
       MasterDrawerOpeningLid() => _StageInfo(
         kind: _StageKind.working,
         icon: PhosphorIcons.package(),
         title: l10n.masterDrawer_status_openingLidTitle,
         subtitle: l10n.masterDrawer_status_openingLidSubtitle,
+      ),
+      MasterDrawerWaitingForLidClose() when isSerumTray => _StageInfo(
+        kind: _StageKind.action,
+        icon: PhosphorIcons.lock(),
+        title: l10n.masterDrawer_tray_waitingCloseTitle,
+        subtitle: l10n.masterDrawer_tray_waitingCloseSubtitle,
       ),
       MasterDrawerWaitingForLidClose() => _StageInfo(
         kind: _StageKind.action,

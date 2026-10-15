@@ -6535,10 +6535,24 @@ class AppLocalizationsAr extends AppLocalizations {
       'The tray status cannot be read.';
 
   @override
+  String get masterDrawer_tray_openingTitle => 'Unlocking Tray';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Please wait, the tray lock is being released.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Push the tray back in';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Once the tray is pushed back, the next tray is unlocked.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'Completing Your Operation';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Finishing intake.';
+  String get masterDrawer_status_completingSubtitle => 'Please wait';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Defined Cabinets';

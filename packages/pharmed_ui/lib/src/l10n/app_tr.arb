@@ -7675,6 +7675,22 @@
   "@masterDrawer_error_traySensorLost": {
     "description": "Serum cabinet: tray status polling failed repeatedly while the tray was unlocked/pulled; user can confirm the tray was pushed back manually"
   },
+  "masterDrawer_tray_openingTitle": "Avadanlık Kilidi Açılıyor",
+  "@masterDrawer_tray_openingTitle": {
+    "description": "Serum cabinet: overlay title while the electromagnetic lock of the target tray is being released"
+  },
+  "masterDrawer_tray_openingSubtitle": "Lütfen bekleyin, işlem yapılacak avadanlığın kilidi açılıyor.",
+  "@masterDrawer_tray_openingSubtitle": {
+    "description": "Serum cabinet: overlay subtitle while the target tray lock is being released"
+  },
+  "masterDrawer_tray_waitingCloseTitle": "Avadanlığı yerine itin",
+  "@masterDrawer_tray_waitingCloseTitle": {
+    "description": "Serum cabinet: overlay title shown after completing a tray, waiting for the user to push the tray back in"
+  },
+  "masterDrawer_tray_waitingCloseSubtitle": "Avadanlık yerine itildiğinde sıradaki avadanlığa geçilir.",
+  "@masterDrawer_tray_waitingCloseSubtitle": {
+    "description": "Serum cabinet: overlay subtitle shown while waiting for the tray to be pushed back; the next tray is unlocked afterwards"
+  },
   "masterDrawer_status_completingTitle": "İşleminiz Tamamlanıyor",
   "@masterDrawer_status_completingTitle": {
     "description": "Kuyruktaki son iş bitip çekmece kapandıktan sonra, kullanıcıya işlemin sonlandığını bildiren başlık."
@@ -9113,10 +9129,6 @@
   "masterDrawer_status_openingSubtitle": "Çekmece açılıyor, lütfen bekleyin.",
   "@masterDrawer_status_openingSubtitle": {
     "description": "Subtitle shown while the drawer is transitioning open between two consecutive intake jobs."
-  },
-  "masterDrawer_status_completingSubtitle": "Alım tamamlanıyor.",
-  "@masterDrawer_status_completingSubtitle": {
-    "description": "Subtitle shown when the last job in the intake queue is finishing and no further drawer will open."
   },
   "masterDrawer_status_lockOpeningSubtitle": "Kilit açılıyor, lütfen bekleyin.",
   "@masterDrawer_status_lockOpeningSubtitle": {

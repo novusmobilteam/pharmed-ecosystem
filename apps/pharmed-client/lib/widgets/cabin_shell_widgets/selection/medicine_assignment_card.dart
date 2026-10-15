@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -53,7 +54,14 @@ class MedicineAssignmentCard extends StatelessWidget {
 
     final bool isSelected = isActive == false ? false : selected;
 
-    String addressLabel = _isKubik
+    final serumCellId = assignment.cabinDrawerDetailId;
+    final serumStepNo = serumCellId == null
+        ? null
+        : assignment.cabinDrawerDetail?.firstWhereOrNull((c) => c.id == serumCellId)?.stepNo;
+
+    String addressLabel = serumCellId != null
+        ? context.l10n.assignment_idle_serumLocationLabel(assignment.drawerUnit?.orderNo ?? 0, serumStepNo ?? 0)
+        : _isKubik
         ? context.l10n.refill_chip_drawerCell(_address, '${_cellNo ?? '-'}')
         : context.l10n.refill_chip_drawer(_address);
 

@@ -5,7 +5,6 @@
 //
 // Sınıf: Class B
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -38,12 +37,18 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
 
   Set<int> _cabinSlotIds = const {};
+
+  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
+  List<DrawerGroup> _groups = const [];
+
   List<MedicineAssignment> _assignments = [];
-  final Set<int> _selectedUnitIds = {};
+  final AssignmentSelection _selection = AssignmentSelection();
   String _search = '';
 
   List<MedicineAssignment> get assignments => _assignments;
-  Set<int> get selectedUnitIds => Set.unmodifiable(_selectedUnitIds);
+  Set<int> get selectedUnitIds => _selection.unitIds;
+  Set<int> get selectedSerumCellIds => _selection.serumCellIds;
+  bool isSelected(MedicineAssignment a) => _selection.contains(a);
   String get search => _search;
 
   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
@@ -59,10 +64,9 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
     }).toList();
   }
 
-  List<MedicineAssignment> get selectedAssignments =>
-      _assignments.where((a) => _selectedUnitIds.contains(a.cabinDrawerId)).toList();
+  List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
 
-  bool get canStart => _selectedUnitIds.isNotEmpty;
+  bool get canStart => _selection.isNotEmpty;
 
   /// Kullanıcı bu ilacı imha etmeye yetkili mi. İlaç olmayan malzemede
   /// (örn. tıbbi sarf) kısıt yoktur.
@@ -78,7 +82,8 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
   bool canSelect(MedicineAssignment a) => a.cabinDrawerId != null && isAuthorized(a) && a.totalQuantity > 0;
 
   Future<void> init(CabinRouteContext ctx) {
-    _cabinSlotIds = {for (final g in ctx.cabinData?.groups ?? const <DrawerGroup>[]) ?g.slot.id};
+    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
+    _cabinSlotIds = {for (final g in _groups) ?g.slot.id};
     return _fetchAssignments();
   }
 
@@ -93,7 +98,7 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
           final slotId = a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
           return slotId != null && _cabinSlotIds.contains(slotId);
         }).toList();
-        _selectedUnitIds.clear(); // imha bilinçli seçim ister — varsayılan seçim yok
+        _selection.clear(); // imha bilinçli seçim ister — varsayılan seçim yok
         notifyListeners();
       },
     );
@@ -104,27 +109,21 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
     notifyListeners();
   }
 
-  void toggleUnit(int cabinDrawerId) {
-    final assignment = _assignments.firstWhereOrNull((a) => a.cabinDrawerId == cabinDrawerId);
+  void toggleUnit(int cabinDrawerId) =>
+      toggleAssignment(AssignmentSelection.unitAssignment(cabinDrawerId, _assignments));
+
+  /// Serum avadanlığı — normal gözle aynı kurallar.
+  void toggleSerumTray(int cellId) => toggleAssignment(AssignmentSelection.serumAssignment(cellId, _assignments));
+
+  void toggleAssignment(MedicineAssignment? assignment) {
     if (assignment == null || !canSelect(assignment)) return;
-    _selectedUnitIds.contains(cabinDrawerId)
-        ? _selectedUnitIds.remove(cabinDrawerId)
-        : _selectedUnitIds.add(cabinDrawerId);
+    _selection.toggle(assignment);
     notifyListeners();
   }
 
   void toggleDrawer(DrawerGroup group) {
-    final unitIdsInGroup = group.units.map((u) => u.id).whereType<int>().toSet();
-    final selectableIds = _assignments
-        .where((a) => unitIdsInGroup.contains(a.cabinDrawerId) && canSelect(a))
-        .map((a) => a.cabinDrawerId!)
-        .toSet();
-    if (selectableIds.isEmpty) return;
-
-    selectableIds.every(_selectedUnitIds.contains)
-        ? _selectedUnitIds.removeAll(selectableIds)
-        : _selectedUnitIds.addAll(selectableIds);
-    notifyListeners();
+    final selectable = AssignmentSelection.inGroup(group, _assignments).where(canSelect);
+    if (_selection.toggleAll(selectable)) notifyListeners();
   }
 
   void startDestruction({
@@ -137,6 +136,7 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.destruction),
+      groups: _groups,
     );
 
     if (result.jobs.isEmpty) {

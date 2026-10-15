@@ -11529,6 +11529,30 @@ abstract class AppLocalizations {
   /// **'The tray status cannot be read.'**
   String get masterDrawer_error_traySensorLost;
 
+  /// No description provided for @masterDrawer_tray_openingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking Tray'**
+  String get masterDrawer_tray_openingTitle;
+
+  /// No description provided for @masterDrawer_tray_openingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the tray lock is being released.'**
+  String get masterDrawer_tray_openingSubtitle;
+
+  /// No description provided for @masterDrawer_tray_waitingCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Push the tray back in'**
+  String get masterDrawer_tray_waitingCloseTitle;
+
+  /// No description provided for @masterDrawer_tray_waitingCloseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Once the tray is pushed back, the next tray is unlocked.'**
+  String get masterDrawer_tray_waitingCloseSubtitle;
+
   /// No description provided for @masterDrawer_status_completingTitle.
   ///
   /// In en, this message translates to:
@@ -11538,7 +11562,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_completingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Finishing intake.'**
+  /// **'Please wait'**
   String get masterDrawer_status_completingSubtitle;
 
   /// No description provided for @cabinDesign_cabinList_sectionTitle.

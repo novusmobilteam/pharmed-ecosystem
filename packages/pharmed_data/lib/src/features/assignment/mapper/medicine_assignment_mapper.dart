@@ -8,7 +8,8 @@ class MedicineAssignmentMapper {
   MedicineAssignment toEntity(MedicineAssignmentDto dto) {
     return MedicineAssignment(
       id: dto.id,
-      cabinDrawerId: dto.cabinDrawerId,
+      // Serum avadanlığı ataması cabinDrawrId'siz gelir — rafı (cabinDrawr) taşır.
+      cabinDrawerId: dto.cabinDrawerId ?? dto.cabinDrawer?.id,
       cabinDrawerDetailId: dto.cabinDrawerDetailId,
       minQuantity: dto.minQuantity ?? 0.0,
       criticalQuantity: dto.criticalQuantity ?? 0.0,

@@ -26,6 +26,13 @@ class DrawerGroup {
   /// Tip no 250 ise Serumdur
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
 
+  /// Serum çekmecesindeki kayıtlı avadanlıkların (DrawerCell) id'leri.
+  Set<int> get serumTrayIds => {
+    for (final shelf in serumShelves ?? const <SerumShelfLayout>[])
+      for (final tray in shelf.trays)
+        if (tray.id != null) tray.id!,
+  };
+
   String get name {
     if (isSerum) return contextlessL10n().enumCore_cabinTypeSerum;
     return isKubik ? contextlessL10n().cabin_kubikDrawerName : contextlessL10n().cabin_unitDoseDrawerName;

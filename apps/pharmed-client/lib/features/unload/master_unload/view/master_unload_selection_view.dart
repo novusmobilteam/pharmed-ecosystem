@@ -8,6 +8,7 @@ import '../../../../core/hardware/hardware.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../notifier/master_unload_execution_notifier.dart';
 import '../notifier/master_unload_selection_notifier.dart';
 
@@ -50,6 +51,7 @@ class MasterUnloadSelectionView extends ConsumerWidget {
       isLoading: selection.isLoadingAssignments,
       left: CabinOverviewSelectionPanel(
         cabin: cabinContext.cabin,
+        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
         groups: cabinContext.cabinData?.groups ?? const [],
         assignments: selection.assignments,
         selectedUnitIds: selection.selectedUnitIds,
@@ -57,6 +59,11 @@ class MasterUnloadSelectionView extends ConsumerWidget {
         onCellTap: (unit) {
           final id = unit.id;
           if (id != null) selection.toggleUnit(id);
+        },
+        selectedCellIds: selection.selectedSerumCellIds,
+        onSerumTrayTap: (_, tray) {
+          final id = tray.id;
+          if (id != null) selection.toggleSerumTray(id);
         },
       ),
       right: CabinSelectionContentShell(
@@ -72,6 +79,8 @@ class MasterUnloadSelectionView extends ConsumerWidget {
                 items: items,
                 selectedItemIds: selection.selectedUnitIds,
                 onToggle: selection.toggleUnit,
+                selectedCellIds: selection.selectedSerumCellIds,
+                onToggleCell: selection.toggleSerumTray,
                 onDelete: (assignment) => MessageUtils.showConfirmDeleteDialog(
                   context: context,
                   itemName: assignment.medicine?.name,

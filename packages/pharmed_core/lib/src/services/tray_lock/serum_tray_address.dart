@@ -41,6 +41,21 @@ final class SerumTrayAddress {
     return null;
   }
 
+  /// Avadanlığa yapılmış atamanın ([MedicineAssignment.cabinDrawerDetailId])
+  /// kilit adresi — kabin görselindeki serum yerleşimlerinden çözülür.
+  /// Serum ataması değilse ya da rafı kilitsizse null.
+  static SerumTrayAddress? forAssignment(MedicineAssignment assignment, List<DrawerGroup> groups) {
+    final cellId = assignment.cabinDrawerDetailId;
+    if (cellId == null) return null;
+    for (final group in groups) {
+      final shelves = group.serumShelves;
+      if (shelves == null) continue;
+      final address = resolve(shelves: shelves, cellId: cellId);
+      if (address != null) return address;
+    }
+    return null;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

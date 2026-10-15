@@ -15,6 +15,10 @@
 // normal job'ından SONRA işlenir — çekmece iki kez açılır, ortak kuyruk
 // altyapısı (kapak/kapanış akışı) değişmez.
 //
+// Serum: [groups] verilirse kilitli raftaki avadanlık hedeflerine kilit adresi
+// (SerumTrayAddress) bağlanır. Kilitli ve kilitsiz avadanlıklar AYNI job'da
+// kalır — kapak bir kez açılır, hedefler raf/port sırasıyla işlenir.
+//
 // [skipped]: fiziksel çekmece kimliği (drawerSlot.id / drawerSlotId) hiç
 // çözülemeyen atamalar — eksik/bozuk ilişkisel veri anlamına gelir. Bunlar
 // SESSİZCE atılmaz, çağırana bildirilir; aksi halde kullanıcı bir ilacı
@@ -22,6 +26,7 @@
 //
 // Sınıf: Class B
 
+import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 abstract final class CabinOperationQueueBuilder {
@@ -32,15 +37,19 @@ abstract final class CabinOperationQueueBuilder {
   /// [isReturnDrawerOf]: yalnızca iade — öğe iade kutusuna gidiyorsa true.
   /// Bu öğeler aynı fiziksel çekmecenin normal öğelerinden ayrı bir job'da
   /// toplanır (bkz. dosya başı).
+  ///
+  /// [groups]: kabin görsel verisi — serum avadanlığı kilit adreslerini
+  /// çözmek için. Verilmezse avadanlık kilidi hiç açılmaz (yalnızca kapak).
   static ({List<CabinOperationDrawerJob> jobs, List<T> skipped}) build<T>({
     required List<T> items,
     required MedicineAssignment Function(T item) assignmentOf,
     required CabinOperationTarget Function(T item, MedicineAssignment assignment) targetOf,
     bool Function(T item)? isReturnDrawerOf,
     List<int> cabinOrder = const [],
+    List<DrawerGroup> groups = const [],
   }) {
     // Anahtar: (fiziksel çekmece, iade kutusu mu).
-    final grouped = <(int, bool), List<(T, MedicineAssignment)>>{};
+    final grouped = <(int, bool), List<(MedicineAssignment, CabinOperationTarget)>>{};
     final skipped = <T>[];
 
     for (final item in items) {
@@ -51,20 +60,23 @@ abstract final class CabinOperationQueueBuilder {
         continue;
       }
       final isReturnBox = isReturnDrawerOf?.call(item) ?? false;
-      grouped.putIfAbsent((physicalId, isReturnBox), () => []).add((item, assignment));
+      var target = targetOf(item, assignment);
+      final tray = isReturnBox ? null : SerumTrayAddress.forAssignment(assignment, groups);
+      if (tray != null) target = target.withSerumTray(tray);
+      grouped.putIfAbsent((physicalId, isReturnBox), () => []).add((assignment, target));
     }
 
     final jobs = [
       for (final MapEntry(key: (physicalId, isReturnBox), value: pairs) in grouped.entries)
         () {
-          pairs.sort((a, b) => _compareByCell(a.$2, b.$2));
-          final first = pairs.first.$2;
+          pairs.sort((a, b) => _compareTargets(a.$2, b.$2));
+          final first = pairs.first.$1;
           return CabinOperationDrawerJob(
             cabinDrawerId: physicalId,
             representativeAssignment: first,
             cabinId: first.drawerUnit?.drawerSlot?.cabinId,
             isReturnDrawer: isReturnBox,
-            targets: [for (final (item, assignment) in pairs) targetOf(item, assignment)],
+            targets: [for (final (_, target) in pairs) target],
           );
         }(),
     ]..sort((a, b) => _compareJobs(a, b, cabinOrder));
@@ -94,6 +106,19 @@ abstract final class CabinOperationQueueBuilder {
     // Aynı fiziksel çekmecenin iki job'ı: önce normal gözler, sonra iade
     // kutusu. List.sort kararlı olmadığı için açıkça sıralanır.
     return (a.isReturnDrawer ? 1 : 0).compareTo(b.isReturnDrawer ? 1 : 0);
+  }
+
+  static int _compareTargets(CabinOperationTarget a, CabinOperationTarget b) {
+    final byCell = _compareByCell(a.assignment, b.assignment);
+    if (byCell != 0) return byCell;
+    // Aynı serum rafı: avadanlık sırası (sağdan sola).
+    return _serumStepNo(a.assignment).compareTo(_serumStepNo(b.assignment));
+  }
+
+  static int _serumStepNo(MedicineAssignment a) {
+    final cellId = a.cabinDrawerDetailId;
+    if (cellId == null) return 0;
+    return a.cabinDrawerDetail?.firstWhereOrNull((c) => c.id == cellId)?.stepNo ?? 0;
   }
 
   static int _compareByCell(MedicineAssignment a, MedicineAssignment b) {

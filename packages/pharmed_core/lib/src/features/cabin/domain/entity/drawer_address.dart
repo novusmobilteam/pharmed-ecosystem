@@ -44,6 +44,15 @@ DrawerAddress calculateAddressFromAssignment(
   final config = slot?.drawerConfig;
 
   final rowStr = slot?.address ?? "0";
+
+  // Serum kabini yalnızca satırla (kart adresi) açılır/izlenir — port/göz
+  // kavramı yoktur. DrawerUnit burada RAF'tır; compartmentNo'su (raf no)
+  // port sanılırsa birim doz port ters çevirmesiyle 0'a düşüp geçersiz
+  // adres üretir (Raf 2/3).
+  if (config?.isSerum ?? false) {
+    return DrawerAddress(row: int.tryParse(rowStr) ?? 0, port: 1, index: 1);
+  }
+
   final isKubik = config?.drawerType?.isKubik ?? false;
   final rawPort = item.drawerUnit?.compartmentNo ?? 1;
   final port = isKubik

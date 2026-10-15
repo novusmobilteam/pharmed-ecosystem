@@ -162,7 +162,7 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
                   child: Column(
                     spacing: 24.0,
                     children: [
-                      if (job.isKubik || job.isReturnDrawer) SizedBox(height: 220),
+                      if (job.isKubik || job.isReturnDrawer || job.isSerumTrayJob) SizedBox(height: 220),
                       Expanded(flex: 3, child: DrawerLayoutOverviewPanel(item: activeItem)),
                     ],
                   ),
@@ -184,7 +184,9 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
     final controller = widget.controller;
     final jobs = controller.jobs;
     final completed = jobs.where((j) => j.status == CabinOperationJobStatus.completed).length;
-    final isOpened = controller.drawerStage is MasterDrawerOpened;
+    // Serum avadanlığı "Tamamla"dan önce yerine itilmiş olabilir (LidClosed).
+    final stage = controller.drawerStage;
+    final isOpened = stage is MasterDrawerOpened || (job.isSerumTrayJob && stage is MasterDrawerLidClosed);
     final canConfirm = isOpened && !controller.isSaving && !controller.isStopping && target.isValid;
 
     return CabinExecutionPanel(
@@ -200,6 +202,7 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
         onRetryLid: controller.retryCubicLid,
         onSkipLid: controller.skipCurrentLid,
         onAcknowledgeLidClosed: controller.acknowledgeLidClosedManually,
+        isSerumTray: target.serumTray != null,
         child: CabinOperationEntryBody(
           job: job,
           target: target,

@@ -7,7 +7,8 @@
 // yerini alır.
 //
 // Gruplama birimi FİZİKSEL BİRİMDİR (drawerUnit): kübik göz, birim doz
-// kolonu ya da iade çekmecesi. Aynı birime giden kalemler TEK target olur:
+// kolonu ya da iade çekmecesi; serumda avadanlık (cabinDrawerDetailId) —
+// aynı rafın avadanlıkları ayrı hedeflerdir. Aynı birime giden kalemler TEK target olur:
 //   - Kübik: aynı gözün kapağı tek kez açılır, miktarlar toplanır.
 //   - Birim doz: kalemler kaynak stoklarının gözüne (corpartmentNo) dağılır,
 //     çekmece en arka göze kadar açılır.
@@ -56,15 +57,21 @@ abstract final class RefundJobMapper {
   /// Kalemin iade miktarı — CompleteRefundParams'a giden değerle aynı.
   static double quantityOf(RefundableItem item) => (item.returnQuantity ?? item.appliedQuantity).toDouble();
 
-  static RefundJobPlan build(List<RefundableItem> items, {List<int> cabinOrder = const []}) {
-    final groups = _groupByUnit(items);
+  /// [groups]: kabin görsel verisi — serum avadanlığı kilit adresleri için.
+  static RefundJobPlan build(
+    List<RefundableItem> items, {
+    List<int> cabinOrder = const [],
+    List<DrawerGroup> groups = const [],
+  }) {
+    final unitGroups = _groupByUnit(items);
 
     final result = CabinOperationQueueBuilder.build<RefundUnitGroup>(
-      items: groups,
+      items: unitGroups,
       assignmentOf: (g) => g.assignment,
       targetOf: _targetOf,
       isReturnDrawerOf: (g) => g.isReturnDrawer,
       cabinOrder: cabinOrder,
+      groups: groups,
     );
 
     final skippedIds = {for (final g in result.skipped) g.sourceId};
@@ -72,7 +79,7 @@ abstract final class RefundJobMapper {
     return RefundJobPlan(
       jobs: result.jobs,
       itemsBySourceId: {
-        for (final g in groups)
+        for (final g in unitGroups)
           if (!skippedIds.contains(g.sourceId)) g.sourceId: g.items,
       },
       skipped: [for (final g in result.skipped) ...g.items],
@@ -80,15 +87,17 @@ abstract final class RefundJobMapper {
   }
 
   static List<RefundUnitGroup> _groupByUnit(List<RefundableItem> items) {
-    final byUnit = <(bool, int), List<RefundableItem>>{};
+    // Anahtar: (iade çekmecesi mi, serum avadanlığı mı, birim/avadanlık id).
+    final byUnit = <(bool, bool, int), List<RefundableItem>>{};
 
     for (var i = 0; i < items.length; i++) {
       final item = items[i];
       final isReturnDrawer = item.returnType == ReturnType.toDrawer;
       // Birimi çözülemeyen kalem hiçbir kalemle birleşmez — negatif index
       // gerçek bir id ile çakışmaz.
-      final unitId = item.resolvedTarget?.drawerUnit?.id ?? -(i + 1);
-      byUnit.putIfAbsent((isReturnDrawer, unitId), () => []).add(item);
+      final serumCellId = isReturnDrawer ? null : item.resolvedTarget?.cabinDrawerDetailId;
+      final unitId = serumCellId ?? item.resolvedTarget?.drawerUnit?.id ?? -(i + 1);
+      byUnit.putIfAbsent((isReturnDrawer, serumCellId != null, unitId), () => []).add(item);
     }
 
     return [

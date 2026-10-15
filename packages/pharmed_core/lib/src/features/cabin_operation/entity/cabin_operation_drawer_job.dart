@@ -16,6 +16,10 @@
 // bölmedir — çekmece tamamen açılır, kapak komutu gönderilmez. Aynı fiziksel
 // çekmecenin normal gözleri ayrı, kübik bir job'dadır.
 //
+// Serum avadanlık job'u ([isSerumTrayJob]): serum kapağı bir kez açılır, tüm
+// avadanlıklar aynı açılışta işlenir — kilitli raftakinin kilidi açılıp yerine
+// itilmesi beklenir, kilitsiz raftakinde yalnızca kapak açıktır.
+//
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
@@ -48,10 +52,18 @@ class CabinOperationDrawerJob implements DrawerJob<CabinOperationTarget> {
   bool get isKubik =>
       !isReturnDrawer && (representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.drawerType?.isKubik ?? false);
 
-  /// Kübik dışında hiçbir job "aynı açık çekmecede kalma" ihtiyacı duymuyor —
-  /// birim doz (ve iade çekmecesi) her zaman target başına aç/kapa.
   @override
-  bool get staysOpenAcrossTargets => isKubik;
+  bool get isSerumTrayJob =>
+      !isReturnDrawer &&
+      (representativeAssignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false) &&
+      targets.isNotEmpty &&
+      targets.every((t) => t.assignment.cabinDrawerDetailId != null);
+
+  /// Kübik ve serum aynı açık çekmecede alt birim (kapak / avadanlık)
+  /// bazında ilerler; birim doz (ve iade çekmecesi) her zaman target başına
+  /// aç/kapa.
+  @override
+  bool get staysOpenAcrossTargets => isKubik || isSerumTrayJob;
 
   CabinOperationDrawerJob copyWith({List<CabinOperationTarget>? targets, CabinOperationJobStatus? status}) {
     return CabinOperationDrawerJob(

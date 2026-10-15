@@ -79,7 +79,7 @@ abstract final class CabinOperationParamsMapper {
     ];
   }
 
-  /// Hedefin göz satırları: kübikte (girdi varsa) tek satır, birim dozda göz
+  /// Hedefin göz satırları: kübikte / serum avadanlığında (girdi varsa) tek satır, birim dozda göz
   /// sayısı kadar satır. Adres, miktar alanları ve SKT kuralı tek yerde.
   static List<CabinOperationCellRow> cellRows(CabinOperationTarget target) {
     final mode = target.mode;
@@ -107,11 +107,16 @@ abstract final class CabinOperationParamsMapper {
 
       final count = target.cubicCount ?? 0;
       final isEmpty = count == 0 && target.cubicSecondary == 0;
+      // Serum avadanlığı: göz kaydı atamanın kendisinde; göz no = raftaki sıra.
+      final serumCellId = assignment.cabinDrawerDetailId;
+      final serumCell = serumCellId == null
+          ? null
+          : assignment.cabinDrawerDetail?.firstWhereOrNull((c) => c.id == serumCellId);
       return [
         row(
-          assignment.cabinDrawerDetail?.firstOrNull?.id ?? 0,
+          serumCellId ?? assignment.cabinDrawerDetail?.firstOrNull?.id ?? 0,
           unit?.orderNo ?? 1,
-          unit?.compartmentNo ?? 0,
+          serumCellId != null ? (serumCell?.stepNo ?? 0) : (unit?.compartmentNo ?? 0),
           count,
           target.cubicSecondary,
           // Birim dozla aynı kural: backend SKT'yi zorunlu tutuyor.

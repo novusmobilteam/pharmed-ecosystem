@@ -128,8 +128,10 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
   /// Kuyruğu başlatır. Fiziksel çekmecesi çözülemeyen kalem varsa kuyruk
   /// HİÇ başlatılmaz ve o kalemler döner — kısmi bir iade listesiyle
   /// yürütmeye geçilmez.
-  Future<List<RefundableItem>> start(List<RefundableItem> items) async {
-    final plan = RefundJobMapper.build(items);
+  ///
+  /// [groups]: kabin görsel verisi — serum avadanlığı kilit adresleri için.
+  Future<List<RefundableItem>> start(List<RefundableItem> items, {List<DrawerGroup> groups = const []}) async {
+    final plan = RefundJobMapper.build(items, groups: groups);
 
     if (plan.skipped.isNotEmpty) {
       MedLogger.warn(

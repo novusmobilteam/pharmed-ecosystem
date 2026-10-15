@@ -49,7 +49,8 @@ abstract class IMasterDrawerSession implements Listenable {
   /// beklenir. Yalnızca kapak izlenirken (awaitLidClose) ve Opened'da çalışır.
   void confirmLidClose();
 
-  /// LidFailed sonrası son açılmaya çalışılan gözü aynı modda yeniden açar.
+  /// LidFailed sonrası son açılmaya çalışılan alt birimi (kübik göz ya da
+  /// serum avadanlığı) aynı modda yeniden açar.
   Future<void> retryCubicLid();
 
   /// Kapak/avadanlık durum sorgusu koptuğunda (lidSensorLost /
@@ -162,6 +163,9 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   bool _traySeenActive = false;
   int _trayReadErrors = 0;
 
+  /// Son açılmaya çalışılan alt birim serum avadanlığı mı (retry yönlendirmesi).
+  bool _lastSubUnitIsTray = false;
+
   MasterDrawerStage _stage = const MasterDrawerIdle();
   @override
   MasterDrawerStage get stage => _stage;
@@ -188,7 +192,17 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
         .call(assignment: assignment, requestedQuantity: requestedQuantity, explicitTargetStep: explicitTargetStep)
         .listen(
           _onEvent,
-          onError: (e, _) {
+          onError: (Object e, StackTrace st) {
+            // Beklenmeyen istisna — kullanıcıya bağlantı hatası olarak yansır,
+            // gerçek sebep yalnızca bu logda görünür.
+            MedLogger.error(
+              unit: 'MasterDrawerSession',
+              swreq: 'SWREQ-CLI-CABIN-OP-011',
+              message: 'Çekmece açma akışı beklenmeyen bir hatayla sonlandı',
+              context: {'assignmentId': assignment.id, 'cabinDrawerDetailId': assignment.cabinDrawerDetailId},
+              error: e,
+              stackTrace: st,
+            );
             _setStage(MasterDrawerFailed(failure: MasterDrawerFailure.managerConnectFailed, detail: e.toString()));
           },
           onDone: () => _sessionSub = null,
@@ -240,6 +254,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     _cancelTrayWatch();
     _lastLidAssignment = cellAssignment;
     _lastLidAwaitClose = awaitLidClose;
+    _lastSubUnitIsTray = false;
 
     _setStage(const MasterDrawerOpeningLid());
     try {
@@ -281,6 +296,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
 
   @override
   Future<void> retryCubicLid() async {
+    if (_lastSubUnitIsTray) return retrySerumTray();
     final cell = _lastLidAssignment;
     if (cell == null || _stage is! MasterDrawerLidFailed) return;
     await openCubicLid(cell, awaitLidClose: _lastLidAwaitClose);
@@ -377,6 +393,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     _cancelLidWatch();
     _cancelTrayWatch();
     _lastTrayAddress = address;
+    _lastSubUnitIsTray = true;
 
     _setStage(const MasterDrawerOpeningLid());
     try {

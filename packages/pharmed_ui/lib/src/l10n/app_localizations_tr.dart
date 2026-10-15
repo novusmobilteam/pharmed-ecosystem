@@ -6486,10 +6486,24 @@ class AppLocalizationsTr extends AppLocalizations {
       'Avadanlığın durumu okunamıyor.';
 
   @override
+  String get masterDrawer_tray_openingTitle => 'Avadanlık Kilidi Açılıyor';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Lütfen bekleyin, işlem yapılacak avadanlığın kilidi açılıyor.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Avadanlığı yerine itin';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Avadanlık yerine itildiğinde sıradaki avadanlığa geçilir.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Alım tamamlanıyor.';
+  String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Tanımlı Kabinler';

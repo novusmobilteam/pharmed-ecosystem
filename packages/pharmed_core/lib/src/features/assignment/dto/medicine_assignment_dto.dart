@@ -35,7 +35,14 @@ class MedicineAssignmentDto {
     this.stocks,
   });
 
+  /// Servis bazı endpoint'lerde (alım — `cabinDrawrQuantity`) serum
+  /// avadanlığı atamasını farklı şekilde döner: `cabinDrawr` null,
+  /// `cabinDrawrDetail` LİSTE değil tek nesne ve raf (`cabinDrawr`) onun
+  /// içinde. İki şekil de kabul edilir; raf avadanlıktan tamamlanır.
   factory MedicineAssignmentDto.fromJson(Map<String, dynamic> json) {
+    final cells = _listOf(json['cabinDrawrDetail']);
+    final rawDrawer = json['cabinDrawr'] ?? _nestedDrawerOf(cells, json['cabinDrawrDetailId']);
+
     return MedicineAssignmentDto(
       id: json['id'] as int?,
       cabinId: json['cabinId'] as int?,
@@ -46,14 +53,30 @@ class MedicineAssignmentDto {
       maxQuantity: json['maxQuantity'] as int?,
       cabin: json['cabin'] != null ? CabinDTO.fromJson(json['cabin']) : null,
       medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,
-      cabinDrawer: json['cabinDrawr'] != null ? DrawerUnitDTO.fromJson(json['cabinDrawr']) : null,
-      cabinDrawerDetail: json['cabinDrawrDetail'] != null
-          ? (json['cabinDrawrDetail'] as List).map((e) => DrawerCellDTO.fromJson(e as Map<String, dynamic>)).toList()
-          : null,
-      stocks: json['cabinDrawrStock'] != null
-          ? (json['cabinDrawrStock'] as List).map((e) => CabinStockDTO.fromJson(e as Map<String, dynamic>)).toList()
-          : null,
+      cabinDrawer: rawDrawer != null ? DrawerUnitDTO.fromJson(rawDrawer as Map<String, dynamic>) : null,
+      cabinDrawerDetail: cells?.map(DrawerCellDTO.fromJson).toList(),
+      stocks: _listOf(json['cabinDrawrStock'])?.map(CabinStockDTO.fromJson).toList(),
     );
+  }
+
+  /// null → null, tek nesne → tek elemanlı liste, liste → aynen.
+  static List<Map<String, dynamic>>? _listOf(Object? raw) => switch (raw) {
+    null => null,
+    final List<dynamic> list => [for (final e in list) e as Map<String, dynamic>],
+    final Map<String, dynamic> map => [map],
+    _ => throw FormatException('Beklenmeyen JSON tipi: ${raw.runtimeType}'),
+  };
+
+  /// Atamanın avadanlığına gömülü raf (serum) — üst seviye `cabinDrawr` yoksa.
+  static Object? _nestedDrawerOf(List<Map<String, dynamic>>? cells, Object? detailId) {
+    if (cells == null) return null;
+    for (final cell in cells) {
+      if (detailId == null || cell['id'] == detailId) {
+        final drawer = cell['cabinDrawr'];
+        if (drawer != null) return drawer;
+      }
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {

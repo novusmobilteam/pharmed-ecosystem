@@ -6696,12 +6696,25 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'état du plateau ne peut pas être lu.';
 
   @override
+  String get masterDrawer_tray_openingTitle => 'Déverrouillage du plateau';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Veuillez patienter, le verrou du plateau est en cours de déverrouillage.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Repoussez le plateau';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Une fois le plateau repoussé, le plateau suivant est déverrouillé.';
+
+  @override
   String get masterDrawer_status_completingTitle =>
       'Finalisation de votre opération';
 
   @override
-  String get masterDrawer_status_completingSubtitle =>
-      'Finalisation de la prise.';
+  String get masterDrawer_status_completingSubtitle => 'Veuillez patienter';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Armoires Définies';

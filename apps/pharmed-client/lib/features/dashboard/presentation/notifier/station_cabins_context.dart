@@ -35,4 +35,8 @@ class StationCabinsContext {
   Cabin? cabinFor(int? cabinId) => cabinId != null ? cabins.firstWhereOrNull((c) => c.id == cabinId) : null;
 
   Cabin? get masterCabin => cabins.firstWhereOrNull((c) => c.type == CabinType.master);
+
+  /// İstasyondaki tüm kabinlerin çekmece grupları — serum avadanlığı kilit
+  /// adresleri gibi kabin bağımsız çözümlemeler için.
+  List<DrawerGroup> get allGroups => [for (final data in cabinDataByCabinId.values) ...data.groups];
 }

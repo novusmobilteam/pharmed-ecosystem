@@ -205,7 +205,17 @@ class GetIntakeItemsUseCase {
       if (byDetail != null) return byDetail;
     }
 
-    return allAssignments.firstWhereOrNull((a) => a.cabinDrawerId == task.cabinAssignment.cabinDrawerId);
+    // Serum avadanlığı: atama avadanlık kimliğiyle yapılır — rafın
+    // (cabinDrawerId) diğer avadanlıklarıyla karışmasın.
+    final serumCellId = task.cabinAssignment.cabinDrawerDetailId;
+    if (serumCellId != null) {
+      final bySerumCell = allAssignments.firstWhereOrNull((a) => a.cabinDrawerDetailId == serumCellId);
+      if (bySerumCell != null) return bySerumCell;
+    }
+
+    final unitId = task.cabinAssignment.cabinDrawerId;
+    if (unitId == null) return null;
+    return allAssignments.firstWhereOrNull((a) => a.cabinDrawerDetailId == null && a.cabinDrawerId == unitId);
   }
 
   /// [medicines] içindeki BENZERSİZ, isWitnessedPurchase=true olan Drug'lar

@@ -5,6 +5,7 @@ export 'entity/cabin_operation_medicine_params.dart';
 export 'entity/cabin_operation_cell_geometry.dart';
 export 'entity/cabin_targeted_prescription_item.dart';
 export 'entity/drawer_job_target.dart';
+export 'entity/assignment_selection.dart';
 
 export 'usecase/cabin_operation_queue_builder.dart';
 

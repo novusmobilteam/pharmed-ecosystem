@@ -162,4 +162,115 @@ void main() {
       expect(failure, MasterDrawerFailure.trayBusy);
     });
   });
+
+  group('Serum kuyruğu', () {
+    const slot = DrawerSlot(
+      id: 346,
+      orderNumber: 4,
+      drawerConfig: DrawerConfig(drawerTypeId: 1, numberOfSteps: 1, deviceTypeNo: 250),
+    );
+    const shelf1 = DrawerUnit(id: 1701, orderNo: 1, drawerSlot: slot);
+    const shelf2 = DrawerUnit(id: 1702, orderNo: 2, drawerSlot: slot);
+    final groups = [
+      DrawerGroup(
+        slot: slot,
+        units: const [shelf1, shelf2],
+        serumShelves: const [
+          SerumShelfLayout(id: 1701, orderNo: 1, trays: [SerumTray(id: 10, size: SerumTraySize.small)]),
+          SerumShelfLayout(
+            id: 1702,
+            orderNo: 2,
+            lockType: SerumShelfLockType.locked,
+            trays: [
+              SerumTray(id: 20, size: SerumTraySize.large),
+              SerumTray(id: 21, size: SerumTraySize.medium),
+            ],
+          ),
+          SerumShelfLayout(orderNo: 3),
+        ],
+      ),
+    ];
+
+    MedicineAssignment trayAssignment(int cellId, DrawerUnit shelf, int stepNo) => MedicineAssignment(
+      cabinDrawerId: shelf.id,
+      cabinDrawerDetailId: cellId,
+      drawerUnit: shelf,
+      cabinDrawerDetail: [DrawerCell(id: cellId, stepNo: stepNo)],
+    );
+
+    final locked21 = trayAssignment(21, shelf2, 2);
+    final locked20 = trayAssignment(20, shelf2, 1);
+    final unlocked10 = trayAssignment(10, shelf1, 1);
+
+    test('forAssignment yalnızca kilitli raftaki avadanlığı çözer', () {
+      expect(SerumTrayAddress.forAssignment(locked21, groups), const SerumTrayAddress(deviceId: 2, port: 5, cellId: 21));
+      expect(SerumTrayAddress.forAssignment(unlocked10, groups), isNull);
+      expect(SerumTrayAddress.forAssignment(MedicineAssignment(cabinDrawerId: 1701), groups), isNull);
+    });
+
+    test('kilitli ve kilitsiz avadanlıklar tek job, raf ve avadanlık sırasıyla', () {
+      final result = CabinOperationQueueBuilder.build(
+        items: [locked21, unlocked10, locked20],
+        assignmentOf: (a) => a,
+        targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.refill),
+        groups: groups,
+      );
+
+      expect(result.skipped, isEmpty);
+      expect(result.jobs, hasLength(1));
+
+      final job = result.jobs.single;
+      expect(job.isSerumTrayJob, isTrue);
+      expect(job.staysOpenAcrossTargets, isTrue);
+      expect(job.targets.map((t) => t.assignment.cabinDrawerDetailId), [10, 20, 21]);
+      expect(job.targets.map((t) => t.serumTray?.port), [null, 1, 5]);
+    });
+
+    test('seçim: serum avadanlığı raf değil avadanlık bazında', () {
+      final normal = MedicineAssignment(cabinDrawerId: 1701);
+      final all = [locked20, locked21, unlocked10, normal];
+      final selection = AssignmentSelection()..add(locked20);
+
+      expect(selection.contains(locked20), isTrue);
+      expect(selection.contains(locked21), isFalse); // aynı raf, farklı avadanlık
+      expect(selection.contains(normal), isFalse); // raf id'si normal göz sayılmaz
+      expect(selection.selectedFrom(all), [locked20]);
+
+      expect(AssignmentSelection.inGroup(groups.single, all).toSet(), {locked20, locked21, unlocked10});
+      selection.toggleAll(AssignmentSelection.inGroup(groups.single, all));
+      expect(selection.serumCellIds, {10, 20, 21});
+      expect(selection.unitIds, isEmpty);
+    });
+
+    test('serum kapak adresi raftan bağımsız (raf no port sanılmaz)', () {
+      const slotWithAddress = DrawerSlot(
+        id: 346,
+        address: '05',
+        drawerConfig: DrawerConfig(drawerTypeId: 14, numberOfSteps: 1, deviceTypeNo: 250),
+      );
+      for (final shelfNo in [1, 2, 3]) {
+        final address = calculateAddressFromAssignment(
+          MedicineAssignment(
+            drawerUnit: DrawerUnit(id: 1700 + shelfNo, compartmentNo: shelfNo, orderNo: shelfNo, drawerSlot: slotWithAddress),
+          ),
+        );
+        expect(address.row, 5);
+        expect(address.port, 1);
+      }
+    });
+
+    test('avadanlık hedefi tek girişli, kayıt avadanlık göz kaydına gider', () {
+      final target = CabinOperationTarget.fromAssignment(
+        locked21,
+        CabinOperationMode.refill,
+      ).withCubicSecondary(5).withCubicMiad(DateTime.now().add(const Duration(days: 365)));
+
+      expect(target.isKubik, isTrue);
+      final rows = CabinOperationParamsMapper.cellRows(target);
+      expect(rows, hasLength(1));
+      expect(rows.single.detailId, 21);
+      expect(rows.single.shelfNo, 2);
+      expect(rows.single.compartmentNo, 2);
+    });
+  });
 }

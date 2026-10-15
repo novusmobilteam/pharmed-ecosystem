@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -9,6 +10,8 @@ class CabinAssignmentListView extends StatelessWidget {
     required this.items,
     required this.selectedItemIds,
     this.onToggle,
+    this.selectedCellIds = const {},
+    this.onToggleCell,
     this.onDelete,
     this.onReplace,
   });
@@ -16,6 +19,11 @@ class CabinAssignmentListView extends StatelessWidget {
   final List<MedicineAssignment> items;
   final Set<int> selectedItemIds;
   final ValueChanged<int>? onToggle;
+
+  /// Serum avadanlığı atamaları (cabinDrawerDetailId'li) göz bazında seçilir.
+  /// [onToggleCell] verilmezse bu satırlar [onToggle] ile raf bazında seçilir.
+  final Set<int> selectedCellIds;
+  final ValueChanged<int>? onToggleCell;
   final ValueChanged<MedicineAssignment>? onDelete;
   final ValueChanged<MedicineAssignment>? onReplace;
 
@@ -50,7 +58,16 @@ class CabinAssignmentListView extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final assignment = items.elementAt(index);
               final name = assignment.medicine?.name ?? '-';
-              final konum = assignment.isKubikType
+              final serumCellId = assignment.cabinDrawerDetailId;
+              final serumCell = serumCellId == null
+                  ? null
+                  : assignment.cabinDrawerDetail?.firstWhereOrNull((c) => c.id == serumCellId);
+              final konum = serumCellId != null
+                  ? context.l10n.assignment_idle_serumLocationLabel(
+                      assignment.drawerUnit?.orderNo ?? 0,
+                      serumCell?.stepNo ?? 0,
+                    )
+                  : assignment.isKubikType
                   ? context.l10n.cabinAssignmentList_cubicLocationLabel(
                       assignment.drawerUnit?.drawerSlot?.address ?? '-',
                       assignment.drawerUnit?.compartmentNo ?? '-',
@@ -66,7 +83,15 @@ class CabinAssignmentListView extends StatelessWidget {
               double critQty = assignment.criticalQuantity.toDouble();
               double minQty = assignment.minQuantity.toDouble();
               final id = assignment.cabinDrawerId;
-              bool isSelected = id != null && selectedItemIds.contains(id);
+              final bool byCell = serumCellId != null && onToggleCell != null;
+              bool isSelected = byCell
+                  ? selectedCellIds.contains(serumCellId)
+                  : id != null && selectedItemIds.contains(id);
+              final VoidCallback? onTap = byCell
+                  ? () => onToggleCell!(serumCellId)
+                  : (id == null || onToggle == null)
+                  ? null
+                  : () => onToggle!(id);
 
               MedCellStockLevel level = current <= critQty
                   ? MedCellStockLevel.critical
@@ -79,7 +104,7 @@ class CabinAssignmentListView extends StatelessWidget {
               final pct = _ratio(current, maxQty);
 
               return GestureDetector(
-                onTap: (id == null || onToggle == null) ? null : () => onToggle!(id),
+                onTap: onTap,
                 child: SizedBox(
                   height: 50,
                   child: Row(

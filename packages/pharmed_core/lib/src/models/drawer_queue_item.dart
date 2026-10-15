@@ -39,6 +39,10 @@ enum DrawerQueueStatus {
 /// Birim doz çekmece için ek alan:
 ///   [activeUnitIndexes] → Dolum yapılacak bölme index'leri (0-tabanlı).
 ///   Boşsa tüm bölmeler eşit gösterilir (serbest dolum).
+///
+/// Serum kabini için ek alanlar (avadanlık = DrawerCell id):
+///   [activeSerumCellIds]    → O an işlenen avadanlık.
+///   [completedSerumCellIds] → Tamamlanan avadanlıklar.
 class DrawerQueueItem {
   const DrawerQueueItem({
     required this.group,
@@ -51,6 +55,8 @@ class DrawerQueueItem {
     this.isReturnDrawerTarget = false,
     this.activeCells = const {},
     this.cabinDrawerId,
+    this.activeSerumCellIds = const {},
+    this.completedSerumCellIds = const {},
   });
 
   final DrawerGroup group;
@@ -96,9 +102,16 @@ class DrawerQueueItem {
   /// indeksinden bağımsız bulmak için (çoklu kabinde indeksler hizalı değil).
   final int? cabinDrawerId;
 
+  /// Serum: şu an işlenen avadanlığın DrawerCell id'si (tek eleman ya da boş).
+  final Set<int> activeSerumCellIds;
+
+  /// Serum: bu işlemde tamamlanan avadanlıkların DrawerCell id'leri.
+  final Set<int> completedSerumCellIds;
+
   // ── Türetilen ─────────────────────────────────────────────────────────────
 
   bool get isKubik => group.isKubik;
+  bool get isSerum => group.isSerum;
   bool get isInQueue => status != DrawerQueueStatus.notInQueue;
   String get address => group.slot.address ?? '?';
   List<DrawerUnit> get units => group.units;
@@ -218,6 +231,27 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
       CabinOperationJobStatus.pending => isActive ? DrawerQueueStatus.active : DrawerQueueStatus.pending,
     };
 
+    // Serum: hedef gözü değil avadanlıktır (cabinDrawerDetailId). Aynı serum
+    // kapağının diğer job'ları (kilitli/kilitsiz) de tamamlandıysa sayılır.
+    final completedSerumCells = <int>{};
+    final activeSerumCells = <int>{};
+    if (group.isSerum && slotId != null) {
+      for (final (i, j) in jobsBySlotId[slotId] ?? const []) {
+        final count = targetCountOf(j as TJob);
+        final done = statusOf(j) == CabinOperationJobStatus.completed
+            ? count
+            : (i == currentIndex ? currentTargetIndex : 0);
+        for (var t = 0; t < done && t < count; t++) {
+          final cellId = assignmentAt(j, t)?.cabinDrawerDetailId;
+          if (cellId != null) completedSerumCells.add(cellId);
+        }
+        if (i == currentIndex && currentTargetIndex >= 0 && currentTargetIndex < count) {
+          final cellId = assignmentAt(j, currentTargetIndex)?.cabinDrawerDetailId;
+          if (cellId != null) activeSerumCells.add(cellId);
+        }
+      }
+    }
+
     final completedIndexes = <int>{};
     final completedCells = <(int, int)>{};
     final activeCells = <(int, int)>{};
@@ -299,6 +333,8 @@ List<DrawerQueueItem> buildCabinExecutionLocationItems<TJob>({
       activeCells: isActive ? activeCells : const {},
       isReturnDrawerTarget: isReturnDrawerTargetOf?.call(job) ?? false,
       cabinDrawerId: cabinDrawerIdOf(job),
+      activeSerumCellIds: activeSerumCells,
+      completedSerumCellIds: completedSerumCells,
     );
   }).toList();
 }

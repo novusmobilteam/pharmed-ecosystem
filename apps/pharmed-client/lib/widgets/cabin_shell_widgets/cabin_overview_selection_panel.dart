@@ -237,8 +237,15 @@ class _DrawerView extends StatelessWidget {
         .where((unitId) => assignments.any((a) => (a.cabinDrawerId ?? a.drawerUnit?.id) == unitId))
         .toSet();
 
-    final bool isDrawerFullySelected =
-        assignedUnitIdsInGroup.isNotEmpty && assignedUnitIdsInGroup.every(selectedUnitIds.contains);
+    // Serumda seçim avadanlık (göz) bazında — atanmış avadanlıklara bakılır.
+    final serumTrayIds = group.serumTrayIds;
+    final assignedSerumCellIds = group.isSerum
+        ? assignments.map((a) => a.cabinDrawerDetailId).whereType<int>().where(serumTrayIds.contains).toSet()
+        : const <int>{};
+
+    final bool isDrawerFullySelected = group.isSerum
+        ? assignedSerumCellIds.isNotEmpty && assignedSerumCellIds.every(selectedCellIds.contains)
+        : assignedUnitIdsInGroup.isNotEmpty && assignedUnitIdsInGroup.every(selectedUnitIds.contains);
 
     return Container(
       padding: MedSpacing.insetLg,
@@ -343,10 +350,7 @@ class _DrawerView extends StatelessWidget {
 
 /// Serum çekmecesi: 3 raf alt alta (Raf 1 en üst), her rafta avadanlıklar
 /// kapladıkları alan oranında (1/2/4 / 8) ve SAĞDAN SOLA dizilir — ilk
-/// avadanlık en sağda. Kilitli raf kilit ikonuyla işaretlenir.
-///
-/// Şimdilik yalnızca gösterim: avadanlık seçimi (tıklama) ilaç ataması
-/// iş paketinde eklenecek.
+/// avadanlık en sağda. [onTrayTap] verilirse avadanlıklar seçilebilir.
 class _SerumShelvesView extends StatelessWidget {
   const _SerumShelvesView({
     required this.group,

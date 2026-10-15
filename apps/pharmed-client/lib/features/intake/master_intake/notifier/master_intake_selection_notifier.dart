@@ -266,6 +266,9 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
   /// kabin kabin ilerler.
   List<int> _cabinOrder = const [];
 
+  /// İstasyondaki tüm kabinlerin çekmece grupları — serum avadanlığı kilit adresleri için.
+  List<DrawerGroup> _groups = const [];
+
   /// Zamanı geçmiş kalemler için alım öncesi girilen açıklamalar (itemId → metin).
   /// Kalemler yeniden çekildiğinde sıfırlanır.
   Map<int, String> _overdueDescriptions = const {};
@@ -286,6 +289,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       for (final c in stationContext.cabins)
         if (c.id != null) c.id!,
     ];
+    _groups = stationContext.allGroups;
   }
 
   /// Ordered ↔ orderless görünüm geçişi (yalnızca `isStatusToggleVisible`
@@ -693,9 +697,11 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     _pendingPlans = [for (final b in built) b.plan];
     _pendingJobs = CabinOperationQueueBuilder.build(
       items: built,
-      assignmentOf: (b) => b.plan.item.assignment!,
+      // Hedefin ataması — serumda avadanlık kimliği plandan tamamlanmış olabilir.
+      assignmentOf: (b) => b.target.assignment,
       targetOf: (b, _) => b.target,
       cabinOrder: _cabinOrder,
+      groups: _groups,
     ).jobs;
 
     // Hatalı kalemler kuyruğa hiç girmedi — "hatasızlarla devam et" senaryosu

@@ -14,6 +14,10 @@
 //   - Miktarı sıfır olan kayıtların ve boş göz işaret tarihinin (2099)
 //     SKT'si yok sayılır.
 //
+// Serum avadanlığı (atama cabinDrawerDetailId ile yapılmış) tek bir gözdür —
+// kübikle aynı tek girişli yolu kullanır ([isKubik] true), çekmece tipi kübik
+// olmasa da. Kilitli raftaysa [serumTray] kilit adresini taşır.
+//
 // Sayım alanı [countType]'a göre başlar: normal → kayıttaki stok, kör/yok →
 // boş. Kayıttaki stok ayrıca [CabinOperationStepEntry.recordedQuantity]'de
 // tutulur — çıkarma üst sınırı kullanıcının sayımına değil ona bakar.
@@ -80,6 +84,7 @@ class CabinOperationTarget implements DrawerJobTarget {
     this.sourceId,
     this.openUntilStep,
     this.activeStepIndexes,
+    this.serumTray,
   });
 
   final CabinOperationMode mode;
@@ -87,7 +92,12 @@ class CabinOperationTarget implements DrawerJobTarget {
   @override
   final MedicineAssignment assignment;
 
+  /// Tek girişli hedef: kübik göz ya da serum avadanlığı.
   final bool isKubik;
+
+  /// Kilitli serum rafındaki avadanlığın kilit adresi; diğer hedeflerde null.
+  @override
+  final SerumTrayAddress? serumTray;
 
   /// Kübik sayım. Kör sayımda / sayımsız ilaçta girilene kadar null.
   final double? cubicCount;
@@ -157,7 +167,8 @@ class CabinOperationTarget implements DrawerJobTarget {
     assert(mode.usesEntryTarget, '$mode kabin işlem target\'ı kullanmaz');
 
     final drawerConfig = assignment.drawerUnit?.drawerSlot?.drawerConfig;
-    final isKubik = drawerConfig?.drawerType?.isKubik ?? false;
+    // Serum avadanlığı tek bir göz — kübikle aynı tek girişli yol.
+    final isKubik = (drawerConfig?.drawerType?.isKubik ?? false) || assignment.cabinDrawerDetailId != null;
     final stocks = assignment.stocks ?? const <CabinStock>[];
 
     // Kör sayımda ve sayımsız ilaçta kayıttaki miktar kullanıcıya önceden
@@ -279,6 +290,7 @@ class CabinOperationTarget implements DrawerJobTarget {
     bool clearSingleMiad = false,
     int? openUntilStep,
     Set<int>? activeStepIndexes,
+    SerumTrayAddress? serumTray,
   }) => CabinOperationTarget._(
     mode: mode,
     assignment: assignment,
@@ -293,6 +305,7 @@ class CabinOperationTarget implements DrawerJobTarget {
     sourceId: sourceId,
     openUntilStep: openUntilStep ?? this.openUntilStep,
     activeStepIndexes: activeStepIndexes ?? this.activeStepIndexes,
+    serumTray: serumTray ?? this.serumTray,
   );
 
   CabinOperationTarget withCubicCount(double v) => _copy(cubicCount: v);
@@ -315,6 +328,9 @@ class CabinOperationTarget implements DrawerJobTarget {
   /// [openUntilStep]'e kadar açılır.
   CabinOperationTarget withIntakePlan({required Set<int> activeSteps, required int openUntilStep}) =>
       _copy(activeStepIndexes: activeSteps, openUntilStep: openUntilStep);
+
+  /// Kilitli serum rafındaki avadanlığın kilit adresini bağlar.
+  CabinOperationTarget withSerumTray(SerumTrayAddress tray) => _copy(serumTray: tray);
 
   CabinOperationTarget _copyStep(int i, CabinOperationStepEntry Function(CabinOperationStepEntry) update) {
     if (i < 0 || i >= steps.length) return this;
