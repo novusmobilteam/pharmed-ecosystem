@@ -7744,6 +7744,15 @@
   "@cabinOperation_changeCabinButton": {
     "description": "Back button shown at the top of a cabin-scoped operation screen (refill, census, intake, etc.) — returns to the cabin selection screen so the user can pick a different cabin for the same operation"
   },
+  "cabinOperation_serumShelfLabel": "Raf {index}",
+  "@cabinOperation_serumShelfLabel": {
+    "description": "Shelf label in the serum cabinet visual of cabin operation screens (shelf 1 is the top shelf)",
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "cabinOperation_serumShelfNoTrays": "Avadanlık tanımlı değil",
+  "@cabinOperation_serumShelfNoTrays": {
+    "description": "Shown inside a serum cabinet shelf in the cabin visual when no trays have been configured for it in cabin design"
+  },
   "assignment_idle_kicker": "KABİN YAPILANDIRMA",
   "assignment_idle_title": "İlaç Atama",
   "assignment_idle_description": "Soldaki kabinden bir göze dokunun; o göze ilaç listesinden seçim yapıp minimum, kritik ve maksimum miktarları girin. Dolu bir göze dokunarak mevcut atamayı düzenleyebilirsiniz.",
@@ -7764,6 +7773,14 @@
       "cell": {
         "type": "int"
       }
+    }
+  },
+  "assignment_idle_serumLocationLabel": "Serum — Raf {shelf}, A-{tray}",
+  "@assignment_idle_serumLocationLabel": {
+    "description": "Location label for a serum cabinet tray assignment in the assignments table: shelf number (1 = top) and the tray's position on that shelf counted right to left",
+    "placeholders": {
+      "shelf": { "type": "int" },
+      "tray": { "type": "int" }
     }
   },
   "assignment_edit_title": "Atamayı Düzenle",

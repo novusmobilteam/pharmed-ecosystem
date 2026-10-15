@@ -11625,6 +11625,18 @@ abstract class AppLocalizations {
   /// **'Select Cabinet'**
   String get cabinOperation_changeCabinButton;
 
+  /// No description provided for @cabinOperation_serumShelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf {index}'**
+  String cabinOperation_serumShelfLabel(int index);
+
+  /// No description provided for @cabinOperation_serumShelfNoTrays.
+  ///
+  /// In en, this message translates to:
+  /// **'No trays defined'**
+  String get cabinOperation_serumShelfNoTrays;
+
   /// No description provided for @assignment_idle_kicker.
   ///
   /// In en, this message translates to:
@@ -11690,6 +11702,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drawer {drawer} — Cell {cell}'**
   String assignment_idle_locationLabel(String drawer, int cell);
+
+  /// No description provided for @assignment_idle_serumLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serum — Shelf {shelf}, T-{tray}'**
+  String assignment_idle_serumLocationLabel(int shelf, int tray);
 
   /// No description provided for @assignment_edit_title.
   ///
@@ -14166,7 +14184,6 @@ abstract class AppLocalizations {
   /// **'Barcode test'**
   String get printer_testReceipt_barcodeLabel;
 
-
   /// No description provided for @printer_receipt_intakeTitle.
   ///
   /// In en, this message translates to:
@@ -14202,7 +14219,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Room / Bed'**
   String get printer_receipt_roomBedLabel;
-
 
   /// No description provided for @printer_receipt_operatorLabel.
   ///
@@ -14257,7 +14273,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sent to the printer.'**
   String get printer_sentMessage;
-
 
   /// No description provided for @fingerprint_enroll_screenTitle.
   ///

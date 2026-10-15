@@ -4663,6 +4663,11 @@
   "cabinSelection_continueButton": "Continue",
   "cabinSelection_dataUnavailableLabel": "No Data",
   "cabinOperation_changeCabinButton": "Select Cabinet",
+  "cabinOperation_serumShelfLabel": "Shelf {index}",
+  "@cabinOperation_serumShelfLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "cabinOperation_serumShelfNoTrays": "No trays defined",
   "assignment_idle_kicker": "CABINET CONFIGURATION",
   "@assignment_idle_kicker": {},
   "assignment_idle_title": "Drug Assignment",
@@ -4692,6 +4697,13 @@
       "cell": {
         "type": "int"
       }
+    }
+  },
+  "assignment_idle_serumLocationLabel": "Serum — Shelf {shelf}, T-{tray}",
+  "@assignment_idle_serumLocationLabel": {
+    "placeholders": {
+      "shelf": { "type": "int" },
+      "tray": { "type": "int" }
     }
   },
   "assignment_edit_title": "Edit Assignment",

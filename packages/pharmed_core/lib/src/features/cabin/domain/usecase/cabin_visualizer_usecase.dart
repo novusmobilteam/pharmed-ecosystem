@@ -119,6 +119,8 @@ class GetCabinVisualizerDataUseCase {
 
     groups.sort((a, b) => a.orderNumber.compareTo(b.orderNumber));
 
+    await _attachSerumLayouts(groups);
+
     final slotVisuals = _buildSlots(groups);
 
     final data = CabinVisualizerData(
@@ -130,6 +132,24 @@ class GetCabinVisualizerDataUseCase {
     );
 
     return Result.ok(data);
+  }
+
+  /// Serum çekmecelerinin avadanlık yerleşimini gruba ekler (yerinde).
+  /// Okunamazsa grup yerleşimsiz kalır (serumShelves null) — görsel yine
+  /// çizilir, sadece avadanlık detayı olmaz; kabin yüklemesi bozulmaz.
+  Future<void> _attachSerumLayouts(List<DrawerGroup> groups) async {
+    final serumIndexes = [
+      for (final (i, g) in groups.indexed)
+        if (g.isSerum && g.slot.id != null) i,
+    ];
+    if (serumIndexes.isEmpty) return;
+
+    final layouts = await Future.wait(serumIndexes.map((i) => _cabinRepository.getSerumLayout(groups[i].slot.id!)));
+
+    for (final (k, i) in serumIndexes.indexed) {
+      final shelves = layouts[k].when(ok: (s) => s, error: (_) => null);
+      if (shelves != null) groups[i] = groups[i].copyWith(serumShelves: shelves);
+    }
   }
 
   // Stock kaldırıldı — renk artık her zaman nötr (empty). Yapı (Kubic/UnitDose/

@@ -12,7 +12,7 @@ class _AssignmentIdlePanel extends StatelessWidget {
   final MenuItem menu;
   final List<MedicineAssignment> assignments;
   final List<DrawerGroup> groups;
-  final ValueChanged<int> onEdit;
+  final ValueChanged<MedicineAssignment> onEdit;
   final Function(String? query) onAssignmentSearchChanged;
 
   @override
@@ -44,7 +44,7 @@ class _AssignmentTable extends StatelessWidget {
 
   final List<MedicineAssignment> assignments;
   final List<DrawerGroup> groups;
-  final ValueChanged<int> onEdit;
+  final ValueChanged<MedicineAssignment> onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +60,33 @@ class _AssignmentTable extends StatelessWidget {
           _TableDataRow(
             assignment: assignment,
             locationLabel: _locationLabel(assignment, groups, context),
-            onEdit: () {
-              final id = assignment.cabinDrawerId;
-              if (id != null) onEdit(id);
-            },
+            onEdit: () => onEdit(assignment),
           ),
       ],
     );
   }
 
   String _locationLabel(MedicineAssignment assignment, List<DrawerGroup> groups, BuildContext context) {
+    // Serum ataması cabinDrawrId'siz olabilir — önce avadanlık üzerinden bak.
+    final serumLabel = _serumLocationLabel(assignment, groups, context);
+    if (serumLabel != null) return serumLabel;
+
     for (final group in groups) {
       final index = group.units.indexWhere((u) => u.id == assignment.cabinDrawerId);
       if (index != -1) return context.l10n.assignment_idle_locationLabel(group.address, index + 1);
     }
     return '—';
+  }
+
+  /// Serum: raf + avadanlığın raftaki sırası (sağdan sola, A-n).
+  String? _serumLocationLabel(MedicineAssignment assignment, List<DrawerGroup> groups, BuildContext context) {
+    for (final group in groups.where((g) => g.isSerum)) {
+      for (final shelf in group.serumShelves ?? const <SerumShelfLayout>[]) {
+        final trayIndex = shelf.trays.indexWhere((t) => t.id != null && assignment.ownsCell(t.id!));
+        if (trayIndex != -1) return context.l10n.assignment_idle_serumLocationLabel(shelf.orderNo, trayIndex + 1);
+      }
+    }
+    return null;
   }
 }
 

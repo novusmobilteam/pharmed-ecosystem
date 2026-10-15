@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -9,7 +10,9 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
     required this.groups,
     this.assignments = const [],
     required this.selectedUnitIds,
+    this.selectedCellIds = const {},
     this.onCellTap,
+    this.onSerumTrayTap,
     this.onDrawerTap,
     this.onChangeCabin,
     this.cabin,
@@ -23,6 +26,13 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
   final Set<int> selectedUnitIds;
 
   final void Function(DrawerUnit)? onCellTap;
+
+  /// Seçili serum avadanlıklarının (DrawerCell) id'leri.
+  final Set<int> selectedCellIds;
+
+  /// Verilirse serum avadanlıkları tıklanabilir olur: [shelf] rafın
+  /// DrawerUnit'i, [tray] avadanlık. Verilmezse serum yalnızca gösterilir.
+  final void Function(DrawerUnit shelf, SerumTray tray)? onSerumTrayTap;
 
   /// Verilirse, çekmece başlığına tıklanabilir hale gelir (o çekmecedeki
   /// tüm atanmış gözleri toplu seç/kaldır). Verilmezse başlık statik kalır.
@@ -70,7 +80,9 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
                   group: group,
                   assignments: assignments,
                   selectedUnitIds: selectedUnitIds,
+                  selectedCellIds: selectedCellIds,
                   onCellTap: onCellTap,
+                  onSerumTrayTap: onSerumTrayTap,
                   onDrawerTap: onDrawerTap,
                 );
               },
@@ -88,14 +100,18 @@ class _DrawerView extends StatelessWidget {
     required this.group,
     required this.assignments,
     required this.selectedUnitIds,
+    required this.selectedCellIds,
     this.onCellTap,
+    this.onSerumTrayTap,
     this.onDrawerTap,
   });
 
   final DrawerGroup group;
   final List<MedicineAssignment> assignments;
   final Set<int> selectedUnitIds;
+  final Set<int> selectedCellIds;
   final void Function(DrawerUnit)? onCellTap;
+  final void Function(DrawerUnit shelf, SerumTray tray)? onSerumTrayTap;
   final void Function(DrawerGroup)? onDrawerTap;
 
   static const double _cellHeight = 100;
@@ -250,6 +266,15 @@ class _DrawerView extends StatelessWidget {
           ),
           Builder(
             builder: (context) {
+              if (group.isSerum) {
+                return _SerumShelvesView(
+                  group: group,
+                  assignments: assignments,
+                  selectedCellIds: selectedCellIds,
+                  onTrayTap: onSerumTrayTap,
+                );
+              }
+
               if (!isKubik) {
                 return Row(
                   spacing: _spacing,
@@ -311,6 +336,156 @@ class _DrawerView extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Serum çekmecesi: 3 raf alt alta (Raf 1 en üst), her rafta avadanlıklar
+/// kapladıkları alan oranında (1/2/4 / 8) ve SAĞDAN SOLA dizilir — ilk
+/// avadanlık en sağda. Kilitli raf kilit ikonuyla işaretlenir.
+///
+/// Şimdilik yalnızca gösterim: avadanlık seçimi (tıklama) ilaç ataması
+/// iş paketinde eklenecek.
+class _SerumShelvesView extends StatelessWidget {
+  const _SerumShelvesView({
+    required this.group,
+    required this.assignments,
+    required this.selectedCellIds,
+    this.onTrayTap,
+  });
+
+  final DrawerGroup group;
+  final List<MedicineAssignment> assignments;
+  final Set<int> selectedCellIds;
+  final void Function(DrawerUnit shelf, SerumTray tray)? onTrayTap;
+
+  static const double _shelfHeight = 72;
+  static const double _spacing = 4;
+
+  /// Avadanlık (DrawerCell) id → atama.
+  Map<int, MedicineAssignment> get _assignmentByCellId => {
+    for (final a in assignments) ...{
+      for (final cell in a.cabinDrawerDetail ?? const <DrawerCell>[])
+        if (cell.id != null) cell.id!: a,
+      if (a.cabinDrawerDetailId != null) a.cabinDrawerDetailId!: a,
+    },
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final shelves = group.serumShelves ?? SerumShelfLayout.emptyShelves();
+    final byCellId = _assignmentByCellId;
+
+    return Column(
+      spacing: _spacing,
+      children: [
+        for (final shelf in shelves) SizedBox(height: _shelfHeight, child: _shelfRow(context, shelf, byCellId)),
+      ],
+    );
+  }
+
+  /// Raf, grubun DrawerUnit'leri arasında id ile bulunur (raf = DrawerUnit).
+  /// Raf ya da avadanlık kayıtsızsa (id yok) ya da arızalıysa tıklanamaz.
+  VoidCallback? _tapHandler(SerumShelfLayout shelf, SerumTray tray) {
+    final onTap = onTrayTap;
+    if (onTap == null || tray.id == null || shelf.id == null) return null;
+    final unit = group.units.firstWhereOrNull((u) => u.id == shelf.id);
+    if (unit == null || unit.workingStatus != CabinWorkingStatus.working) return null;
+    return () => onTap(unit, tray);
+  }
+
+  Widget _shelfRow(BuildContext context, SerumShelfLayout shelf, Map<int, MedicineAssignment> byCellId) {
+    if (shelf.trays.isEmpty) {
+      return Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: MedColors.surface3,
+          borderRadius: MedRadius.smAll,
+          border: Border.all(color: MedColors.border),
+        ),
+        child: Text(context.l10n.cabinOperation_serumShelfNoTrays, style: MedTextStyles.bodySm(color: MedColors.text4)),
+      );
+    }
+
+    // trays[0] en sağdadır → ters sırayla çizilir, boş alan solda kalır.
+    final indexed = shelf.trays.indexed.toList().reversed;
+    return Row(
+      spacing: _spacing,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (shelf.remainingArea > 0)
+          Expanded(
+            flex: shelf.remainingArea,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: MedColors.surface2,
+                borderRadius: MedRadius.smAll,
+                border: Border.all(color: MedColors.border2),
+              ),
+            ),
+          ),
+        for (final (i, tray) in indexed)
+          Expanded(
+            flex: tray.size.areaSize,
+            child: _SerumTrayCell(
+              stepNo: i + 1,
+              assignment: tray.id == null ? null : byCellId[tray.id],
+              isSelected: tray.id != null && selectedCellIds.contains(tray.id),
+              onTap: _tapHandler(shelf, tray),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _SerumTrayCell extends StatelessWidget {
+  const _SerumTrayCell({required this.stepNo, required this.assignment, required this.isSelected, this.onTap});
+
+  final int stepNo;
+  final MedicineAssignment? assignment;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final medicine = assignment?.medicine;
+    final isEmpty = medicine == null;
+
+    // Normal gözlerle aynı renk mantığı: seçili > dolu > boş.
+    final Color cellColor = isSelected ? MedColors.blue : (isEmpty ? MedColors.surface3 : MedColors.blueLight);
+    final Color? textColor = isSelected ? Colors.white : (isEmpty ? null : MedColors.text);
+    final Color borderColor = isSelected ? Colors.transparent : (isEmpty ? MedColors.border : MedColors.blue);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: MedSpacing.insetSm,
+        decoration: BoxDecoration(
+          color: cellColor,
+          borderRadius: MedRadius.smAll,
+          border: Border.all(width: 2, color: borderColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('A-$stepNo', style: MedTextStyles.monoSm(color: textColor)),
+                if (isSelected) Icon(PhosphorIcons.checkCircle(), size: 14, color: textColor),
+              ],
+            ),
+            Text(
+              medicine == null ? context.l10n.drawerStatus_empty : medicine.name.toString(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: MedTextStyles.monoSm(color: textColor).copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }

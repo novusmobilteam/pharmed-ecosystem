@@ -6535,6 +6535,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Kabin Seçimi';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Raf $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'Avadanlık tanımlı değil';
+
+  @override
   String get assignment_idle_kicker => 'KABİN YAPILANDIRMA';
 
   @override
@@ -6568,6 +6576,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Çekmece $drawer — Göz $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Serum — Raf $shelf, A-$tray';
   }
 
   @override
@@ -7943,7 +7956,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_title => 'Fiş yazıcısı';
 
   @override
-  String get printer_settings_description => 'İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.';
+  String get printer_settings_description =>
+      'İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.';
 
   @override
   String get printer_settings_connectionLabel => 'Bağlantı türü';
@@ -7967,10 +7981,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Seçiniz';
 
   @override
-  String get printer_settings_noPortsWarning => 'Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.';
+  String get printer_settings_noPortsWarning =>
+      'Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'Kurulu Windows yazıcısı bulunamadı.';
+  String get printer_settings_noPrintersWarning =>
+      'Kurulu Windows yazıcısı bulunamadı.';
 
   @override
   String get printer_settings_refreshTooltip => 'Listeyi yenile';
@@ -7991,13 +8007,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_removedMessage => 'Yazıcı tanımı kaldırıldı.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Test fişi yazıcıya gönderildi.';
+  String get printer_settings_testSuccessMessage =>
+      'Test fişi yazıcıya gönderildi.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.';
+  String get printer_settings_notConfiguredNotice =>
+      'Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.';
 
   @override
-  String get printer_settings_unsavedNotice => 'Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.';
+  String get printer_settings_unsavedNotice =>
+      'Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8005,10 +8024,12 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.';
+  String get printer_error_notConfigured =>
+      'Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.';
 
   @override
-  String get printer_error_connectionFailed => 'Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.';
+  String get printer_error_connectionFailed =>
+      'Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.';
 
   @override
   String get printer_error_writeFailed => 'Fiş yazıcıya gönderilemedi.';
@@ -8023,7 +8044,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_error_invalidDocument => 'Yazdırılacak içerik yok.';
 
   @override
-  String get printer_error_unexpected => 'Fiş yazdırılırken beklenmeyen bir hata oluştu.';
+  String get printer_error_unexpected =>
+      'Fiş yazdırılırken beklenmeyen bir hata oluştu.';
 
   @override
   String get printer_testReceipt_title => 'Yazıcı Testi';
@@ -8033,7 +8055,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Barkod testi';
-
 
   @override
   String get printer_receipt_intakeTitle => 'İLAÇ ALIM FİŞİ';
@@ -8052,7 +8073,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_receipt_roomBedLabel => 'Oda / Yatak';
-
 
   @override
   String get printer_receipt_operatorLabel => 'İşlem yapan';
@@ -8080,7 +8100,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Yazıcıya gönderildi.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Parmak İzi Tanıtma';

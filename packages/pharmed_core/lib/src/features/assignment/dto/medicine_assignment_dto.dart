@@ -6,6 +6,9 @@ class MedicineAssignmentDto {
   final int? id;
   final int? cabinId;
   final int? cabinDrawerId;
+
+  /// Yalnızca serum avadanlığı ataması — null ise JSON'a yazılmaz.
+  final int? cabinDrawerDetailId;
   final num? minQuantity;
   final num? criticalQuantity;
   final num? maxQuantity;
@@ -21,6 +24,7 @@ class MedicineAssignmentDto {
     this.id,
     this.cabinId,
     this.cabinDrawerId,
+    this.cabinDrawerDetailId,
     this.minQuantity,
     this.criticalQuantity,
     this.maxQuantity,
@@ -36,6 +40,7 @@ class MedicineAssignmentDto {
       id: json['id'] as int?,
       cabinId: json['cabinId'] as int?,
       cabinDrawerId: json['cabinDrawrId'] as int?,
+      cabinDrawerDetailId: json['cabinDrawrDetailId'] as int?,
       minQuantity: json['minQuantity'] as int?,
       criticalQuantity: json['criticalQuantity'] as int?,
       maxQuantity: json['maxQuantity'] as int?,
@@ -54,7 +59,9 @@ class MedicineAssignmentDto {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'cabinDrawrId': cabinDrawerId,
+      // Serum avadanlığı ataması yalnızca cabinDrawrDetailId ile gönderilir,
+      // cabinDrawrId GÖNDERİLMEZ. Diğer çekmecelerde yalnızca cabinDrawrId.
+      if (cabinDrawerDetailId != null) 'cabinDrawrDetailId': cabinDrawerDetailId else 'cabinDrawrId': cabinDrawerId,
       'materialId': MedicineMapper().toEntityOrNull(medicine)?.id,
       'minQuantity': minQuantity,
       'criticalQuantity': criticalQuantity,
@@ -65,6 +72,7 @@ class MedicineAssignmentDto {
   MedicineAssignmentDto copyWith({
     int? id,
     int? cabinDrawerId,
+    int? cabinDrawerDetailId,
     int? minQuantity,
     int? criticalQuantity,
     int? maxQuantity,
@@ -75,6 +83,7 @@ class MedicineAssignmentDto {
     return MedicineAssignmentDto(
       id: id ?? this.id,
       cabinDrawerId: cabinDrawerId ?? this.cabinDrawerId,
+      cabinDrawerDetailId: cabinDrawerDetailId ?? this.cabinDrawerDetailId,
       minQuantity: minQuantity ?? this.minQuantity,
       criticalQuantity: criticalQuantity ?? this.criticalQuantity,
       maxQuantity: maxQuantity ?? this.maxQuantity,

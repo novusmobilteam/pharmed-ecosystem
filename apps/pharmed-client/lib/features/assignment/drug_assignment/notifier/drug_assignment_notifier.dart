@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
@@ -65,14 +67,16 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final assignments = _extractAssignments(current);
     final cabinId = _extractCabinId(current);
 
-    if (current is DrugAssignmentCellSelected &&
-        current.assignment.cabinDrawerId == unit.id &&
-        current.selectedStepNo == stepNo) {
+    final unitId = unit.id;
+    if (unitId == null) return;
+    final target = AssignmentTarget(unitId: unitId);
+
+    if (current is DrugAssignmentCellSelected && current.target == target && current.selectedStepNo == stepNo) {
       state = DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId);
       return;
     }
 
-    final selectedGroup = _findGroupForUnit(unit.id, groups);
+    final selectedGroup = _findGroupForUnit(unitId, groups);
     if (selectedGroup == null) return;
 
     _enterEditing(
@@ -80,8 +84,42 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       assignments: assignments,
       cabinId: cabinId,
       selectedGroup: selectedGroup,
-      unitId: unit.id,
+      target: target,
       selectedStepNo: stepNo,
+    );
+  }
+
+  /// Serum kabininde bir avadanlığa dokunulduğunda çağrılır. [shelf] rafın
+  /// DrawerUnit'i, [tray] avadanlık (DrawerCell). Aynı avadanlığa tekrar
+  /// dokunulursa Idle'a döner.
+  void onSerumTrayTap(DrawerUnit shelf, SerumTray tray) {
+    final current = state;
+    if (current is! DrugAssignmentIdle && current is! DrugAssignmentCellSelected) return;
+
+    final unitId = shelf.id;
+    final cellId = tray.id;
+    if (unitId == null || cellId == null) return;
+    final target = AssignmentTarget(unitId: unitId, cellId: cellId);
+
+    final groups = _extractGroups(current);
+    final assignments = _extractAssignments(current);
+    final cabinId = _extractCabinId(current);
+
+    if (current is DrugAssignmentCellSelected && current.target == target) {
+      state = DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId);
+      return;
+    }
+
+    final selectedGroup = _findGroupForUnit(unitId, groups);
+    if (selectedGroup == null) return;
+
+    _enterEditing(
+      groups: groups,
+      assignments: assignments,
+      cabinId: cabinId,
+      selectedGroup: selectedGroup,
+      target: target,
+      selectedStepNo: null,
     );
   }
 
@@ -92,19 +130,26 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   }
 
   /// "MEVCUT ATAMALAR" tablosundaki "Düzenle" linkinden çağrılır.
-  void editAssignment(int unitId) {
+  void editAssignment(MedicineAssignment assignment) {
     final current = state;
     if (current is! DrugAssignmentIdle) return;
 
+    // Serumda atama avadanlığa aittir; raf id'si cevapta boş gelebileceği
+    // için raf, avadanlığın bulunduğu raftan çözülür.
+    final serumCellId = assignment.cabinDrawerDetailId ?? assignment.cabinDrawerDetail?.firstOrNull?.id;
+    final serumShelfId = serumCellId == null ? null : _findSerumShelfIdForCell(serumCellId, current.groups);
+
+    final cellId = serumShelfId != null ? serumCellId : null;
+    final unitId = serumShelfId ?? assignment.cabinDrawerId;
     final selectedGroup = _findGroupForUnit(unitId, current.groups);
-    if (selectedGroup == null) return;
+    if (unitId == null || selectedGroup == null) return;
 
     _enterEditing(
       groups: current.groups,
       assignments: current.assignments,
       cabinId: current.cabinId,
       selectedGroup: selectedGroup,
-      unitId: unitId,
+      target: AssignmentTarget(unitId: unitId, cellId: cellId),
       selectedStepNo: null,
     );
   }
@@ -114,12 +159,12 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     required List<MedicineAssignment> assignments,
     required int cabinId,
     required DrawerGroup selectedGroup,
-    required int? unitId,
+    required AssignmentTarget target,
     required int? selectedStepNo,
   }) {
     _searchDebounceTimer?.cancel();
 
-    final assignment = _findAssignment(unitId: unitId, cabinId: cabinId, assignments: assignments);
+    final assignment = _findAssignment(target: target, assignments: assignments);
     final hasExistingAssignment = assignment.id != null;
 
     final medicinePage = _cachedMedicinePage ?? const MedicinePageState(pageSize: _medicinePageSize, isLoading: true);
@@ -133,6 +178,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       assignments: assignments,
       cabinId: cabinId,
       selectedGroup: selectedGroup,
+      target: target,
       assignment: assignment,
       selectedStepNo: selectedStepNo,
       selectedDrug: assignment.medicine,
@@ -157,6 +203,16 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final current = state;
     if (current is! DrugAssignmentCellSelected) return;
     state = DrugAssignmentIdle(groups: current.groups, assignments: current.assignments, cabinId: current.cabinId);
+  }
+
+  /// Avadanlığın (DrawerCell) bulunduğu serum rafının DrawerUnit id'si.
+  int? _findSerumShelfIdForCell(int cellId, List<DrawerGroup> groups) {
+    for (final group in groups.where((g) => g.isSerum)) {
+      for (final shelf in group.serumShelves ?? const <SerumShelfLayout>[]) {
+        if (shelf.trays.any((t) => t.id == cellId)) return shelf.id;
+      }
+    }
+    return null;
   }
 
   DrawerGroup? _findGroupForUnit(int? unitId, List<DrawerGroup> groups) {
@@ -296,7 +352,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
 
   /// Bu ilaç kabinde (başka bir gözde) zaten atanmış mı — "KABİNDE VAR" rozeti.
   bool isMedicineAlreadyInCabin(DrugAssignmentCellSelected state, Medicine medicine) {
-    return state.assignments.any((a) => a.medicine?.id == medicine.id && a.cabinDrawerId != state.selectedUnitId);
+    return state.assignments.any((a) => a.medicine?.id == medicine.id && !state.target.matches(a));
   }
 
   void onDrugSelected(Medicine? drug) {
@@ -329,6 +385,8 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     if (!current.canSave) return;
 
     final updated = current.assignment.copyWith(
+      // Serumda avadanlık hem yeni kayıtta hem güncellemede gönderilir.
+      cabinDrawerDetailId: current.target.cellId,
       medicine: current.selectedDrug,
       minQuantity: current.minQty,
       maxQuantity: current.maxQty,
@@ -358,7 +416,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   Future<void> deleteAssignment() async {
     final current = state;
     if (current is! DrugAssignmentCellSelected) return;
-    if (!current.isAssigned) return;
+    if (!current.canDelete) return;
 
     state = DrugAssignmentSaving(
       groups: current.groups,
@@ -372,7 +430,12 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       criticalQty: current.criticalQty,
     );
 
-    final result = await _deleteAssignment.call(current.assignment.cabinDrawerId ?? 0);
+    // Serumda yalnızca seçili avadanlığın ataması silinir (raf bazlı silme
+    // raftaki diğer avadanlık atamalarını da silerdi).
+    final cellId = current.target.cellId;
+    final result = cellId != null
+        ? await _deleteAssignment.serumTray(cellId)
+        : await _deleteAssignment.call(current.assignment.cabinDrawerId ?? 0);
 
     result.when(
       ok: (_) => _refreshAndReturnToIdle(cabinId: current.cabinId, groups: current.groups),
@@ -403,17 +466,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
 
   // ── Extraction helpers ──────────────────────────────────────────
 
-  MedicineAssignment _findAssignment({
-    required int? unitId,
-    required int cabinId,
-    required List<MedicineAssignment> assignments,
-  }) {
-    if (unitId == null) return MedicineAssignment.empty(cabinDrawerId: 0);
-    try {
-      return assignments.firstWhere((a) => a.cabinDrawerId == unitId);
-    } catch (_) {
-      return MedicineAssignment.empty(cabinDrawerId: unitId);
-    }
+  MedicineAssignment _findAssignment({required AssignmentTarget target, required List<MedicineAssignment> assignments}) {
+    return assignments.firstWhereOrNull(target.matches) ??
+        MedicineAssignment.empty(cabinDrawerId: target.unitId, cabinDrawerDetailId: target.cellId);
   }
 
   List<DrawerGroup> _extractGroups(DrugAssignmentUiState s) => switch (s) {

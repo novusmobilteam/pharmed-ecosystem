@@ -6748,6 +6748,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Sélectionner une Armoire';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Étagère $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'Aucun plateau défini';
+
+  @override
   String get assignment_idle_kicker => 'CONFIGURATION DE L\'ARMOIRE';
 
   @override
@@ -6781,6 +6789,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Tiroir $drawer — Case $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Sérum — Étagère $shelf, P-$tray';
   }
 
   @override
@@ -8196,7 +8209,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_title => 'Imprimante de reçus';
 
   @override
-  String get printer_settings_description => 'Configurez l\'imprimante thermique qui imprime un reçu après les opérations de retrait, de retour et de perte/destruction de médicaments. Ce réglage ne s\'applique qu\'à ce kiosque.';
+  String get printer_settings_description =>
+      'Configurez l\'imprimante thermique qui imprime un reçu après les opérations de retrait, de retour et de perte/destruction de médicaments. Ce réglage ne s\'applique qu\'à ce kiosque.';
 
   @override
   String get printer_settings_connectionLabel => 'Type de connexion';
@@ -8220,10 +8234,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Sélectionner';
 
   @override
-  String get printer_settings_noPortsWarning => 'Aucun port série trouvé. Vérifiez que le convertisseur est branché puis actualisez la liste.';
+  String get printer_settings_noPortsWarning =>
+      'Aucun port série trouvé. Vérifiez que le convertisseur est branché puis actualisez la liste.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'Aucune imprimante Windows installée.';
+  String get printer_settings_noPrintersWarning =>
+      'Aucune imprimante Windows installée.';
 
   @override
   String get printer_settings_refreshTooltip => 'Actualiser la liste';
@@ -8238,19 +8254,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_removeButton => 'Retirer l\'imprimante';
 
   @override
-  String get printer_settings_savedMessage => 'Réglage de l\'imprimante enregistré.';
+  String get printer_settings_savedMessage =>
+      'Réglage de l\'imprimante enregistré.';
 
   @override
   String get printer_settings_removedMessage => 'Imprimante retirée.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Reçu de test envoyé à l\'imprimante.';
+  String get printer_settings_testSuccessMessage =>
+      'Reçu de test envoyé à l\'imprimante.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'Aucune imprimante n\'est configurée sur ce kiosque. Les reçus ne seront pas imprimés après les opérations.';
+  String get printer_settings_notConfiguredNotice =>
+      'Aucune imprimante n\'est configurée sur ce kiosque. Les reçus ne seront pas imprimés après les opérations.';
 
   @override
-  String get printer_settings_unsavedNotice => 'Des modifications ne sont pas enregistrées. Le reçu de test utilise le réglage sélectionné.';
+  String get printer_settings_unsavedNotice =>
+      'Des modifications ne sont pas enregistrées. Le reçu de test utilise le réglage sélectionné.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8258,13 +8278,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'Aucune imprimante n\'est configurée. Choisissez la connexion dans Réglages › Imprimante.';
+  String get printer_error_notConfigured =>
+      'Aucune imprimante n\'est configurée. Choisissez la connexion dans Réglages › Imprimante.';
 
   @override
-  String get printer_error_connectionFailed => 'Impossible de se connecter à l\'imprimante. Vérifiez le câble et le port sélectionné.';
+  String get printer_error_connectionFailed =>
+      'Impossible de se connecter à l\'imprimante. Vérifiez le câble et le port sélectionné.';
 
   @override
-  String get printer_error_writeFailed => 'Le reçu n\'a pas pu être envoyé à l\'imprimante.';
+  String get printer_error_writeFailed =>
+      'Le reçu n\'a pas pu être envoyé à l\'imprimante.';
 
   @override
   String get printer_error_timeout => 'L\'imprimante n\'a pas répondu à temps.';
@@ -8276,7 +8299,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_error_invalidDocument => 'Il n\'y a rien à imprimer.';
 
   @override
-  String get printer_error_unexpected => 'Une erreur inattendue s\'est produite lors de l\'impression du reçu.';
+  String get printer_error_unexpected =>
+      'Une erreur inattendue s\'est produite lors de l\'impression du reçu.';
 
   @override
   String get printer_testReceipt_title => 'Test d\'imprimante';
@@ -8286,7 +8310,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Test des codes-barres';
-
 
   @override
   String get printer_receipt_intakeTitle => 'REÇU DE RETRAIT DE MÉDICAMENTS';
@@ -8306,7 +8329,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get printer_receipt_roomBedLabel => 'Chambre / Lit';
 
-
   @override
   String get printer_receipt_operatorLabel => 'Effectué par';
 
@@ -8320,7 +8342,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_receipt_itemCountLabel => 'Total des articles';
 
   @override
-  String get printer_receipt_inventoryTitle => 'LISTE D\'INVENTAIRE DE LA STATION';
+  String get printer_receipt_inventoryTitle =>
+      'LISTE D\'INVENTAIRE DE LA STATION';
 
   @override
   String get printer_receipt_cabinStockTitle => 'LISTE DU STOCK DE L\'ARMOIRE';
@@ -8333,7 +8356,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Envoyé à l\'imprimante.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Enregistrement des empreintes';

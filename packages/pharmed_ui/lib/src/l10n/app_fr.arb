@@ -4144,6 +4144,11 @@
   "cabinSelection_continueButton": "Continuer",
   "cabinSelection_dataUnavailableLabel": "Aucune Donnée",
   "cabinOperation_changeCabinButton": "Sélectionner une Armoire",
+  "cabinOperation_serumShelfLabel": "Étagère {index}",
+  "@cabinOperation_serumShelfLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "cabinOperation_serumShelfNoTrays": "Aucun plateau défini",
   "assignment_idle_kicker": "CONFIGURATION DE L'ARMOIRE",
   "assignment_idle_title": "Attribution de Médicaments",
   "assignment_idle_description": "Touchez une case de l'armoire à gauche ; choisissez un médicament dans la liste pour cette case et saisissez les quantités minimale, critique et maximale. Touchez une case remplie pour modifier son attribution existante.",
@@ -4163,6 +4168,13 @@
       "cell": {
         "type": "int"
       }
+    }
+  },
+  "assignment_idle_serumLocationLabel": "Sérum — Étagère {shelf}, P-{tray}",
+  "@assignment_idle_serumLocationLabel": {
+    "placeholders": {
+      "shelf": { "type": "int" },
+      "tray": { "type": "int" }
     }
   },
   "assignment_edit_title": "Modifier l'Attribution",

@@ -9,6 +9,7 @@ class MedicineAssignmentMapper {
     return MedicineAssignment(
       id: dto.id,
       cabinDrawerId: dto.cabinDrawerId,
+      cabinDrawerDetailId: dto.cabinDrawerDetailId,
       minQuantity: dto.minQuantity ?? 0.0,
       criticalQuantity: dto.criticalQuantity ?? 0.0,
       maxQuantity: dto.maxQuantity ?? 0.0,
@@ -28,6 +29,7 @@ class MedicineAssignmentMapper {
     return MedicineAssignmentDto(
       id: entity.id,
       cabinDrawerId: entity.cabinDrawerId,
+      cabinDrawerDetailId: entity.cabinDrawerDetailId,
       minQuantity: entity.minQuantity,
       criticalQuantity: entity.criticalQuantity,
       maxQuantity: entity.maxQuantity,

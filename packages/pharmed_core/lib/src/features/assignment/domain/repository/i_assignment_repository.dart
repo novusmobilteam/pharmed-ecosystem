@@ -13,6 +13,10 @@ abstract class IAssignmentRepository {
   /// Belirtilen ID'ye sahip ilaç atamasını siler.
   Future<Result<void>> deleteMedicineAssignment(int id);
 
+  /// Serum kabininde tek bir avadanlığın atamasını siler.
+  /// [cabinDrawerDetailId]: avadanlığın DrawerCell.id'si.
+  Future<Result<void>> deleteSerumTrayAssignment(int cabinDrawerDetailId);
+
   /// Belirtilen ilaca ait tüm kabin atamalarını getirir.
   Future<Result<List<MedicineAssignment>>> getMaterialAssignment(int materialId);
 

@@ -6583,6 +6583,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Select Cabinet';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Shelf $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'No trays defined';
+
+  @override
   String get assignment_idle_kicker => 'CABINET CONFIGURATION';
 
   @override
@@ -6616,6 +6624,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Drawer $drawer — Cell $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Serum — Shelf $shelf, T-$tray';
   }
 
   @override
@@ -8009,7 +8022,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_title => 'Receipt printer';
 
   @override
-  String get printer_settings_description => 'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.';
+  String get printer_settings_description =>
+      'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.';
 
   @override
   String get printer_settings_connectionLabel => 'Connection type';
@@ -8033,10 +8047,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Select';
 
   @override
-  String get printer_settings_noPortsWarning => 'No serial port found. Check that the converter is plugged in and refresh the list.';
+  String get printer_settings_noPortsWarning =>
+      'No serial port found. Check that the converter is plugged in and refresh the list.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'No installed Windows printer found.';
+  String get printer_settings_noPrintersWarning =>
+      'No installed Windows printer found.';
 
   @override
   String get printer_settings_refreshTooltip => 'Refresh list';
@@ -8057,13 +8073,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_removedMessage => 'Printer removed.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Test receipt sent to the printer.';
+  String get printer_settings_testSuccessMessage =>
+      'Test receipt sent to the printer.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'No printer is set up on this kiosk. Receipts will not be printed after operations.';
+  String get printer_settings_notConfiguredNotice =>
+      'No printer is set up on this kiosk. Receipts will not be printed after operations.';
 
   @override
-  String get printer_settings_unsavedNotice => 'There are unsaved changes. The test receipt uses the selected setting.';
+  String get printer_settings_unsavedNotice =>
+      'There are unsaved changes. The test receipt uses the selected setting.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8071,13 +8090,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'No printer is set up. Select the connection under Settings › Printer.';
+  String get printer_error_notConfigured =>
+      'No printer is set up. Select the connection under Settings › Printer.';
 
   @override
-  String get printer_error_connectionFailed => 'Could not connect to the printer. Check the cable and the selected port.';
+  String get printer_error_connectionFailed =>
+      'Could not connect to the printer. Check the cable and the selected port.';
 
   @override
-  String get printer_error_writeFailed => 'The receipt could not be sent to the printer.';
+  String get printer_error_writeFailed =>
+      'The receipt could not be sent to the printer.';
 
   @override
   String get printer_error_timeout => 'The printer did not respond in time.';
@@ -8089,7 +8111,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_error_invalidDocument => 'There is nothing to print.';
 
   @override
-  String get printer_error_unexpected => 'An unexpected error occurred while printing the receipt.';
+  String get printer_error_unexpected =>
+      'An unexpected error occurred while printing the receipt.';
 
   @override
   String get printer_testReceipt_title => 'Printer Test';
@@ -8099,7 +8122,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Barcode test';
-
 
   @override
   String get printer_receipt_intakeTitle => 'MEDICATION INTAKE RECEIPT';
@@ -8118,7 +8140,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_receipt_roomBedLabel => 'Room / Bed';
-
 
   @override
   String get printer_receipt_operatorLabel => 'Performed by';
@@ -8146,7 +8167,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Sent to the printer.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Fingerprint Enrolment';

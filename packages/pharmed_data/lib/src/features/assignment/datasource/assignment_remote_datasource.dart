@@ -55,6 +55,15 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  /// Serum kabininde tek bir avadanlığın (DrawerCell) atamasını siler.
+  Future<Result<void>> deleteSerumTrayAssignment(int cabinDrawerDetailId) {
+    return deleteRequest<void>(
+      path: '$_medicineBase/cabinDrawrDetail/$cabinDrawerDetailId',
+      parser: BaseRemoteDataSource.voidParser(),
+      successLog: 'Serum avadanlık ataması silindi',
+    );
+  }
+
   /// Belirtilen ilaca ait tüm kabin atamalarını getirir.
   Future<Result<List<MedicineAssignmentDto>>> getMaterialAssignment(int materialId) async {
     final res = await fetchRequest<List<MedicineAssignmentDto>>(
