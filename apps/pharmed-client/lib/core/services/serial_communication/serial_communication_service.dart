@@ -4,7 +4,7 @@
 // ÖZELLİKLER:
 //   - Mutex ile eşzamanlı komut koruması
 //   - Otomatik fallback port taraması
-//   - Protokol bitiş karakteri tespiti (-, ,, ;, ])
+//   - Protokol bitiş karakteri tespiti (-, ,, ;, ] ve kilit kartı için \)
 //   - Buffer biriktirme ile parçalı veri desteği
 //
 // HATA YÖNETİMİ:
@@ -325,7 +325,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
       final current = _buffer.toString().trim();
 
-      if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {
+      if (current.endsWith('-') ||
+          current.endsWith(',') ||
+          current.endsWith(';') ||
+          current.endsWith(']') ||
+          // Serum avadanlık kilit kartı yanıtları `/…\` çerçevelidir.
+          current.endsWith(TrayLockProtocol.responseTerminator)) {
         // MedLogger.info(
         //   unit: 'SW-UNIT-SER',
         //   swreq: 'SWREQ-HW-SER-001',

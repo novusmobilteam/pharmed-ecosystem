@@ -7663,6 +7663,18 @@
   "masterDrawer_error_lockOpenTimeout": "Çekmece zamanında tam açılamadı. Lütfen çekmeceyi elle sonuna kadar çekin.",
   "masterDrawer_error_sensorCommunicationLost": "Donanımla iletişim kesildi. Bağlantıyı kontrol edip tekrar deneyin.",
   "masterDrawer_error_unexpectedlyClosed": "Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.",
+  "masterDrawer_error_trayUnlockFailed": "Avadanlığın kilidi açılamadı.",
+  "@masterDrawer_error_trayUnlockFailed": {
+    "description": "Serum cabinet: the electromagnetic lock of the target tray could not be released (no/invalid response from the tray lock card after automatic retries)"
+  },
+  "masterDrawer_error_trayBusy": "Rafta başka bir avadanlık çekili. Önce onu yerine itin, sonra tekrar deneyin.",
+  "@masterDrawer_error_trayBusy": {
+    "description": "Serum cabinet: the tray lock card refused because another tray on the same shelf is still pulled out"
+  },
+  "masterDrawer_error_traySensorLost": "Avadanlığın durumu okunamıyor.",
+  "@masterDrawer_error_traySensorLost": {
+    "description": "Serum cabinet: tray status polling failed repeatedly while the tray was unlocked/pulled; user can confirm the tray was pushed back manually"
+  },
   "masterDrawer_status_completingTitle": "İşleminiz Tamamlanıyor",
   "@masterDrawer_status_completingTitle": {
     "description": "Kuyruktaki son iş bitip çekmece kapandıktan sonra, kullanıcıya işlemin sonlandığını bildiren başlık."

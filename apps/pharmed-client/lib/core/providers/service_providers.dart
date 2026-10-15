@@ -9,6 +9,8 @@ import '../services/rfid/mock_rfid_service.dart';
 import '../services/rfid/rfid_service.dart';
 import '../services/serial_communication/mock_serial_communication_service.dart';
 import '../services/serial_communication/serial_communication_service.dart';
+import '../services/tray_lock/mock_tray_lock_service.dart';
+import '../services/tray_lock/tray_lock_service.dart';
 
 final serialServiceProvider = Provider<ISerialCommunicationService>((ref) {
   return switch (FlavorConfig.instance.flavor) {
@@ -23,6 +25,17 @@ final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
     AppFlavor.prod => CabinOperationService(
       serialService: ref.read(serialServiceProvider),
       appSettingsCache: ref.read(appSettingsCacheProvider),
+    ),
+  };
+});
+
+/// Serum kabini avadanlık kilit kartı. Master kabinle aynı seri hattı kullanır.
+final trayLockServiceProvider = Provider<ITrayLockService>((ref) {
+  return switch (FlavorConfig.instance.flavor) {
+    AppFlavor.mock || AppFlavor.dev => MockTrayLockService(),
+    AppFlavor.prod => TrayLockService(
+      serialService: ref.read(serialServiceProvider),
+      cabinOperationService: ref.read(cabinOperationServiceProvider),
     ),
   };
 });

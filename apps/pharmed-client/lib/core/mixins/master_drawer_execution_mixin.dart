@@ -112,6 +112,13 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
   /// LidFailed sonrası aynı gözün kapağını yeniden açmayı dener.
   Future<void> retryCubicLid() => drawerSession.retryCubicLid();
 
+  /// Serum: kilitli raftaki avadanlığın kilidini açar ve izler. Hook'lar
+  /// kübikle aynıdır — yerine itilince [onLidClosed], hata [onLidRejected].
+  Future<void> openSerumTray(SerumTrayAddress address) => drawerSession.openSerumTray(address);
+
+  /// LidFailed sonrası aynı avadanlığın kilidini yeniden açmayı dener.
+  Future<void> retrySerumTray() => drawerSession.retrySerumTray();
+
   /// Kapak durum sorgusu koptuğunda (lidSensorLost) kullanıcı kapağın
   /// kapalı olduğunu elle onaylar — session loglar ve LidClosed üretir.
   void acknowledgeLidClosedManually() => drawerSession.acknowledgeLidClosedManually();

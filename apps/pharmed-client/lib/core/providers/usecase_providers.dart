@@ -437,6 +437,10 @@ final monitorCubicLidUseCaseProvider = Provider<MonitorCubicLidUseCase>(
   (ref) => MonitorCubicLidUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider)),
 );
 
+final openSerumTrayUseCaseProvider = Provider<OpenSerumTrayUseCase>(
+  (ref) => OpenSerumTrayUseCase(ref.read(trayLockServiceProvider)),
+);
+
 final monitorDrawerClosureUseCaseProvider = Provider((ref) {
   return MonitorDrawerClosureUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider));
 });

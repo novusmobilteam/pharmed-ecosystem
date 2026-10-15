@@ -6523,6 +6523,18 @@ class AppLocalizationsAr extends AppLocalizations {
       'The drawer was closed unexpectedly while still in use. Please reopen and try again.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'The tray lock could not be released.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Another tray on this shelf is pulled out. Push it back first, then try again.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'The tray status cannot be read.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'Completing Your Operation';
 
   @override

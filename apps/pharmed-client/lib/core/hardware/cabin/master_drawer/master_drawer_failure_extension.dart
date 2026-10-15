@@ -15,6 +15,9 @@ extension MasterDrawerFailureX on MasterDrawerFailure {
       MasterDrawerFailure.lockOpenTimeout => context.l10n.masterDrawer_error_lockOpenTimeout,
       MasterDrawerFailure.sensorCommunicationLost => context.l10n.masterDrawer_error_sensorCommunicationLost,
       MasterDrawerFailure.unexpectedlyClosed => context.l10n.masterDrawer_error_unexpectedlyClosed,
+      MasterDrawerFailure.trayUnlockFailed => context.l10n.masterDrawer_error_trayUnlockFailed,
+      MasterDrawerFailure.trayBusy => context.l10n.masterDrawer_error_trayBusy,
+      MasterDrawerFailure.traySensorLost => context.l10n.masterDrawer_error_traySensorLost,
     };
   }
 }

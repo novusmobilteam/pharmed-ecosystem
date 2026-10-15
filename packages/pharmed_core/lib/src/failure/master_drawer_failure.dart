@@ -25,4 +25,16 @@ enum MasterDrawerFailure {
   lockOpenTimeout,
   sensorCommunicationLost,
   unexpectedlyClosed,
+
+  /// Serum: avadanlık kilidi açılamadı (yanıt yok / protokol hatası,
+  /// otomatik tekrar tükendi). Seçenekler: Tekrar Dene / Bu Avadanlığı Atla.
+  trayUnlockFailed,
+
+  /// Serum: rafta başka bir avadanlık çekili (`noo4`/`noo2`). Kullanıcı onu
+  /// yerine itip tekrar dener.
+  trayBusy,
+
+  /// Serum: avadanlık açıkken durum sorgusu koptu. Avadanlık çekilmiş ve
+  /// işlem yapılmış olabilir — atlanamaz; kullanıcı yerine ittiğini onaylar.
+  traySensorLost,
 }

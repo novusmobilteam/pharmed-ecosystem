@@ -14,6 +14,8 @@ final drawerExecutionSessionProvider = Provider<IMasterDrawerSession>((ref) {
     openCubicLid: ref.read(openCubicLidUseCaseProvider),
     monitorClosure: ref.read(monitorDrawerClosureUseCaseProvider),
     monitorCubicLid: ref.read(monitorCubicLidUseCaseProvider),
+    openSerumTray: ref.read(openSerumTrayUseCaseProvider),
+    trayLockService: ref.read(trayLockServiceProvider),
     cabinOperationService: ref.read(cabinOperationServiceProvider),
   );
   ref.onDispose(session.dispose);
@@ -50,9 +52,19 @@ abstract class IMasterDrawerSession implements Listenable {
   /// LidFailed sonrası son açılmaya çalışılan gözü aynı modda yeniden açar.
   Future<void> retryCubicLid();
 
-  /// Kapak durum sorgusu koptuğunda (lidSensorLost) kullanıcı kapağın
-  /// kapalı olduğunu elle onaylar. Loglanır, LidClosed üretir.
+  /// Kapak/avadanlık durum sorgusu koptuğunda (lidSensorLost /
+  /// traySensorLost) kullanıcı kapağın kapandığını / avadanlığı yerine
+  /// ittiğini elle onaylar. Loglanır, LidClosed üretir.
   void acknowledgeLidClosedManually();
+
+  /// Elektromanyetik kilitli serum rafında TEK bir avadanlığın kilidini açar
+  /// ve izler — kübik `openCubicLid(awaitLidClose: true)` ile aynı stage
+  /// akışı: OpeningLid → Opened (kilit açıldı) → LidClosed (avadanlık yerine
+  /// itildi). Ön koşul: serum kapağı açık (Opened).
+  Future<void> openSerumTray(SerumTrayAddress address);
+
+  /// LidFailed sonrası son açılmaya çalışılan avadanlığı yeniden açar.
+  Future<void> retrySerumTray();
 
   Future<void> reopen();
   Future<void> stop();
@@ -73,6 +85,15 @@ abstract class IMasterDrawerSession implements Listenable {
 //   • Durum sorgusu koparsa LidFailed(lidSensorLost); kullanıcı
 //     acknowledgeLidClosedManually ile devam edebilir.
 //
+// SERUM AVADANLIK KİLİDİ (openSerumTray) — kübik kapağın birebir eşi:
+//   OpeningLid ─(s:01/02)→ Opened ─confirmLidClose→ WaitingForLidClose ─(s:03)→ LidClosed
+//                              └────────────(s:03, onay yok)────────────→ LidClosed
+//   • k (tümünü kilitle) + o (hedef portu aç) → durum polling ile izlenir.
+//   • "Yerine itildi" kararı yalnızca açık (01/02) GÖRÜLDÜKTEN sonra gelen 03 ile.
+//   • Hiç çekilmeden onaylanırsa açma iptal edilir (c) → 03 → LidClosed.
+//   • 01/02 süre içinde gelmezse LidFailed(trayUnlockFailed); art arda okuma
+//     hatasında LidFailed(traySensorLost) — izleme sürer, okuma gelirse devam.
+//
 // Sınıf: Class B
 class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession {
   MasterDrawerSession({
@@ -80,17 +101,23 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     required OpenCubicLidUseCase openCubicLid,
     required MonitorDrawerClosureUseCase monitorClosure,
     required MonitorCubicLidUseCase monitorCubicLid,
+    required OpenSerumTrayUseCase openSerumTray,
+    required ITrayLockService trayLockService,
     required ICabinOperationService cabinOperationService,
   }) : _startSession = startSession,
        _openCubicLidUseCase = openCubicLid,
        _monitorClosure = monitorClosure,
        _monitorCubicLid = monitorCubicLid,
+       _openSerumTrayUseCase = openSerumTray,
+       _trayLock = trayLockService,
        _cabinOperationService = cabinOperationService;
 
   final StartMasterDrawerSessionUseCase _startSession;
   final OpenCubicLidUseCase _openCubicLidUseCase;
   final MonitorDrawerClosureUseCase _monitorClosure;
   final MonitorCubicLidUseCase _monitorCubicLid;
+  final OpenSerumTrayUseCase _openSerumTrayUseCase;
+  final ITrayLockService _trayLock;
   final ICabinOperationService _cabinOperationService;
 
   StreamSubscription<DrawerSessionEvent>? _sessionSub;
@@ -115,8 +142,25 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   /// Bu göz için ac en az bir kez görüldü mü (kenar tespiti).
   bool _lidSeenOpen = false;
 
-  /// Kullanıcı bu göz için "Tamamla" dedi mi (confirmLidClose).
+  /// Kullanıcı bu göz/avadanlık için "Tamamla" dedi mi (confirmLidClose).
   bool _lidCloseConfirmed = false;
+
+  // ── Serum avadanlık izleme durumu ─────────────────────────────────────────
+
+  /// Kilit açıldıktan sonra 01/02 bu süre içinde okunmazsa LidFailed(trayUnlockFailed).
+  static const _trayUnlockTimeout = Duration(seconds: 5);
+
+  /// Art arda bu kadar okuma hatasında LidFailed(traySensorLost).
+  static const _trayMaxReadErrors = 3;
+
+  StreamSubscription<TrayLockStatus>? _traySub;
+  Timer? _trayUnlockTimer;
+  SerumTrayAddress? _lastTrayAddress;
+  TrayLockStatus? _lastTrayStatus;
+
+  /// Bu avadanlık için açık (01/02) en az bir kez görüldü mü (kenar tespiti).
+  bool _traySeenActive = false;
+  int _trayReadErrors = 0;
 
   MasterDrawerStage _stage = const MasterDrawerIdle();
   @override
@@ -168,6 +212,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     // Çekmece kapanışı beklenirken kapak izlemesi çalışmaya devam ederse,
     // kullanıcının kapağı kapatması WaitingForClose'u LidClosed ile ezer.
     _cancelLidWatch();
+    _cancelTrayWatch();
 
     _setStage(const MasterDrawerWaitingForClose());
     _cabinOperationService.triggerManualClose();
@@ -192,6 +237,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   @override
   Future<void> openCubicLid(MedicineAssignment cellAssignment, {bool awaitLidClose = false}) async {
     _cancelLidWatch();
+    _cancelTrayWatch();
     _lastLidAssignment = cellAssignment;
     _lastLidAwaitClose = awaitLidClose;
 
@@ -223,6 +269,10 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
 
   @override
   void confirmLidClose() {
+    if (_traySub != null) {
+      _confirmTrayClose();
+      return;
+    }
     if (_lidSub == null || _stage is! MasterDrawerOpened) return;
     _lidCloseConfirmed = true;
     _setStage(const MasterDrawerWaitingForLidClose());
@@ -239,6 +289,16 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   @override
   void acknowledgeLidClosedManually() {
     final stage = _stage;
+    if (stage is MasterDrawerLidFailed && stage.failure == MasterDrawerFailure.traySensorLost) {
+      MedLogger.warn(
+        unit: 'MasterDrawerSession',
+        swreq: 'SWREQ-HW-TRAY-002',
+        message: 'Serum avadanlığının yerine itildiği sensör olmadan kullanıcı onayıyla kabul edildi',
+        context: {'address': _lastTrayAddress.toString(), 'lastStatus': _lastTrayStatus?.name},
+      );
+      _onTrayReturned();
+      return;
+    }
     if (stage is! MasterDrawerLidFailed || stage.failure != MasterDrawerFailure.lidSensorLost) return;
 
     MedLogger.warn(
@@ -309,6 +369,120 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   }
 
   // ════════════════════════════════════════════════════════════════
+  // SERUM AVADANLIK KİLİDİ
+  // ════════════════════════════════════════════════════════════════
+
+  @override
+  Future<void> openSerumTray(SerumTrayAddress address) async {
+    _cancelLidWatch();
+    _cancelTrayWatch();
+    _lastTrayAddress = address;
+
+    _setStage(const MasterDrawerOpeningLid());
+    try {
+      // Otomatik tekrar denemeler use case içinde — buraya sadece son hata düşer.
+      await _openSerumTrayUseCase(address: address);
+    } on MasterDrawerException catch (e) {
+      _setStage(MasterDrawerLidFailed(failure: e.failure, detail: e.detail));
+      return;
+    }
+    _startTrayWatch(address);
+  }
+
+  @override
+  Future<void> retrySerumTray() async {
+    final address = _lastTrayAddress;
+    if (address == null || _stage is! MasterDrawerLidFailed) return;
+    await openSerumTray(address);
+  }
+
+  void _startTrayWatch(SerumTrayAddress address) {
+    _traySeenActive = false;
+    _lidCloseConfirmed = false;
+    _trayReadErrors = 0;
+    _lastTrayStatus = null;
+
+    _trayUnlockTimer = Timer(_trayUnlockTimeout, () {
+      if (_traySeenActive || _stage is! MasterDrawerOpeningLid) return;
+      _setStage(const MasterDrawerLidFailed(failure: MasterDrawerFailure.trayUnlockFailed));
+    });
+
+    _traySub = _trayLock
+        .watchStatus(deviceId: address.deviceId, port: address.port)
+        .listen(_onTrayStatus, onError: (Object _) => _onTrayReadError());
+  }
+
+  void _onTrayStatus(TrayLockStatus status) {
+    _trayReadErrors = 0;
+    _lastTrayStatus = status;
+
+    switch (status) {
+      case TrayLockStatus.unlocked:
+      case TrayLockStatus.pulled:
+        if (!_traySeenActive) {
+          // İlk 01/02 — kilit gerçekten açıldı.
+          _traySeenActive = true;
+          _trayUnlockTimer?.cancel();
+          _trayUnlockTimer = null;
+          _setStage(_lidCloseConfirmed ? const MasterDrawerWaitingForLidClose() : const MasterDrawerOpened());
+        } else if (_stage is MasterDrawerLidFailed) {
+          // Okuma geri geldi, avadanlık hâlâ açık — kaldığımız yere dön.
+          _setStage(_lidCloseConfirmed ? const MasterDrawerWaitingForLidClose() : const MasterDrawerOpened());
+        }
+
+      case TrayLockStatus.idle:
+        // Açık görülmeden okunan 03: kilit henüz açılmadı — yerine itme sayılmaz.
+        if (!_traySeenActive) return;
+        _onTrayReturned();
+    }
+  }
+
+  void _onTrayReadError() {
+    _trayReadErrors++;
+    if (_trayReadErrors < _trayMaxReadErrors) return;
+    if (_stage is MasterDrawerLidFailed) return; // zaten hata gösteriliyor
+    _setStage(const MasterDrawerLidFailed(failure: MasterDrawerFailure.traySensorLost));
+  }
+
+  /// Kullanıcı aktif avadanlığı onayladı. Hiç çekilmediyse açma iptal edilir
+  /// (kilit kapanır → 03 → LidClosed); çekildiyse yerine itilmesi beklenir.
+  void _confirmTrayClose() {
+    if (_stage is! MasterDrawerOpened) return;
+    _lidCloseConfirmed = true;
+    _setStage(const MasterDrawerWaitingForLidClose());
+
+    final address = _lastTrayAddress;
+    if (address == null || _lastTrayStatus != TrayLockStatus.unlocked) return;
+    unawaited(_cancelNeverPulledTray(address));
+  }
+
+  Future<void> _cancelNeverPulledTray(SerumTrayAddress address) async {
+    try {
+      await _trayLock.cancelUnlock(deviceId: address.deviceId, port: address.port);
+    } on TrayLockException catch (e) {
+      // alreadyPulled: kullanıcı tam bu arada çekti — yerine itilmesi beklenir.
+      MedLogger.info(
+        unit: 'MasterDrawerSession',
+        swreq: 'SWREQ-HW-TRAY-002',
+        message: 'Çekilmemiş avadanlık iptal edilemedi — izleme sürüyor',
+        context: {'address': address.toString(), 'failure': e.failure.name},
+      );
+    }
+  }
+
+  void _onTrayReturned() {
+    _cancelTrayWatch();
+    _setStage(const MasterDrawerLidClosed());
+  }
+
+  void _cancelTrayWatch() {
+    _trayUnlockTimer?.cancel();
+    _trayUnlockTimer = null;
+    unawaited(_traySub?.cancel());
+    _traySub = null;
+  }
+
+  // ════════════════════════════════════════════════════════════════
   // ANA ÇEKMECE SENSÖRÜ
   // ════════════════════════════════════════════════════════════════
 
@@ -322,6 +496,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
         case DrawerClosed():
           // Çekmece kapandıysa kapak da kapanmıştır — kapak izlemesini bırak.
           _cancelLidWatch();
+          _cancelTrayWatch();
           final wasExpected = _stage is MasterDrawerWaitingForClose;
           if (!wasExpected && _lastCloseCompletes) {
             MedLogger.info(
@@ -340,6 +515,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
           _sensorSub = null;
         case DrawerFailed(:final failure, :final detail):
           _cancelLidWatch();
+          _cancelTrayWatch();
           _setStage(MasterDrawerFailed(failure: failure as MasterDrawerFailure, detail: detail));
           _sensorSub?.cancel();
           _sensorSub = null;
@@ -351,6 +527,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
 
   Future<void> _cancelAll() async {
     _cancelLidWatch();
+    _cancelTrayWatch();
     await _sessionSub?.cancel();
     await _sensorSub?.cancel();
     _sessionSub = null;

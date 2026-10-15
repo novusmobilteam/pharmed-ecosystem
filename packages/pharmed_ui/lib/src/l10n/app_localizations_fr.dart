@@ -6684,6 +6684,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'Le verrou du plateau n\'a pas pu être libéré.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Un autre plateau de cette étagère est sorti. Repoussez-le d\'abord, puis réessayez.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'L\'état du plateau ne peut pas être lu.';
+
+  @override
   String get masterDrawer_status_completingTitle =>
       'Finalisation de votre opération';
 

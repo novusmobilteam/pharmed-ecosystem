@@ -6474,6 +6474,18 @@ class AppLocalizationsTr extends AppLocalizations {
       'Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'Avadanlığın kilidi açılamadı.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Rafta başka bir avadanlık çekili. Önce onu yerine itin, sonra tekrar deneyin.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'Avadanlığın durumu okunamıyor.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
 
   @override

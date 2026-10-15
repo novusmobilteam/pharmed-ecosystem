@@ -11511,6 +11511,24 @@ abstract class AppLocalizations {
   /// **'The drawer was closed unexpectedly while still in use. Please reopen and try again.'**
   String get masterDrawer_error_unexpectedlyClosed;
 
+  /// No description provided for @masterDrawer_error_trayUnlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The tray lock could not be released.'**
+  String get masterDrawer_error_trayUnlockFailed;
+
+  /// No description provided for @masterDrawer_error_trayBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Another tray on this shelf is pulled out. Push it back first, then try again.'**
+  String get masterDrawer_error_trayBusy;
+
+  /// No description provided for @masterDrawer_error_traySensorLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The tray status cannot be read.'**
+  String get masterDrawer_error_traySensorLost;
+
   /// No description provided for @masterDrawer_status_completingTitle.
   ///
   /// In en, this message translates to:

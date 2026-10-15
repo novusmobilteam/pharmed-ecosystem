@@ -417,7 +417,9 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   Future<void> skipCurrentLid() async {
     final stage = drawerStage;
     if (!isExecuting || stage is! MasterDrawerLidFailed) return;
-    if (stage.failure == MasterDrawerFailure.lidSensorLost) return;
+    if (stage.failure == MasterDrawerFailure.lidSensorLost || stage.failure == MasterDrawerFailure.traySensorLost) {
+      return;
+    }
 
     _skippedTargets = {..._skippedTargets, (_currentIndex, _currentTargetIndex)};
     MedLogger.warn(

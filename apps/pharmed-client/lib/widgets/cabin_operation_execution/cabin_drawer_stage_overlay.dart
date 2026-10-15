@@ -249,6 +249,8 @@ class _StageInfo {
   ///   lidNotOpened               → action (amber) · Bu Gözü Atla + Tekrar Dene
   ///   lidOpenFailed (ve diğer)   → error (kırmızı) · Bu Gözü Atla + Tekrar Dene
   ///   lidSensorLost              → error (kırmızı) · Kapağı Kapattım
+  ///   trayBusy                   → action (amber) · Tekrar Dene (önce diğer avadanlık itilir)
+  ///   traySensorLost             → lidSensorLost ile aynı
   ///     (Tekrar Dene YOK: açma komutunu yeniden göndermek anlamsız; izleme
   ///     sürdüğü için bağlantı gelirse akış kendiliğinden devam eder.)
   static _StageInfo _lidFailedInfo(
@@ -271,7 +273,7 @@ class _StageInfo {
     final message = failure.message(context, detail: detail);
 
     return switch (failure) {
-      MasterDrawerFailure.lidDrawerNotOpen => _StageInfo(
+      MasterDrawerFailure.lidDrawerNotOpen || MasterDrawerFailure.trayBusy => _StageInfo(
         kind: _StageKind.action,
         icon: PhosphorIcons.arrowsOutLineVertical(),
         title: l10n.masterDrawer_status_failedTitle,
@@ -285,7 +287,7 @@ class _StageInfo {
         subtitle: message,
         actions: [?skip, ?retry],
       ),
-      MasterDrawerFailure.lidSensorLost => _StageInfo(
+      MasterDrawerFailure.lidSensorLost || MasterDrawerFailure.traySensorLost => _StageInfo(
         kind: _StageKind.error,
         icon: PhosphorIcons.wifiSlash(),
         title: l10n.masterDrawer_status_failedTitle,
