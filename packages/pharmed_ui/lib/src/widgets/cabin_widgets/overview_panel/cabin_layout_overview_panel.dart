@@ -126,7 +126,9 @@ class _DrawerRow extends StatelessWidget {
               children: [
                 Text(item.address, style: MedTextStyles.titleSm(color: text)),
                 Text(
-                  item.isKubik
+                  item.isSerum
+                      ? context.l10n.enumCore_cabinTypeSerum
+                      : item.isKubik
                       ? context.l10n.cabinOverview_cubicDrawerSubtitle
                       : context.l10n.cabinOverview_unitDoseDrawerSubtitle,
                   style: MedTextStyles.monoXs(color: MedColors.text3),
@@ -157,7 +159,35 @@ class _MiniDrawerShape extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(width: _boxSize, height: _boxSize, child: item.isKubik ? _kubikGrid() : _unitDoseRow());
+    return SizedBox(
+      width: _boxSize,
+      height: _boxSize,
+      child: item.isSerum
+          ? _serumShelves()
+          : item.isKubik
+          ? _kubikGrid()
+          : _unitDoseRow(),
+    );
+  }
+
+  /// Serum: 3 raf alt alta.
+  Widget _serumShelves() {
+    return Column(
+      spacing: 2,
+      children: List.generate(
+        SerumShelfLayout.shelfCount,
+        (_) => Expanded(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: accentColor.withAlpha(60),
+              border: Border.all(color: accentColor, width: 0.5),
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _kubikGrid() {

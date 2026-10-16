@@ -4548,6 +4548,12 @@ abstract class AppLocalizations {
   /// **'RFID Available'**
   String get medicine_checkboxRfid;
 
+  /// No description provided for @medicine_checkboxTakeGiveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Take-Give Button Active?'**
+  String get medicine_checkboxTakeGiveButton;
+
   /// No description provided for @medicine_checkboxMultiPatientAccess.
   ///
   /// In en, this message translates to:
@@ -11301,6 +11307,18 @@ abstract class AppLocalizations {
   /// **'Electromagnetic Lock'**
   String get cabinDesign_serum_lockToggleLabel;
 
+  /// No description provided for @cabinDesign_serum_takeGiveToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Take-Give Button Active?'**
+  String get cabinDesign_serum_takeGiveToggleLabel;
+
+  /// No description provided for @cabinDesign_serum_takeGiveRequiresLockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available only on shelves with an electromagnetic lock.'**
+  String get cabinDesign_serum_takeGiveRequiresLockHint;
+
   /// No description provided for @cabinDesign_serum_addSmallButton.
   ///
   /// In en, this message translates to:
@@ -11511,6 +11529,48 @@ abstract class AppLocalizations {
   /// **'The drawer was closed unexpectedly while still in use. Please reopen and try again.'**
   String get masterDrawer_error_unexpectedlyClosed;
 
+  /// No description provided for @masterDrawer_error_trayUnlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The tray lock could not be released.'**
+  String get masterDrawer_error_trayUnlockFailed;
+
+  /// No description provided for @masterDrawer_error_trayBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Another tray on this shelf is pulled out. Push it back first, then try again.'**
+  String get masterDrawer_error_trayBusy;
+
+  /// No description provided for @masterDrawer_error_traySensorLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The tray status cannot be read.'**
+  String get masterDrawer_error_traySensorLost;
+
+  /// No description provided for @masterDrawer_tray_openingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking Tray'**
+  String get masterDrawer_tray_openingTitle;
+
+  /// No description provided for @masterDrawer_tray_openingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, the tray lock is being released.'**
+  String get masterDrawer_tray_openingSubtitle;
+
+  /// No description provided for @masterDrawer_tray_waitingCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Push the tray back in'**
+  String get masterDrawer_tray_waitingCloseTitle;
+
+  /// No description provided for @masterDrawer_tray_waitingCloseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Once the tray is pushed back, the next tray is unlocked.'**
+  String get masterDrawer_tray_waitingCloseSubtitle;
+
   /// No description provided for @masterDrawer_status_completingTitle.
   ///
   /// In en, this message translates to:
@@ -11520,7 +11580,7 @@ abstract class AppLocalizations {
   /// No description provided for @masterDrawer_status_completingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Finishing intake.'**
+  /// **'Please wait'**
   String get masterDrawer_status_completingSubtitle;
 
   /// No description provided for @cabinDesign_cabinList_sectionTitle.
@@ -11625,6 +11685,18 @@ abstract class AppLocalizations {
   /// **'Select Cabinet'**
   String get cabinOperation_changeCabinButton;
 
+  /// No description provided for @cabinOperation_serumShelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf {index}'**
+  String cabinOperation_serumShelfLabel(int index);
+
+  /// No description provided for @cabinOperation_serumShelfNoTrays.
+  ///
+  /// In en, this message translates to:
+  /// **'No trays defined'**
+  String get cabinOperation_serumShelfNoTrays;
+
   /// No description provided for @assignment_idle_kicker.
   ///
   /// In en, this message translates to:
@@ -11690,6 +11762,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drawer {drawer} — Cell {cell}'**
   String assignment_idle_locationLabel(String drawer, int cell);
+
+  /// No description provided for @assignment_idle_serumLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serum — Shelf {shelf}, T-{tray}'**
+  String assignment_idle_serumLocationLabel(int shelf, int tray);
 
   /// No description provided for @assignment_edit_title.
   ///
@@ -12518,6 +12596,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not save'**
   String get cabinExecution_errorTitle;
+
+  /// No description provided for @cabinExecution_takeGive_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Take-Give Verification'**
+  String get cabinExecution_takeGive_title;
+
+  /// No description provided for @cabinExecution_takeGive_instruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter {expected} pcs with the take-give buttons on the cabinet.'**
+  String cabinExecution_takeGive_instruction(int expected);
+
+  /// No description provided for @cabinExecution_takeGive_matched.
+  ///
+  /// In en, this message translates to:
+  /// **'Value matches, you can complete the step.'**
+  String get cabinExecution_takeGive_matched;
+
+  /// No description provided for @cabinExecution_takeGive_staleValue.
+  ///
+  /// In en, this message translates to:
+  /// **'The previous value is still shown — enter the quantity again with the buttons.'**
+  String get cabinExecution_takeGive_staleValue;
+
+  /// No description provided for @cabinExecution_takeGive_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading take-give value…'**
+  String get cabinExecution_takeGive_reading;
+
+  /// No description provided for @cabinExecution_takeGive_mismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'The take-give value does not match the expected quantity. Nothing was saved; the tray is being unlocked again.'**
+  String get cabinExecution_takeGive_mismatchError;
 
   /// No description provided for @cabinExecution_errorSkipButton.
   ///
@@ -14166,7 +14280,6 @@ abstract class AppLocalizations {
   /// **'Barcode test'**
   String get printer_testReceipt_barcodeLabel;
 
-
   /// No description provided for @printer_receipt_intakeTitle.
   ///
   /// In en, this message translates to:
@@ -14202,7 +14315,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Room / Bed'**
   String get printer_receipt_roomBedLabel;
-
 
   /// No description provided for @printer_receipt_operatorLabel.
   ///
@@ -14257,7 +14369,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sent to the printer.'**
   String get printer_sentMessage;
-
 
   /// No description provided for @fingerprint_enroll_screenTitle.
   ///

@@ -334,4 +334,9 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     _drug = _drug.copyWith(isRfidEnable: !_drug.isRfidEnable);
     notifyListeners();
   }
+
+  void toggleTakeGiveButton() {
+    _drug = _drug.copyWith(isTakeGiveButtonActive: !_drug.isTakeGiveButtonActive);
+    notifyListeners();
+  }
 }

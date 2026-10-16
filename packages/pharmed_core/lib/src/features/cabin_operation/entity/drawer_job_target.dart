@@ -20,6 +20,16 @@ abstract interface class DrawerJobTarget {
   /// birim-doz akışında (güvenlik: FIFO'nun izin verdiği kadar) kullanılıyor;
   /// diğer tüm job tipleri null döner (davranış değişmez).
   int? get explicitTargetStep;
+
+  /// Elektromanyetik kilitli serum rafındaki avadanlığın kilit adresi —
+  /// çekmece (serum kapağı) açıldıktan sonra bu avadanlığın kilidi açılır.
+  /// Serum dışı ve kilitsiz raftaki hedeflerde null.
+  SerumTrayAddress? get serumTray;
+
+  /// Al-Ver doğrulaması: kullanıcının kilit kartındaki Al-Ver tuşlarıyla
+  /// girmesi gereken adet. null → doğrulama yok. Raf ve ilaç ayarının ikisi
+  /// de açıksa, yalnızca alım ve iadede dolu döner.
+  int? get takeGiveExpectedQuantity;
 }
 
 abstract interface class DrawerJob<T extends DrawerJobTarget> {
@@ -32,6 +42,12 @@ abstract interface class DrawerJob<T extends DrawerJobTarget> {
   /// iade çekmecesi gibi), fiziksel aç/kapa döngüsüne hiç girilmez.
   /// false → her target kendi fiziksel aç/kapa döngüsünü yaşar (birim doz).
   bool get staysOpenAcrossTargets;
+
+  /// Serum avadanlık job'u — serum kapağı bir kez açılır ve tüm avadanlıklar
+  /// aynı açılışta işlenir. Kilitli raftaki avadanlığın ([DrawerJobTarget.
+  /// serumTray]) kilidi açılır ve yerine itilmesi beklenir (kübik kapağın
+  /// eşi); kilitsiz raftakinde yalnızca kapak açıktır.
+  bool get isSerumTrayJob;
 
   /// Çekmeceyi açma komutu için kullanılacak temsilci adres.
   MedicineAssignment get representativeAssignment;

@@ -1580,6 +1580,7 @@
   "@medicine_checkboxLowerDose": {},
   "medicine_checkboxRfid": "RFID Available",
   "@medicine_checkboxRfid": {},
+  "medicine_checkboxTakeGiveButton": "Take-Give Button Active?",
   "medicine_checkboxMultiPatientAccess": "Multi-Patient Access",
   "@medicine_checkboxMultiPatientAccess": {},
   "medicine_checkboxSingleUse": "Single Use",
@@ -4568,6 +4569,8 @@
     "placeholders": { "used": { "type": "int" }, "total": { "type": "int" }, "count": { "type": "int" } }
   },
   "cabinDesign_serum_lockToggleLabel": "Electromagnetic Lock",
+  "cabinDesign_serum_takeGiveToggleLabel": "Take-Give Button Active?",
+  "cabinDesign_serum_takeGiveRequiresLockHint": "Available only on shelves with an electromagnetic lock.",
   "cabinDesign_serum_addSmallButton": "Small",
   "cabinDesign_serum_addMediumButton": "Medium",
   "cabinDesign_serum_addLargeButton": "Large",
@@ -4627,6 +4630,13 @@
   "masterDrawer_error_sensorCommunicationLost": "Communication with the hardware was lost. Check the connection and try again.",
   "@masterDrawer_error_sensorCommunicationLost": {},
   "masterDrawer_error_unexpectedlyClosed": "The drawer was closed unexpectedly while still in use. Please reopen and try again.",
+  "masterDrawer_error_trayUnlockFailed": "The tray lock could not be released.",
+  "masterDrawer_error_trayBusy": "Another tray on this shelf is pulled out. Push it back first, then try again.",
+  "masterDrawer_error_traySensorLost": "The tray status cannot be read.",
+  "masterDrawer_tray_openingTitle": "Unlocking Tray",
+  "masterDrawer_tray_openingSubtitle": "Please wait, the tray lock is being released.",
+  "masterDrawer_tray_waitingCloseTitle": "Push the tray back in",
+  "masterDrawer_tray_waitingCloseSubtitle": "Once the tray is pushed back, the next tray is unlocked.",
   "masterDrawer_status_completingTitle": "Completing Your Operation",
   "@masterDrawer_status_completingTitle": {},
   "masterDrawer_status_completingSubtitle": "Please wait",
@@ -4663,6 +4673,11 @@
   "cabinSelection_continueButton": "Continue",
   "cabinSelection_dataUnavailableLabel": "No Data",
   "cabinOperation_changeCabinButton": "Select Cabinet",
+  "cabinOperation_serumShelfLabel": "Shelf {index}",
+  "@cabinOperation_serumShelfLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "cabinOperation_serumShelfNoTrays": "No trays defined",
   "assignment_idle_kicker": "CABINET CONFIGURATION",
   "@assignment_idle_kicker": {},
   "assignment_idle_title": "Drug Assignment",
@@ -4692,6 +4707,13 @@
       "cell": {
         "type": "int"
       }
+    }
+  },
+  "assignment_idle_serumLocationLabel": "Serum — Shelf {shelf}, T-{tray}",
+  "@assignment_idle_serumLocationLabel": {
+    "placeholders": {
+      "shelf": { "type": "int" },
+      "tray": { "type": "int" }
     }
   },
   "assignment_edit_title": "Edit Assignment",
@@ -4884,7 +4906,6 @@
   "masterDrawer_status_workingPill": "In progress",
   "masterDrawer_status_closureMonitoredPill": "Detecting closure",
   "masterDrawer_status_openingSubtitle": "Drawer opening, please wait.",
-  "masterDrawer_status_completingSubtitle": "Finishing intake.",
   "masterDrawer_status_lockOpeningSubtitle": "Unlocking, please wait.",
   "masterDrawer_status_devicePreparingSubtitle": "Preparing device.",
   "masterDrawer_status_waitingPullSubtitle": "Pull the drawer open.",
@@ -4942,6 +4963,13 @@
 "cabinExecution_stopConfirmMessage": "Saved drawers are kept; unsaved entries in this drawer will be lost.",
 "cabinExecution_stopConfirmYes": "Stop",
 "cabinExecution_errorTitle": "Could not save",
+"cabinExecution_takeGive_title": "Take-Give Verification",
+"cabinExecution_takeGive_instruction": "Enter {expected} pcs with the take-give buttons on the cabinet.",
+"@cabinExecution_takeGive_instruction": { "placeholders": { "expected": { "type": "int" } } },
+"cabinExecution_takeGive_matched": "Value matches, you can complete the step.",
+"cabinExecution_takeGive_staleValue": "The previous value is still shown — enter the quantity again with the buttons.",
+"cabinExecution_takeGive_reading": "Reading take-give value…",
+"cabinExecution_takeGive_mismatchError": "The take-give value does not match the expected quantity. Nothing was saved; the tray is being unlocked again.",
 "cabinExecution_errorSkipButton": "Skip to Next Drawer",
 "cabinExecution_errorAbortButton": "End Operation",
 "cabinEntryCard_cellBadge": "CELL {label}",

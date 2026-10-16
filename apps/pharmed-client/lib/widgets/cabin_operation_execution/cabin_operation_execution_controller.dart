@@ -36,6 +36,11 @@ abstract interface class CabinQueueController implements Listenable {
   Future<void> retryCubicLid();
   Future<void> skipCurrentLid();
   void acknowledgeLidClosedManually();
+
+  // ── Al-Ver doğrulaması (serum, alım/iade) ──
+  int? get takeGiveExpected;
+  TrayKeypadReading? get takeGiveReading;
+  bool get isTakeGiveSatisfied;
 }
 
 /// Dolum/sayım/boşaltma/imha: iskelete ek olarak CabinOperationTarget girişleri.

@@ -31,6 +31,9 @@ class MockCabinOperationService implements ICabinOperationService {
 
   bool _masterDrawerIsOpen = false;
 
+  /// Serum kapağı açık mı — kapanış izleme stream'i açılışı tekrar simüle etmesin.
+  bool _serumDrawerIsOpen = false;
+
   /// Açık kübik kapaklar — anahtar: "row:port:lidIndex", değer: açılma anı.
   final Map<String, DateTime> _openLids = {};
 
@@ -44,6 +47,7 @@ class MockCabinOperationService implements ICabinOperationService {
   void triggerManualClose() {
     _shouldFastForward = true;
     _masterDrawerIsOpen = false;
+    _serumDrawerIsOpen = false;
     _openLids.clear();
     debugPrint('MOCK: Manuel kapatma tetiklendi.');
   }
@@ -211,22 +215,28 @@ class MockCabinOperationService implements ICabinOperationService {
     required ManagementCard manager,
     required int row,
   }) async* {
-    _shouldFastForward = false;
+    // Kapak zaten açıksa (kapanış izleme stream'i) açılış yeniden simüle
+    // edilmez — aksi halde ilk `locked` beklenmedik kapanış sayılır.
+    if (_serumDrawerIsOpen) {
+      yield DrawerPhysicalStatus.fullyOpen;
+    } else {
+      _shouldFastForward = false;
+      yield DrawerPhysicalStatus.locked;
+      await Future.delayed(const Duration(seconds: 2));
+      if (_shouldFastForward) return;
 
-    yield DrawerPhysicalStatus.locked;
-    await Future.delayed(const Duration(seconds: 2));
-    if (_shouldFastForward) return;
-
-    debugPrint('MOCK SENSOR (Master Serum row:$row): Kullanıcı kabini çekti!');
-    yield DrawerPhysicalStatus.fullyOpen;
-
-    int elapsed = 0;
-    while (elapsed < 60000) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      elapsed += 500;
-      if (_shouldFastForward) break;
+      _serumDrawerIsOpen = true;
+      debugPrint('MOCK SENSOR (Master Serum row:$row): Kullanıcı kabini çekti!');
+      yield DrawerPhysicalStatus.fullyOpen;
     }
 
+    // Master çekmeceyle aynı: kullanıcı kapatmadıkça (triggerManualClose)
+    // kendiliğinden kapanmaz — avadanlık işlemleri uzun sürebilir.
+    while (!_shouldFastForward) {
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _serumDrawerIsOpen = false;
     debugPrint('MOCK SENSOR (Master Serum row:$row): Kabin kapandı 🔒');
     yield DrawerPhysicalStatus.locked;
   }

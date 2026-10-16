@@ -42,6 +42,12 @@ class AssignmentRepositoryImpl implements IAssignmentRepository {
   }
 
   @override
+  Future<Result<void>> deleteSerumTrayAssignment(int cabinDrawerDetailId) async {
+    final result = await _dataSource.deleteSerumTrayAssignment(cabinDrawerDetailId);
+    return result.when(ok: (_) => Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
   Future<Result<void>> updateMedicineAssignment(MedicineAssignment entity) async {
     final dto = _medicineAssignmentMapper.toDto(entity);
     final result = await _dataSource.updateMedicineAssignment(dto);

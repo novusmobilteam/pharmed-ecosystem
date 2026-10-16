@@ -5,7 +5,8 @@ part of 'overview_panel.dart';
 // Bir DrawerQueueItem'ın (aktif çekmece/göz) fiziksel konumunu ve o anki
 // doldurma/alım durumunu şematik bir grid olarak çizen panel — kübik
 // (4 sütunlu göz grid'i, opsiyonel birleşik iade gözü) ve birim doz
-// (derinlik/step bazlı grid) olmak üzere iki farklı çizim moduna sahiptir.
+// (derinlik/step bazlı grid) ve serum (3 raf, avadanlıklar sağdan sola)
+// olmak üzere üç farklı çizim moduna sahiptir.
 //
 // Önceden CabinOverviewExecutionPanel'in İÇİNDE (_LocationSection) yaşıyordu
 // — bağımsız bir widget'a çıkarıldı ki tek bir aktif item'ın konum rehberi,
@@ -36,7 +37,64 @@ class DrawerLayoutOverviewPanel extends StatelessWidget {
       // vermemiz gerekiyor. Bu widget'ı çağıran taraf zaten Expanded içine
       // koyuyorsa (execution view'daki flex:3 gibi) bu SizedBox.expand
       // o kısıtı aşağı, LayoutBuilder'a taşıyor.
-      child: SizedBox.expand(child: item.isKubik ? _kubikGrid(context) : _unitDoseGrid(context)),
+      child: SizedBox.expand(
+        child: item.isSerum
+            ? _serumShelves(context)
+            : item.isKubik
+            ? _kubikGrid(context)
+            : _unitDoseGrid(context),
+      ),
+    );
+  }
+
+  /// Serum: yalnızca işlem yapılan raf — avadanlıklar kapladıkları alan
+  /// oranında, SAĞDAN SOLA (ilk avadanlık en sağda), seçim paneliyle aynı.
+  /// Aktif avadanlık yoksa (geçiş anı) son tamamlananın rafı gösterilir.
+  Widget _serumShelves(BuildContext context) {
+    final shelves = item.group.serumShelves ?? SerumShelfLayout.emptyShelves();
+    bool contains(SerumShelfLayout shelf, Set<int> ids) => shelf.trays.any((t) => t.id != null && ids.contains(t.id));
+
+    final shelf =
+        shelves.firstWhereOrNull((s) => contains(s, item.activeSerumCellIds)) ??
+        shelves.lastWhereOrNull((s) => contains(s, item.completedSerumCellIds)) ??
+        shelves.first;
+
+    return Row(
+      children: [
+        SizedBox(
+          width: 18,
+          child: Text('${shelf.orderNo}', style: MedTextStyles.monoXs(color: MedColors.text3)),
+        ),
+        const SizedBox(width: 6),
+        Expanded(child: _serumShelfRow(shelf)),
+      ],
+    );
+  }
+
+  Widget _serumShelfRow(SerumShelfLayout shelf) {
+    return Row(
+      spacing: _spacing,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (shelf.remainingArea > 0)
+          Expanded(
+            flex: shelf.remainingArea,
+            child: Container(
+              decoration: BoxDecoration(
+                color: MedColors.surface2,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        for (final tray in shelf.trays.reversed)
+          Expanded(
+            flex: tray.size.areaSize,
+            child: _Cell(
+              isCompleted: tray.id != null && item.completedSerumCellIds.contains(tray.id),
+              isActive: tray.id != null && item.activeSerumCellIds.contains(tray.id),
+            ),
+          ),
+      ],
     );
   }
 

@@ -76,6 +76,8 @@ class CabinPendingChanges {
     this.returnSlotId,
     this.returnValue,
     this.scanGroups,
+    this.serumSlotId,
+    this.serumShelves,
   });
 
   static const none = CabinPendingChanges();
@@ -95,17 +97,28 @@ class CabinPendingChanges {
   /// Tarama sonucu mevcut tasarımdan FARKLI çıktıysa yeni yerleşim.
   final List<DrawerGroup>? scanGroups;
 
+  /// Serum kabini raf yerleşimi değişikliği: hangi serum slot'u ve 3 rafın
+  /// yeni hali. İkisi birlikte atanır/temizlenir.
+  final int? serumSlotId;
+  final List<SerumShelfLayout>? serumShelves;
+
   bool get hasNameChange => name != null;
   bool get hasConnectionChange => comPort != null || addressChar != null;
   bool get hasReturnChange => returnSlotId != null && returnValue != null;
   bool get hasDesignChange => scanGroups != null;
-  bool get hasAny => hasNameChange || hasConnectionChange || hasReturnChange || hasDesignChange;
+  bool get hasSerumLayoutChange => serumSlotId != null && serumShelves != null;
+  bool get hasAny =>
+      hasNameChange || hasConnectionChange || hasReturnChange || hasDesignChange || hasSerumLayoutChange;
 
   CabinPendingChanges withName(String? v) => _copy(name: () => v);
   CabinPendingChanges withComPort(ComPort? v) => _copy(comPort: () => v);
   CabinPendingChanges withAddressChar(String? v) => _copy(addressChar: () => v);
   CabinPendingChanges withReturn(int slotId, bool value) => _copy(returnSlotId: () => slotId, returnValue: () => value);
   CabinPendingChanges withScanGroups(List<DrawerGroup>? v) => _copy(scanGroups: () => v);
+
+  /// [shelves] null ise serum değişikliği temizlenir.
+  CabinPendingChanges withSerumLayout(int slotId, List<SerumShelfLayout>? shelves) =>
+      _copy(serumSlotId: () => shelves == null ? null : slotId, serumShelves: () => shelves);
 
   CabinPendingChanges _copy({
     String? Function()? name,
@@ -114,6 +127,8 @@ class CabinPendingChanges {
     int? Function()? returnSlotId,
     bool? Function()? returnValue,
     List<DrawerGroup>? Function()? scanGroups,
+    int? Function()? serumSlotId,
+    List<SerumShelfLayout>? Function()? serumShelves,
   }) => CabinPendingChanges(
     name: name != null ? name() : this.name,
     comPort: comPort != null ? comPort() : this.comPort,
@@ -121,5 +136,7 @@ class CabinPendingChanges {
     returnSlotId: returnSlotId != null ? returnSlotId() : this.returnSlotId,
     returnValue: returnValue != null ? returnValue() : this.returnValue,
     scanGroups: scanGroups != null ? scanGroups() : this.scanGroups,
+    serumSlotId: serumSlotId != null ? serumSlotId() : this.serumSlotId,
+    serumShelves: serumShelves != null ? serumShelves() : this.serumShelves,
   );
 }

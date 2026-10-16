@@ -1353,6 +1353,7 @@
   "@medicine_checkboxLowerDose": {},
   "medicine_checkboxRfid": "RFID disponible",
   "@medicine_checkboxRfid": {},
+  "medicine_checkboxTakeGiveButton": "Bouton Prendre-Rendre actif ?",
   "medicine_checkboxMultiPatientAccess": "Accès multi-patients",
   "@medicine_checkboxMultiPatientAccess": {},
   "medicine_checkboxSingleUse": "Usage unique",
@@ -4067,6 +4068,8 @@
     "placeholders": { "used": { "type": "int" }, "total": { "type": "int" }, "count": { "type": "int" } }
   },
   "cabinDesign_serum_lockToggleLabel": "Verrou électromagnétique",
+  "cabinDesign_serum_takeGiveToggleLabel": "Bouton Prendre-Rendre actif ?",
+  "cabinDesign_serum_takeGiveRequiresLockHint": "Disponible uniquement sur les étagères à verrou électromagnétique.",
   "cabinDesign_serum_addSmallButton": "Petit",
   "cabinDesign_serum_addMediumButton": "Moyen",
   "cabinDesign_serum_addLargeButton": "Grand",
@@ -4108,6 +4111,13 @@
   "masterDrawer_error_lockOpenTimeout": "Le tiroir ne s'est pas complètement ouvert à temps. Veuillez tirer le tiroir jusqu'au bout.",
   "masterDrawer_error_sensorCommunicationLost": "La communication avec le matériel a été perdue. Vérifiez la connexion et réessayez.",
   "masterDrawer_error_unexpectedlyClosed": "Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.",
+  "masterDrawer_error_trayUnlockFailed": "Le verrou du plateau n'a pas pu être libéré.",
+  "masterDrawer_error_trayBusy": "Un autre plateau de cette étagère est sorti. Repoussez-le d'abord, puis réessayez.",
+  "masterDrawer_error_traySensorLost": "L'état du plateau ne peut pas être lu.",
+  "masterDrawer_tray_openingTitle": "Déverrouillage du plateau",
+  "masterDrawer_tray_openingSubtitle": "Veuillez patienter, le verrou du plateau est en cours de déverrouillage.",
+  "masterDrawer_tray_waitingCloseTitle": "Repoussez le plateau",
+  "masterDrawer_tray_waitingCloseSubtitle": "Une fois le plateau repoussé, le plateau suivant est déverrouillé.",
   "masterDrawer_status_completingTitle": "Finalisation de votre opération",
   "@masterDrawer_status_completingTitle": {},
   "masterDrawer_status_completingSubtitle": "Veuillez patienter",
@@ -4144,6 +4154,11 @@
   "cabinSelection_continueButton": "Continuer",
   "cabinSelection_dataUnavailableLabel": "Aucune Donnée",
   "cabinOperation_changeCabinButton": "Sélectionner une Armoire",
+  "cabinOperation_serumShelfLabel": "Étagère {index}",
+  "@cabinOperation_serumShelfLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "cabinOperation_serumShelfNoTrays": "Aucun plateau défini",
   "assignment_idle_kicker": "CONFIGURATION DE L'ARMOIRE",
   "assignment_idle_title": "Attribution de Médicaments",
   "assignment_idle_description": "Touchez une case de l'armoire à gauche ; choisissez un médicament dans la liste pour cette case et saisissez les quantités minimale, critique et maximale. Touchez une case remplie pour modifier son attribution existante.",
@@ -4163,6 +4178,13 @@
       "cell": {
         "type": "int"
       }
+    }
+  },
+  "assignment_idle_serumLocationLabel": "Sérum — Étagère {shelf}, P-{tray}",
+  "@assignment_idle_serumLocationLabel": {
+    "placeholders": {
+      "shelf": { "type": "int" },
+      "tray": { "type": "int" }
     }
   },
   "assignment_edit_title": "Modifier l'Attribution",
@@ -4336,7 +4358,6 @@
   "masterDrawer_status_workingPill": "En cours",
   "masterDrawer_status_closureMonitoredPill": "Détection de la fermeture",
   "masterDrawer_status_openingSubtitle": "Ouverture du tiroir, veuillez patienter.",
-  "masterDrawer_status_completingSubtitle": "Finalisation de la prise.",
   "masterDrawer_status_lockOpeningSubtitle": "Déverrouillage, veuillez patienter.",
   "masterDrawer_status_devicePreparingSubtitle": "Préparation de l'appareil.",
   "masterDrawer_status_waitingPullSubtitle": "Tirez le tiroir pour l'ouvrir.",
@@ -4394,6 +4415,13 @@
 "cabinExecution_stopConfirmMessage": "Les tiroirs enregistrés sont conservés ; les saisies non enregistrées de ce tiroir seront perdues.",
 "cabinExecution_stopConfirmYes": "Arrêter",
 "cabinExecution_errorTitle": "Enregistrement impossible",
+"cabinExecution_takeGive_title": "Vérification Prendre-Rendre",
+"cabinExecution_takeGive_instruction": "Saisissez {expected} pcs avec les boutons Prendre-Rendre de l’armoire.",
+"@cabinExecution_takeGive_instruction": { "placeholders": { "expected": { "type": "int" } } },
+"cabinExecution_takeGive_matched": "La valeur correspond, vous pouvez terminer l’étape.",
+"cabinExecution_takeGive_staleValue": "La valeur précédente est affichée — saisissez à nouveau la quantité avec les boutons.",
+"cabinExecution_takeGive_reading": "Lecture de la valeur Prendre-Rendre…",
+"cabinExecution_takeGive_mismatchError": "La valeur Prendre-Rendre ne correspond pas à la quantité attendue. Rien n’a été enregistré ; le plateau est de nouveau déverrouillé.",
 "cabinExecution_errorSkipButton": "Passer au tiroir suivant",
 "cabinExecution_errorAbortButton": "Terminer l'opération",
 "cabinEntryCard_cellBadge": "CASE {label}",

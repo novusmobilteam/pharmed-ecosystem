@@ -1,6 +1,7 @@
 // [SWREQ-CLI-MREFILL-001] [IEC 62304 §5.5]
 // Master kabin dolumunun seçim fazı: seçilen kabinin atamalarını çeker,
 // göz/çekmece seçimini yönetir, kuyruğu hazırlayıp execution notifier'a devreder.
+// Serum avadanlıkları (cabinDrawerDetailId'li atamalar) göz bazında seçilir.
 //
 // Sınıf: Class B
 
@@ -28,11 +29,12 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
   int? _cabinId;
   List<MedicineAssignment> _assignments = [];
-  final Set<int> _selectedUnitIds = {};
+  final AssignmentSelection _selection = AssignmentSelection();
   String _search = '';
 
   List<MedicineAssignment> get assignments => _assignments;
-  Set<int> get selectedUnitIds => Set.unmodifiable(_selectedUnitIds);
+  Set<int> get selectedUnitIds => _selection.unitIds;
+  Set<int> get selectedSerumCellIds => _selection.serumCellIds;
   String get search => _search;
 
   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
@@ -48,10 +50,9 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     }).toList();
   }
 
-  List<MedicineAssignment> get selectedAssignments =>
-      _assignments.where((a) => _selectedUnitIds.contains(a.cabinDrawerId)).toList();
+  List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
 
-  bool get canStart => _selectedUnitIds.isNotEmpty;
+  bool get canStart => _selection.isNotEmpty;
 
   Future<void> init(CabinRouteContext ctx) {
     _cabinId = ctx.cabin?.id;
@@ -70,7 +71,7 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       operation: () => _getAssignments.call(cabinId),
       onData: (list) {
         _assignments = list;
-        _selectedUnitIds.clear(); // doldurulan gözler işaretli kalmasın
+        _selection.clear(); // doldurulan gözler işaretli kalmasın
         notifyListeners();
       },
     );
@@ -82,28 +83,28 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   }
 
   void toggleUnit(int cabinDrawerId) {
-    _selectedUnitIds.contains(cabinDrawerId)
-        ? _selectedUnitIds.remove(cabinDrawerId)
-        : _selectedUnitIds.add(cabinDrawerId);
+    final assignment = AssignmentSelection.unitAssignment(cabinDrawerId, _assignments);
+    if (assignment == null) return;
+    _selection.toggle(assignment);
+    notifyListeners();
+  }
+
+  /// Serum avadanlığı — yalnızca ataması olan avadanlık seçilebilir.
+  void toggleSerumTray(int cellId) {
+    final assignment = AssignmentSelection.serumAssignment(cellId, _assignments);
+    if (assignment == null) return;
+    _selection.toggle(assignment);
     notifyListeners();
   }
 
   void toggleDrawer(DrawerGroup group) {
-    final unitIdsInGroup = group.units.map((u) => u.id).whereType<int>().toSet();
-    final drawerUnitIds = _assignments
-        .map((a) => a.cabinDrawerId)
-        .whereType<int>()
-        .where(unitIdsInGroup.contains)
-        .toSet();
-    if (drawerUnitIds.isEmpty) return;
-
-    drawerUnitIds.every(_selectedUnitIds.contains)
-        ? _selectedUnitIds.removeAll(drawerUnitIds)
-        : _selectedUnitIds.addAll(drawerUnitIds);
-    notifyListeners();
+    if (_selection.toggleAll(AssignmentSelection.inGroup(group, _assignments))) notifyListeners();
   }
 
+  /// [groups]: kabin görsel verisi — kilitli serum raflarının avadanlık
+  /// kilit adresleri buradan çözülür.
   void startRefill({
+    required List<DrawerGroup> groups,
     required void Function(List<CabinOperationDrawerJob> jobs, int skippedCount) onQueueReady,
     required void Function(CabinOperationFailure failure) onFailed,
   }) {
@@ -113,6 +114,7 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.refill),
+      groups: groups,
     );
 
     if (result.jobs.isEmpty) {

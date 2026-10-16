@@ -72,7 +72,7 @@ class _MasterRefundViewState extends ConsumerState<MasterRefundView> {
         // çekmece açılmadan önce.
         if (!await _runQrGate(selection)) return;
 
-        final skipped = await _execution?.start(selection.checkedItems) ?? const [];
+        final skipped = await _execution?.start(selection.checkedItems, groups: widget.stationContext.allGroups) ?? const [];
         if (skipped.isEmpty || !mounted) return;
         MessageUtils.showErrorSnackbar(context, context.l10n.refund_error_drawerNotResolved(skipped.length));
       },

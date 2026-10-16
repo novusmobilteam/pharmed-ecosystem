@@ -67,6 +67,10 @@ class DrugDTO extends MedicineDto {
   final bool isNotSerumCabinetMaxValue;
   final bool isNotCubicDrawrMaxValue;
   final bool isRfidEnable;
+  
+  /// Al-Ver butonu aktif mi — serum kabininde Al-Ver tuşlarıyla miktar
+  /// doğrulaması (alım/iade). Rafın ayarıyla birlikte geçerlidir.
+  final bool isTakeGiveButtonActive;
 
   final String? collectNote;
   final String? returnNote;
@@ -144,6 +148,7 @@ class DrugDTO extends MedicineDto {
     this.activeIngredientIds = const [],
     this.equivalentCode,
     this.isRfidEnable = false,
+    this.isTakeGiveButtonActive = false,
   });
 
   factory DrugDTO.fromJson(Map<String, dynamic> json) {
@@ -195,6 +200,7 @@ class DrugDTO extends MedicineDto {
       isIndependentMaterial: json['isIndependentMaterial'] as bool? ?? false,
       isCanLowerDose: json['isCanLowerDose'] as bool? ?? false,
       isRfidEnable: json['isRfidCard'] as bool? ?? false,
+      isTakeGiveButtonActive: json['isTakeGiveButtonActive'] as bool? ?? false,
       collectNote: json['collectNote'] as String?,
       returnNote: json['returnNote'] as String?,
       destructionNote: json['destructionNote'] as String?,
@@ -294,6 +300,7 @@ class DrugDTO extends MedicineDto {
       'isIndependentMaterial': isIndependentMaterial,
       'isCanLowerDose': isCanLowerDose,
       'isRfidCard': isRfidEnable,
+      'isTakeGiveButtonActive': isTakeGiveButtonActive,
     };
   }
 
@@ -330,6 +337,7 @@ class DrugDTO extends MedicineDto {
       isSinglePatientAccess: isSinglePatientAccess,
       isSingleUse: isSingleUse,
       isRfidEnable: isRfidEnable,
+      isTakeGiveButtonActive: isTakeGiveButtonActive,
       isCameraRecording: isCameraRecording,
       isWastagePharmacyApproval: isWastagePharmacyApproval,
       isWastageOrderRenewed: isWastageOrderRenewed,

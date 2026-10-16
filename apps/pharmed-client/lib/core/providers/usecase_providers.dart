@@ -164,6 +164,14 @@ final saveMobileCabinDesignUseCaseProvider = Provider((ref) {
   );
 });
 
+final getSerumLayoutUseCaseProvider = Provider((ref) {
+  return GetSerumLayoutUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
+final saveSerumLayoutUseCaseProvider = Provider((ref) {
+  return SaveSerumLayoutUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
 final finishCabinSetupUseCaseProvider = Provider((ref) {
   return FinishCabinSetupUseCase(
     createCabin: ref.read(createCabinUseCaseProvider),
@@ -427,6 +435,10 @@ final openCubicLidUseCaseProvider = Provider((ref) {
 
 final monitorCubicLidUseCaseProvider = Provider<MonitorCubicLidUseCase>(
   (ref) => MonitorCubicLidUseCase(ref.read(scanManagerUseCaseProvider), ref.read(cabinOperationServiceProvider)),
+);
+
+final openSerumTrayUseCaseProvider = Provider<OpenSerumTrayUseCase>(
+  (ref) => OpenSerumTrayUseCase(ref.read(trayLockServiceProvider)),
 );
 
 final monitorDrawerClosureUseCaseProvider = Provider((ref) {

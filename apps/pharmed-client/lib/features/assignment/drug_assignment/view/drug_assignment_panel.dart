@@ -211,7 +211,7 @@ class _CellSelectedContent extends ConsumerWidget {
             ),
 
             // Sil — sadece atanmış göz için
-            if (state.isAssigned) ...[
+            if (state.canDelete) ...[
               const SizedBox(height: 8),
               MedButton(
                 label: context.l10n.assignment_removeAssignmentButton,

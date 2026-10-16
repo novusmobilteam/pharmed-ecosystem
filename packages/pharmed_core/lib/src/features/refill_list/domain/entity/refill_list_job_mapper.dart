@@ -4,6 +4,7 @@ abstract final class RefillListJobMapper {
   static ({List<CabinOperationDrawerJob> jobs, List<RefillListDetail> skipped}) build({
     required List<RefillListDetail> rows,
     List<int> cabinOrder = const [],
+    List<DrawerGroup> groups = const [],
   }) => CabinOperationQueueBuilder.build(
     items: rows,
     assignmentOf: (row) => row.toCompatibleQuantity(),
@@ -17,6 +18,7 @@ abstract final class RefillListJobMapper {
       row,
     ),
     cabinOrder: cabinOrder,
+    groups: groups,
   );
 
   /// Dolum alanlarına varsayılan olarak KALAN planlanan miktarı yazar —

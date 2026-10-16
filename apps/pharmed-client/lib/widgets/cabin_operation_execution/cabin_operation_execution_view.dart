@@ -162,7 +162,7 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
                   child: Column(
                     spacing: 24.0,
                     children: [
-                      if (job.isKubik || job.isReturnDrawer) SizedBox(height: 220),
+                      if (job.isKubik || job.isReturnDrawer || job.isSerumTrayJob) SizedBox(height: 220),
                       Expanded(flex: 3, child: DrawerLayoutOverviewPanel(item: activeItem)),
                     ],
                   ),
@@ -184,8 +184,16 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
     final controller = widget.controller;
     final jobs = controller.jobs;
     final completed = jobs.where((j) => j.status == CabinOperationJobStatus.completed).length;
-    final isOpened = controller.drawerStage is MasterDrawerOpened;
-    final canConfirm = isOpened && !controller.isSaving && !controller.isStopping && target.isValid;
+    // Serum avadanlığı "Tamamla"dan önce yerine itilmiş olabilir (LidClosed).
+    final stage = controller.drawerStage;
+    final isOpened = stage is MasterDrawerOpened || (job.isSerumTrayJob && stage is MasterDrawerLidClosed);
+    final canConfirm =
+        isOpened &&
+        !controller.isSaving &&
+        !controller.isStopping &&
+        target.isValid &&
+        controller.isTakeGiveSatisfied;
+    final takeGiveExpected = controller.takeGiveExpected;
 
     return CabinExecutionPanel(
       header: CabinExecutionHeader(
@@ -200,13 +208,25 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
         onRetryLid: controller.retryCubicLid,
         onSkipLid: controller.skipCurrentLid,
         onAcknowledgeLidClosed: controller.acknowledgeLidClosedManually,
-        child: CabinOperationEntryBody(
-          job: job,
-          target: target,
-          handlers: controller,
-          drawerGroup: drawerGroup,
-          enabled: !controller.isSaving,
-          isPerCellMiadEnabled: controller.isPerCellMiadEnabled,
+        isSerumTray: target.serumTray != null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (takeGiveExpected != null) ...[
+              CabinTakeGiveVerificationBar(expected: takeGiveExpected, reading: controller.takeGiveReading),
+              const SizedBox(height: 12),
+            ],
+            Expanded(
+              child: CabinOperationEntryBody(
+                job: job,
+                target: target,
+                handlers: controller,
+                drawerGroup: drawerGroup,
+                enabled: !controller.isSaving,
+                isPerCellMiadEnabled: controller.isPerCellMiadEnabled,
+              ),
+            ),
+          ],
         ),
       ),
       footer: CabinExecutionFooter(

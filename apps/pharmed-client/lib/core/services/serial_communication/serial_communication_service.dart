@@ -4,7 +4,7 @@
 // ÖZELLİKLER:
 //   - Mutex ile eşzamanlı komut koruması
 //   - Otomatik fallback port taraması
-//   - Protokol bitiş karakteri tespiti (-, ,, ;, ])
+//   - Protokol bitiş karakteri tespiti (-, ,, ;, ] ve kilit kartı için \)
 //   - Buffer biriktirme ile parçalı veri desteği
 //
 // HATA YÖNETİMİ:
@@ -20,7 +20,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
-import 'package:pharmed_core/pharmed_core.dart';
+// pharmed_core'un TimeoutException'ı (AppException) dart:async'inkini gölgeler —
+// gizlenmezse aşağıdaki `on TimeoutException` yanıt zaman aşımını YAKALAMAZ.
+import 'package:pharmed_core/pharmed_core.dart' hide TimeoutException;
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SerialCommunicationService implements ISerialCommunicationService {
@@ -325,7 +327,12 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
       final current = _buffer.toString().trim();
 
-      if (current.endsWith('-') || current.endsWith(',') || current.endsWith(';') || current.endsWith(']')) {
+      if (current.endsWith('-') ||
+          current.endsWith(',') ||
+          current.endsWith(';') ||
+          current.endsWith(']') ||
+          // Serum avadanlık kilit kartı yanıtları `/…\` çerçevelidir.
+          current.endsWith(TrayLockProtocol.responseTerminator)) {
         // MedLogger.info(
         //   unit: 'SW-UNIT-SER',
         //   swreq: 'SWREQ-HW-SER-001',

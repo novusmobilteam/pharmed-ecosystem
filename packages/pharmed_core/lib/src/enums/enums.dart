@@ -44,3 +44,5 @@ export 'station_transaction_type.dart';
 export 'camera_recording_failure_reason.dart';
 export 'fingerprint_failure_reason.dart';
 export 'printer_failure_reason.dart';
+export 'serum_shelf_lock_type.dart';
+export 'serum_tray_size.dart';

@@ -16,6 +16,21 @@
 //   → resumeAfterTargetCompleted → sıradaki kapak / hedef / job.
 //   Kapak açılamazsa (LidFailed) kullanıcı skipCurrentLid ile gözü atlayabilir.
 //
+// SERUM (job.isSerumTrayJob):
+//   Serum kapağı bir kez açılır, tüm avadanlıklar aynı açılışta işlenir.
+//   Kilitli raftaki avadanlıkta (target.serumTray) kilit açılır — kübik
+//   kapağın eşi. Kilit kartı bir avadanlık dışarıdayken başkasını açmadığı
+//   için sıradaki hedefe, completesOnPhysicalClose'dan BAĞIMSIZ olarak,
+//   avadanlık yerine itildikten (LidClosed) sonra geçilir. Kilitsiz raftaki
+//   avadanlıkta açılacak bir şey yoktur — "Tamamla" doğrudan ilerletir.
+//
+// AL-VER DOĞRULAMASI (target.takeGiveExpectedQuantity != null):
+//   Raf ve ilaç ayarı açıksa (alım/iade) avadanlığın Al-Ver tuş değeri
+//   izlenir; değer beklenen adetle eşleşmeden ve kullanıcı bu açılışta
+//   tuşlara dokunmadan hedef TAMAMLANMAZ — ne "Tamamla" ile ne de avadanlık
+//   yerine itilerek. Eşleşmeden itilirse kayıt yapılmaz, uyarı gösterilir ve
+//   aynı avadanlığın kilidi yeniden açılır.
+//
 // Sınıf: Class B
 import 'dart:async';
 
@@ -220,17 +235,40 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     );
   }
 
-  /// Kübik gözün kapağını, kuyruğun politikasına göre açar.
-  Future<void> _openLid(MedicineAssignment cellAssignment) {
+  // ── Al-Ver doğrulaması ────────────────────────────────────────────────────
+
+  /// Aktif hedefte Al-Ver tuşlarıyla girilmesi gereken adet; doğrulama yoksa null.
+  int? get takeGiveExpected => currentTarget?.takeGiveExpectedQuantity;
+
+  /// Aktif avadanlığın Al-Ver tuş değeri (izleniyorsa).
+  TrayKeypadReading? get takeGiveReading => trayKeypad;
+
+  /// Doğrulama yoksa her zaman true; varsa tuş değeri eşleşmeli ve kullanıcı
+  /// bu açılışta tuşlara dokunmuş olmalı.
+  bool get isTakeGiveSatisfied {
+    final expected = takeGiveExpected;
+    if (expected == null) return true;
+    return trayKeypad?.matches(expected) ?? false;
+  }
+
+  /// Job açık çekmecede alt birim (kübik kapak / serum avadanlığı) bazında mı ilerliyor.
+  bool _hasSubUnits(TJob job) => job.isKubik || job.isSerumTrayJob;
+
+  /// Hedefin alt birimini açar: kilitli serum avadanlığı ya da kübik kapak
+  /// (kuyruğun politikasına göre izlenerek). Kilitsiz serum avadanlığında
+  /// açılacak bir şey yok — serum kapağı zaten açık.
+  Future<void> _openSubUnit(TJob job, TTarget target) async {
     _currentTargetSaved = false;
-    return openCubicLid(cellAssignment, awaitLidClose: completesOnPhysicalClose);
+    final tray = target.serumTray;
+    if (tray != null) return openSerumTray(tray, watchKeypad: target.takeGiveExpectedQuantity != null);
+    if (job.isKubik) return openCubicLid(target.assignment, awaitLidClose: completesOnPhysicalClose);
   }
 
   @override
   void onDrawerOpened() {
     final job = currentJob;
-    if (job == null || !job.isKubik) return;
-    unawaited(_openLid(job.targets[_currentTargetIndex].assignment));
+    if (job == null || !_hasSubUnits(job)) return;
+    unawaited(_openSubUnit(job, job.targets[_currentTargetIndex]));
   }
 
   /// Fiziksel kapanış GERÇEKLEŞTİKTEN SONRA, kuyruk ilerlemeden HEMEN ÖNCE
@@ -321,6 +359,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     final job = currentJob;
     final target = currentTarget;
     if (job == null || target == null) return;
+    if (!isTakeGiveSatisfied) return; // UI zaten engeller — savunma amaçlı
 
     isSaving = true;
     final ok = await saveTarget(target); // hata olursa saveTarget kendi setQueueFailure'ını çağırır
@@ -346,7 +385,19 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     if (job == null || target == null) return;
 
     if (!completesOnPhysicalClose) {
-      if (job.isKubik) {
+      if (job.isSerumTrayJob && target.serumTray == null) {
+        // Kilitsiz raf: avadanlık serbest, doğrudan sıradakine.
+        await advanceCubicLid();
+      } else if (job.isSerumTrayJob) {
+        // Avadanlık yerine itilmeden sıradaki açılamaz — kapanış beklenir.
+        _currentTargetSaved = true;
+        isSaving = false;
+        if (drawerStage is MasterDrawerLidClosed) {
+          await advanceCubicLid();
+        } else {
+          confirmLidClose();
+        }
+      } else if (job.isKubik) {
         await advanceCubicLid();
       } else {
         isSaving = false;
@@ -359,7 +410,10 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     isSaving = false;
 
     final stage = drawerStage;
-    if (job.isKubik) {
+    if (job.isSerumTrayJob && target.serumTray == null) {
+      // Kilitsiz serum avadanlığı: beklenecek fiziksel kapanış yok.
+      await _continueAfterLidClosed(target);
+    } else if (_hasSubUnits(job)) {
       if (stage is MasterDrawerLidClosed) {
         await _continueAfterLidClosed(target);
       } else {
@@ -376,7 +430,17 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
   @override
   void onLidClosed() {
-    if (!completesOnPhysicalClose || !isExecuting || _stopRequested) return;
+    if (!isExecuting || _stopRequested) return;
+
+    if (!completesOnPhysicalClose) {
+      // Serum avadanlığı "Tamamla"dan sonra yerine itildi — sıradakine geç.
+      // Kayıttan ÖNCE itildiyse kayıt bitince advanceAfterTargetSaved ilerler.
+      final job = currentJob;
+      if (job != null && currentTarget?.serumTray != null && _currentTargetSaved && !_isSaving) {
+        unawaited(advanceCubicLid());
+      }
+      return;
+    }
 
     // "Tamamla" yolunun kaydı sürüyor — bitince advanceAfterTargetSaved
     // stage'e bakıp devam eder. Burada ikinci bir kayıt BAŞLATILMAMALI.
@@ -388,6 +452,26 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   }
 
   Future<void> _continueAfterLidClosed(TTarget target) async {
+    // Avadanlık Al-Ver değeri eşleşmeden yerine itildi — kayıt yapılmaz,
+    // aynı avadanlık yeniden açılır.
+    if (!_currentTargetSaved && !isTakeGiveSatisfied) await refreshTrayKeypad();
+    if (!_currentTargetSaved && !isTakeGiveSatisfied) {
+      final job = currentJob;
+      MedLogger.warn(
+        unit: 'CabinDrawerQueue',
+        swreq: 'SWREQ-CLI-DRAWER-QUEUE-MIXIN-001',
+        message: 'Al-Ver değeri eşleşmeden avadanlık itildi — kayıt yapılmadı, kilit yeniden açılıyor',
+        context: {
+          'expected': target.takeGiveExpectedQuantity,
+          'reading': trayKeypad?.toString(),
+          'tray': target.serumTray?.toString(),
+        },
+      );
+      setQueueFailure(const CabinValidationFailure(reason: CabinValidationReason.takeGiveMismatch));
+      if (job != null) await _openSubUnit(job, target);
+      return;
+    }
+
     final completed = await _completeTargetAfterPhysicalClose(target, then: advanceCubicLid);
     if (!completed) return;
     await advanceCubicLid();
@@ -406,7 +490,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
     _currentTargetIndex = nextTarget;
     isSaving = false;
     notifyListeners();
-    await _openLid(job.targets[nextTarget].assignment);
+    await _openSubUnit(job, job.targets[nextTarget]);
   }
 
   /// LidFailed durumunda aktif gözü kayıt yapmadan atlar ve sıradaki göze
@@ -417,7 +501,9 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
   Future<void> skipCurrentLid() async {
     final stage = drawerStage;
     if (!isExecuting || stage is! MasterDrawerLidFailed) return;
-    if (stage.failure == MasterDrawerFailure.lidSensorLost) return;
+    if (stage.failure == MasterDrawerFailure.lidSensorLost || stage.failure == MasterDrawerFailure.traySensorLost) {
+      return;
+    }
 
     _skippedTargets = {..._skippedTargets, (_currentIndex, _currentTargetIndex)};
     MedLogger.warn(

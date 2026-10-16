@@ -8,7 +8,14 @@ class DeleteMedicineAssignmentUseCase {
 
   DeleteMedicineAssignmentUseCase(this._repository);
 
+  /// [id]: atamanın bağlı olduğu göz (cabinDrawrId).
   Future<Result<void>> call(int id) {
     return _repository.deleteMedicineAssignment(id);
+  }
+
+  /// Serum kabini: yalnızca verilen avadanlığın atamasını siler. Raf bazlı
+  /// [call] serumda raftaki tüm avadanlık atamalarını sileceği için kullanılmaz.
+  Future<Result<void>> serumTray(int cabinDrawerDetailId) {
+    return _repository.deleteSerumTrayAssignment(cabinDrawerDetailId);
   }
 }

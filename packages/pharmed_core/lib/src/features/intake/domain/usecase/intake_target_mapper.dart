@@ -10,10 +10,15 @@ import 'package:pharmed_core/pharmed_core.dart';
 /// erişilemez. Göz çözülemeyen bir detay varsa null döner — plan kuyruğa
 /// ALINMAZ; aksi halde ya çekmece tam açılır (FIFO güvenliği kalkar) ya da
 /// fiziksel olarak alınmayan stok kayda gider.
+///
+/// Serum avadanlığı: atama avadanlık kimliğini (cabinDrawerDetailId)
+/// taşımıyorsa plandaki stoğun avadanlığından tamamlanır — hedef tek
+/// girişli olur ve kilitli rafta avadanlık kilidi çözülebilir.
 abstract final class IntakeTargetMapper {
   static CabinOperationTarget? build(IntakeItem item, List<IntakeDetail> details) {
-    final assignment = item.assignment;
-    if (assignment == null || details.isEmpty) return null;
+    final base = item.assignment;
+    if (base == null || details.isEmpty) return null;
+    final assignment = _withSerumCell(base, item, details);
 
     final medicine = item.medicine;
     final countType = medicine is Drug ? medicine.countType : CountType.noCount;
@@ -47,14 +52,25 @@ abstract final class IntakeTargetMapper {
     return target.withIntakePlan(activeSteps: activeSteps, openUntilStep: deepestStep);
   }
 
+  static MedicineAssignment _withSerumCell(MedicineAssignment assignment, IntakeItem item, List<IntakeDetail> details) {
+    final isSerum = assignment.drawerUnit?.drawerSlot?.drawerConfig?.isSerum ?? false;
+    if (!isSerum || assignment.cabinDrawerDetailId != null) return assignment;
+    final cellId = _stockOf(item, details.first.stockId)?.cabinDrawerDetailId;
+    return cellId == null ? assignment : assignment.copyWith(cabinDrawerDetailId: cellId);
+  }
+
+  static CabinStock? _stockOf(IntakeItem item, int stockId) {
+    final itemStock = item.stock;
+    return itemStock != null && itemStock.id == stockId
+        ? itemStock
+        : item.assignment?.stocks?.firstWhereOrNull((s) => s.id == stockId);
+  }
+
   /// Stok → göz numarası (1 tabanlı). Önce servisin çözdüğü item.stock
   /// (sipariş bazlı alım), yoksa assignment.stocks (FIFO). İç içe stepNo
   /// boşsa cabinDrawerDetailId üzerinden atamanın göz listesinden bulunur.
   static int? stepNoOf(IntakeItem item, int stockId) {
-    final itemStock = item.stock;
-    final stock = itemStock != null && itemStock.id == stockId
-        ? itemStock
-        : item.assignment?.stocks?.firstWhereOrNull((s) => s.id == stockId);
+    final stock = _stockOf(item, stockId);
     if (stock == null) return null;
 
     final nested = stock.cabinDrawerDetail?.stepNo;

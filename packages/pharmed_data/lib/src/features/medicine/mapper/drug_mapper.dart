@@ -64,6 +64,7 @@ class DrugMapper {
       isNotSerumCabinetMaxValue: dto.isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: dto.isNotCubicDrawrMaxValue,
       isRfidEnable: dto.isRfidEnable,
+      isTakeGiveButtonActive: dto.isTakeGiveButtonActive,
     );
   }
 
@@ -124,6 +125,7 @@ class DrugMapper {
       isCanLowerDose: entity.isCanLowerDose,
       isIndependentMaterial: entity.isIndependentMaterial,
       isRfidEnable: entity.isRfidEnable,
+      isTakeGiveButtonActive: entity.isTakeGiveButtonActive,
     );
   }
 

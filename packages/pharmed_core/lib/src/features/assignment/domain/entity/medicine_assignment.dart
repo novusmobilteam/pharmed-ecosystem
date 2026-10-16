@@ -10,6 +10,11 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 class MedicineAssignment {
   final int? id;
   final int? cabinDrawerId;
+
+  /// Yalnızca serum kabininde: atamanın ait olduğu avadanlık (DrawerCell.id).
+  /// Serumda bir rafta (DrawerUnit) birden fazla atama olur; atama bu alanla
+  /// tek bir avadanlığa daralır. Diğer çekmecelerde null ve hiç gönderilmez.
+  final int? cabinDrawerDetailId;
   final num minQuantity;
   final num criticalQuantity;
   final num maxQuantity;
@@ -24,6 +29,7 @@ class MedicineAssignment {
   MedicineAssignment({
     this.id,
     this.cabinDrawerId,
+    this.cabinDrawerDetailId,
     this.minQuantity = 0.0,
     this.criticalQuantity = 0.0,
     this.maxQuantity = 0.0,
@@ -89,6 +95,7 @@ class MedicineAssignment {
   MedicineAssignment copyWith({
     int? id,
     int? cabinDrawerId,
+    int? cabinDrawerDetailId,
     num? minQuantity,
     num? criticalQuantity,
     num? maxQuantity,
@@ -103,6 +110,7 @@ class MedicineAssignment {
     return MedicineAssignment(
       id: id ?? this.id,
       cabinDrawerId: cabinDrawerId ?? this.cabinDrawerId,
+      cabinDrawerDetailId: cabinDrawerDetailId ?? this.cabinDrawerDetailId,
       minQuantity: minQuantity ?? this.minQuantity,
       criticalQuantity: criticalQuantity ?? this.criticalQuantity,
       maxQuantity: maxQuantity ?? this.maxQuantity,
@@ -116,5 +124,11 @@ class MedicineAssignment {
     );
   }
 
-  factory MedicineAssignment.empty({required int cabinDrawerId}) => MedicineAssignment(cabinDrawerId: cabinDrawerId);
+  factory MedicineAssignment.empty({required int cabinDrawerId, int? cabinDrawerDetailId}) =>
+      MedicineAssignment(cabinDrawerId: cabinDrawerId, cabinDrawerDetailId: cabinDrawerDetailId);
+
+  /// Bu atama verilen avadanlığa (DrawerCell) mı ait — serum eşleştirmesi.
+  /// Gönderilen alan ([cabinDrawerDetailId]) yoksa cevaptaki hücre listesine bakılır.
+  bool ownsCell(int cellId) =>
+      cabinDrawerDetailId == cellId || (cabinDrawerDetail?.any((c) => c.id == cellId) ?? false);
 }

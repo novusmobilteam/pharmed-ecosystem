@@ -139,6 +139,37 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <DrawerSlotDTO>[]), error: Result.error);
   }
 
+  /// Serum kabininin kayıtlı raf/avadanlık yerleşimi. Kayıt yoksa null dönebilir.
+  Future<Result<SerumLayoutDTO?>> getSerumLayout(int slotId) {
+    return fetchRequest<SerumLayoutDTO>(
+      path: '/CabinDrawr/serum/details',
+      query: {'cabinDesignId': slotId},
+      parser: BaseRemoteDataSource.singleParser(SerumLayoutDTO.fromJson),
+      successLog: 'Serum yerleşimi getirildi',
+      emptyLog: 'Serum yerleşimi bulunamadı',
+    );
+  }
+
+  /// Serum yerleşiminin ilk kaydı (id'siz).
+  Future<Result<void>> createSerumLayout(SerumLayoutDTO dto) {
+    return postRequest(
+      path: '/CabinDrawr/serum',
+      body: dto.toJson(),
+      parser: BaseRemoteDataSource.voidParser(),
+      successLog: 'Serum yerleşimi kaydedildi',
+    );
+  }
+
+  /// Serum yerleşiminin güncellemesi (mevcut id'lerle).
+  Future<Result<void>> updateSerumLayout(SerumLayoutDTO dto) {
+    return putRequest(
+      path: '/CabinDrawr/serum',
+      body: dto.toJson(),
+      parser: BaseRemoteDataSource.voidParser(),
+      successLog: 'Serum yerleşimi güncellendi',
+    );
+  }
+
   Future<Result<void>> createMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers) {
     return postBulkRequest(
       path: '/CabinDesign/mobileBulk',

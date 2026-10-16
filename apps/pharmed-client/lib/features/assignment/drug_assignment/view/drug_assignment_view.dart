@@ -56,6 +56,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
     final groups = _extractGroups(state);
     final selectedUnitId = state is DrugAssignmentCellSelected ? state.selectedUnitId : null;
+    final selectedCellId = state is DrugAssignmentCellSelected ? state.selectedCellId : null;
     final assignments = _assignments(state);
 
     final idle = switch (state) {
@@ -66,21 +67,16 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
     return CabinOperationSelectionLayout(
       isLoading: state is DrugAssignmentLoading,
-      left: Column(
-        spacing: 6.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: CabinOverviewSelectionPanel(
-              cabin: widget.cabinContext.cabin,
-              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-              groups: groups,
-              assignments: assignments,
-              selectedUnitIds: selectedUnitId != null ? {selectedUnitId} : const {},
-              onCellTap: (unit) => notifier.onCellTap(unit, null),
-            ),
-          ),
-        ],
+      left: CabinOverviewSelectionPanel(
+        cabin: widget.cabinContext.cabin,
+        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+        groups: groups,
+        assignments: assignments,
+        // Serumda raf değil avadanlık seçilidir — raf (unit) vurgulanmaz.
+        selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
+        selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
+        onCellTap: (unit) => notifier.onCellTap(unit, null),
+        onSerumTrayTap: notifier.onSerumTrayTap,
       ),
       right: switch (state) {
         DrugAssignmentCellSelected s => _AssignmentEditPanel(state: s, notifier: notifier),

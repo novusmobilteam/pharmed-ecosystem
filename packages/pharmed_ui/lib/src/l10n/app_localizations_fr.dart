@@ -2542,6 +2542,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID disponible';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Bouton Prendre-Rendre actif ?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Accès multi-patients';
 
   @override
@@ -6560,6 +6563,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Verrou électromagnétique';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel =>
+      'Bouton Prendre-Rendre actif ?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Disponible uniquement sur les étagères à verrou électromagnétique.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Petit';
 
   @override
@@ -6684,12 +6695,37 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le tiroir a été fermé de manière inattendue pendant son utilisation. Veuillez le rouvrir et réessayer.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'Le verrou du plateau n\'a pas pu être libéré.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Un autre plateau de cette étagère est sorti. Repoussez-le d\'abord, puis réessayez.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'L\'état du plateau ne peut pas être lu.';
+
+  @override
+  String get masterDrawer_tray_openingTitle => 'Déverrouillage du plateau';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Veuillez patienter, le verrou du plateau est en cours de déverrouillage.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Repoussez le plateau';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Une fois le plateau repoussé, le plateau suivant est déverrouillé.';
+
+  @override
   String get masterDrawer_status_completingTitle =>
       'Finalisation de votre opération';
 
   @override
-  String get masterDrawer_status_completingSubtitle =>
-      'Finalisation de la prise.';
+  String get masterDrawer_status_completingSubtitle => 'Veuillez patienter';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Armoires Définies';
@@ -6748,6 +6784,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Sélectionner une Armoire';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Étagère $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'Aucun plateau défini';
+
+  @override
   String get assignment_idle_kicker => 'CONFIGURATION DE L\'ARMOIRE';
 
   @override
@@ -6781,6 +6825,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Tiroir $drawer — Case $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Sérum — Étagère $shelf, P-$tray';
   }
 
   @override
@@ -7267,6 +7316,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'Enregistrement impossible';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Vérification Prendre-Rendre';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Saisissez $expected pcs avec les boutons Prendre-Rendre de l’armoire.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'La valeur correspond, vous pouvez terminer l’étape.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'La valeur précédente est affichée — saisissez à nouveau la quantité avec les boutons.';
+
+  @override
+  String get cabinExecution_takeGive_reading =>
+      'Lecture de la valeur Prendre-Rendre…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'La valeur Prendre-Rendre ne correspond pas à la quantité attendue. Rien n’a été enregistré ; le plateau est de nouveau déverrouillé.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Passer au tiroir suivant';
@@ -8196,7 +8269,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_title => 'Imprimante de reçus';
 
   @override
-  String get printer_settings_description => 'Configurez l\'imprimante thermique qui imprime un reçu après les opérations de retrait, de retour et de perte/destruction de médicaments. Ce réglage ne s\'applique qu\'à ce kiosque.';
+  String get printer_settings_description =>
+      'Configurez l\'imprimante thermique qui imprime un reçu après les opérations de retrait, de retour et de perte/destruction de médicaments. Ce réglage ne s\'applique qu\'à ce kiosque.';
 
   @override
   String get printer_settings_connectionLabel => 'Type de connexion';
@@ -8220,10 +8294,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Sélectionner';
 
   @override
-  String get printer_settings_noPortsWarning => 'Aucun port série trouvé. Vérifiez que le convertisseur est branché puis actualisez la liste.';
+  String get printer_settings_noPortsWarning =>
+      'Aucun port série trouvé. Vérifiez que le convertisseur est branché puis actualisez la liste.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'Aucune imprimante Windows installée.';
+  String get printer_settings_noPrintersWarning =>
+      'Aucune imprimante Windows installée.';
 
   @override
   String get printer_settings_refreshTooltip => 'Actualiser la liste';
@@ -8238,19 +8314,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_settings_removeButton => 'Retirer l\'imprimante';
 
   @override
-  String get printer_settings_savedMessage => 'Réglage de l\'imprimante enregistré.';
+  String get printer_settings_savedMessage =>
+      'Réglage de l\'imprimante enregistré.';
 
   @override
   String get printer_settings_removedMessage => 'Imprimante retirée.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Reçu de test envoyé à l\'imprimante.';
+  String get printer_settings_testSuccessMessage =>
+      'Reçu de test envoyé à l\'imprimante.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'Aucune imprimante n\'est configurée sur ce kiosque. Les reçus ne seront pas imprimés après les opérations.';
+  String get printer_settings_notConfiguredNotice =>
+      'Aucune imprimante n\'est configurée sur ce kiosque. Les reçus ne seront pas imprimés après les opérations.';
 
   @override
-  String get printer_settings_unsavedNotice => 'Des modifications ne sont pas enregistrées. Le reçu de test utilise le réglage sélectionné.';
+  String get printer_settings_unsavedNotice =>
+      'Des modifications ne sont pas enregistrées. Le reçu de test utilise le réglage sélectionné.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8258,13 +8338,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'Aucune imprimante n\'est configurée. Choisissez la connexion dans Réglages › Imprimante.';
+  String get printer_error_notConfigured =>
+      'Aucune imprimante n\'est configurée. Choisissez la connexion dans Réglages › Imprimante.';
 
   @override
-  String get printer_error_connectionFailed => 'Impossible de se connecter à l\'imprimante. Vérifiez le câble et le port sélectionné.';
+  String get printer_error_connectionFailed =>
+      'Impossible de se connecter à l\'imprimante. Vérifiez le câble et le port sélectionné.';
 
   @override
-  String get printer_error_writeFailed => 'Le reçu n\'a pas pu être envoyé à l\'imprimante.';
+  String get printer_error_writeFailed =>
+      'Le reçu n\'a pas pu être envoyé à l\'imprimante.';
 
   @override
   String get printer_error_timeout => 'L\'imprimante n\'a pas répondu à temps.';
@@ -8276,7 +8359,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_error_invalidDocument => 'Il n\'y a rien à imprimer.';
 
   @override
-  String get printer_error_unexpected => 'Une erreur inattendue s\'est produite lors de l\'impression du reçu.';
+  String get printer_error_unexpected =>
+      'Une erreur inattendue s\'est produite lors de l\'impression du reçu.';
 
   @override
   String get printer_testReceipt_title => 'Test d\'imprimante';
@@ -8286,7 +8370,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Test des codes-barres';
-
 
   @override
   String get printer_receipt_intakeTitle => 'REÇU DE RETRAIT DE MÉDICAMENTS';
@@ -8306,7 +8389,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get printer_receipt_roomBedLabel => 'Chambre / Lit';
 
-
   @override
   String get printer_receipt_operatorLabel => 'Effectué par';
 
@@ -8320,7 +8402,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get printer_receipt_itemCountLabel => 'Total des articles';
 
   @override
-  String get printer_receipt_inventoryTitle => 'LISTE D\'INVENTAIRE DE LA STATION';
+  String get printer_receipt_inventoryTitle =>
+      'LISTE D\'INVENTAIRE DE LA STATION';
 
   @override
   String get printer_receipt_cabinStockTitle => 'LISTE DU STOCK DE L\'ARMOIRE';
@@ -8333,7 +8416,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Envoyé à l\'imprimante.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Enregistrement des empreintes';

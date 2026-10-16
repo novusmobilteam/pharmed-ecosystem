@@ -4,3 +4,4 @@ export 'master_drawer_failure.dart';
 export 'mobile_drawer_failure.dart';
 export 'rfid_failure.dart';
 export 'cubic_lid_failure.dart';
+export 'tray_lock_failure.dart';

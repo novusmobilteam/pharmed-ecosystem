@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -19,15 +20,21 @@ class MasterRefillSelectionView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selection = ref.watch(masterRefillSelectionNotifierProvider);
     final visible = selection.visibleAssignments;
+    final groups = cabinContext.cabinData?.groups ?? const <DrawerGroup>[];
 
     return CabinOperationSelectionLayout(
       isLoading: selection.isLoadingAssignments,
       left: CabinOverviewSelectionPanel(
         cabin: cabinContext.cabin,
         onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-        groups: cabinContext.cabinData?.groups ?? const [],
+        groups: groups,
         assignments: selection.assignments,
         selectedUnitIds: selection.selectedUnitIds,
+        selectedCellIds: selection.selectedSerumCellIds,
+        onSerumTrayTap: (_, tray) {
+          final id = tray.id;
+          if (id != null) selection.toggleSerumTray(id);
+        },
         onDrawerTap: selection.toggleDrawer,
         onCellTap: (unit) {
           final id = unit.id;
@@ -47,6 +54,8 @@ class MasterRefillSelectionView extends ConsumerWidget {
                 items: visible,
                 selectedItemIds: selection.selectedUnitIds,
                 onToggle: selection.toggleUnit,
+                selectedCellIds: selection.selectedSerumCellIds,
+                onToggleCell: selection.toggleSerumTray,
               ),
         footer: selection.canStart
             ? MedButton(
@@ -55,6 +64,7 @@ class MasterRefillSelectionView extends ConsumerWidget {
                 size: MedButtonSize.lg,
                 variant: MedButtonVariant.primary,
                 onPressed: () => selection.startRefill(
+                  groups: groups,
                   onQueueReady: (jobs, skipped) {
                     ref.read(masterRefillExecutionNotifierProvider).start(jobs);
                   },

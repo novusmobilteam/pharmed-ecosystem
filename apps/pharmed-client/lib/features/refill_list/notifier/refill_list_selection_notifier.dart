@@ -217,7 +217,12 @@ class RefillListSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
         if (cabin.id != null) cabin.id!,
     ];
 
-    final result = RefillListJobMapper.build(rows: selectedItems, cabinOrder: cabinOrder);
+    // Serum avadanlığı kilit adresleri istasyondaki tüm kabinlerin yerleşiminden çözülür.
+    final result = RefillListJobMapper.build(
+      rows: selectedItems,
+      cabinOrder: cabinOrder,
+      groups: _stationContext?.allGroups ?? const [],
+    );
 
     if (result.jobs.isEmpty) {
       onFailed(const CabinValidationFailure(reason: CabinValidationReason.noValidTargets));

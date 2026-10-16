@@ -33,6 +33,11 @@ class MasterDestructionSelectionView extends ConsumerWidget {
           final id = unit.id;
           if (id != null) selection.toggleUnit(id);
         },
+        selectedCellIds: selection.selectedSerumCellIds,
+        onSerumTrayTap: (_, tray) {
+          final id = tray.id;
+          if (id != null) selection.toggleSerumTray(id);
+        },
       ),
       right: CabinSelectionContentShell(
         menu: cabinContext.menu,
@@ -83,13 +88,12 @@ class _AssignmentGrid extends StatelessWidget {
       itemCount: ordered.length,
       itemBuilder: (context, i) {
         final a = ordered[i];
-        final id = a.cabinDrawerId;
         final isAuthorized = selection.isAuthorized(a);
 
         return MedicineAssignmentCard(
           assignment: a,
-          selected: id != null && selection.selectedUnitIds.contains(id),
-          onTap: selection.canSelect(a) ? () => selection.toggleUnit(id!) : null,
+          selected: selection.isSelected(a),
+          onTap: selection.canSelect(a) ? () => selection.toggleAssignment(a) : null,
           isActive: isAuthorized,
           extra: isAuthorized
               ? const []

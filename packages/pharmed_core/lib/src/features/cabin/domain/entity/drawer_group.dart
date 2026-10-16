@@ -5,7 +5,15 @@ class DrawerGroup {
   final DrawerSlot slot;
   final List<DrawerUnit> units;
 
-  DrawerGroup({required this.slot, required this.units});
+  /// Yalnızca serum çekmecesinde: 3 rafın avadanlık yerleşimi (Raf 1 en üst).
+  /// Karttan taranmaz, ayrı servisten okunur. null → okunmadı/okunamadı;
+  /// raflar boş liste değil, her zaman 3 elemandır.
+  final List<SerumShelfLayout>? serumShelves;
+
+  DrawerGroup({required this.slot, required this.units, this.serumShelves});
+
+  DrawerGroup copyWith({List<DrawerUnit>? units, List<SerumShelfLayout>? serumShelves}) =>
+      DrawerGroup(slot: slot, units: units ?? this.units, serumShelves: serumShelves ?? this.serumShelves);
 
   String get address => slot.address ?? '';
   int get orderNumber => slot.orderNumber ?? 999;
@@ -17,6 +25,13 @@ class DrawerGroup {
 
   /// Tip no 250 ise Serumdur
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
+
+  /// Serum çekmecesindeki kayıtlı avadanlıkların (DrawerCell) id'leri.
+  Set<int> get serumTrayIds => {
+    for (final shelf in serumShelves ?? const <SerumShelfLayout>[])
+      for (final tray in shelf.trays)
+        if (tray.id != null) tray.id!,
+  };
 
   String get name {
     if (isSerum) return contextlessL10n().enumCore_cabinTypeSerum;

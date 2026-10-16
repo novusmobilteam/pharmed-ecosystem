@@ -21,6 +21,8 @@ final cabinDesignNotifierProvider = ChangeNotifierProvider.autoDispose<CabinDesi
     scanCabin: ref.read(scanCabinUseCaseProvider),
     createCabin: ref.read(createCabinUseCaseProvider),
     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
+    getSerumLayout: ref.read(getSerumLayoutUseCaseProvider),
+    saveSerumLayout: ref.read(saveSerumLayoutUseCaseProvider),
     updateCabin: ref.read(updateCabinUseCaseProvider),
     activeService: ref.read(activeServiceNotifierProvider),
     cameraDevices: ref.read(cameraDeviceRepositoryProvider),
@@ -35,6 +37,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     required ScanCabinUseCase scanCabin,
     required CreateCabinUseCase createCabin,
     required SaveCabinDesignUseCase saveCabinDesign,
+    required GetSerumLayoutUseCase getSerumLayout,
+    required SaveSerumLayoutUseCase saveSerumLayout,
     required UpdateCabinUseCase updateCabin,
     required ActiveServiceNotifier activeService,
     required ICameraDeviceRepository cameraDevices,
@@ -45,6 +49,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
        _scanCabin = scanCabin,
        _createCabin = createCabin,
        _saveCabinDesign = saveCabinDesign,
+       _getSerumLayout = getSerumLayout,
+       _saveSerumLayout = saveSerumLayout,
        _updateCabin = updateCabin,
        _activeService = activeService;
 
@@ -54,6 +60,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   final ScanCabinUseCase _scanCabin;
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
+  final GetSerumLayoutUseCase _getSerumLayout;
+  final SaveSerumLayoutUseCase _saveSerumLayout;
   final UpdateCabinUseCase _updateCabin;
   final ActiveServiceNotifier _activeService;
   final ICameraDeviceRepository _cameraDevices;
@@ -74,6 +82,9 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   static const _saveOp = OperationKey.custom('cabin-design-save');
   static const _toggleStatusOp = OperationKey.custom('cabin-design-toggle-status');
   static const _createCabinOp = OperationKey.custom('cabin-design-create-cabin');
+
+  /// Serum raf yerleşiminin okunması — sadece serum panelinde loading/hata.
+  static const _serumLoadOp = OperationKey.custom('cabin-design-serum-load');
 
   /// Seçili kabin paneline satır içi gösterilen hatalar.
   static const _inlineErrorOps = [_saveOp, _rescanOp, _toggleStatusOp];
@@ -107,6 +118,11 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   List<CameraDevice> _cameras = const [];
   List<CameraDevice> get cameras => _cameras;
 
+  /// Backend'den okunan serum yerleşimleri (slotId → 3 raf). Kabin her
+  /// yüklendiğinde yeniden çekilir; okunmamış slot düzenlenemez (kayıtlı
+  /// yerleşimin üzerine yanlışlıkla yeni kayıt atılmasın diye).
+  final Map<int, List<SerumShelfLayout>> _serumLayouts = {};
+
   // ── Türetilmiş ────────────────────────────────────────────────────────────
 
   bool get hasStation => _station != null;
@@ -134,6 +150,21 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   List<DrawerGroup> get displayedGroups => _pending.scanGroups ?? _groups;
 
   DrawerGroup? get selectedGroup => _groups.firstWhereOrNull((g) => g.slot.id == _selectedSlotId);
+
+  /// Serum slot'unun ekranda gösterilecek 3 rafı: bekleyen değişiklik >
+  /// kayıtlı > boş (henüz okunmadıysa).
+  List<SerumShelfLayout> serumShelvesFor(int slotId) {
+    if (_pending.hasSerumLayoutChange && _pending.serumSlotId == slotId) return _pending.serumShelves!;
+    return _serumBaseline(slotId);
+  }
+
+  List<SerumShelfLayout> _serumBaseline(int slotId) => _serumLayouts[slotId] ?? SerumShelfLayout.emptyShelves();
+
+  bool get isLoadingSerumLayout => isLoading(_serumLoadOp);
+  String? get serumLoadError => isFailed(_serumLoadOp) ? message(_serumLoadOp) : null;
+
+  /// Yerleşim okunmadan düzenlemeye izin verilmez.
+  bool canEditSerumLayout(int slotId) => _serumLayouts.containsKey(slotId) && !isSaving && !isLoadingSerumLayout;
 
   int? get effectiveReturnSlotId {
     if (!_pending.hasReturnChange) return _currentReturnSlotId;
@@ -211,6 +242,25 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
         _clearInlineErrors(notify: false);
       },
     );
+    if (isFailed(key) || _cabin?.id != cabinId) return;
+
+    // Serum yerleşimi karttan taranmaz, ayrı servisten okunur.
+    _serumLayouts.clear();
+    clearOperation(_serumLoadOp);
+    for (final slotId in _groups.where((g) => g.isSerum).map((g) => g.slot.id).whereType<int>()) {
+      await loadSerumLayout(slotId);
+    }
+  }
+
+  /// Serum slot'unun kayıtlı yerleşimini okur. Panel "Tekrar Dene" ile de çağırır.
+  Future<void> loadSerumLayout(int slotId) async {
+    await execute(
+      _serumLoadOp,
+      operation: () => _getSerumLayout.call(slotId),
+      onData: (shelves) {
+        _serumLayouts[slotId] = shelves;
+      },
+    );
   }
 
   /// Sol listeden kabin seçimi. Yeni kabin formu açıkken de çalışır
@@ -250,6 +300,21 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   void updatePendingName(String? value) {
     final same = value?.trim() == _cabin?.name?.trim();
     _pending = _pending.withName(same ? null : value);
+    _clearInlineErrors(notify: false);
+    notifyListeners();
+  }
+
+  /// Serum kabininde tek rafın yeni hali (kilit / avadanlık ekle-çıkar).
+  /// Sonuç kayıtlı hale eşitse bekleyen değişiklik temizlenir.
+  void updateSerumShelf(int slotId, SerumShelfLayout shelf) {
+    if (!canEditSerumLayout(slotId)) return;
+    if (shelf.usedArea > SerumShelfLayout.totalArea) return;
+
+    final updated = [
+      for (final s in serumShelvesFor(slotId)) s.orderNo == shelf.orderNo ? shelf : s,
+    ];
+    final same = const ListEquality<SerumShelfLayout>().equals(updated, _serumBaseline(slotId));
+    _pending = _pending.withSerumLayout(slotId, same ? null : updated);
     _clearInlineErrors(notify: false);
     notifyListeners();
   }
@@ -397,7 +462,16 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
       if (r.isError) return _failSave(_errorOf(r));
     }
 
-    // ── 5. Tasarım (yeni tarama sonucu farklıysa) ─────────────────────
+    // ── 5. Serum raf yerleşimi ────────────────────────────────────────
+    if (pending.hasSerumLayoutChange) {
+      final slotId = pending.serumSlotId!;
+      final shelves = pending.serumShelves!;
+      final r = await _saveSerumLayout.call(serumSlotId: slotId, shelves: shelves);
+      if (r.isError) return _failSave(_errorOf(r));
+      // Yeni id'ler için yerleşim adım 7'deki yeniden yüklemede tekrar okunur.
+    }
+
+    // ── 6. Tasarım (yeni tarama sonucu farklıysa) ─────────────────────
     if (finalScanGroups != null) {
       final r = await _saveCabinDesign.call(
         cabinId: updatedCabin.id!,
@@ -407,7 +481,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
       if (r.isError) return _failSave(_errorOf(r));
     }
 
-    // ── 6. Hepsi başarılı — kabini temiz baştan yükle ─────────────────
+    // ── 7. Hepsi başarılı — kabini temiz baştan yükle ─────────────────
     await _loadCabin(updatedCabin, fullScreen: false);
     setSuccess(_saveOp);
     return true;
@@ -604,6 +678,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     _currentReturnSlotId = null;
     _pending = CabinPendingChanges.none;
     _cameras = const [];
+    _serumLayouts.clear();
     clearAllOperations();
   }
 

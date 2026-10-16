@@ -251,7 +251,7 @@ class _QuantityFormPanel extends StatelessWidget {
         ),
 
         const Spacer(),
-        if (state.isAssigned) ...[
+        if (state.canDelete) ...[
           MedButton(
             label: context.l10n.assignment_edit_removeLink,
             fullWidth: true,

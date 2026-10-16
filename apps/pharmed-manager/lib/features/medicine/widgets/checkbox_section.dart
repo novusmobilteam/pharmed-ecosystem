@@ -17,7 +17,7 @@ class CheckboxSection extends StatelessWidget {
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_CameraRecordingTile(), _IndependentMaterialTile()],
+          children: [_CameraRecordingTile(), _IndependentMaterialTile(), _TakeGiveButtonTile()],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +56,25 @@ class _RfidTile extends StatelessWidget {
           value: vm.drug.isRfidEnable,
           onChanged: (_) => vm.toggleRfid(),
           label: context.l10n.medicine_checkboxRfid,
+        );
+      },
+    );
+  }
+}
+
+/// Serum kabininde Al-Ver tuşlarıyla miktar doğrulaması — rafın ayarıyla
+/// birlikte açıksa alım/iadede girilen miktar tuş değeriyle eşleşmelidir.
+class _TakeGiveButtonTile extends StatelessWidget {
+  const _TakeGiveButtonTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<DrugFormNotifier>(
+      builder: (context, vm, _) {
+        return MedCheckboxField(
+          value: vm.drug.isTakeGiveButtonActive,
+          onChanged: (_) => vm.toggleTakeGiveButton(),
+          label: context.l10n.medicine_checkboxTakeGiveButton,
         );
       },
     );

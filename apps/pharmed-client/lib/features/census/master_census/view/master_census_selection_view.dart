@@ -6,6 +6,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/hardware/hardware.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
+import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../notifier/master_census_execution_notifier.dart';
 import '../notifier/master_census_selection_notifier.dart';
 
@@ -25,6 +26,7 @@ class MasterCensusSelectionView extends ConsumerWidget {
       isLoading: selection.isLoadingAssignments,
       left: CabinOverviewSelectionPanel(
         cabin: cabinContext.cabin,
+        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
         groups: cabinContext.cabinData?.groups ?? const [],
         assignments: selection.assignments,
         selectedUnitIds: selection.selectedUnitIds,
@@ -32,6 +34,11 @@ class MasterCensusSelectionView extends ConsumerWidget {
         onCellTap: (unit) {
           final id = unit.id;
           if (id != null) selection.toggleUnit(id);
+        },
+        selectedCellIds: selection.selectedSerumCellIds,
+        onSerumTrayTap: (_, tray) {
+          final id = tray.id;
+          if (id != null) selection.toggleSerumTray(id);
         },
       ),
       right: CabinSelectionContentShell(
@@ -62,6 +69,8 @@ class MasterCensusSelectionView extends ConsumerWidget {
                 items: visible,
                 selectedItemIds: selection.selectedUnitIds,
                 onToggle: isMedicineMode ? selection.toggleUnit : null,
+                selectedCellIds: selection.selectedSerumCellIds,
+                onToggleCell: isMedicineMode ? selection.toggleSerumTray : null,
               ),
         footer: selection.canStart
             ? MedButton(

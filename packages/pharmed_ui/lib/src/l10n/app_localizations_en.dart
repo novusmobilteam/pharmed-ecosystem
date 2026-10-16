@@ -2474,6 +2474,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID Available';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Take-Give Button Active?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Multi-Patient Access';
 
   @override
@@ -6400,6 +6403,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Electromagnetic Lock';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel =>
+      'Take-Give Button Active?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Available only on shelves with an electromagnetic lock.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Small';
 
   @override
@@ -6522,10 +6533,36 @@ class AppLocalizationsEn extends AppLocalizations {
       'The drawer was closed unexpectedly while still in use. Please reopen and try again.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'The tray lock could not be released.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Another tray on this shelf is pulled out. Push it back first, then try again.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'The tray status cannot be read.';
+
+  @override
+  String get masterDrawer_tray_openingTitle => 'Unlocking Tray';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Please wait, the tray lock is being released.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Push the tray back in';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Once the tray is pushed back, the next tray is unlocked.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'Completing Your Operation';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Finishing intake.';
+  String get masterDrawer_status_completingSubtitle => 'Please wait';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Defined Cabinets';
@@ -6583,6 +6620,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Select Cabinet';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Shelf $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'No trays defined';
+
+  @override
   String get assignment_idle_kicker => 'CABINET CONFIGURATION';
 
   @override
@@ -6616,6 +6661,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Drawer $drawer — Cell $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Serum — Shelf $shelf, T-$tray';
   }
 
   @override
@@ -7091,6 +7141,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'Could not save';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Take-Give Verification';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Enter $expected pcs with the take-give buttons on the cabinet.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'Value matches, you can complete the step.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'The previous value is still shown — enter the quantity again with the buttons.';
+
+  @override
+  String get cabinExecution_takeGive_reading => 'Reading take-give value…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'The take-give value does not match the expected quantity. Nothing was saved; the tray is being unlocked again.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Skip to Next Drawer';
@@ -8009,7 +8082,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_title => 'Receipt printer';
 
   @override
-  String get printer_settings_description => 'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.';
+  String get printer_settings_description =>
+      'Set up the thermal printer that prints a receipt after medication intake, return and waste/destruction operations. This setting applies to this kiosk only.';
 
   @override
   String get printer_settings_connectionLabel => 'Connection type';
@@ -8033,10 +8107,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Select';
 
   @override
-  String get printer_settings_noPortsWarning => 'No serial port found. Check that the converter is plugged in and refresh the list.';
+  String get printer_settings_noPortsWarning =>
+      'No serial port found. Check that the converter is plugged in and refresh the list.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'No installed Windows printer found.';
+  String get printer_settings_noPrintersWarning =>
+      'No installed Windows printer found.';
 
   @override
   String get printer_settings_refreshTooltip => 'Refresh list';
@@ -8057,13 +8133,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_settings_removedMessage => 'Printer removed.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Test receipt sent to the printer.';
+  String get printer_settings_testSuccessMessage =>
+      'Test receipt sent to the printer.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'No printer is set up on this kiosk. Receipts will not be printed after operations.';
+  String get printer_settings_notConfiguredNotice =>
+      'No printer is set up on this kiosk. Receipts will not be printed after operations.';
 
   @override
-  String get printer_settings_unsavedNotice => 'There are unsaved changes. The test receipt uses the selected setting.';
+  String get printer_settings_unsavedNotice =>
+      'There are unsaved changes. The test receipt uses the selected setting.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8071,13 +8150,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'No printer is set up. Select the connection under Settings › Printer.';
+  String get printer_error_notConfigured =>
+      'No printer is set up. Select the connection under Settings › Printer.';
 
   @override
-  String get printer_error_connectionFailed => 'Could not connect to the printer. Check the cable and the selected port.';
+  String get printer_error_connectionFailed =>
+      'Could not connect to the printer. Check the cable and the selected port.';
 
   @override
-  String get printer_error_writeFailed => 'The receipt could not be sent to the printer.';
+  String get printer_error_writeFailed =>
+      'The receipt could not be sent to the printer.';
 
   @override
   String get printer_error_timeout => 'The printer did not respond in time.';
@@ -8089,7 +8171,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get printer_error_invalidDocument => 'There is nothing to print.';
 
   @override
-  String get printer_error_unexpected => 'An unexpected error occurred while printing the receipt.';
+  String get printer_error_unexpected =>
+      'An unexpected error occurred while printing the receipt.';
 
   @override
   String get printer_testReceipt_title => 'Printer Test';
@@ -8099,7 +8182,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Barcode test';
-
 
   @override
   String get printer_receipt_intakeTitle => 'MEDICATION INTAKE RECEIPT';
@@ -8118,7 +8200,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_receipt_roomBedLabel => 'Room / Bed';
-
 
   @override
   String get printer_receipt_operatorLabel => 'Performed by';
@@ -8146,7 +8227,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Sent to the printer.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Fingerprint Enrolment';

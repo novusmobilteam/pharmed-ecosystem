@@ -2465,6 +2465,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID Kullanılabilir';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Al-Ver Butonu Aktif mi?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Çoklu Hasta Erişim';
 
   @override
@@ -6352,6 +6355,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Elektromanyetik Kilit';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel => 'Al-Ver Butonu Aktif mi?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Yalnızca elektromanyetik kilitli rafta kullanılabilir.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Küçük';
 
   @override
@@ -6474,10 +6484,36 @@ class AppLocalizationsTr extends AppLocalizations {
       'Çekmece işlem sırasında beklenmedik şekilde kapatıldı. Lütfen tekrar açıp deneyin.';
 
   @override
+  String get masterDrawer_error_trayUnlockFailed =>
+      'Avadanlığın kilidi açılamadı.';
+
+  @override
+  String get masterDrawer_error_trayBusy =>
+      'Rafta başka bir avadanlık çekili. Önce onu yerine itin, sonra tekrar deneyin.';
+
+  @override
+  String get masterDrawer_error_traySensorLost =>
+      'Avadanlığın durumu okunamıyor.';
+
+  @override
+  String get masterDrawer_tray_openingTitle => 'Avadanlık Kilidi Açılıyor';
+
+  @override
+  String get masterDrawer_tray_openingSubtitle =>
+      'Lütfen bekleyin, işlem yapılacak avadanlığın kilidi açılıyor.';
+
+  @override
+  String get masterDrawer_tray_waitingCloseTitle => 'Avadanlığı yerine itin';
+
+  @override
+  String get masterDrawer_tray_waitingCloseSubtitle =>
+      'Avadanlık yerine itildiğinde sıradaki avadanlığa geçilir.';
+
+  @override
   String get masterDrawer_status_completingTitle => 'İşleminiz Tamamlanıyor';
 
   @override
-  String get masterDrawer_status_completingSubtitle => 'Alım tamamlanıyor.';
+  String get masterDrawer_status_completingSubtitle => 'Lütfen bekleyiniz';
 
   @override
   String get cabinDesign_cabinList_sectionTitle => 'Tanımlı Kabinler';
@@ -6535,6 +6571,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinOperation_changeCabinButton => 'Kabin Seçimi';
 
   @override
+  String cabinOperation_serumShelfLabel(int index) {
+    return 'Raf $index';
+  }
+
+  @override
+  String get cabinOperation_serumShelfNoTrays => 'Avadanlık tanımlı değil';
+
+  @override
   String get assignment_idle_kicker => 'KABİN YAPILANDIRMA';
 
   @override
@@ -6568,6 +6612,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String assignment_idle_locationLabel(String drawer, int cell) {
     return 'Çekmece $drawer — Göz $cell';
+  }
+
+  @override
+  String assignment_idle_serumLocationLabel(int shelf, int tray) {
+    return 'Serum — Raf $shelf, A-$tray';
   }
 
   @override
@@ -7043,6 +7092,29 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'İşlem kaydedilemedi';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Al-Ver Doğrulaması';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Kabindeki Al-Ver tuşlarıyla $expected adet girin.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'Değer eşleşti, işlemi tamamlayabilirsiniz.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'Önceki işlemin değeri görünüyor — miktarı tuşlarla yeniden girin.';
+
+  @override
+  String get cabinExecution_takeGive_reading => 'Al-Ver değeri okunuyor…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'Al-Ver değeri beklenen miktarla eşleşmiyor. Kayıt yapılmadı, avadanlık yeniden açılıyor.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Sonraki Çekmeceye Geç';
@@ -7943,7 +8015,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_title => 'Fiş yazıcısı';
 
   @override
-  String get printer_settings_description => 'İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.';
+  String get printer_settings_description =>
+      'İlaç alım, iade ve fire/imha işlemlerinden sonra fiş basan termal yazıcının bağlantısını ayarlayın. Bu ayar yalnızca bu kiosk için geçerlidir.';
 
   @override
   String get printer_settings_connectionLabel => 'Bağlantı türü';
@@ -7967,10 +8040,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_selectPlaceholder => 'Seçiniz';
 
   @override
-  String get printer_settings_noPortsWarning => 'Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.';
+  String get printer_settings_noPortsWarning =>
+      'Sistemde seri port bulunamadı. Dönüştürücünün takılı olduğunu kontrol edip listeyi yenileyin.';
 
   @override
-  String get printer_settings_noPrintersWarning => 'Kurulu Windows yazıcısı bulunamadı.';
+  String get printer_settings_noPrintersWarning =>
+      'Kurulu Windows yazıcısı bulunamadı.';
 
   @override
   String get printer_settings_refreshTooltip => 'Listeyi yenile';
@@ -7991,13 +8066,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_settings_removedMessage => 'Yazıcı tanımı kaldırıldı.';
 
   @override
-  String get printer_settings_testSuccessMessage => 'Test fişi yazıcıya gönderildi.';
+  String get printer_settings_testSuccessMessage =>
+      'Test fişi yazıcıya gönderildi.';
 
   @override
-  String get printer_settings_notConfiguredNotice => 'Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.';
+  String get printer_settings_notConfiguredNotice =>
+      'Bu kioskta yazıcı tanımlı değil. İşlem sonrası fişler basılmaz.';
 
   @override
-  String get printer_settings_unsavedNotice => 'Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.';
+  String get printer_settings_unsavedNotice =>
+      'Kaydedilmemiş değişiklik var. Test fişi seçili ayarla basılır.';
 
   @override
   String printer_settings_mockNotice(String path) {
@@ -8005,10 +8083,12 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get printer_error_notConfigured => 'Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.';
+  String get printer_error_notConfigured =>
+      'Yazıcı tanımlı değil. Ayarlar › Yazıcı bölümünden bağlantıyı seçin.';
 
   @override
-  String get printer_error_connectionFailed => 'Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.';
+  String get printer_error_connectionFailed =>
+      'Yazıcıya bağlanılamadı. Kabloyu ve port seçimini kontrol edin.';
 
   @override
   String get printer_error_writeFailed => 'Fiş yazıcıya gönderilemedi.';
@@ -8023,7 +8103,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get printer_error_invalidDocument => 'Yazdırılacak içerik yok.';
 
   @override
-  String get printer_error_unexpected => 'Fiş yazdırılırken beklenmeyen bir hata oluştu.';
+  String get printer_error_unexpected =>
+      'Fiş yazdırılırken beklenmeyen bir hata oluştu.';
 
   @override
   String get printer_testReceipt_title => 'Yazıcı Testi';
@@ -8033,7 +8114,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_testReceipt_barcodeLabel => 'Barkod testi';
-
 
   @override
   String get printer_receipt_intakeTitle => 'İLAÇ ALIM FİŞİ';
@@ -8052,7 +8132,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_receipt_roomBedLabel => 'Oda / Yatak';
-
 
   @override
   String get printer_receipt_operatorLabel => 'İşlem yapan';
@@ -8080,7 +8159,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get printer_sentMessage => 'Yazıcıya gönderildi.';
-
 
   @override
   String get fingerprint_enroll_screenTitle => 'Parmak İzi Tanıtma';

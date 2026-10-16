@@ -2,6 +2,34 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 enum MedicineListMode { equivalent, all }
 
+/// Atama yapılan hedef.
+///   - Normal göz (kübik / birim doz): yalnızca [unitId] (DrawerUnit).
+///   - Serum avadanlığı: [unitId] = raf (DrawerUnit), [cellId] = avadanlık (DrawerCell).
+///     Serumda bir rafta birden fazla atama olduğu için raf tek başına yetmez.
+final class AssignmentTarget {
+  const AssignmentTarget({required this.unitId, this.cellId});
+
+  final int unitId;
+  final int? cellId;
+
+  bool get isSerumTray => cellId != null;
+
+  /// [a] bu hedefin ataması mı. Serumda avadanlık eşleşmesi yeterlidir —
+  /// serum ataması cabinDrawrId'siz kaydedildiği için cevapta raf id'si boş
+  /// gelebilir. Diğer çekmecelerde göz (cabinDrawrId) eşleşmeli.
+  bool matches(MedicineAssignment a) {
+    final cell = cellId;
+    return cell != null ? a.ownsCell(cell) : a.cabinDrawerId == unitId;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is AssignmentTarget && other.unitId == unitId && other.cellId == cellId;
+
+  @override
+  int get hashCode => Object.hash(unitId, cellId);
+}
+
 sealed class DrugAssignmentUiState {
   const DrugAssignmentUiState();
 }
@@ -54,6 +82,7 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
     required this.assignments,
     required this.cabinId,
     required this.selectedGroup,
+    required this.target,
     required this.assignment,
     required this.medicinePage,
     required this.equivalentMedicinePage, // YENİ
@@ -71,6 +100,9 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   final DrawerGroup selectedGroup;
   final int? selectedStepNo;
 
+  /// Seçili göz ya da serum avadanlığı.
+  final AssignmentTarget target;
+
   final MedicineAssignment assignment;
   final MedicinePageState medicinePage; // "Tüm İlaçlar"
   final MedicinePageState equivalentMedicinePage; // YENİ — "Muadil İlaçlar"
@@ -82,8 +114,13 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   final int? criticalQty;
 
   int get selectedSlotId => selectedGroup.slot.id ?? -1;
-  int? get selectedUnitId => assignment.cabinDrawerId;
+  int get selectedUnitId => target.unitId;
+
+  /// Yalnızca serum avadanlığı seçiliyse dolu.
+  int? get selectedCellId => target.cellId;
   bool get isAssigned => assignment.id != null;
+
+  bool get canDelete => isAssigned;
   bool get canSave => selectedDrug != null && minQty != null && minQty! > 0;
 
   /// Aktif sekmeye göre gösterilecek sayfa.
@@ -105,6 +142,7 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
       cabinId: cabinId,
       selectedGroup: selectedGroup,
       selectedStepNo: selectedStepNo,
+      target: target,
       assignment: assignment ?? this.assignment,
       medicinePage: medicinePage ?? this.medicinePage,
       equivalentMedicinePage: equivalentMedicinePage ?? this.equivalentMedicinePage,
