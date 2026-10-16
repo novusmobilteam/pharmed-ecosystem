@@ -2475,6 +2475,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID Available';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Take-Give Button Active?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Multi-Patient Access';
 
   @override
@@ -6401,6 +6404,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Electromagnetic Lock';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel =>
+      'Take-Give Button Active?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Available only on shelves with an electromagnetic lock.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Small';
 
   @override
@@ -7131,6 +7142,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'Could not save';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Take-Give Verification';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Enter $expected pcs with the take-give buttons on the cabinet.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'Value matches, you can complete the step.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'The previous value is still shown — enter the quantity again with the buttons.';
+
+  @override
+  String get cabinExecution_takeGive_reading => 'Reading take-give value…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'The take-give value does not match the expected quantity. Nothing was saved; the tray is being unlocked again.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Skip to Next Drawer';

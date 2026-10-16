@@ -114,7 +114,16 @@ mixin MasterDrawerExecutionMixin on ChangeNotifier {
 
   /// Serum: kilitli raftaki avadanlığın kilidini açar ve izler. Hook'lar
   /// kübikle aynıdır — yerine itilince [onLidClosed], hata [onLidRejected].
-  Future<void> openSerumTray(SerumTrayAddress address) => drawerSession.openSerumTray(address);
+  ///
+  /// [watchKeypad]: Al-Ver doğrulaması gereken avadanlıkta tuş değeri de okunur.
+  Future<void> openSerumTray(SerumTrayAddress address, {bool watchKeypad = false}) =>
+      drawerSession.openSerumTray(address, watchKeypad: watchKeypad);
+
+  /// Aktif avadanlığın Al-Ver tuş değeri (izleniyorsa).
+  TrayKeypadReading? get trayKeypad => drawerSession.trayKeypad;
+
+  /// Al-Ver tuş değerini hemen yeniden okur (izleniyorsa).
+  Future<void> refreshTrayKeypad() => drawerSession.refreshTrayKeypad();
 
   /// LidFailed sonrası aynı avadanlığın kilidini yeniden açmayı dener.
   Future<void> retrySerumTray() => drawerSession.retrySerumTray();

@@ -36,6 +36,7 @@ class SerumShelfDTO {
     required this.orderNo,
     required this.toolType,
     required this.trays,
+    this.isTakeGiveButtonActive,
   });
 
   /// Yeni kayıtta null — JSON'a hiç yazılmaz.
@@ -47,11 +48,15 @@ class SerumShelfDTO {
   final int? toolType;
   final List<SerumTrayDTO> trays;
 
+  /// Al-Ver butonu aktif mi.
+  final bool? isTakeGiveButtonActive;
+
   factory SerumShelfDTO.fromJson(Map<String, dynamic> json) => SerumShelfDTO(
     id: json['id'] as int?,
     compartmentNo: json['compartmentNo'] as int? ?? 0,
     orderNo: json['orderNo'] as int? ?? 0,
     toolType: json['toolType'] as int?,
+    isTakeGiveButtonActive: json['isTakeGiveButtonActive'] as bool?,
     trays: (json['cabinDrawrDetails'] as List? ?? const [])
         .map((e) => SerumTrayDTO.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -62,6 +67,7 @@ class SerumShelfDTO {
     'compartmentNo': compartmentNo,
     'orderNo': orderNo,
     'toolType': toolType,
+    'isTakeGiveButtonActive': isTakeGiveButtonActive ?? false,
     'cabinDrawrDetails': trays.map((t) => t.toJson()).toList(),
   };
 }

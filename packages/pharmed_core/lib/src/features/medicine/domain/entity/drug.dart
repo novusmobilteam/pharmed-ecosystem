@@ -56,6 +56,10 @@ class Drug extends Medicine {
   final bool isNotSerumCabinetMaxValue;
   final bool isNotCubicDrawrMaxValue;
   final bool isRfidEnable;
+  
+  /// Al-Ver butonu aktif mi — serum kabininde Al-Ver tuşlarıyla miktar
+  /// doğrulaması (alım/iade). Rafın ayarıyla birlikte geçerlidir.
+  final bool isTakeGiveButtonActive;
 
   final String? collectNote;
   final String? returnNote;
@@ -121,6 +125,7 @@ class Drug extends Medicine {
     this.isNotSerumCabinetMaxValue = false,
     this.isNotCubicDrawrMaxValue = false,
     this.isRfidEnable = false,
+    this.isTakeGiveButtonActive = false,
     this.collectNote,
     this.returnNote,
     this.destructionNote,
@@ -175,6 +180,7 @@ class Drug extends Medicine {
     bool? isNotSerumCabinetMaxValue,
     bool? isNotCubicDrawrMaxValue,
     bool? isRfidEnable,
+    bool? isTakeGiveButtonActive,
     String? collectNote,
     String? returnNote,
     String? destructionNote,
@@ -219,6 +225,7 @@ class Drug extends Medicine {
       isSingleUse: isSingleUse ?? this.isSingleUse,
       isCameraRecording: isCameraRecording ?? this.isCameraRecording,
       isRfidEnable: isRfidEnable ?? this.isRfidEnable,
+      isTakeGiveButtonActive: isTakeGiveButtonActive ?? this.isTakeGiveButtonActive,
       isWastagePharmacyApproval: isWastagePharmacyApproval ?? this.isWastagePharmacyApproval,
       isWastageOrderRenewed: isWastageOrderRenewed ?? this.isWastageOrderRenewed,
       isWitnessedPurchase: isWitnessedPurchase ?? this.isWitnessedPurchase,

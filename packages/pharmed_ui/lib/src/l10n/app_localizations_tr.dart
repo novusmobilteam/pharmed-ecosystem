@@ -2465,6 +2465,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID Kullanılabilir';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Al-Ver Butonu Aktif mi?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Çoklu Hasta Erişim';
 
   @override
@@ -6352,6 +6355,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Elektromanyetik Kilit';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel => 'Al-Ver Butonu Aktif mi?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Yalnızca elektromanyetik kilitli rafta kullanılabilir.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Küçük';
 
   @override
@@ -7082,6 +7092,29 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'İşlem kaydedilemedi';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Al-Ver Doğrulaması';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Kabindeki Al-Ver tuşlarıyla $expected adet girin.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'Değer eşleşti, işlemi tamamlayabilirsiniz.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'Önceki işlemin değeri görünüyor — miktarı tuşlarla yeniden girin.';
+
+  @override
+  String get cabinExecution_takeGive_reading => 'Al-Ver değeri okunuyor…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'Al-Ver değeri beklenen miktarla eşleşmiyor. Kayıt yapılmadı, avadanlık yeniden açılıyor.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Sonraki Çekmeceye Geç';

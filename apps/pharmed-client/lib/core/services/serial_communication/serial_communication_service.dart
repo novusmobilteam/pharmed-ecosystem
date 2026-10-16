@@ -20,7 +20,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
-import 'package:pharmed_core/pharmed_core.dart';
+// pharmed_core'un TimeoutException'ı (AppException) dart:async'inkini gölgeler —
+// gizlenmezse aşağıdaki `on TimeoutException` yanıt zaman aşımını YAKALAMAZ.
+import 'package:pharmed_core/pharmed_core.dart' hide TimeoutException;
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SerialCommunicationService implements ISerialCommunicationService {

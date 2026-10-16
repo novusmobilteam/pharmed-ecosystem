@@ -2958,6 +2958,10 @@
   "@medicine_checkboxRfid": {
     "description": "Checkbox label indicating RFID can be used for this drug"
   },
+  "medicine_checkboxTakeGiveButton": "Al-Ver Butonu Aktif mi?",
+  "@medicine_checkboxTakeGiveButton": {
+    "description": "Checkbox label on the drug form: when enabled together with the serum shelf setting, the quantity taken/returned must be confirmed with the take-give buttons on the tray lock card"
+  },
   "medicine_checkboxMultiPatientAccess": "Çoklu Hasta Erişim",
   "@medicine_checkboxMultiPatientAccess": {
     "description": "Checkbox label enabling multi-patient access to the drug"
@@ -7581,6 +7585,14 @@
 "@cabinDesign_serum_lockToggleLabel": {
   "description": "Toggle label for enabling/disabling the electromagnetic lock on a serum shelf"
 },
+"cabinDesign_serum_takeGiveToggleLabel": "Al-Ver Butonu Aktif mi?",
+"@cabinDesign_serum_takeGiveToggleLabel": {
+  "description": "Toggle label on a serum shelf: enables quantity verification with the take-give buttons on the tray lock card during intake and refund"
+},
+"cabinDesign_serum_takeGiveRequiresLockHint": "Yalnızca elektromanyetik kilitli rafta kullanılabilir.",
+"@cabinDesign_serum_takeGiveRequiresLockHint": {
+  "description": "Hint under the take-give toggle when the shelf has no electromagnetic lock (the buttons are on the lock card)"
+},
 "cabinDesign_serum_addSmallButton": "Küçük",
 "@cabinDesign_serum_addSmallButton": {
   "description": "Button to add a small-size tray to a serum shelf"
@@ -9280,6 +9292,33 @@
 "cabinExecution_errorTitle": "İşlem kaydedilemedi",
 "@cabinExecution_errorTitle": {
   "description": "Title of the dialog shown when saving a drawer fails or a hardware error occurs during the drawer queue; also used as the fallback message when the error has no text"
+},
+"cabinExecution_takeGive_title": "Al-Ver Doğrulaması",
+"@cabinExecution_takeGive_title": {
+  "description": "Title of the bar shown during serum intake/refund when the quantity must be confirmed with the take-give buttons"
+},
+"cabinExecution_takeGive_instruction": "Kabindeki Al-Ver tuşlarıyla {expected} adet girin.",
+"@cabinExecution_takeGive_instruction": {
+  "description": "Instruction shown until the take-give value matches the expected quantity",
+  "placeholders": {
+    "expected": { "type": "int" }
+  }
+},
+"cabinExecution_takeGive_matched": "Değer eşleşti, işlemi tamamlayabilirsiniz.",
+"@cabinExecution_takeGive_matched": {
+  "description": "Shown when the take-give value matches the expected quantity"
+},
+"cabinExecution_takeGive_staleValue": "Önceki işlemin değeri görünüyor — miktarı tuşlarla yeniden girin.",
+"@cabinExecution_takeGive_staleValue": {
+  "description": "Shown when the displayed take-give value equals the expected quantity but was left over from a previous operation (not entered in this opening)"
+},
+"cabinExecution_takeGive_reading": "Al-Ver değeri okunuyor…",
+"@cabinExecution_takeGive_reading": {
+  "description": "Shown until the first take-give value is read from the tray lock card"
+},
+"cabinExecution_takeGive_mismatchError": "Al-Ver değeri beklenen miktarla eşleşmiyor. Kayıt yapılmadı, avadanlık yeniden açılıyor.",
+"@cabinExecution_takeGive_mismatchError": {
+  "description": "Error shown when the serum tray was pushed back while the take-give value did not match; the record is not saved and the tray is unlocked again"
 },
 "cabinExecution_errorSkipButton": "Sonraki Çekmeceye Geç",
 "@cabinExecution_errorSkipButton": {

@@ -25,6 +25,11 @@ abstract interface class DrawerJobTarget {
   /// çekmece (serum kapağı) açıldıktan sonra bu avadanlığın kilidi açılır.
   /// Serum dışı ve kilitsiz raftaki hedeflerde null.
   SerumTrayAddress? get serumTray;
+
+  /// Al-Ver doğrulaması: kullanıcının kilit kartındaki Al-Ver tuşlarıyla
+  /// girmesi gereken adet. null → doğrulama yok. Raf ve ilaç ayarının ikisi
+  /// de açıksa, yalnızca alım ve iadede dolu döner.
+  int? get takeGiveExpectedQuantity;
 }
 
 abstract interface class DrawerJob<T extends DrawerJobTarget> {

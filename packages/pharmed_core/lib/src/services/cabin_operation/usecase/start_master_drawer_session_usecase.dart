@@ -2,7 +2,9 @@
 // Sınıf: Class B
 
 import 'dart:async';
-import 'package:pharmed_core/pharmed_core.dart';
+// pharmed_core'un TimeoutException'ı (AppException) dart:async'inkini gölgeler —
+// gizlenmezse `on TimeoutException` sensör zaman aşımını YAKALAMAZ.
+import 'package:pharmed_core/pharmed_core.dart' hide TimeoutException;
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 /// Master kabin çekmece oturumunu BAŞLATIR: yönetim kartını bulur, ilgili

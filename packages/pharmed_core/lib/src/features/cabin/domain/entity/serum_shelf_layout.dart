@@ -20,6 +20,7 @@ class SerumShelfLayout {
     required this.orderNo,
     this.lockType = SerumShelfLockType.unlocked,
     this.trays = const [],
+    this.isTakeGiveEnabled = false,
   });
 
   /// Sabit raf sayısı — serum kabininde her zaman 3 raf vardır.
@@ -40,14 +41,28 @@ class SerumShelfLayout {
   final SerumShelfLockType lockType;
   final List<SerumTray> trays;
 
+  /// "Al-Ver butonu aktif mi?" — kilit kartındaki Al-Ver tuşlarıyla miktar
+  /// doğrulaması (alım/iade). Tuşlar kilit kartında olduğundan YALNIZCA
+  /// kilitli rafta anlamlıdır — bkz. [isTakeGiveVerified].
+  final bool isTakeGiveEnabled;
+
+  /// Al-Ver doğrulaması bu rafta gerçekten uygulanır mı (kilitli + açık).
+  bool get isTakeGiveVerified => isLocked && isTakeGiveEnabled;
+
   bool get isLocked => lockType.isLocked;
   bool get isPersisted => id != null;
   int get usedArea => trays.fold(0, (sum, t) => sum + t.size.areaSize);
   int get remainingArea => totalArea - usedArea;
   bool canAdd(SerumTraySize size) => remainingArea >= size.areaSize;
 
-  SerumShelfLayout copyWith({SerumShelfLockType? lockType, List<SerumTray>? trays}) =>
-      SerumShelfLayout(id: id, orderNo: orderNo, lockType: lockType ?? this.lockType, trays: trays ?? this.trays);
+  SerumShelfLayout copyWith({SerumShelfLockType? lockType, List<SerumTray>? trays, bool? isTakeGiveEnabled}) =>
+      SerumShelfLayout(
+        id: id,
+        orderNo: orderNo,
+        lockType: lockType ?? this.lockType,
+        trays: trays ?? this.trays,
+        isTakeGiveEnabled: isTakeGiveEnabled ?? this.isTakeGiveEnabled,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -56,13 +71,14 @@ class SerumShelfLayout {
           other.id == id &&
           other.orderNo == orderNo &&
           other.lockType == lockType &&
+          other.isTakeGiveEnabled == isTakeGiveEnabled &&
           const ListEquality<SerumTray>().equals(other.trays, trays);
 
   @override
-  int get hashCode => Object.hash(id, orderNo, lockType, Object.hashAll(trays));
+  int get hashCode => Object.hash(id, orderNo, lockType, isTakeGiveEnabled, Object.hashAll(trays));
 
   @override
-  String toString() => 'SerumShelfLayout(id: $id, order: $orderNo, lock: ${lockType.name}, trays: $trays)';
+  String toString() => 'SerumShelfLayout(id: $id, order: $orderNo, lock: ${lockType.name}, takeGive: $isTakeGiveEnabled, trays: $trays)';
 }
 
 /// Raftaki tek avadanlık. Sırası, içinde bulunduğu listedeki konumudur.

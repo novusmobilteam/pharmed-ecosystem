@@ -273,4 +273,57 @@ void main() {
       expect(rows.single.compartmentNo, 2);
     });
   });
+
+  group('Al-Ver doğrulaması', () {
+    test('kart değeri sıfırlamaz — ilk okuma referans, dokunulmadan eşleşmez', () {
+      var reading = const TrayKeypadReading(value: 3, baseline: 3, hasChanged: false);
+      expect(reading.matches(3), isFalse);
+
+      reading = reading.withValue(2);
+      expect(reading.matches(3), isFalse);
+
+      reading = reading.withValue(3);
+      expect(reading.matches(3), isTrue);
+    });
+
+    test('beklenen adet yalnızca raf + ilaç açıkken ve alım/iadede', () {
+      const slot = DrawerSlot(
+        id: 346,
+        drawerConfig: DrawerConfig(drawerTypeId: 14, numberOfSteps: 1, deviceTypeNo: 250),
+      );
+      const shelf = DrawerUnit(id: 1698, orderNo: 1, drawerSlot: slot);
+
+      CabinOperationTarget targetFor({
+        required bool drugFlag,
+        required bool shelfFlag,
+        CabinOperationMode mode = CabinOperationMode.intake,
+      }) {
+        final assignment = MedicineAssignment(
+          cabinDrawerDetailId: 6836,
+          drawerUnit: shelf,
+          medicine: Drug(isTakeGiveButtonActive: drugFlag),
+          cabinDrawerDetail: const [DrawerCell(id: 6836, stepNo: 2)],
+        );
+        return CabinOperationTarget.fromAssignment(assignment, mode)
+            .withSerumTray(SerumTrayAddress(deviceId: 1, port: 2, cellId: 6836, isTakeGiveEnabled: shelfFlag))
+            .withCubicSecondary(3);
+      }
+
+      expect(targetFor(drugFlag: true, shelfFlag: true).takeGiveExpectedQuantity, 3);
+      expect(targetFor(drugFlag: true, shelfFlag: true, mode: CabinOperationMode.refund).takeGiveExpectedQuantity, 3);
+      expect(targetFor(drugFlag: false, shelfFlag: true).takeGiveExpectedQuantity, isNull);
+      expect(targetFor(drugFlag: true, shelfFlag: false).takeGiveExpectedQuantity, isNull);
+      expect(
+        targetFor(drugFlag: true, shelfFlag: true, mode: CabinOperationMode.refill).takeGiveExpectedQuantity,
+        isNull,
+      );
+    });
+
+    test('Al-Ver yalnızca kilitli rafta geçerli', () {
+      const unlocked = SerumShelfLayout(orderNo: 1, isTakeGiveEnabled: true);
+      const locked = SerumShelfLayout(orderNo: 1, lockType: SerumShelfLockType.locked, isTakeGiveEnabled: true);
+      expect(unlocked.isTakeGiveVerified, isFalse);
+      expect(locked.isTakeGiveVerified, isTrue);
+    });
+  });
 }

@@ -140,6 +140,10 @@ class TrayLockService implements ITrayLockService {
       raw = await _serial.sendAndReceive(command, timeout: _commandTimeout);
     } on SerialPortException catch (e) {
       throw TrayLockException(TrayLockFailure.noResponse, detail: e.message);
+    } catch (e) {
+      // Seri katmandan beklenmeyen istisna (ör. zaman aşımı) — üst katmanlar
+      // yalnızca TrayLockException bekler.
+      throw TrayLockException(TrayLockFailure.noResponse, detail: e.toString());
     }
 
     final response = TrayLockProtocol.parse(raw);

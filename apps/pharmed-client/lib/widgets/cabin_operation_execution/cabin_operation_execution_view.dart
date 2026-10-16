@@ -187,7 +187,13 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
     // Serum avadanlığı "Tamamla"dan önce yerine itilmiş olabilir (LidClosed).
     final stage = controller.drawerStage;
     final isOpened = stage is MasterDrawerOpened || (job.isSerumTrayJob && stage is MasterDrawerLidClosed);
-    final canConfirm = isOpened && !controller.isSaving && !controller.isStopping && target.isValid;
+    final canConfirm =
+        isOpened &&
+        !controller.isSaving &&
+        !controller.isStopping &&
+        target.isValid &&
+        controller.isTakeGiveSatisfied;
+    final takeGiveExpected = controller.takeGiveExpected;
 
     return CabinExecutionPanel(
       header: CabinExecutionHeader(
@@ -203,13 +209,24 @@ class _CabinOperationExecutionViewState extends ConsumerState<CabinOperationExec
         onSkipLid: controller.skipCurrentLid,
         onAcknowledgeLidClosed: controller.acknowledgeLidClosedManually,
         isSerumTray: target.serumTray != null,
-        child: CabinOperationEntryBody(
-          job: job,
-          target: target,
-          handlers: controller,
-          drawerGroup: drawerGroup,
-          enabled: !controller.isSaving,
-          isPerCellMiadEnabled: controller.isPerCellMiadEnabled,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (takeGiveExpected != null) ...[
+              CabinTakeGiveVerificationBar(expected: takeGiveExpected, reading: controller.takeGiveReading),
+              const SizedBox(height: 12),
+            ],
+            Expanded(
+              child: CabinOperationEntryBody(
+                job: job,
+                target: target,
+                handlers: controller,
+                drawerGroup: drawerGroup,
+                enabled: !controller.isSaving,
+                isPerCellMiadEnabled: controller.isPerCellMiadEnabled,
+              ),
+            ),
+          ],
         ),
       ),
       footer: CabinExecutionFooter(

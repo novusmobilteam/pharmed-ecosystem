@@ -146,9 +146,40 @@ class _SerumShelfBody extends StatelessWidget {
               value: shelf.isLocked,
               onChanged: enabled
                   ? (v) => onChanged(
-                      shelf.copyWith(lockType: v ? SerumShelfLockType.locked : SerumShelfLockType.unlocked),
+                      shelf.copyWith(
+                        lockType: v ? SerumShelfLockType.locked : SerumShelfLockType.unlocked,
+                        // Al-Ver tuşları kilit kartında — kilit kalkınca kapanır.
+                        isTakeGiveEnabled: v ? null : false,
+                      ),
                     )
                   : null,
+            ),
+          ],
+        ),
+        const SizedBox(height: MedSpacing.md),
+
+        // ── Al-Ver butonu toggle'ı (yalnızca kilitli rafta) ─────────
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.cabinDesign_serum_takeGiveToggleLabel,
+                    style: MedTextStyles.bodyMd(color: shelf.isLocked ? MedColors.text : MedColors.text4),
+                  ),
+                  if (!shelf.isLocked)
+                    Text(
+                      context.l10n.cabinDesign_serum_takeGiveRequiresLockHint,
+                      style: MedTextStyles.bodySm(color: MedColors.text4),
+                    ),
+                ],
+              ),
+            ),
+            _MedToggleSwitch(
+              value: shelf.isTakeGiveVerified,
+              onChanged: enabled && shelf.isLocked ? (v) => onChanged(shelf.copyWith(isTakeGiveEnabled: v)) : null,
             ),
           ],
         ),

@@ -62,7 +62,19 @@ abstract class IMasterDrawerSession implements Listenable {
   /// ve izler — kübik `openCubicLid(awaitLidClose: true)` ile aynı stage
   /// akışı: OpeningLid → Opened (kilit açıldı) → LidClosed (avadanlık yerine
   /// itildi). Ön koşul: serum kapağı açık (Opened).
-  Future<void> openSerumTray(SerumTrayAddress address);
+  ///
+  /// [watchKeypad] true ise kilit açıldıktan sonra kartın Al-Ver tuş değeri
+  /// de periyodik okunur — bkz. [trayKeypad].
+  Future<void> openSerumTray(SerumTrayAddress address, {bool watchKeypad = false});
+
+  /// Aktif avadanlığın Al-Ver tuş değeri. Yalnızca `watchKeypad: true` ile
+  /// açılmış avadanlıkta ve ilk okumadan sonra dolu; avadanlık yerine
+  /// itildikten sonra da sıradaki alt birim/kapanışa kadar okunmaya devam eder.
+  TrayKeypadReading? get trayKeypad;
+
+  /// Al-Ver tuş değerini periyodu beklemeden hemen okur (izleniyorsa) —
+  /// avadanlık itildiği anda karar verilirken son değerin kaçmaması için.
+  Future<void> refreshTrayKeypad();
 
   /// LidFailed sonrası son açılmaya çalışılan avadanlığı yeniden açar.
   Future<void> retrySerumTray();
@@ -166,6 +178,18 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   /// Son açılmaya çalışılan alt birim serum avadanlığı mı (retry yönlendirmesi).
   bool _lastSubUnitIsTray = false;
 
+  // ── Al-Ver tuş değeri ─────────────────────────────────────────────────────
+
+  static const _keypadPollInterval = Duration(milliseconds: 700);
+
+  Timer? _keypadTimer;
+  bool _keypadReadInFlight = false;
+  bool _lastWatchKeypad = false;
+
+  TrayKeypadReading? _trayKeypad;
+  @override
+  TrayKeypadReading? get trayKeypad => _trayKeypad;
+
   MasterDrawerStage _stage = const MasterDrawerIdle();
   @override
   MasterDrawerStage get stage => _stage;
@@ -227,6 +251,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     // kullanıcının kapağı kapatması WaitingForClose'u LidClosed ile ezer.
     _cancelLidWatch();
     _cancelTrayWatch();
+    _cancelKeypadWatch();
 
     _setStage(const MasterDrawerWaitingForClose());
     _cabinOperationService.triggerManualClose();
@@ -252,6 +277,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   Future<void> openCubicLid(MedicineAssignment cellAssignment, {bool awaitLidClose = false}) async {
     _cancelLidWatch();
     _cancelTrayWatch();
+    _cancelKeypadWatch();
     _lastLidAssignment = cellAssignment;
     _lastLidAwaitClose = awaitLidClose;
     _lastSubUnitIsTray = false;
@@ -389,11 +415,13 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   // ════════════════════════════════════════════════════════════════
 
   @override
-  Future<void> openSerumTray(SerumTrayAddress address) async {
+  Future<void> openSerumTray(SerumTrayAddress address, {bool watchKeypad = false}) async {
     _cancelLidWatch();
     _cancelTrayWatch();
+    _cancelKeypadWatch();
     _lastTrayAddress = address;
     _lastSubUnitIsTray = true;
+    _lastWatchKeypad = watchKeypad;
 
     _setStage(const MasterDrawerOpeningLid());
     try {
@@ -404,13 +432,65 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
       return;
     }
     _startTrayWatch(address);
+    if (watchKeypad) _startKeypadWatch(address);
   }
 
   @override
   Future<void> retrySerumTray() async {
     final address = _lastTrayAddress;
     if (address == null || _stage is! MasterDrawerLidFailed) return;
-    await openSerumTray(address);
+    await openSerumTray(address, watchKeypad: _lastWatchKeypad);
+  }
+
+  /// Kilit açıldıktan sonra Al-Ver tuş değerini periyodik okur. İlk okuma
+  /// referanstır (kart değeri sıfırlamaz — bkz. TrayKeypadReading).
+  void _startKeypadWatch(SerumTrayAddress address) {
+    _trayKeypad = null;
+    _keypadTimer = Timer.periodic(_keypadPollInterval, (_) => unawaited(_readKeypad(address)));
+    unawaited(_readKeypad(address));
+  }
+
+  @override
+  Future<void> refreshTrayKeypad() async {
+    final address = _lastTrayAddress;
+    if (address == null || _keypadTimer == null) return;
+    await _readKeypad(address, force: true);
+  }
+
+  Future<void> _readKeypad(SerumTrayAddress address, {bool force = false}) async {
+    if (_keypadReadInFlight && !force) return;
+    _keypadReadInFlight = true;
+    try {
+      final value = await _trayLock.getKeypadValue(deviceId: address.deviceId, port: address.port);
+      if (_keypadTimer == null || _lastTrayAddress != address) return; // izleme bu arada bitti
+      final previous = _trayKeypad;
+      final next = previous == null
+          ? TrayKeypadReading(value: value, baseline: value, hasChanged: false)
+          : previous.withValue(value);
+      if (next != previous) {
+        _trayKeypad = next;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Tekil okuma hatası — sonraki periyotta tekrar denenir, son değer korunur.
+      MedLogger.info(
+        unit: 'MasterDrawerSession',
+        swreq: 'SWREQ-HW-TRAY-003',
+        message: 'Al-Ver tuş değeri okunamadı',
+        context: {'address': address.toString(), 'error': e.toString()},
+      );
+    } finally {
+      _keypadReadInFlight = false;
+    }
+  }
+
+  void _cancelKeypadWatch() {
+    _keypadTimer?.cancel();
+    _keypadTimer = null;
+    if (_trayKeypad != null) {
+      _trayKeypad = null;
+      notifyListeners();
+    }
   }
 
   void _startTrayWatch(SerumTrayAddress address) {
@@ -514,6 +594,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
           // Çekmece kapandıysa kapak da kapanmıştır — kapak izlemesini bırak.
           _cancelLidWatch();
           _cancelTrayWatch();
+          _cancelKeypadWatch();
           final wasExpected = _stage is MasterDrawerWaitingForClose;
           if (!wasExpected && _lastCloseCompletes) {
             MedLogger.info(
@@ -545,6 +626,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   Future<void> _cancelAll() async {
     _cancelLidWatch();
     _cancelTrayWatch();
+    _cancelKeypadWatch();
     await _sessionSub?.cancel();
     await _sensorSub?.cancel();
     _sessionSub = null;

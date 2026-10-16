@@ -25,6 +25,7 @@ class MockTrayLockService implements ITrayLockService {
     this.returnDelay = const Duration(seconds: 6),
     this.commandDelay = const Duration(milliseconds: 80),
     this.autoSimulate = true,
+    this.autoKeypadValue,
   });
 
   final Duration pullDelay;
@@ -33,6 +34,11 @@ class MockTrayLockService implements ITrayLockService {
 
   /// false ise çekme/geri itme yalnızca [simulatePull]/[simulateReturn] ile olur.
   final bool autoSimulate;
+
+  /// Verilirse otomatik simülasyonda avadanlık çekilince Al-Ver tuş değeri
+  /// bu değere ayarlanır (Al-Ver doğrulamasını mock'ta denemek için). null →
+  /// değer yalnızca [simulateKeypad] ile değişir.
+  final int? autoKeypadValue;
 
   final Map<int, _MockCard> _cards = {};
 
@@ -72,6 +78,8 @@ class MockTrayLockService implements ITrayLockService {
       card.timer?.cancel();
       card.timer = Timer(pullDelay, () {
         simulatePull(deviceId: deviceId);
+        final keypad = autoKeypadValue;
+        if (keypad != null) simulateKeypad(deviceId: deviceId, port: port, value: keypad);
         card.timer = Timer(returnDelay, () => simulateReturn(deviceId: deviceId));
       });
     }

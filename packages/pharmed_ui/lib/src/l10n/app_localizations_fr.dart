@@ -2542,6 +2542,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicine_checkboxRfid => 'RFID disponible';
 
   @override
+  String get medicine_checkboxTakeGiveButton => 'Bouton Prendre-Rendre actif ?';
+
+  @override
   String get medicine_checkboxMultiPatientAccess => 'Accès multi-patients';
 
   @override
@@ -6560,6 +6563,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_serum_lockToggleLabel => 'Verrou électromagnétique';
 
   @override
+  String get cabinDesign_serum_takeGiveToggleLabel =>
+      'Bouton Prendre-Rendre actif ?';
+
+  @override
+  String get cabinDesign_serum_takeGiveRequiresLockHint =>
+      'Disponible uniquement sur les étagères à verrou électromagnétique.';
+
+  @override
   String get cabinDesign_serum_addSmallButton => 'Petit';
 
   @override
@@ -7305,6 +7316,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinExecution_errorTitle => 'Enregistrement impossible';
+
+  @override
+  String get cabinExecution_takeGive_title => 'Vérification Prendre-Rendre';
+
+  @override
+  String cabinExecution_takeGive_instruction(int expected) {
+    return 'Saisissez $expected pcs avec les boutons Prendre-Rendre de l’armoire.';
+  }
+
+  @override
+  String get cabinExecution_takeGive_matched =>
+      'La valeur correspond, vous pouvez terminer l’étape.';
+
+  @override
+  String get cabinExecution_takeGive_staleValue =>
+      'La valeur précédente est affichée — saisissez à nouveau la quantité avec les boutons.';
+
+  @override
+  String get cabinExecution_takeGive_reading =>
+      'Lecture de la valeur Prendre-Rendre…';
+
+  @override
+  String get cabinExecution_takeGive_mismatchError =>
+      'La valeur Prendre-Rendre ne correspond pas à la quantité attendue. Rien n’a été enregistré ; le plateau est de nouveau déverrouillé.';
 
   @override
   String get cabinExecution_errorSkipButton => 'Passer au tiroir suivant';

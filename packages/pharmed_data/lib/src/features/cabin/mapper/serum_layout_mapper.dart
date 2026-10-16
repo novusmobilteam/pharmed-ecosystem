@@ -23,6 +23,7 @@ class SerumLayoutMapper {
         id: shelf.id,
         orderNo: orderNo,
         lockType: SerumShelfLockType.fromId(shelf.toolType),
+        isTakeGiveEnabled: shelf.isTakeGiveButtonActive ?? false,
         trays: [
           for (final t in trays)
             if (SerumTraySize.fromId(t.toolSize) case final size?) SerumTray(id: t.id, size: size),
@@ -44,6 +45,8 @@ class SerumLayoutMapper {
             compartmentNo: shelf.orderNo,
             orderNo: shelf.orderNo,
             toolType: shelf.lockType.id,
+            // Al-Ver tuşları kilit kartında — kilitsiz rafta gönderilmez.
+            isTakeGiveButtonActive: shelf.isTakeGiveVerified,
             trays: [
               for (final (i, tray) in shelf.trays.indexed)
                 SerumTrayDTO(id: tray.id, stepNo: i + 1, toolSize: tray.size.id),

@@ -6,7 +6,12 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 /// Elektromanyetik kilitli bir raftaki avadanlığın donanım adresi.
 final class SerumTrayAddress {
-  const SerumTrayAddress({required this.deviceId, required this.port, required this.cellId});
+  const SerumTrayAddress({
+    required this.deviceId,
+    required this.port,
+    required this.cellId,
+    this.isTakeGiveEnabled = false,
+  });
 
   /// Rafın kilit kartı ID'si (`<iXX:…>` içindeki XX).
   final int deviceId;
@@ -16,6 +21,10 @@ final class SerumTrayAddress {
 
   /// Avadanlığın DrawerCell.id'si — log ve eşleştirme için.
   final int cellId;
+
+  /// Rafta Al-Ver tuşlarıyla miktar doğrulaması açık mı (raf ayarı).
+  /// İlacın ayarıyla birlikte değerlendirilir — bkz. CabinOperationTarget.
+  final bool isTakeGiveEnabled;
 
   /// [cellId]'li avadanlığın adresini serum yerleşiminden çözer.
   ///
@@ -33,7 +42,12 @@ final class SerumTrayAddress {
       for (final tray in shelf.trays) {
         if (tray.id == cellId) {
           if (!shelf.isLocked) return null;
-          return SerumTrayAddress(deviceId: shelf.orderNo, port: areaOffset + 1, cellId: cellId);
+          return SerumTrayAddress(
+            deviceId: shelf.orderNo,
+            port: areaOffset + 1,
+            cellId: cellId,
+            isTakeGiveEnabled: shelf.isTakeGiveVerified,
+          );
         }
         areaOffset += tray.size.areaSize;
       }
@@ -59,11 +73,16 @@ final class SerumTrayAddress {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SerumTrayAddress && other.deviceId == deviceId && other.port == port && other.cellId == cellId;
+      other is SerumTrayAddress &&
+          other.deviceId == deviceId &&
+          other.port == port &&
+          other.cellId == cellId &&
+          other.isTakeGiveEnabled == isTakeGiveEnabled;
 
   @override
-  int get hashCode => Object.hash(deviceId, port, cellId);
+  int get hashCode => Object.hash(deviceId, port, cellId, isTakeGiveEnabled);
 
   @override
-  String toString() => 'SerumTrayAddress(device: $deviceId, port: $port, cell: $cellId)';
+  String toString() =>
+      'SerumTrayAddress(device: $deviceId, port: $port, cell: $cellId${isTakeGiveEnabled ? ', takeGive' : ''})';
 }

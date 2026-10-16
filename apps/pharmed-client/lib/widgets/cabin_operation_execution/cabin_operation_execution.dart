@@ -8,3 +8,4 @@ export 'cabin_entry_common.dart';
 export 'cabin_drawer_stage_overlay.dart';
 export 'cabin_intake_entry_list.dart';
 export 'cabin_execution_panel.dart';
+export 'cabin_take_give_verification_bar.dart';

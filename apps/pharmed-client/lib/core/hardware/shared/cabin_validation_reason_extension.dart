@@ -6,6 +6,9 @@ enum CabinValidationReason {
   noValidTargets,
   noDrawerFound,
   closedWithInvalidEntry,
+
+  /// Serum avadanlığı Al-Ver tuş değeri beklenen adetle eşleşmeden itildi.
+  takeGiveMismatch,
   // ileride eklenecekler buraya
 }
 
@@ -16,6 +19,7 @@ extension CabinValidationReasonX on CabinValidationReason {
       CabinValidationReason.noValidTargets => context.l10n.intake_error_noValidTargets,
       CabinValidationReason.noDrawerFound => context.l10n.intake_error_noDrawerFound,
       CabinValidationReason.closedWithInvalidEntry => context.l10n.intake_error_noValidTargets,
+      CabinValidationReason.takeGiveMismatch => context.l10n.cabinExecution_takeGive_mismatchError,
     };
   }
 }

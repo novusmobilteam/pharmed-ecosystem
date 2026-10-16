@@ -133,6 +133,18 @@ class CabinOperationTarget implements DrawerJobTarget {
   @override
   int? get explicitTargetStep => openUntilStep;
 
+  /// Al-Ver doğrulaması yalnızca alım ve iadede, raf (kilitli + Al-Ver açık)
+  /// ve ilaç ayarının ikisi de açıksa yapılır. Beklenen adet hedefin tek
+  /// girişli ikincil miktarıdır (alımda plan, iadede iade edilecek toplam).
+  @override
+  int? get takeGiveExpectedQuantity {
+    if (!(serumTray?.isTakeGiveEnabled ?? false) || !isKubik) return null;
+    if (mode != CabinOperationMode.intake && mode != CabinOperationMode.refund) return null;
+    final medicine = assignment.medicine;
+    if (medicine is! Drug || !medicine.isTakeGiveButtonActive) return null;
+    return cubicSecondary.round();
+  }
+
   /// Girdi olan aktif gözlerin fiziksel numaraları (1 tabanlı, panelin
   /// beklediği stepNo). Dolumda konulacak, boşaltmada çıkarılacak miktar
   /// girilmiş gözler. Kübikte boş.
