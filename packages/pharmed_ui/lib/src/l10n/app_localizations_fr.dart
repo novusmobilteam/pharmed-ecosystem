@@ -6987,6 +6987,74 @@ class AppLocalizationsFr extends AppLocalizations {
       'Afficher les codes non scannés';
 
   @override
+  String get unscannedBarcodes_action_enableWarning => 'Activer l\'alerte';
+
+  @override
+  String get unscannedBarcodes_action_disableWarning => 'Désactiver l\'alerte';
+
+  @override
+  String get unscannedBarcodes_table_scannedCountColumn => 'Codes QR scannés';
+
+  @override
+  String get unscannedBarcodes_table_missingCountColumn => 'Codes QR à scanner';
+
+  @override
+  String unscannedBarcodes_scannedCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count boîtes scannées',
+      one: '$count boîte scannée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_table_warningColumn => 'Alerte';
+
+  @override
+  String get unscannedBarcodes_status_warningOn => 'Activée';
+
+  @override
+  String get unscannedBarcodes_status_warningOff => 'Désactivée';
+
+  @override
+  String unscannedBarcodes_alertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count codes QR non scannés',
+      one: '$count code QR non scanné',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_alertDialogTitle => 'Codes QR non scannés';
+
+  @override
+  String get unscannedBarcodes_alertDialogSubtitle =>
+      'Les codes QR des médicaments que vous avez administrés n\'ont pas été scannés';
+
+  @override
+  String unscannedBarcodes_missingCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count boîtes non scannées',
+      one: '$count boîte non scannée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_scanButton => 'Scanner le code QR';
+
+  @override
+  String get unscannedBarcodes_alertEmptyTitle =>
+      'Plus aucun code QR non scanné';
+
+  @override
   String get urgentPatientTermination_listTitle => 'Patients urgents';
 
   @override

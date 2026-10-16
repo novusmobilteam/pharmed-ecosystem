@@ -36,6 +36,9 @@ class PrescriptionItemMapper {
       rfidTag: dto.rfidTag,
       applicationDate: dto.applicationDate,
       applicationUser: const UserMapper().toEntityOrNull(dto.applicationUser),
+      qrCodeCount: dto.qrCodeCount,
+      missingQrCodeCount: dto.missingQrCodeCount,
+      warning: dto.warning,
 
       // Enum Dönüşümleri
       requestType: RequestType.fromId(dto.requestType),
@@ -83,6 +86,9 @@ class PrescriptionItemMapper {
       protocolNo: entity.protocolNo,
       patientName: entity.patientName,
       rfidTag: entity.rfidTag,
+      qrCodeCount: entity.qrCodeCount,
+      missingQrCodeCount: entity.missingQrCodeCount,
+      warning: entity.warning,
 
       // Alt DTO Dönüşümleri
       physicalService: const ServiceMapper().toDtoOrNull(entity.physicalService),

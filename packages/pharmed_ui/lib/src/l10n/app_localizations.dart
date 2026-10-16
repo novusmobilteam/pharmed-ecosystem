@@ -12045,6 +12045,90 @@ abstract class AppLocalizations {
   /// **'Show Unscanned Barcodes'**
   String get unscannedBarcodes_action_showUnscanned;
 
+  /// No description provided for @unscannedBarcodes_action_enableWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Warning On'**
+  String get unscannedBarcodes_action_enableWarning;
+
+  /// No description provided for @unscannedBarcodes_action_disableWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Warning Off'**
+  String get unscannedBarcodes_action_disableWarning;
+
+  /// No description provided for @unscannedBarcodes_table_scannedCountColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned QR Codes'**
+  String get unscannedBarcodes_table_scannedCountColumn;
+
+  /// No description provided for @unscannedBarcodes_table_missingCountColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Codes to Scan'**
+  String get unscannedBarcodes_table_missingCountColumn;
+
+  /// No description provided for @unscannedBarcodes_scannedCountChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} box scanned} other{{count} boxes scanned}}'**
+  String unscannedBarcodes_scannedCountChip(int count);
+
+  /// No description provided for @unscannedBarcodes_table_warningColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get unscannedBarcodes_table_warningColumn;
+
+  /// No description provided for @unscannedBarcodes_status_warningOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get unscannedBarcodes_status_warningOn;
+
+  /// No description provided for @unscannedBarcodes_status_warningOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get unscannedBarcodes_status_warningOff;
+
+  /// No description provided for @unscannedBarcodes_alertTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} unscanned QR code} other{{count} unscanned QR codes}}'**
+  String unscannedBarcodes_alertTooltip(int count);
+
+  /// No description provided for @unscannedBarcodes_alertDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unscanned QR Codes'**
+  String get unscannedBarcodes_alertDialogTitle;
+
+  /// No description provided for @unscannedBarcodes_alertDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR codes of medicines you administered were not scanned'**
+  String get unscannedBarcodes_alertDialogSubtitle;
+
+  /// No description provided for @unscannedBarcodes_missingCountChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} box not scanned} other{{count} boxes not scanned}}'**
+  String unscannedBarcodes_missingCountChip(int count);
+
+  /// No description provided for @unscannedBarcodes_scanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get unscannedBarcodes_scanButton;
+
+  /// No description provided for @unscannedBarcodes_alertEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No unscanned QR codes left'**
+  String get unscannedBarcodes_alertEmptyTitle;
+
   /// No description provided for @urgentPatientTermination_listTitle.
   ///
   /// In en, this message translates to:

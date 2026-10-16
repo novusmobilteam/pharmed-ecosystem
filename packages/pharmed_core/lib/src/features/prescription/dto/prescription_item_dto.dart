@@ -40,6 +40,9 @@ class PrescriptionItemDto {
   final PrescriptionItemMovementDto? lastMovement;
   final DateTime? applicationDate;
   final UserDto? applicationUser;
+  final int? qrCodeCount;
+  final int? missingQrCodeCount;
+  final bool? warning;
 
   const PrescriptionItemDto({
     this.id,
@@ -81,6 +84,9 @@ class PrescriptionItemDto {
     this.rfidTag,
     this.applicationDate,
     this.applicationUser,
+    this.qrCodeCount,
+    this.missingQrCodeCount,
+    this.warning,
   });
 
   factory PrescriptionItemDto.fromJson(Map<String, dynamic> json) {
@@ -143,6 +149,9 @@ class PrescriptionItemDto {
       lastMovement: json['lastMovement'] != null ? PrescriptionItemMovementDto.fromJson(json['lastMovement']) : null,
       applicationDate: json['applicationDate'] != null ? DateTime.tryParse(json['applicationDate']) : null,
       applicationUser: json['applicationUser'] != null ? UserDto.fromJson(json['applicationUser']) : null,
+      qrCodeCount: (json['qrCodeCount'] as num?)?.toInt(),
+      missingQrCodeCount: (json['missingQrCodeCount'] as num?)?.toInt(),
+      warning: json['warning'] as bool?,
     );
   }
 

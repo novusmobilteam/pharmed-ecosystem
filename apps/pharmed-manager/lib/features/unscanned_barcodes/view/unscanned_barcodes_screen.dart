@@ -34,9 +34,11 @@ class UnscannedBarcodesScreen extends StatelessWidget {
             desktop: MedDesktopLayout(
               menu: menu,
               actions: [
-                if (notifier.canOpenWarning)
+                if (notifier.selectedItem case final selected? when notifier.canSelectItem)
                   MedButton(
-                    label: 'Uyarı Aç/Kapa',
+                    label: selected.isWarningOn
+                        ? context.l10n.unscannedBarcodes_action_disableWarning
+                        : context.l10n.unscannedBarcodes_action_enableWarning,
                     onPressed: () => notifier.toggleWarning(
                       onFailed: (msg) => MessageUtils.showErrorSnackbar(context, msg),
                       onSuccess: (msg) =>

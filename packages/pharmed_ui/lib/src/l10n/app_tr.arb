@@ -8867,6 +8867,77 @@
 "@unscannedBarcodes_action_showUnscanned": {
   "description": "Toolbar toggle button tooltip — shown while in 'deleted' mode, tapping switches the table back to unscanned barcodes."
 },
+"unscannedBarcodes_action_enableWarning": "Uyarıyı Aç",
+"@unscannedBarcodes_action_enableWarning": {
+  "description": "Manager Unscanned Barcodes screen toolbar button; shown when the selected row's warning is off. Turning it on makes the row appear as an alert on the applying user's client dashboard."
+},
+"unscannedBarcodes_action_disableWarning": "Uyarıyı Kapat",
+"@unscannedBarcodes_action_disableWarning": {
+  "description": "Manager Unscanned Barcodes screen toolbar button; shown when the selected row's warning is on."
+},
+"unscannedBarcodes_table_scannedCountColumn": "Okutulan Karekod",
+"@unscannedBarcodes_table_scannedCountColumn": {
+  "description": "Unscanned Barcodes table column (manager and client): number of QR codes already scanned for the row (qrCodeCount)."
+},
+"unscannedBarcodes_table_missingCountColumn": "Okutulacak Karekod",
+"@unscannedBarcodes_table_missingCountColumn": {
+  "description": "Unscanned Barcodes table column (manager and client): number of QR codes still to be scanned for the row (missingQrCodeCount). The QR scan dialog opens this many fields."
+},
+"unscannedBarcodes_scannedCountChip": "{count, plural, other{{count} kutu okutuldu}}",
+"@unscannedBarcodes_scannedCountChip": {
+  "description": "Chip on a row of the client unscanned QR codes alert dialog; number of boxes already scanned (qrCodeCount). Shown only when > 0.",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_table_warningColumn": "Uyarı",
+"@unscannedBarcodes_table_warningColumn": {
+  "description": "Column title on the Unscanned Barcodes table showing whether the unscanned QR code warning is on for the row."
+},
+"unscannedBarcodes_status_warningOn": "Açık",
+"@unscannedBarcodes_status_warningOn": {
+  "description": "Warning column cell value when the unscanned QR code warning is on (PrescriptionItem.warning == true)."
+},
+"unscannedBarcodes_status_warningOff": "Kapalı",
+"@unscannedBarcodes_status_warningOff": {
+  "description": "Warning column cell value when the unscanned QR code warning is off (PrescriptionItem.warning == false)."
+},
+"unscannedBarcodes_alertTooltip": "{count, plural, other{{count} okutulmayan karekod}}",
+"@unscannedBarcodes_alertTooltip": {
+  "description": "Client dashboard app bar alert button tooltip; count of items returned by Dashboard/unReadQrCode for the logged-in user.",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_alertDialogTitle": "Okutulmayan Karekodlar",
+"@unscannedBarcodes_alertDialogTitle": {
+  "description": "Title of the client dialog opened from the app bar alert, listing the logged-in user's unscanned QR codes."
+},
+"unscannedBarcodes_alertDialogSubtitle": "Uyguladığınız ilaçların karekodları okutulmadı",
+"@unscannedBarcodes_alertDialogSubtitle": {
+  "description": "Subtitle of the client unscanned QR codes alert dialog."
+},
+"unscannedBarcodes_missingCountChip": "{count, plural, other{{count} kutu okutulmadı}}",
+"@unscannedBarcodes_missingCountChip": {
+  "description": "Chip on each row of the client unscanned QR codes alert dialog; number of boxes still to be scanned (missingQrCodeCount).",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_scanButton": "Karekod Okut",
+"@unscannedBarcodes_scanButton": {
+  "description": "Row button in the client unscanned QR codes alert dialog; opens the shared QR scan dialog for that item."
+},
+"unscannedBarcodes_alertEmptyTitle": "Okutulmayan karekod kalmadı",
+"@unscannedBarcodes_alertEmptyTitle": {
+  "description": "Empty state of the client unscanned QR codes alert dialog after all items are scanned."
+},
 "urgentPatientTermination_listTitle": "Acil Hastalar",
 "@urgentPatientTermination_listTitle": {
   "description": "Section title above the list of still-open urgent patient records (middle column of the termination screen)."

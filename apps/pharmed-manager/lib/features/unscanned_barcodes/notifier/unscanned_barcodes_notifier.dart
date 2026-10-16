@@ -70,10 +70,7 @@ class UnscannedBarcodesNotifier extends ChangeNotifier with ApiRequestMixin, Pag
   int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
 
   /// Kalemin okutulması gereken kutu adedi — dialog'daki okutma alanı sayısı.
-  int requiredQrCountOf(PrescriptionItem item) {
-    final count = item.medicine?.boxCountOf(item.dosePiece ?? 0) ?? 0;
-    return count < 1 ? 1 : count;
-  }
+  int requiredQrCountOf(PrescriptionItem item) => item.requiredQrCount;
 
   /// İlacın barkodu — farklı ilacın karekodunu reddetmek için. İlaç değilse
   /// (sarf malzeme vb.) GTIN kontrolü yapılmaz.

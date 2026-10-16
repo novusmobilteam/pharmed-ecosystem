@@ -401,6 +401,12 @@ final getUnappliedPrescriptionsUseCaseProvider = Provider((ref) {
   return GetDashboardUnappliedPrescriptionsUseCase(ref.read(dashboardRepositoryProvider));
 });
 
+/// Oturumdaki kullanıcının, manager'da uyarısı açılmış okutulmayan
+/// karekodları (Dashboard/unReadQrCode).
+final getUnreadQrCodesUseCaseProvider = Provider((ref) {
+  return GetUnreadQrcodesUsecase(ref.read(dashboardRepositoryProvider));
+});
+
 final saveSensorValuesUseCaseProvider = Provider<SaveSensorValuesUseCase>(
   (ref) =>
       SaveSensorValuesUseCase(ref.read(cabinTemperatureRepositoryProvider), ref.read(getCurrentStationUseCaseProvider)),

@@ -20,6 +20,7 @@ final dashboardNotifierProvider = ChangeNotifierProvider<DashboardNotifier>((ref
     getUpcomingTreatments: ref.read(getUpcomingTreatmensUseCaseProvider),
     getDrugActivities: ref.read(getDrugActivitiesUseCaseProvider),
     getUnappliedPrescriptions: ref.read(getUnappliedPrescriptionsUseCaseProvider),
+    getUnreadQrCodes: ref.read(getUnreadQrCodesUseCaseProvider),
     getCurrentStation: ref.read(getCurrentStationUseCaseProvider),
     getCabinVisualizer: ref.read(getCabinVisualizerDataUseCaseProvider),
     settings: ref.read(appSettingsCacheProvider),
@@ -35,6 +36,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
     required GetDrugActivitiesUseCase getDrugActivities,
     required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
+    required GetUnreadQrcodesUsecase getUnreadQrCodes,
     required GetCurrentStationUseCase getCurrentStation,
     required GetCabinVisualizerDataUseCase getCabinVisualizer,
     required AppSettingsCache settings,
@@ -45,6 +47,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
        _getUpcomingTreatments = getUpcomingTreatments,
        _getDrugActivities = getDrugActivities,
        _getUnapplied = getUnappliedPrescriptions,
+       _getUnreadQrCodes = getUnreadQrCodes,
        _getCurrentStation = getCurrentStation,
        _getCabinVisualizer = getCabinVisualizer,
        _settings = settings,
@@ -56,6 +59,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
   final GetDrugActivitiesUseCase _getDrugActivities;
   final GetDashboardUnappliedPrescriptionsUseCase _getUnapplied;
+  final GetUnreadQrcodesUsecase _getUnreadQrCodes;
   final GetCurrentStationUseCase _getCurrentStation;
   final GetCabinVisualizerDataUseCase _getCabinVisualizer;
   final AuthNotifier _authNotifier;
@@ -105,6 +109,13 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
 
   List<PrescriptionItem>? _unappliedPrescriptions;
   List<PrescriptionItem>? get unappliedPrescriptions => _unappliedPrescriptions;
+
+  /// Oturumdaki kullanıcının, uyarısı açık okutulmayan karekodları. Boşsa
+  /// app bar'da uyarı gösterilmez.
+  List<PrescriptionItem> _unreadQrCodes = const [];
+  List<PrescriptionItem> get unreadQrCodes => _unreadQrCodes;
+
+  final OperationKey fetchUnreadQrCodesKey = OperationKey.custom('fetch-unread-qr-codes');
 
   AppUser? get currentUser => _authNotifier.currentUser;
 
@@ -286,7 +297,35 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
           notifyListeners();
         },
       ),
+      refreshUnreadQrCodes(),
     ]);
+  }
+
+  /// Okutulmayan karekod uyarılarını yeniler. Kullanıcıya özgüdür (sunucu
+  /// kullanıcıyı token'dan alır); oturum yokken istek atılmaz, liste boşalır.
+  /// Periyodik yenilemeye ek olarak giriş sonrası ve okutma sonrası çağrılır.
+  Future<void> refreshUnreadQrCodes() async {
+    if (currentUser == null) {
+      clearUnreadQrCodes();
+      return;
+    }
+    await execute(
+      fetchUnreadQrCodesKey,
+      operation: () => _getUnreadQrCodes.call(),
+      onData: (data) {
+        // İstek sürerken oturum kapandıysa önceki kullanıcının listesi
+        // gösterilmesin.
+        _unreadQrCodes = currentUser == null ? const [] : data;
+        notifyListeners();
+      },
+    );
+  }
+
+  /// Oturum kapanınca çağrılır — uyarı bir sonraki kullanıcıya taşınmasın.
+  void clearUnreadQrCodes() {
+    if (_unreadQrCodes.isEmpty) return;
+    _unreadQrCodes = const [];
+    notifyListeners();
   }
 
   Future<CabinType?> _resolveDeviceMode() async {

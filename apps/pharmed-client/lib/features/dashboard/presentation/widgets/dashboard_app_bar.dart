@@ -28,6 +28,8 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.isLoggedIn,
     this.isNavigationLocked = false,
     this.user,
+    this.unreadQrCount = 0,
+    this.onUnreadQrTap,
     this.onHomeTap,
     this.onLoginTap,
     this.onLogoutTap,
@@ -45,6 +47,11 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// true → kabin işlemi sürüyor; navigasyon aksiyonları pasif.
   final bool isNavigationLocked;
   final AppUser? user;
+
+  /// Oturumdaki kullanıcının okutulmayan karekod uyarısı sayısı. 0 → buton
+  /// gösterilmez.
+  final int unreadQrCount;
+  final VoidCallback? onUnreadQrTap;
 
   final VoidCallback? onHomeTap;
   final VoidCallback? onLoginTap;
@@ -212,6 +219,13 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           ),
 
           SizedBox(width: 10),
+          if (widget.isLoggedIn && widget.unreadQrCount > 0) ...[
+            Opacity(
+              opacity: actionOpacity,
+              child: _UnreadQrAlertButton(count: widget.unreadQrCount, onTap: _lockAware(widget.onUnreadQrTap)),
+            ),
+            const SizedBox(width: 10),
+          ],
           if (!widget.isLoggedIn)
             MedButton(
               prefixIcon: Icon(PhosphorIcons.signIn()),
@@ -361,6 +375,59 @@ class _NavItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Okutulmayan karekod uyarısı: amber ikon butonu + sayaç rozeti.
+class _UnreadQrAlertButton extends StatelessWidget {
+  const _UnreadQrAlertButton({required this.count, this.onTap});
+
+  final int count;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        MedRectangleIconButton(
+          iconData: PhosphorIcons.qrCode(),
+          tooltip: context.l10n.unscannedBarcodes_alertTooltip(count),
+          color: MedColors.amberLight,
+          iconColor: MedColors.amber,
+          borderColor: MedColors.amber,
+          onPressed: onTap,
+          size: 40,
+        ),
+        Positioned(
+          top: -6,
+          right: -6,
+          child: IgnorePointer(
+            child: Container(
+              constraints: const BoxConstraints(minWidth: 18),
+              height: 18,
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: MedColors.red,
+                borderRadius: BorderRadius.circular(9),
+                border: Border.all(color: MedColors.surface, width: 1.5),
+              ),
+              child: Text(
+                count > 99 ? '99+' : '$count',
+                style: const TextStyle(
+                  fontFamily: MedFonts.mono,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

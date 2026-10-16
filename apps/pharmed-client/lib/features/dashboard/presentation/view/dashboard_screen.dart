@@ -42,6 +42,7 @@ import '../../../waste/waste.dart';
 import '../../dashboard.dart';
 import '../notifier/dashboard_notifier.dart';
 import '../widgets/dashboard_app_bar.dart';
+import '../widgets/unread_qr_codes_dialog.dart';
 
 part 'dashboard_route_content.dart';
 part '../widgets/cabin_telemetry_panel.dart';
@@ -90,12 +91,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       // geçiş olduğu için navigasyon kilidi bypass edilir (force).
       if (previousUserId != null && nextUserId == null) {
         dashboard.navigateTo('dashboard', force: true);
+        dashboard.clearUnreadQrCodes();
         return;
       }
 
-      // Giriş yapıldı ve kullanıcı farklı — menü yetkileri yeniden çekilir.
+      // Giriş yapıldı ve kullanıcı farklı — menü yetkileri ve kullanıcıya
+      // özgü okutulmayan karekod uyarıları yeniden çekilir.
       if (nextUserId != null && nextUserId != previousUserId) {
         dashboard.reloadMenus();
+        dashboard.refreshUnreadQrCodes();
       }
     });
 
@@ -140,6 +144,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       isLoggedIn: isLoggedIn,
                       isNavigationLocked: isNavigationLocked,
                       user: currentUser,
+                      unreadQrCount: notifier.unreadQrCodes.length,
+                      onUnreadQrTap: () => guarded(() => showUnreadQrCodesDialog(context)),
                       onHomeTap: () => guarded(() {
                         notifier.navigateTo('dashboard');
                         notifier.refresh(forceRefresh: false);

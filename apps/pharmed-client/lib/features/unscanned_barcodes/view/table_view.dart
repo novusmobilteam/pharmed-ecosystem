@@ -64,4 +64,16 @@ List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) =>
     title: context.l10n.movement_quantityLabel,
     displayValue: (item) => '${item.dosePiece.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
   ),
+  TableColumnDef(
+    title: context.l10n.unscannedBarcodes_table_scannedCountColumn,
+    numeric: true,
+    displayValue: (item) => '${item.qrCodeCount ?? 0}',
+    sortValue: (item) => item.qrCodeCount ?? 0,
+  ),
+  TableColumnDef(
+    title: context.l10n.unscannedBarcodes_table_missingCountColumn,
+    numeric: true,
+    displayValue: (item) => item.missingQrCodeCount?.toString() ?? '-',
+    sortValue: (item) => item.missingQrCodeCount ?? 0,
+  ),
 ];

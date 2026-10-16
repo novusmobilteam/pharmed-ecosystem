@@ -43,6 +43,27 @@ class PrescriptionItem implements Selectable {
   final DateTime? applicationDate;
   final User? applicationUser;
 
+  /// Okutulmuş karekod adedi (okutulmayan karekod listelerinde dolu gelir).
+  final int? qrCodeCount;
+
+  /// Okutulması gereken ama henüz okutulmamış karekod (kutu) adedi.
+  final int? missingQrCodeCount;
+
+  /// Okutulmayan karekod uyarısı açık mı? Manager'da açılıp kapatılır;
+  /// açıksa kayıt, uygulayan kullanıcının client dashboard'unda uyarı olarak
+  /// görünür (Dashboard/unReadQrCode).
+  final bool? warning;
+
+  bool get isWarningOn => warning ?? false;
+
+  /// Karekod okutma dialog'unda istenecek kutu sayısı (en az 1). Sunucu
+  /// eksik adedi bildiriyorsa o kullanılır (kısmen okutulmuş kalemler),
+  /// bildirmiyorsa uygulanan dozdan hesaplanır.
+  int get requiredQrCount {
+    final count = missingQrCodeCount ?? medicine?.boxCountOf(dosePiece ?? 0) ?? 0;
+    return count < 1 ? 1 : count;
+  }
+
   PrescriptionMovementType? get status => lastMovement?.type;
   User? get activityUser => lastMovement?.performedBy;
   DateTime? get activityDate => lastMovement?.createdAt;
@@ -85,6 +106,9 @@ class PrescriptionItem implements Selectable {
     this.hospitalization,
     this.applicationDate,
     this.applicationUser,
+    this.qrCodeCount,
+    this.missingQrCodeCount,
+    this.warning,
   });
 
   PrescriptionItem copyWith({
@@ -122,6 +146,9 @@ class PrescriptionItem implements Selectable {
     String? patientName,
     String? rfidTag,
     PrescriptionItemMovement? lastMovement,
+    int? qrCodeCount,
+    int? missingQrCodeCount,
+    bool? warning,
     bool clearRfidTag = false,
   }) {
     return PrescriptionItem(
@@ -157,6 +184,9 @@ class PrescriptionItem implements Selectable {
       rfidTag: clearRfidTag ? null : (rfidTag ?? this.rfidTag),
       prescription: prescription ?? this.prescription,
       lastMovement: lastMovement ?? this.lastMovement,
+      qrCodeCount: qrCodeCount ?? this.qrCodeCount,
+      missingQrCodeCount: missingQrCodeCount ?? this.missingQrCodeCount,
+      warning: warning ?? this.warning,
     );
   }
 

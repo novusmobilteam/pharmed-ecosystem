@@ -4804,6 +4804,41 @@
 "unscannedBarcodes_action_showScanned": "Show Scanned Barcodes",
 "unscannedBarcodes_action_showDeleted": "Show Deleted Barcodes",
 "unscannedBarcodes_action_showUnscanned": "Show Unscanned Barcodes",
+"unscannedBarcodes_action_enableWarning": "Turn Warning On",
+"unscannedBarcodes_action_disableWarning": "Turn Warning Off",
+"unscannedBarcodes_table_scannedCountColumn": "Scanned QR Codes",
+"unscannedBarcodes_table_missingCountColumn": "QR Codes to Scan",
+"unscannedBarcodes_scannedCountChip": "{count, plural, one{{count} box scanned} other{{count} boxes scanned}}",
+"@unscannedBarcodes_scannedCountChip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_table_warningColumn": "Warning",
+"unscannedBarcodes_status_warningOn": "On",
+"unscannedBarcodes_status_warningOff": "Off",
+"unscannedBarcodes_alertTooltip": "{count, plural, one{{count} unscanned QR code} other{{count} unscanned QR codes}}",
+"@unscannedBarcodes_alertTooltip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_alertDialogTitle": "Unscanned QR Codes",
+"unscannedBarcodes_alertDialogSubtitle": "QR codes of medicines you administered were not scanned",
+"unscannedBarcodes_missingCountChip": "{count, plural, one{{count} box not scanned} other{{count} boxes not scanned}}",
+"@unscannedBarcodes_missingCountChip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"unscannedBarcodes_scanButton": "Scan QR Code",
+"unscannedBarcodes_alertEmptyTitle": "No unscanned QR codes left",
 "urgentPatientTermination_listTitle": "Emergency Patients",
 "urgentPatientTermination_selectHint": "Select an emergency patient to continue",
 "urgentPatientTermination_takenMedicinesTitle": "Medicines Taken",

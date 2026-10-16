@@ -17,7 +17,7 @@ class _TableView extends StatelessWidget {
 
       selectionMode: notifier.canSelectItem ? TableSelectionMode.single : TableSelectionMode.none,
       onSingleSelectionChanged: (selectedItem) => notifier.selectedItem = selectedItem,
-      columnDefs: _buildColumnDefs(context),
+      columnDefs: _buildColumnDefs(context, showWarning: notifier.mode == BarcodeListMode.unscanned),
 
       // Pagination
       enablePagination: true,
@@ -86,7 +86,7 @@ class _TableView extends StatelessWidget {
   }
 }
 
-List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) => [
+List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context, {required bool showWarning}) => [
   TableColumnDef(
     title: context.l10n.drugActivity_table_patientColumn,
     displayValue: (item) => item.prescription?.hospitalization?.patient?.fullName,
@@ -105,4 +105,39 @@ List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) =>
     title: context.l10n.movement_quantityLabel,
     displayValue: (item) => '${item.dosePiece.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
   ),
+  TableColumnDef(
+    title: context.l10n.unscannedBarcodes_table_scannedCountColumn,
+    numeric: true,
+    displayValue: (item) => '${item.qrCodeCount ?? 0}',
+    sortValue: (item) => item.qrCodeCount ?? 0,
+  ),
+  TableColumnDef(
+    title: context.l10n.unscannedBarcodes_table_missingCountColumn,
+    numeric: true,
+    displayValue: (item) => item.missingQrCodeCount?.toString() ?? '-',
+    sortValue: (item) => item.missingQrCodeCount ?? 0,
+  ),
+  // Uyarı yalnızca okutulmayan kayıtlarda anlamlı (client dashboard'a düşer).
+  if (showWarning)
+    TableColumnDef(
+      title: context.l10n.unscannedBarcodes_table_warningColumn,
+      displayValue: (item) => item.isWarningOn
+          ? context.l10n.unscannedBarcodes_status_warningOn
+          : context.l10n.unscannedBarcodes_status_warningOff,
+      sortValue: (item) => item.isWarningOn ? 1 : 0,
+      cellBuilder: (item) => Align(
+        alignment: Alignment.centerLeft,
+        child: MedChip(
+          label: item.isWarningOn
+              ? context.l10n.unscannedBarcodes_status_warningOn
+              : context.l10n.unscannedBarcodes_status_warningOff,
+          icon: item.isWarningOn ? PhosphorIcons.bellRinging() : PhosphorIcons.bellSlash(),
+          style: item.isWarningOn ? MedChipStyle.warning : MedChipStyle.neutral,
+          shape: MedChipShape.pill,
+          size: MedChipSize.sm,
+          showBorder: false,
+          mono: false,
+        ),
+      ),
+    ),
 ];

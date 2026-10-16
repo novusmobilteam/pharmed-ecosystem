@@ -6821,6 +6821,73 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show Unscanned Barcodes';
 
   @override
+  String get unscannedBarcodes_action_enableWarning => 'Turn Warning On';
+
+  @override
+  String get unscannedBarcodes_action_disableWarning => 'Turn Warning Off';
+
+  @override
+  String get unscannedBarcodes_table_scannedCountColumn => 'Scanned QR Codes';
+
+  @override
+  String get unscannedBarcodes_table_missingCountColumn => 'QR Codes to Scan';
+
+  @override
+  String unscannedBarcodes_scannedCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count boxes scanned',
+      one: '$count box scanned',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_table_warningColumn => 'Warning';
+
+  @override
+  String get unscannedBarcodes_status_warningOn => 'On';
+
+  @override
+  String get unscannedBarcodes_status_warningOff => 'Off';
+
+  @override
+  String unscannedBarcodes_alertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unscanned QR codes',
+      one: '$count unscanned QR code',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_alertDialogTitle => 'Unscanned QR Codes';
+
+  @override
+  String get unscannedBarcodes_alertDialogSubtitle =>
+      'QR codes of medicines you administered were not scanned';
+
+  @override
+  String unscannedBarcodes_missingCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count boxes not scanned',
+      one: '$count box not scanned',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_scanButton => 'Scan QR Code';
+
+  @override
+  String get unscannedBarcodes_alertEmptyTitle => 'No unscanned QR codes left';
+
+  @override
   String get urgentPatientTermination_listTitle => 'Emergency Patients';
 
   @override

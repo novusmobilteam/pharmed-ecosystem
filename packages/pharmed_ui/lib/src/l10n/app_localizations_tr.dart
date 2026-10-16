@@ -6774,6 +6774,70 @@ class AppLocalizationsTr extends AppLocalizations {
       'Okutulmayan Karekodları Göster';
 
   @override
+  String get unscannedBarcodes_action_enableWarning => 'Uyarıyı Aç';
+
+  @override
+  String get unscannedBarcodes_action_disableWarning => 'Uyarıyı Kapat';
+
+  @override
+  String get unscannedBarcodes_table_scannedCountColumn => 'Okutulan Karekod';
+
+  @override
+  String get unscannedBarcodes_table_missingCountColumn => 'Okutulacak Karekod';
+
+  @override
+  String unscannedBarcodes_scannedCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kutu okutuldu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_table_warningColumn => 'Uyarı';
+
+  @override
+  String get unscannedBarcodes_status_warningOn => 'Açık';
+
+  @override
+  String get unscannedBarcodes_status_warningOff => 'Kapalı';
+
+  @override
+  String unscannedBarcodes_alertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count okutulmayan karekod',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_alertDialogTitle => 'Okutulmayan Karekodlar';
+
+  @override
+  String get unscannedBarcodes_alertDialogSubtitle =>
+      'Uyguladığınız ilaçların karekodları okutulmadı';
+
+  @override
+  String unscannedBarcodes_missingCountChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kutu okutulmadı',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unscannedBarcodes_scanButton => 'Karekod Okut';
+
+  @override
+  String get unscannedBarcodes_alertEmptyTitle => 'Okutulmayan karekod kalmadı';
+
+  @override
   String get urgentPatientTermination_listTitle => 'Acil Hastalar';
 
   @override
