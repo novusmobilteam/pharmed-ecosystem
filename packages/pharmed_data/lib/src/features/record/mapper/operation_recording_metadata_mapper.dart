@@ -12,6 +12,7 @@ class OperationRecordingMetadataMapper {
         startedAt: _ts(r.startedAt),
         endedAt: _ts(r.endedAt),
         endReason: r.endReason.name,
+        operatorUserId: r.userId,
         cameras: [
           for (final t in r.tracks)
             RecordingCameraDTO(

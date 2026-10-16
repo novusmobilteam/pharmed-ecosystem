@@ -18,6 +18,8 @@ import 'package:pharmed_client/core/recording/storage/recording_storage.dart';
 /// - Geçici hatada üstel geri çekilme + jitter; kalıcı hatada `rejected`.
 /// - Kabin operasyonu sürerken DURAKLAR: upload, operasyonun API çağrılarıyla
 ///   bant genişliği ve bağlantı havuzu için yarışmamalı.
+/// - Oturum yokken (token yok) BEKLER: sunucu kullanıcıyı JWT'den alır ve
+///   tokensız istek 401 döner. 401 kaydı reddetmez, yalnızca erteler.
 class RecordingUploadWorker {
   RecordingUploadWorker({
     required HiveRecordingOutbox outbox,
@@ -28,6 +30,7 @@ class RecordingUploadWorker {
     required CompleteRecordingVideoUseCase completeVideo,
     required RecordingUploadConfig config,
     required bool Function() isBusy,
+    required bool Function() canUpload,
     DateTime Function() clock = DateTime.now,
     Random? random,
   }) : _outbox = outbox,
@@ -38,6 +41,7 @@ class RecordingUploadWorker {
        _completeVideo = completeVideo,
        _config = config,
        _isBusy = isBusy,
+       _canUpload = canUpload,
        _clock = clock,
        _random = random ?? Random();
 
@@ -51,6 +55,9 @@ class RecordingUploadWorker {
   final CompleteRecordingVideoUseCase _completeVideo;
   final RecordingUploadConfig _config;
   final bool Function() _isBusy;
+
+  /// Upload için geçerli bir oturum (token) var mı?
+  final bool Function() _canUpload;
   final DateTime Function() _clock;
   final Random _random;
 
@@ -93,11 +100,11 @@ class RecordingUploadWorker {
         final due = (await _outbox.entries()).where((e) => e.isDue(now)).toList()
           ..sort((a, b) => a.createdAt.compareTo(b.createdAt)); // en eski önce
         for (final candidate in due) {
-          if (_disposed || _isBusy()) return;
+          if (_disposed || _isBusy() || !_canUpload()) return;
           await _outbox.exclusive(() async {
             // Kilit beklenirken sweeper kaydı değiştirmiş/silmiş olabilir.
             final entry = await _outbox.find(candidate.operationId);
-            if (entry != null && entry.isDue(_clock())) await _process(entry);
+            if (entry != null && entry.isDue(_clock())) await _processSafely(entry);
           });
         }
       } while (_rerunRequested && !_disposed);
@@ -111,6 +118,36 @@ class RecordingUploadWorker {
       );
     } finally {
       _running = false;
+    }
+  }
+
+  /// Bir kaydın hatası kuyruğun geri kalanını durdurmasın (head-of-line
+  /// blocking). Kayıtlar en eskiden işlendiği için, yakalanmayan tek bir
+  /// hata her turda aynı kayıtta patlayıp sonrakilerin hiç yüklenmemesine
+  /// yol açar.
+  Future<void> _processSafely(RecordingOutboxEntry entry) async {
+    try {
+      await _process(entry);
+    } on PathNotFoundException catch (e) {
+      // Sidecar ya da video diskten silinmiş (elle temizlik vb.). Yeniden
+      // denemek düzeltmez → incelemeye ayır. Kısmi ilerleme korunsun diye
+      // indeksin güncel halinden reddedilir.
+      final latest = await _outbox.find(entry.operationId) ?? entry;
+      await _reject(latest, 'Kayıt dosyası diskte yok: ${e.path}');
+    } catch (e, st) {
+      final latest = await _outbox.find(entry.operationId) ?? entry;
+      final attempts = latest.attempts + 1;
+      final delay = _backoff(attempts);
+      await _outbox.update(
+        latest.copyWith(attempts: attempts, nextAttemptAt: _clock().add(delay), lastError: e.toString()),
+      );
+      MedLogger.error(
+        unit: _unit,
+        swreq: 'SWREQ-CAM-031',
+        message: 'Kayıt işlenirken beklenmeyen hata (${entry.operationId}), ${delay.inSeconds} sn sonra tekrar denenecek',
+        error: e,
+        stackTrace: st,
+      );
     }
   }
 
@@ -166,7 +203,8 @@ class RecordingUploadWorker {
     try {
       for (var i = 0; i < totalChunks; i++) {
         if (have.contains(i)) continue;
-        if (_disposed || _isBusy()) return _VideoOutcome.paused; // operasyon başladı → sonra devam
+        // Operasyon başladı / oturum kapandı → sonra kaldığı yerden devam.
+        if (_disposed || _isBusy() || !_canUpload()) return _VideoOutcome.paused;
         await raf.setPosition(i * _config.chunkSize);
         final bytes = await raf.read(min(_config.chunkSize, size - i * _config.chunkSize));
         final r = await _uploadChunk(UploadRecordingChunkParams(video: ref, index: i, bytes: bytes));
@@ -242,7 +280,27 @@ class RecordingUploadWorker {
     if (!result.isError) return false;
     final error = _errorOf(result);
 
-    if (error.isRetryable) {
+    // 401: token süresi doldu / oturum kapandı. Kayıt sağlam; yeni oturumda
+    // devam edilir. Deneme sayısı artmaz (backoff büyümesin).
+    if (error is ServiceException && error.statusCode == 401) {
+      await _outbox.update(
+        e.copyWith(nextAttemptAt: _clock().add(_config.pollInterval), lastError: 'unauthorized (401)'),
+      );
+      MedLogger.info(
+        unit: _unit,
+        swreq: 'SWREQ-CAM-031',
+        message: 'Upload yetkisiz (401), oturum açılınca devam edilecek',
+        context: {'operationId': e.operationId},
+      );
+      return true;
+    }
+
+    // 403: istasyon/yetki eşleşmesi sunucu tarafında düzeltilebilir bir
+    // yapılandırma sorunu (sözleşmede yok). Kaydı reddetmek kanıtı kaybettirir;
+    // artan aralıklarla (en fazla maxBackoff) yeniden denenir.
+    final forbidden = error is ServiceException && error.statusCode == 403;
+
+    if (error.isRetryable || forbidden) {
       final attempts = e.attempts + 1;
       final delay = _backoff(attempts);
       await _outbox.update(

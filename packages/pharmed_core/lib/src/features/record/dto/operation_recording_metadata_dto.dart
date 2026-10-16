@@ -1,5 +1,8 @@
 /// Sunucuya giden operasyon kaydı metadata'sı.
-/// Kullanıcı kimliği GÖNDERİLMEZ — sunucu JWT'den alır.
+///
+/// Yükleyen kullanıcı sunucuda JWT'den alınır. Upload arka planda ve sonradan
+/// yapıldığı için yükleyen, işlemi yapan kişiden farklı olabilir; bu yüzden
+/// işlemi yapan kullanıcı [operatorUserId] ile ayrıca gönderilir.
 class OperationRecordingMetadataDTO {
   const OperationRecordingMetadataDTO({
     this.operationId,
@@ -8,6 +11,7 @@ class OperationRecordingMetadataDTO {
     this.startedAt,
     this.endedAt,
     this.endReason,
+    this.operatorUserId,
     this.cameras,
     this.markers,
   });
@@ -18,6 +22,9 @@ class OperationRecordingMetadataDTO {
   final String? startedAt;
   final String? endedAt;
   final String? endReason;
+
+  /// İşlemi yapan kullanıcı (kayıt anındaki oturum).
+  final int? operatorUserId;
   final List<RecordingCameraDTO>? cameras;
   final List<RecordingMarkerDTO>? markers;
 
@@ -28,6 +35,7 @@ class OperationRecordingMetadataDTO {
     startedAt: json['startedAt'] as String?,
     endedAt: json['endedAt'] as String?,
     endReason: json['endReason'] as String?,
+    operatorUserId: json['operatorUserId'] as int?,
     cameras: (json['cameras'] as List?)
         ?.map((e) => RecordingCameraDTO.fromJson((e as Map).cast<String, dynamic>()))
         .toList(),
@@ -43,6 +51,7 @@ class OperationRecordingMetadataDTO {
     'startedAt': startedAt,
     'endedAt': endedAt,
     'endReason': endReason,
+    'operatorUserId': operatorUserId,
     'cameras': cameras?.map((e) => e.toJson()).toList(),
     'markers': markers?.map((e) => e.toJson()).toList(),
   };

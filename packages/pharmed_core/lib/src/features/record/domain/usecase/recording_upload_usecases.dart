@@ -9,7 +9,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 ///
 /// Backend endpoint'leri tamamlanınca `true` yapılır — başka değişiklik gerekmez.
 abstract final class RecordingUploadApi {
-  static const bool isAvailable = false;
+  static const bool isAvailable = true;
 }
 
 // ── Metadata ────────────────────────────────────────────────────────────────

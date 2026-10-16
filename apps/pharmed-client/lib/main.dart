@@ -30,6 +30,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     _observer = SerialPortLifecycleObserver(ref.read(serialServiceProvider));
     WidgetsBinding.instance.addObserver(_observer);
+
+    // [SWREQ-CAM-023] Kamera kayıt hattı: çökme kurtarma → saklama/temizlik →
+    // upload. Operasyonlar girişten sonra başladığı için kurtarma onlardan önce
+    // biter.
+    ref.read(recordingPipelineBootstrapProvider);
   }
 
   @override

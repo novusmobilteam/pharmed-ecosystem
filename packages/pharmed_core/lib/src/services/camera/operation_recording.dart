@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
-import 'recording_file.dart';
-
 /// Kaydı alınan kabin operasyonunun türü.
 enum RecordedOperationType { refill, census, intake, refund, waste, unload }
 

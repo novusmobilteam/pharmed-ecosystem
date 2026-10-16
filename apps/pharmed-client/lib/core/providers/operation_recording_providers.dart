@@ -15,10 +15,9 @@ import 'providers.dart';
 
 final recordingStorageConfigProvider = Provider<RecordingStorageConfig>((ref) => RecordingStorageConfig.defaults());
 
-/// Upload worker her flavor'da açık. API yokken use case'ler sahte başarı
-/// döner ve kayıtlar verifiedByStub işaretlenir — saklama kuralı onları
-/// silmez, API açılınca yeniden yüklenirler. Gerekirse
-/// --dart-define=RECORDING_UPLOAD_ENABLED=false ile tamamen kapatılabilir.
+/// Upload worker her flavor'da açık. Gerekirse
+/// --dart-define=RECORDING_UPLOAD_ENABLED=false ile tamamen kapatılabilir
+/// (kayıtlar lokalde birikir, saklama kuralı yüklenmemişleri silmez).
 final recordingUploadConfigProvider = Provider<RecordingUploadConfig>((ref) => RecordingUploadConfig.fromEnvironment());
 
 final recordingStorageProvider = Provider<RecordingStorage>(
@@ -32,13 +31,26 @@ final recordingOutboxProvider = Provider<HiveRecordingOutbox>((ref) {
 });
 
 // ── Upload: datasource → repository → use case ──────────────────────────────
-// Use case'ler RecordingUploadApi.isAvailable = false iken sunucuya gitmez.
+
+/// Kayıt upload'ı için AYRI APIManager. [SWREQ-CAM-030]
+/// - Ayrı Dio / bağlantı havuzu: 5 MB'lık parçalar operasyonun API
+///   çağrılarını bekletmez.
+/// - Uzun receive timeout: `complete` adımında sunucu parçaları birleştirip
+///   SHA-256 hesaplar (70 MB'a kadar); 15 sn'lik genel timeout yetmez.
+/// - Arka plan 401'i oturumu KAPATMAZ: token ana APIManager ile aynı
+///   TokenHolder'dan okunur ama onUnauthorized yutulur (worker kaydı erteler).
+final recordingApiManagerProvider = Provider<APIManager>((ref) {
+  final config = FlavorConfig.instance;
+  return APIManager(
+    baseUrl: config.baseUrl,
+    tokenProvider: _BackgroundTokenProvider(ref.read(tokenHolderProvider)),
+    connectTimeout: Duration(milliseconds: config.connectTimeoutMs),
+    receiveTimeout: const Duration(minutes: 2),
+  );
+});
 
 final operationRecordingRemoteDataSourceProvider = Provider<OperationRecordingRemoteDataSource>(
-  // NOT: apiManagerProvider adını doğrulayın. Büyük parçalar için ileride
-  // ayrı (uzun timeout'lu) bir APIManager örneği önerilir — operasyonun API
-  // çağrılarıyla aynı bağlantı havuzunu paylaşmasın.
-  (ref) => OperationRecordingRemoteDataSource(apiManager: ref.read(apiManagerProvider)),
+  (ref) => OperationRecordingRemoteDataSource(apiManager: ref.read(recordingApiManagerProvider)),
 );
 
 final recordingUploadRepositoryProvider = Provider<IRecordingUploadRepository>((ref) {
@@ -100,6 +112,7 @@ final operationRecordingCoordinatorProvider = Provider<OperationRecordingCoordin
 
 final recordingUploadWorkerProvider = Provider<RecordingUploadWorker>((ref) {
   final coordinator = ref.watch(operationRecordingCoordinatorProvider);
+  final tokenHolder = ref.read(tokenHolderProvider);
   final worker = RecordingUploadWorker(
     outbox: ref.watch(recordingOutboxProvider),
     storage: ref.watch(recordingStorageProvider),
@@ -109,7 +122,12 @@ final recordingUploadWorkerProvider = Provider<RecordingUploadWorker>((ref) {
     completeVideo: ref.read(completeRecordingVideoUseCaseProvider),
     config: ref.watch(recordingUploadConfigProvider),
     isBusy: () => coordinator.hasActiveOperation,
+    canUpload: () => tokenHolder.accessToken?.isNotEmpty ?? false,
   );
+  // Oturum açılınca bekleyen kayıtları hemen dene (sonraki poll'u bekleme).
+  ref.listen(authNotifierProvider, (_, next) {
+    if (next is AuthLoggedIn) worker.kick();
+  });
   ref.onDispose(worker.dispose);
   return worker;
 });
@@ -134,3 +152,19 @@ final recordingPipelineBootstrapProvider = FutureProvider<void>((ref) async {
   ref.read(recordingRetentionSweeperProvider).start();
   ref.read(recordingUploadWorkerProvider).start();
 });
+
+/// Ana TokenHolder'dan token okur; arka plan isteklerinin 401'i oturumu
+/// kapatmasın diye onUnauthorized'ı yutar.
+class _BackgroundTokenProvider implements AuthTokenProvider {
+  const _BackgroundTokenProvider(this._inner);
+  final AuthTokenProvider _inner;
+
+  @override
+  String? get accessToken => _inner.accessToken;
+
+  @override
+  String get currentLocale => _inner.currentLocale;
+
+  @override
+  void onUnauthorized() {}
+}
