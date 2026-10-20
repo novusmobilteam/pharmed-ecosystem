@@ -148,4 +148,19 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(CabinTemperatureValueDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<UnorderedLoadedMaterialDto>>?>> getUnorderedLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/unorderedLoadedMaterials',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(UnorderedLoadedMaterialDto.fromJson),
+    );
+  }
 }

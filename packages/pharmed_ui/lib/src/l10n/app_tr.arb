@@ -3051,7 +3051,7 @@
   },
   "report_stationsCategoryTitle": "İstasyonlar",
   "@report_stationsCategoryTitle": {
-    "description": "Category title for the stations side-list, shared across refill list, expired items report and station transaction report screens"
+    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction and unordered loaded materials report screens"
   },
   "refillList_cellValueYes": "Evet",
   "@refillList_cellValueYes": {
@@ -9492,6 +9492,10 @@
 "tableCore_stationTransactionProtocolCodeColumn": "Protokol No",
 "tableCore_stationTransactionPerformedByColumn": "İşlemi Yapan",
 "tableCore_stationTransactionWitnessColumn": "Tanık",
+"tableCore_unorderedLoadedMaterialStationColumn": "İstasyon",
+"tableCore_unorderedLoadedMaterialBarcodeColumn": "Barkod",
+"tableCore_unorderedLoadedMaterialMaterialColumn": "Malzeme",
+"tableCore_unorderedLoadedMaterialQuantityColumn": "Miktar",
 "report_stationTransaction_detailDialogTitle": "İşlem Detayı",
 "report_stationTransaction_detailTooltip": "Detayı Görüntüle",
 "report_stationTransaction_stepsSectionTitle": "Göz Detayı",

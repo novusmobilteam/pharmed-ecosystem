@@ -5112,6 +5112,22 @@
 "@tableCore_stationTransactionWitnessColumn": {
   "description": "Station transaction report table column header for the witness user who approved the transaction, if any"
 },
+"tableCore_unorderedLoadedMaterialStationColumn": "Station",
+"@tableCore_unorderedLoadedMaterialStationColumn": {
+  "description": "Unordered loaded materials report table column header for the station name the material is loaded in"
+},
+"tableCore_unorderedLoadedMaterialBarcodeColumn": "Barcode",
+"@tableCore_unorderedLoadedMaterialBarcodeColumn": {
+  "description": "Unordered loaded materials report table column header for the material barcode"
+},
+"tableCore_unorderedLoadedMaterialMaterialColumn": "Material",
+"@tableCore_unorderedLoadedMaterialMaterialColumn": {
+  "description": "Unordered loaded materials report table column header for the material name"
+},
+"tableCore_unorderedLoadedMaterialQuantityColumn": "Quantity",
+"@tableCore_unorderedLoadedMaterialQuantityColumn": {
+  "description": "Unordered loaded materials report table column header for the total loaded quantity of the material in the station"
+},
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {
   "description": "Title of the detail dialog opened from a row in the station transaction report table"

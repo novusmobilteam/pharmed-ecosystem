@@ -9,6 +9,7 @@ import 'package:pharmed_manager/features/refill_list/view/refill_list_screen.dar
 import 'package:pharmed_manager/features/reports/auth_summary/view/auth_summary_report_screen.dart';
 import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
 import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
+import 'package:pharmed_manager/features/reports/unordered_loaded_materials/view/unordered_loaded_materials_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/settings/view/settings_view.dart';
 import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
@@ -206,6 +207,7 @@ class _HomeContent extends StatelessWidget {
       'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
+      'unordered-loaded-materials' => UnorderedLoadedMaterialsReportScreen(menu: menu!),
       'hospital-material-list' => HospitalStocksReportScreen(menu: menu!),
       //'refill' => RefillListScreen(menu: menu!),
       'tray' => AssignmentScreen(menu: menu!),

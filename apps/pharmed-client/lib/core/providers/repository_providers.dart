@@ -343,6 +343,7 @@ final reportRepositoryProvider = Provider<IReportRepository>((ref) {
       cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
       stationTransactionMapper: StationTransactionMapper(),
       stepMapper: StationTransactionStepMapper(),
+      unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
       dataSource: ref.read(reportDataSourceProvider),
@@ -355,6 +356,7 @@ final reportRepositoryProvider = Provider<IReportRepository>((ref) {
       cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
       stationTransactionMapper: StationTransactionMapper(),
       stepMapper: StationTransactionStepMapper(),
+      unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
     ),
   };
 });

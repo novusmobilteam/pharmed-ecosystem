@@ -37,4 +37,7 @@ abstract interface class IReportRepository {
     required int stationId,
     bool outOfRange = false,
   });
+
+  /// Order Edilmemiş / Yüklü Malzeme
+  Future<Result<ApiResponse<List<UnorderedLoadedMaterial>>?>> getUnorderedLoadedMaterials({PagedQueryParams? params});
 }

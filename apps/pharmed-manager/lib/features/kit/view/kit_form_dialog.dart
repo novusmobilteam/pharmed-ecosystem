@@ -49,7 +49,7 @@ class _KitFormDialogState extends State<KitFormDialog> {
               );
             }
           },
-          onClose: () => context.pop(false),
+          onClose: () => Navigator.of(context).pop(),
           child: Form(
             key: formKey,
             child: Column(

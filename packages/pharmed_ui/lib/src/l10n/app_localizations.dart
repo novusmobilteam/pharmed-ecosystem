@@ -12908,6 +12908,30 @@ abstract class AppLocalizations {
   /// **'Witness'**
   String get tableCore_stationTransactionWitnessColumn;
 
+  /// Unordered loaded materials report table column header for the station name the material is loaded in
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_unorderedLoadedMaterialStationColumn;
+
+  /// Unordered loaded materials report table column header for the material barcode
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_unorderedLoadedMaterialBarcodeColumn;
+
+  /// Unordered loaded materials report table column header for the material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_unorderedLoadedMaterialMaterialColumn;
+
+  /// Unordered loaded materials report table column header for the total loaded quantity of the material in the station
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_unorderedLoadedMaterialQuantityColumn;
+
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
   /// In en, this message translates to:

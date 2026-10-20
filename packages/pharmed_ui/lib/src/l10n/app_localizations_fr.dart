@@ -7525,6 +7525,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tableCore_stationTransactionWitnessColumn => 'Témoin';
 
   @override
+  String get tableCore_unorderedLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialBarcodeColumn => 'Code-barres';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMaterialColumn => 'Article';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Quantité';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Détail de l\'opération';
 

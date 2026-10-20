@@ -7348,6 +7348,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tableCore_stationTransactionWitnessColumn => 'Witness';
 
   @override
+  String get tableCore_unorderedLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Quantity';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Transaction Detail';
 

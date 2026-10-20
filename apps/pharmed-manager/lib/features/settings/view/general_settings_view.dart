@@ -33,7 +33,7 @@ class GeneralSettingsView extends StatelessWidget {
         ),
         SizedBox(height: 12),
         MedCheckbox(
-          label: context.l10n.settingsGeneral_wasteOrderReactivateLabel,
+          label: context.l10n.medicine_checkboxWastageOrderRenewed,
           size: MedCheckboxSize.sm,
           value: settings.getBool(SystemParameterKeys.wasteOrderMayItFall),
           onChanged: (_) => settings.setBool(

@@ -422,6 +422,7 @@ class RepositoryProviders {
             cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
             stationTransactionMapper: StationTransactionMapper(),
             stepMapper: StationTransactionStepMapper(),
+            unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
             dataSource: context.read(),
@@ -434,6 +435,7 @@ class RepositoryProviders {
             cabinTemperatureValueMapper: CabinTemperatureValueMapper(),
             stationTransactionMapper: StationTransactionMapper(),
             stepMapper: StationTransactionStepMapper(),
+            unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
           ),
         },
       ),
