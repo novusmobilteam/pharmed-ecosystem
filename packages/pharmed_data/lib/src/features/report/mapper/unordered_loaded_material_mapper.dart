@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class UnorderedLoadedMaterialMapper {
   const UnorderedLoadedMaterialMapper();
@@ -11,6 +12,7 @@ class UnorderedLoadedMaterialMapper {
       materialName: dto.materialName,
       barcode: dto.barcode,
       quantity: dto.quantity,
+      medicine: const MedicineMapper().toEntityOrNull(dto.material),
     );
   }
 
@@ -26,6 +28,7 @@ class UnorderedLoadedMaterialMapper {
       materialName: entity.materialName,
       barcode: entity.barcode,
       quantity: entity.quantity,
+      material: const MedicineMapper().toDtoOrNull(entity.medicine),
     );
   }
 }

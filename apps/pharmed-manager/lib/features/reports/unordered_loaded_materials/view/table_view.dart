@@ -47,12 +47,12 @@ List<TableColumnDef<UnorderedLoadedMaterial>> _buildColumnDefs(BuildContext cont
   TableColumnDef(
     title: context.l10n.tableCore_unorderedLoadedMaterialMaterialColumn,
     flex: 2,
-    displayValue: (item) => item.materialName,
+    displayValue: (item) => item.medicine?.name ?? item.materialName,
   ),
   TableColumnDef(
     title: context.l10n.tableCore_unorderedLoadedMaterialQuantityColumn,
     numeric: true,
-    displayValue: (item) => item.quantity?.formatFractional,
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
     sortValue: (item) => item.quantity,
   ),
 ];

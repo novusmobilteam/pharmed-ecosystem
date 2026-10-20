@@ -37,9 +37,13 @@ class TableView extends StatelessWidget {
 List<TableColumnDef<HospitalStock>> _buildColumnDefs(BuildContext context) => [
   TableColumnDef(title: context.l10n.hospitalStock_table_serviceColumn, displayValue: (item) => item.serviceName),
   TableColumnDef(title: context.l10n.hospitalStock_table_codeColumn, displayValue: (item) => item.code),
-  TableColumnDef(title: context.l10n.hospitalStock_table_medicineColumn, displayValue: (item) => item.materialName),
+  TableColumnDef(
+    title: context.l10n.hospitalStock_table_medicineColumn,
+    displayValue: (item) => item.medicine?.name ?? item.materialName,
+  ),
   TableColumnDef(
     title: context.l10n.hospitalStock_table_quantityColumn,
-    displayValue: (item) => item.quantity?.formatFractional,
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.quantity,
   ),
 ];

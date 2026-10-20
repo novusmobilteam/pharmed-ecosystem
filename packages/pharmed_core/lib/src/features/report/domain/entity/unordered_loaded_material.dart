@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 /// Order Edilmemiş / Yüklü Malzeme raporu satırı.
 ///
 /// İstasyon kabinlerinde stoğu bulunan ancak aktif bir order'ı olmayan
@@ -9,6 +11,7 @@ class UnorderedLoadedMaterial {
   final String? materialName;
   final String? barcode;
   final double? quantity;
+  final Medicine? medicine;
 
   const UnorderedLoadedMaterial({
     this.stationId,
@@ -17,5 +20,6 @@ class UnorderedLoadedMaterial {
     this.materialName,
     this.barcode,
     this.quantity,
+    this.medicine,
   });
 }

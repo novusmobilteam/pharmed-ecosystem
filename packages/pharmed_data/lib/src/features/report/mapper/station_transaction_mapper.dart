@@ -1,9 +1,11 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class StationTransactionMapper {
   const StationTransactionMapper();
 
   StationTransaction toEntity(StationTransactionDto dto) {
+    final medicine = const MedicineMapper().toEntityOrNull(dto.medicine);
     return StationTransaction(
       id: dto.id,
       cabinName: dto.cabinName,
@@ -11,7 +13,8 @@ class StationTransactionMapper {
       transactionType: StationTransactionType.fromValue(dto.transactionId),
       code: dto.code,
       barcode: dto.barcode,
-      material: dto.material,
+      material: dto.material ?? medicine?.name,
+      medicine: medicine,
       transactionDate: dto.transactionDate,
       quantity: dto.quantity,
       performedBy: dto.performedBy,
@@ -49,6 +52,7 @@ class StationTransactionMapper {
       hasSteps: entity.hasSteps,
       stationId: entity.stationId,
       cabinId: entity.cabinId,
+      medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
     );
   }
 }

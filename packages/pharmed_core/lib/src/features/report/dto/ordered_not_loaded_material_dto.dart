@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 class OrderedNotLoadedMaterialDto {
   final int? prescriptionDetailId;
   final int? stationId;
@@ -10,6 +12,7 @@ class OrderedNotLoadedMaterialDto {
   final String? protocolNo;
   final double? quantity;
   final String? patientFullName;
+  final MedicineDto? material;
 
   const OrderedNotLoadedMaterialDto({
     this.prescriptionDetailId,
@@ -23,6 +26,7 @@ class OrderedNotLoadedMaterialDto {
     this.protocolNo,
     this.quantity,
     this.patientFullName,
+    this.material,
   });
 
   factory OrderedNotLoadedMaterialDto.fromJson(Map<String, dynamic> json) {
@@ -38,6 +42,9 @@ class OrderedNotLoadedMaterialDto {
       protocolNo: json['protocolNo'] as String?,
       quantity: (json['quantity'] as num?)?.toDouble(),
       patientFullName: json['patientFullName'] as String?,
+      material: json['material'] is Map<String, dynamic>
+          ? MedicineDto.fromJson(json['material'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -54,6 +61,7 @@ class OrderedNotLoadedMaterialDto {
       if (protocolNo != null) 'protocolNo': protocolNo,
       if (quantity != null) 'quantity': quantity,
       if (patientFullName != null) 'patientFullName': patientFullName,
+      if (material != null) 'material': material!.toJson(),
     };
   }
 }

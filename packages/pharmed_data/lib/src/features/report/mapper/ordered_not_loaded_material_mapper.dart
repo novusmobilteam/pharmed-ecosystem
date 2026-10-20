@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 class OrderedNotLoadedMaterialMapper {
   const OrderedNotLoadedMaterialMapper();
@@ -16,6 +17,7 @@ class OrderedNotLoadedMaterialMapper {
       protocolNo: dto.protocolNo,
       quantity: dto.quantity,
       patientFullName: dto.patientFullName,
+      medicine: const MedicineMapper().toEntityOrNull(dto.material),
     );
   }
 
@@ -36,6 +38,7 @@ class OrderedNotLoadedMaterialMapper {
       protocolNo: entity.protocolNo,
       quantity: entity.quantity,
       patientFullName: entity.patientFullName,
+      material: const MedicineMapper().toDtoOrNull(entity.medicine),
     );
   }
 }

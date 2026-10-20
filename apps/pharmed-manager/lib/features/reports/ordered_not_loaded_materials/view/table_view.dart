@@ -54,7 +54,7 @@ List<TableColumnDef<OrderedNotLoadedMaterial>> _buildColumnDefs(BuildContext con
   TableColumnDef(
     title: context.l10n.tableCore_orderedNotLoadedMaterialMaterialColumn,
     flex: 2,
-    displayValue: (item) => item.materialName,
+    displayValue: (item) => item.medicine?.name ?? item.materialName,
   ),
   TableColumnDef(
     title: context.l10n.tableCore_orderedNotLoadedMaterialDateColumn,
@@ -68,7 +68,7 @@ List<TableColumnDef<OrderedNotLoadedMaterial>> _buildColumnDefs(BuildContext con
   TableColumnDef(
     title: context.l10n.tableCore_orderedNotLoadedMaterialQuantityColumn,
     numeric: true,
-    displayValue: (item) => item.quantity?.formatFractional,
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
     sortValue: (item) => item.quantity,
   ),
   TableColumnDef(

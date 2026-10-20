@@ -72,7 +72,8 @@ List<TableColumnDef<StationTransaction>> _buildColumnDefs(BuildContext context) 
   TableColumnDef(title: context.l10n.tableCore_stationTransactionMaterialColumn, displayValue: (item) => item.material),
   TableColumnDef(
     title: context.l10n.tableCore_stationTransactionQuantityColumn,
-    displayValue: (item) => item.quantity?.formatFractional,
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.quantity,
   ),
   // TableColumnDef(
   //   title: context.l10n.tableCore_stationTransactionOrderColumn,

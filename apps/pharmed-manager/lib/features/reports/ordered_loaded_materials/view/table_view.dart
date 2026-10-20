@@ -58,6 +58,6 @@ List<TableColumnDef<OrderedLoadedMaterial>> _buildColumnDefs(BuildContext contex
   TableColumnDef(
     title: context.l10n.tableCore_orderedLoadedMaterialMaterialColumn,
     flex: 2,
-    displayValue: (item) => item.materialName,
+    displayValue: (item) => item.medicine?.name ?? item.materialName,
   ),
 ];

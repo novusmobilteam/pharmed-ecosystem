@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 /// Order Edilmiş / Yüklenmemiş Malzeme raporu satırı.
 ///
 /// Aktif bir order'ı (reçete kalemi) bulunan ancak ilgili istasyonun
@@ -14,6 +16,7 @@ class OrderedNotLoadedMaterial {
   final String? protocolNo;
   final double? quantity;
   final String? patientFullName;
+  final Medicine? medicine;
 
   const OrderedNotLoadedMaterial({
     this.prescriptionItemId,
@@ -27,5 +30,6 @@ class OrderedNotLoadedMaterial {
     this.protocolNo,
     this.quantity,
     this.patientFullName,
+    this.medicine,
   });
 }

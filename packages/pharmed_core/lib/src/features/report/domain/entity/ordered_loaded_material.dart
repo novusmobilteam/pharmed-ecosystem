@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 /// Order Edilmiş / Yüklü Malzeme raporu satırı.
 ///
 /// Aktif bir order'ı (reçete kalemi) bulunan ve ilgili istasyonun
@@ -10,6 +12,7 @@ class OrderedLoadedMaterial {
   final String? cabinCode;
   final String? materialName;
   final String? barcode;
+  final Medicine? medicine;
 
   const OrderedLoadedMaterial({
     this.serviceName,
@@ -19,5 +22,6 @@ class OrderedLoadedMaterial {
     this.cabinCode,
     this.materialName,
     this.barcode,
+    this.medicine,
   });
 }

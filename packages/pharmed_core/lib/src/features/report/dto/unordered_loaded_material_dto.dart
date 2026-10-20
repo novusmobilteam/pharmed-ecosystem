@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 class UnorderedLoadedMaterialDto {
   final int? stationId;
   final String? stationName;
@@ -5,6 +7,7 @@ class UnorderedLoadedMaterialDto {
   final String? materialName;
   final String? barcode;
   final double? quantity;
+  final MedicineDto? material;
 
   const UnorderedLoadedMaterialDto({
     this.stationId,
@@ -13,6 +16,7 @@ class UnorderedLoadedMaterialDto {
     this.materialName,
     this.barcode,
     this.quantity,
+    this.material,
   });
 
   factory UnorderedLoadedMaterialDto.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,9 @@ class UnorderedLoadedMaterialDto {
       materialName: json['materialName'] as String?,
       barcode: json['barcode'] as String?,
       quantity: (json['quantity'] as num?)?.toDouble(),
+      material: json['material'] is Map<String, dynamic>
+          ? MedicineDto.fromJson(json['material'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -34,6 +41,7 @@ class UnorderedLoadedMaterialDto {
       if (materialName != null) 'materialName': materialName,
       if (barcode != null) 'barcode': barcode,
       if (quantity != null) 'quantity': quantity,
+      if (material != null) 'material': material!.toJson(),
     };
   }
 }
