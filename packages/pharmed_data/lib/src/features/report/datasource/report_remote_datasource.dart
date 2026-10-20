@@ -163,4 +163,22 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(UnorderedLoadedMaterialDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<OrderedNotLoadedMaterialDto>>?>> getOrderedNotLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/orderedUnloadedMaterials',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      filters: params?.filters,
+      dateField: 'orderDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(OrderedNotLoadedMaterialDto.fromJson),
+    );
+  }
 }

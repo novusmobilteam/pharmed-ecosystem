@@ -12932,6 +12932,54 @@ abstract class AppLocalizations {
   /// **'Quantity'**
   String get tableCore_unorderedLoadedMaterialQuantityColumn;
 
+  /// Ordered but not loaded materials report table column header for the station name the ordered material belongs to
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_orderedNotLoadedMaterialStationColumn;
+
+  /// Ordered but not loaded materials report table column header for the hospital department (service) of the order
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get tableCore_orderedNotLoadedMaterialServiceColumn;
+
+  /// Ordered but not loaded materials report table column header for the material barcode
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_orderedNotLoadedMaterialBarcodeColumn;
+
+  /// Ordered but not loaded materials report table column header for the material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_orderedNotLoadedMaterialMaterialColumn;
+
+  /// Ordered but not loaded materials report table column header for the order date and time
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get tableCore_orderedNotLoadedMaterialDateColumn;
+
+  /// Ordered but not loaded materials report table column header for the patient protocol number
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol'**
+  String get tableCore_orderedNotLoadedMaterialProtocolColumn;
+
+  /// Ordered but not loaded materials report table column header for the ordered quantity
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_orderedNotLoadedMaterialQuantityColumn;
+
+  /// Ordered but not loaded materials report table column header for the patient full name
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get tableCore_orderedNotLoadedMaterialPatientColumn;
+
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
   /// In en, this message translates to:

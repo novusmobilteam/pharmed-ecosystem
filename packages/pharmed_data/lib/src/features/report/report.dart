@@ -4,5 +4,6 @@ export 'mapper/stock_transaction_mapper.dart';
 export 'mapper/station_transaction_mapper.dart';
 export 'mapper/station_transaction_step_mapper.dart';
 export 'mapper/unordered_loaded_material_mapper.dart';
+export 'mapper/ordered_not_loaded_material_mapper.dart';
 
 export 'repository/report_repository_impl.dart';

@@ -3051,7 +3051,7 @@
   },
   "report_stationsCategoryTitle": "İstasyonlar",
   "@report_stationsCategoryTitle": {
-    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction and unordered loaded materials report screens"
+    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded materials and ordered not loaded materials report screens"
   },
   "refillList_cellValueYes": "Evet",
   "@refillList_cellValueYes": {
@@ -9496,6 +9496,14 @@
 "tableCore_unorderedLoadedMaterialBarcodeColumn": "Barkod",
 "tableCore_unorderedLoadedMaterialMaterialColumn": "Malzeme",
 "tableCore_unorderedLoadedMaterialQuantityColumn": "Miktar",
+"tableCore_orderedNotLoadedMaterialStationColumn": "İstasyon",
+"tableCore_orderedNotLoadedMaterialServiceColumn": "Bölüm",
+"tableCore_orderedNotLoadedMaterialBarcodeColumn": "Barkod",
+"tableCore_orderedNotLoadedMaterialMaterialColumn": "Malzeme",
+"tableCore_orderedNotLoadedMaterialDateColumn": "Tarih",
+"tableCore_orderedNotLoadedMaterialProtocolColumn": "Protokol",
+"tableCore_orderedNotLoadedMaterialQuantityColumn": "Miktar",
+"tableCore_orderedNotLoadedMaterialPatientColumn": "Ad Soyad",
 "report_stationTransaction_detailDialogTitle": "İşlem Detayı",
 "report_stationTransaction_detailTooltip": "Detayı Görüntüle",
 "report_stationTransaction_stepsSectionTitle": "Göz Detayı",

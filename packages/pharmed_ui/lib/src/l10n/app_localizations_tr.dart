@@ -7305,6 +7305,30 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Miktar';
 
   @override
+  String get tableCore_orderedNotLoadedMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialServiceColumn => 'Bölüm';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialDateColumn => 'Tarih';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialProtocolColumn => 'Protokol';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialQuantityColumn => 'Miktar';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialPatientColumn => 'Ad Soyad';
+
+  @override
   String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';
 
   @override

@@ -5128,6 +5128,38 @@
 "@tableCore_unorderedLoadedMaterialQuantityColumn": {
   "description": "Unordered loaded materials report table column header for the total loaded quantity of the material in the station"
 },
+"tableCore_orderedNotLoadedMaterialStationColumn": "Station",
+"@tableCore_orderedNotLoadedMaterialStationColumn": {
+  "description": "Ordered but not loaded materials report table column header for the station name the ordered material belongs to"
+},
+"tableCore_orderedNotLoadedMaterialServiceColumn": "Department",
+"@tableCore_orderedNotLoadedMaterialServiceColumn": {
+  "description": "Ordered but not loaded materials report table column header for the hospital department (service) of the order"
+},
+"tableCore_orderedNotLoadedMaterialBarcodeColumn": "Barcode",
+"@tableCore_orderedNotLoadedMaterialBarcodeColumn": {
+  "description": "Ordered but not loaded materials report table column header for the material barcode"
+},
+"tableCore_orderedNotLoadedMaterialMaterialColumn": "Material",
+"@tableCore_orderedNotLoadedMaterialMaterialColumn": {
+  "description": "Ordered but not loaded materials report table column header for the material name"
+},
+"tableCore_orderedNotLoadedMaterialDateColumn": "Date",
+"@tableCore_orderedNotLoadedMaterialDateColumn": {
+  "description": "Ordered but not loaded materials report table column header for the order date and time"
+},
+"tableCore_orderedNotLoadedMaterialProtocolColumn": "Protocol",
+"@tableCore_orderedNotLoadedMaterialProtocolColumn": {
+  "description": "Ordered but not loaded materials report table column header for the patient protocol number"
+},
+"tableCore_orderedNotLoadedMaterialQuantityColumn": "Quantity",
+"@tableCore_orderedNotLoadedMaterialQuantityColumn": {
+  "description": "Ordered but not loaded materials report table column header for the ordered quantity"
+},
+"tableCore_orderedNotLoadedMaterialPatientColumn": "Full Name",
+"@tableCore_orderedNotLoadedMaterialPatientColumn": {
+  "description": "Ordered but not loaded materials report table column header for the patient full name"
+},
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {
   "description": "Title of the detail dialog opened from a row in the station transaction report table"

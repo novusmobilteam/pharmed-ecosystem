@@ -7360,6 +7360,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Quantity';
 
   @override
+  String get tableCore_orderedNotLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialServiceColumn => 'Department';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialDateColumn => 'Date';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialProtocolColumn => 'Protocol';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialPatientColumn => 'Full Name';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Transaction Detail';
 

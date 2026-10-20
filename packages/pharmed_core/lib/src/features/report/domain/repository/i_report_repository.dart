@@ -40,4 +40,7 @@ abstract interface class IReportRepository {
 
   /// Order Edilmemiş / Yüklü Malzeme
   Future<Result<ApiResponse<List<UnorderedLoadedMaterial>>?>> getUnorderedLoadedMaterials({PagedQueryParams? params});
+
+  /// Order Edilmiş / Yüklenmemiş Malzeme
+  Future<Result<ApiResponse<List<OrderedNotLoadedMaterial>>?>> getOrderedNotLoadedMaterials({PagedQueryParams? params});
 }
