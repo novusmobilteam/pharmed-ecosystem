@@ -13,6 +13,10 @@ class PrescriptionItemMovementMapper {
       performedBy: const UserMapper().toEntityOrNull(dto.user),
       quantity: dto.quantity,
       prescriptionItem: PrescriptionItemMapper().toEntityOrNull(dto.prescriptionItem),
+      returnRequestUserId: dto.returnRequestUserId,
+      returnRequestUserName: dto.returnRequestUser,
+      returnApprovalUserId: dto.returnApprovalUserId,
+      returnApprovalUserName: dto.returnApprovalUser,
     );
   }
 
@@ -29,6 +33,10 @@ class PrescriptionItemMovementMapper {
       user: const UserMapper().toDtoOrNull(entity.performedBy),
       quantity: entity.quantity,
       prescriptionItem: PrescriptionItemMapper().toDtoOrNull(entity.prescriptionItem),
+      returnRequestUserId: entity.returnRequestUserId,
+      returnRequestUser: entity.returnRequestUserName,
+      returnApprovalUserId: entity.returnApprovalUserId,
+      returnApprovalUser: entity.returnApprovalUserName,
     );
   }
 }
