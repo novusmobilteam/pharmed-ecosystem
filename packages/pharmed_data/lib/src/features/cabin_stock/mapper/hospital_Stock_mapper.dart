@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_data/pharmed_data.dart';
 
 /// MaterialStock ↔ MaterialStockDto dönüşümleri.
 class HospitalStockMapper {
@@ -12,6 +13,7 @@ class HospitalStockMapper {
       materialName: dto.materialName,
       code: dto.code,
       quantity: dto.quantity,
+      medicine: const MedicineMapper().toEntityOrNull(dto.material),
     );
   }
 
@@ -23,6 +25,7 @@ class HospitalStockMapper {
       materialName: entity.materialName,
       code: entity.code,
       quantity: entity.quantity,
+      material: const MedicineMapper().toDtoOrNull(entity.medicine),
     );
   }
 

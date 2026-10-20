@@ -267,6 +267,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabin_unitDoseDrawerName => 'Unit Dose Drawer';
 
   @override
+  String get cabin_closetDrawerName => 'Closet';
+
+  @override
+  String get cabin_mobileDrawerName => 'Mobile Drawer';
+
+  @override
   String get cabin_serumRackView => 'Rack view';
 
   @override
@@ -7345,6 +7351,116 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tableCore_stationTransactionWitnessColumn => 'Witness';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialServiceColumn => 'Department';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialDateColumn => 'Date';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialProtocolColumn => 'Protocol';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialPatientColumn => 'Full Name';
+
+  @override
+  String get tableCore_orderedLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_orderedLoadedMaterialCabinColumn => 'Cabin';
+
+  @override
+  String get tableCore_orderedLoadedMaterialServiceColumn => 'Department';
+
+  @override
+  String get tableCore_orderedLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_orderedLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_stationEmptyCompartmentStationColumn => 'Station';
+
+  @override
+  String get tableCore_stationEmptyCompartmentCabinColumn => 'Cabin';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDrawerColumn => 'Drawer';
+
+  @override
+  String get tableCore_stationEmptyCompartmentEmptyColumn => 'Empty';
+
+  @override
+  String get tableCore_stationEmptyCompartmentOccupiedColumn => 'Occupied';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailLocationColumn =>
+      'Location';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailCompartmentCountColumn =>
+      'Compartment Count';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailStepCountColumn =>
+      'Step Count';
+
+  @override
+  String get report_stationEmptyCompartment_detailTooltip =>
+      'View Empty Compartments';
+
+  @override
+  String get report_stationEmptyCompartment_detailDialogTitle =>
+      'Empty Compartment Detail';
+
+  @override
+  String get report_stationEmptyCompartment_detailsSectionTitle =>
+      'Empty Compartments';
+
+  @override
+  String get report_stationEmptyCompartment_detailsLoadError =>
+      'Empty compartment details could not be loaded.';
+
+  @override
+  String get report_stationEmptyCompartment_detailsEmpty =>
+      'There are no empty compartments in this drawer.';
+
+  @override
+  String get tableCore_inertMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_inertMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_inertMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_inertMaterialQuantityColumn => 'Quantity';
 
   @override
   String get report_stationTransaction_detailDialogTitle =>

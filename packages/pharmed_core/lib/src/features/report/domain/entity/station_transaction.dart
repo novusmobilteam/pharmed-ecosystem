@@ -19,6 +19,7 @@ class StationTransaction {
   final bool? hasSteps;
   final int? stationId;
   final int? cabinId;
+  final Medicine? medicine;
 
   StationTransaction({
     this.id,
@@ -39,5 +40,6 @@ class StationTransaction {
     this.hasSteps,
     this.stationId,
     this.cabinId,
+    this.medicine,
   });
 }

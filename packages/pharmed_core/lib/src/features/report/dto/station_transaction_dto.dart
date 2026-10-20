@@ -1,3 +1,5 @@
+import 'package:pharmed_core/pharmed_core.dart';
+
 class StationTransactionDto {
   final int? id;
   final String? cabinName;
@@ -18,6 +20,9 @@ class StationTransactionDto {
   final int? stationId;
   final int? cabinId;
 
+  /// Malzeme detayı (servis `material` alanında Medicine nesnesi döner).
+  final MedicineDto? medicine;
+
   StationTransactionDto({
     this.id,
     this.cabinName,
@@ -37,6 +42,7 @@ class StationTransactionDto {
     this.hasSteps,
     this.stationId,
     this.cabinId,
+    this.medicine,
   });
 
   factory StationTransactionDto.fromJson(Map<String, dynamic> json) {
@@ -47,7 +53,11 @@ class StationTransactionDto {
       transaction: json['transaction'] as String?,
       code: json['code'] as String?,
       barcode: json['barcode'] as String?,
-      material: json['material'] as String?,
+      // Eski yanıtlarda `material` düz isimdi; yenilerde Medicine nesnesi.
+      material: json['material'] is String ? json['material'] as String : null,
+      medicine: json['material'] is Map<String, dynamic>
+          ? MedicineDto.fromJson(json['material'] as Map<String, dynamic>)
+          : null,
       transactionDate: json['transactionDate'] != null ? DateTime.tryParse(json['transactionDate'].toString()) : null,
       quantity: (json['quantity'] as num?)?.toDouble(),
       performedBy: json['userName'] as String?,

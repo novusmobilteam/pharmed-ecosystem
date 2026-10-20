@@ -27,7 +27,10 @@ class StationTransactionDetailDialog extends StatelessWidget {
       (l10n.tableCore_stationTransactionDateColumn, v(t.transactionDate?.formattedDate)),
       (l10n.tableCore_stationTransactionTypeColumn, v(t.transaction)),
       (l10n.tableCore_stationTransactionCabinColumn, v(t.cabinName)),
-      (l10n.tableCore_stationTransactionQuantityColumn, v(t.quantity?.formatFractional)),
+      (
+        l10n.tableCore_stationTransactionQuantityColumn,
+        v(t.quantity == null ? null : '${t.quantity.formatFractional} ${t.medicine?.pieceUnitLabel ?? ''}'),
+      ),
       (l10n.tableCore_stationTransactionCodeColumn, v(t.code)),
       (l10n.tableCore_stationTransactionBarcodeColumn, v(t.barcode)),
       (l10n.tableCore_stationTransactionOrderColumn, v(t.order)),

@@ -13,6 +13,7 @@ class DrawerTypeMapper {
       compartmentCount: dto.compartmentCount,
       isMultipleMaterialInput: dto.isMultipleMaterialInput ?? false,
       isKubik: dto.isKubik ?? false,
+      isMobileDrawer: dto.isMobileDrawr ?? false,
       isActive: dto.isActive ?? true,
     );
   }
@@ -28,6 +29,7 @@ class DrawerTypeMapper {
       compartmentCount: entity.compartmentCount,
       isMultipleMaterialInput: entity.isMultipleMaterialInput,
       isKubik: entity.isKubik,
+      isMobileDrawr: entity.isMobileDrawer,
       isActive: entity.isActive,
     );
   }

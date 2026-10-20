@@ -37,4 +37,20 @@ abstract interface class IReportRepository {
     required int stationId,
     bool outOfRange = false,
   });
+
+  /// Order Edilmemiş / Yüklü Malzeme
+  Future<Result<ApiResponse<List<UnorderedLoadedMaterial>>?>> getUnorderedLoadedMaterials({PagedQueryParams? params});
+
+  /// Order Edilmiş / Yüklenmemiş Malzeme
+  Future<Result<ApiResponse<List<OrderedNotLoadedMaterial>>?>> getOrderedNotLoadedMaterials({PagedQueryParams? params});
+
+  /// Order Edilmiş / Yüklü Malzeme
+  Future<Result<ApiResponse<List<OrderedLoadedMaterial>>?>> getOrderedLoadedMaterials({PagedQueryParams? params});
+
+  /// İstasyon Boş Göz Listesi
+  Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({PagedQueryParams? params});
+  Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId);
+
+  /// Hareketsiz Malzeme
+  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params});
 }

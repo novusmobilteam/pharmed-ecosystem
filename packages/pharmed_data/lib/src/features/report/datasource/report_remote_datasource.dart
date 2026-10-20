@@ -148,4 +148,97 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(CabinTemperatureValueDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<UnorderedLoadedMaterialDto>>?>> getUnorderedLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/unorderedLoadedMaterials',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(UnorderedLoadedMaterialDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<OrderedNotLoadedMaterialDto>>?>> getOrderedNotLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/orderedUnloadedMaterials',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      filters: params?.filters,
+      dateField: 'orderDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(OrderedNotLoadedMaterialDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<OrderedLoadedMaterialDto>>?>> getOrderedLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/orderedLoadedMaterials',
+      // Bu endpoint tarih aralığını DevExtreme filtresiyle değil query parametresiyle alır.
+      query: {
+        if (params?.startDate != null) 'startDate': params!.startDate!.toIso8601String(),
+        if (params?.endDate != null) 'endDate': params!.endDate!.toIso8601String(),
+      },
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(OrderedLoadedMaterialDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<StationEmptyCompartmentDto>>?>> getStationEmptyCompartments({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/stationEmptyCompartments',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDto.fromJson),
+    );
+  }
+
+  /// Seçilen çekmecenin (cabinDesignId) tüm boş gözleri — sayfalama yok.
+  Future<Result<ApiResponse<List<StationEmptyCompartmentDetailDto>>?>> getStationEmptyCompartmentDetails(
+    int cabinDesignId,
+  ) async {
+    return await fetchRequest(
+      path: '$_basePath/stationEmptyCompartments/details',
+      query: {'cabinDesignId': cabinDesignId},
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDetailDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<InertMaterialDto>>?>> getInertMaterials({PagedQueryParams? params}) async {
+    return await fetchRequest(
+      path: '$_basePath/inertMaterial',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(InertMaterialDto.fromJson),
+    );
+  }
 }

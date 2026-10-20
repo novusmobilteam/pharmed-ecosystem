@@ -1,0 +1,607 @@
+From 0ee904cd252494f5c24e1f5ed0738cb03870fdec Mon Sep 17 00:00:00 2001
+From: Feyzullah Kodat <feyzkodat@gmail.com>
+Date: Tue, 20 Oct 2026 18:32:06 +0300
+Subject: [PATCH] feat(manager): add inert materials report
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_012spz7B6ZtTGzotz5U81kFo
+---
+ .../core/providers/repository_providers.dart  |  2 +
+ .../lib/core/providers/usecase_providers.dart |  1 +
+ .../lib/features/home/view/home_screen.dart   |  2 +
+ .../inert_materials_report_notifier.dart      | 77 +++++++++++++++++++
+ .../view/inert_materials_report_screen.dart   | 33 ++++++++
+ .../inert_materials/view/table_view.dart      | 58 ++++++++++++++
+ .../report/domain/entity/inert_material.dart  | 25 ++++++
+ .../repository/i_report_repository.dart       |  3 +
+ .../usecase/get_inert_materials_usecase.dart  | 16 ++++
+ .../report/dto/inert_material_dto.dart        | 47 +++++++++++
+ .../lib/src/features/report/report.dart       |  3 +
+ .../datasource/report_remote_datasource.dart  | 13 ++++
+ .../report/mapper/inert_material_mapper.dart  | 34 ++++++++
+ .../lib/src/features/report/report.dart       |  1 +
+ .../repository/report_repository_impl.dart    | 20 ++++-
+ packages/pharmed_ui/lib/src/l10n/app_en.arb   | 16 ++++
+ packages/pharmed_ui/lib/src/l10n/app_fr.arb   |  4 +
+ packages/pharmed_ui/lib/src/l10n/app_tr.arb   |  6 +-
+ 18 files changed, 359 insertions(+), 2 deletions(-)
+ create mode 100644 apps/pharmed-manager/lib/features/reports/inert_materials/notifier/inert_materials_report_notifier.dart
+ create mode 100644 apps/pharmed-manager/lib/features/reports/inert_materials/view/inert_materials_report_screen.dart
+ create mode 100644 apps/pharmed-manager/lib/features/reports/inert_materials/view/table_view.dart
+ create mode 100644 packages/pharmed_core/lib/src/features/report/domain/entity/inert_material.dart
+ create mode 100644 packages/pharmed_core/lib/src/features/report/domain/usecase/get_inert_materials_usecase.dart
+ create mode 100644 packages/pharmed_core/lib/src/features/report/dto/inert_material_dto.dart
+ create mode 100644 packages/pharmed_data/lib/src/features/report/mapper/inert_material_mapper.dart
+
+diff --git a/apps/pharmed-manager/lib/core/providers/repository_providers.dart b/apps/pharmed-manager/lib/core/providers/repository_providers.dart
+index 853ef96..724fc58 100644
+--- a/apps/pharmed-manager/lib/core/providers/repository_providers.dart
++++ b/apps/pharmed-manager/lib/core/providers/repository_providers.dart
+@@ -426,6 +426,7 @@ class RepositoryProviders {
+             orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
+             orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
+             stationEmptyCompartmentMapper: StationEmptyCompartmentMapper(),
++            inertMaterialMapper: InertMaterialMapper(),
+           ),
+           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
+             dataSource: context.read(),
+@@ -442,6 +443,7 @@ class RepositoryProviders {
+             orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
+             orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
+             stationEmptyCompartmentMapper: StationEmptyCompartmentMapper(),
++            inertMaterialMapper: InertMaterialMapper(),
+           ),
+         },
+       ),
+diff --git a/apps/pharmed-manager/lib/core/providers/usecase_providers.dart b/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
+index f752d91..09467cf 100644
+--- a/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
++++ b/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
+@@ -259,6 +259,7 @@ class UsecaseProviders {
+       Provider(create: (context) => GetOrderedLoadedMaterialsUseCase(context.read())),
+       Provider(create: (context) => GetStationEmptyCompartmentsUseCase(context.read())),
+       Provider(create: (context) => GetStationEmptyCompartmentDetailsUseCase(context.read())),
++      Provider(create: (context) => GetInertMaterialsUseCase(context.read())),
+ 
+       /// CabinTemperature
+       Provider(create: (context) => GetCabinTemperatureUseCase(context.read())),
+diff --git a/apps/pharmed-manager/lib/features/home/view/home_screen.dart b/apps/pharmed-manager/lib/features/home/view/home_screen.dart
+index 3f92bb0..65bbf61 100644
+--- a/apps/pharmed-manager/lib/features/home/view/home_screen.dart
++++ b/apps/pharmed-manager/lib/features/home/view/home_screen.dart
+@@ -13,6 +13,7 @@ import 'package:pharmed_manager/features/reports/unordered_loaded_materials/view
+ import 'package:pharmed_manager/features/reports/ordered_not_loaded_materials/view/ordered_not_loaded_materials_report_screen.dart';
+ import 'package:pharmed_manager/features/reports/ordered_loaded_materials/view/ordered_loaded_materials_report_screen.dart';
+ import 'package:pharmed_manager/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart';
++import 'package:pharmed_manager/features/reports/inert_materials/view/inert_materials_report_screen.dart';
+ import 'package:pharmed_manager/features/role/view/role_screen.dart';
+ import 'package:pharmed_manager/features/settings/view/settings_view.dart';
+ import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
+@@ -214,6 +215,7 @@ class _HomeContent extends StatelessWidget {
+       'ordered-unloaded-materials' => OrderedNotLoadedMaterialsReportScreen(menu: menu!),
+       'ordered-loaded-materials' => OrderedLoadedMaterialsReportScreen(menu: menu!),
+       'station-empty-compartments' => StationEmptyCompartmentsReportScreen(menu: menu!),
++      'inert-materials' => InertMaterialsReportScreen(menu: menu!),
+       'hospital-material-list' => HospitalStocksReportScreen(menu: menu!),
+       //'refill' => RefillListScreen(menu: menu!),
+       'tray' => AssignmentScreen(menu: menu!),
+diff --git a/apps/pharmed-manager/lib/features/reports/inert_materials/notifier/inert_materials_report_notifier.dart b/apps/pharmed-manager/lib/features/reports/inert_materials/notifier/inert_materials_report_notifier.dart
+new file mode 100644
+index 0000000..473a9b9
+--- /dev/null
++++ b/apps/pharmed-manager/lib/features/reports/inert_materials/notifier/inert_materials_report_notifier.dart
+@@ -0,0 +1,77 @@
++import 'package:flutter/foundation.dart';
++import 'package:pharmed_manager/core/core.dart';
++
++/// Hareketsiz Malzeme raporu.
++///
++/// İstasyon seçimi çoklu yapılır (İstasyon Hareketleri raporuyla aynı kalıp);
++/// hiçbir istasyon seçili değilse tüm istasyonlar listelenir.
++class InertMaterialsReportNotifier extends ChangeNotifier
++    with ApiRequestMixin, PaginationMixin<InertMaterial> {
++  final GetStationsUseCase _getStationsUseCase;
++  final GetInertMaterialsUseCase _getInertMaterialsUseCase;
++
++  InertMaterialsReportNotifier({
++    required GetStationsUseCase getStationsUseCase,
++    required GetInertMaterialsUseCase getInertMaterialsUseCase,
++  }) : _getStationsUseCase = getStationsUseCase,
++       _getInertMaterialsUseCase = getInertMaterialsUseCase;
++
++  OperationKey fetchStationsOp = OperationKey.fetch();
++  OperationKey fetchReportOp = OperationKey.custom('fetch-inert-materials');
++
++  List<Station> _stations = [];
++  List<Station> get stations => _stations;
++
++  Set<int> _selectedStationIds = {};
++  Set<int> get selectedStationIds => Set.unmodifiable(_selectedStationIds);
++
++  List<TableSideCategory> get tableCategories => [
++    ..._stations.map((s) => TableSideCategory(id: s.id.toString(), label: s.name ?? '-')),
++  ];
++
++  Set<String> get selectedCategoryIds => _selectedStationIds.map((id) => id.toString()).toSet();
++
++  bool get isFetching => isLoading(fetchReportOp);
++
++  Future<void> getStations() async {
++    await execute(
++      fetchStationsOp,
++      operation: () => _getStationsUseCase.call(PagedQueryParams()),
++      onData: (response) {
++        _stations = response.data ?? [];
++        notifyListeners();
++        _refetchFromFirstPage();
++      },
++    );
++  }
++
++  void onCategorySelectionChanged(Set<String> ids) {
++    final next = ids.map(int.tryParse).whereType<int>().toSet();
++    if (setEquals(next, _selectedStationIds)) return;
++    _selectedStationIds = next;
++    notifyListeners();
++    _refetchFromFirstPage();
++  }
++
++  /// Filtre değişimi sayfa navigasyonu değildir: sayfayı koşulsuz 1'e çek
++  /// ve her durumda yeniden sorgula.
++  void _refetchFromFirstPage() {
++    resetPage();
++    fetch();
++  }
++
++  List<Object>? get _filters {
++    if (_selectedStationIds.isEmpty) return null;
++    return [Filter.inList('stationId', _selectedStationIds.toList())];
++  }
++
++  @override
++  Future<void> fetch() async {
++    await fetchPagedData(
++      op: fetchReportOp,
++      fetchMethod: (skip, take) => _getInertMaterialsUseCase.call(
++        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, filters: _filters),
++      ),
++    );
++  }
++}
+diff --git a/apps/pharmed-manager/lib/features/reports/inert_materials/view/inert_materials_report_screen.dart b/apps/pharmed-manager/lib/features/reports/inert_materials/view/inert_materials_report_screen.dart
+new file mode 100644
+index 0000000..db86268
+--- /dev/null
++++ b/apps/pharmed-manager/lib/features/reports/inert_materials/view/inert_materials_report_screen.dart
+@@ -0,0 +1,33 @@
++import 'package:flutter/material.dart';
++import 'package:provider/provider.dart';
++
++import '../../../../core/core.dart';
++import '../notifier/inert_materials_report_notifier.dart';
++
++part 'table_view.dart';
++
++class InertMaterialsReportScreen extends StatelessWidget {
++  const InertMaterialsReportScreen({super.key, required this.menu});
++
++  final MenuItem menu;
++
++  @override
++  Widget build(BuildContext context) {
++    return ChangeNotifierProvider(
++      create: (context) => InertMaterialsReportNotifier(
++        getStationsUseCase: context.read(),
++        getInertMaterialsUseCase: context.read(),
++      )..getStations(),
++      child: MedResponsiveLayout(
++        mobile: MedMobileLayout(),
++        tablet: MedTabletLayout(),
++        desktop: MedDesktopLayout(
++          menu: menu,
++          child: Consumer<InertMaterialsReportNotifier>(
++            builder: (context, notifier, _) => TableView(notifier: notifier),
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/apps/pharmed-manager/lib/features/reports/inert_materials/view/table_view.dart b/apps/pharmed-manager/lib/features/reports/inert_materials/view/table_view.dart
+new file mode 100644
+index 0000000..a8fe7ec
+--- /dev/null
++++ b/apps/pharmed-manager/lib/features/reports/inert_materials/view/table_view.dart
+@@ -0,0 +1,58 @@
++part of 'inert_materials_report_screen.dart';
++
++class TableView extends StatelessWidget {
++  const TableView({super.key, required this.notifier});
++
++  final InertMaterialsReportNotifier notifier;
++
++  @override
++  Widget build(BuildContext context) {
++    return MedTable<InertMaterial>(
++      data: notifier.items,
++      isLoading: notifier.isFetching,
++      enableExcel: true,
++      enableSearch: true,
++      enablePDF: true,
++
++      // Pagination
++      enablePagination: true,
++      pageSize: notifier.pageSize,
++      currentPage: notifier.currentPage,
++      serverTotalCount: notifier.totalCount,
++      onPageChanged: notifier.setPage,
++
++      // Search
++      onSearchChanged: notifier.search,
++
++      // İstasyonlar (çoklu seçim)
++      categories: notifier.tableCategories,
++      selectedCategoryIds: notifier.selectedCategoryIds,
++      onCategorySelectionChanged: notifier.onCategorySelectionChanged,
++      categoryTitle: context.l10n.report_stationsCategoryTitle,
++
++      columnDefs: _buildColumnDefs(context),
++    );
++  }
++}
++
++List<TableColumnDef<InertMaterial>> _buildColumnDefs(BuildContext context) => [
++  TableColumnDef(
++    title: context.l10n.tableCore_inertMaterialStationColumn,
++    displayValue: (item) => item.stationName,
++  ),
++  TableColumnDef(
++    title: context.l10n.tableCore_inertMaterialBarcodeColumn,
++    displayValue: (item) => item.barcode,
++  ),
++  TableColumnDef(
++    title: context.l10n.tableCore_inertMaterialMaterialColumn,
++    flex: 2,
++    displayValue: (item) => item.medicine?.name ?? item.materialName,
++  ),
++  TableColumnDef(
++    title: context.l10n.tableCore_inertMaterialQuantityColumn,
++    numeric: true,
++    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
++    sortValue: (item) => item.quantity,
++  ),
++];
+diff --git a/packages/pharmed_core/lib/src/features/report/domain/entity/inert_material.dart b/packages/pharmed_core/lib/src/features/report/domain/entity/inert_material.dart
+new file mode 100644
+index 0000000..20c694f
+--- /dev/null
++++ b/packages/pharmed_core/lib/src/features/report/domain/entity/inert_material.dart
+@@ -0,0 +1,25 @@
++import 'package:pharmed_core/pharmed_core.dart';
++
++/// Hareketsiz Malzeme raporu satırı.
++///
++/// İstasyon kabinlerinde stoğu bulunan ancak hareket görmeyen malzemeyi,
++/// istasyon bazında miktarıyla temsil eder.
++class InertMaterial {
++  final int? stationId;
++  final String? stationName;
++  final int? materialId;
++  final String? materialName;
++  final String? barcode;
++  final double? quantity;
++  final Medicine? medicine;
++
++  const InertMaterial({
++    this.stationId,
++    this.stationName,
++    this.materialId,
++    this.materialName,
++    this.barcode,
++    this.quantity,
++    this.medicine,
++  });
++}
+diff --git a/packages/pharmed_core/lib/src/features/report/domain/repository/i_report_repository.dart b/packages/pharmed_core/lib/src/features/report/domain/repository/i_report_repository.dart
+index 611a1b4..7d3deda 100644
+--- a/packages/pharmed_core/lib/src/features/report/domain/repository/i_report_repository.dart
++++ b/packages/pharmed_core/lib/src/features/report/domain/repository/i_report_repository.dart
+@@ -50,4 +50,7 @@ abstract interface class IReportRepository {
+   /// İstasyon Boş Göz Listesi
+   Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({PagedQueryParams? params});
+   Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId);
++
++  /// Hareketsiz Malzeme
++  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params});
+ }
+diff --git a/packages/pharmed_core/lib/src/features/report/domain/usecase/get_inert_materials_usecase.dart b/packages/pharmed_core/lib/src/features/report/domain/usecase/get_inert_materials_usecase.dart
+new file mode 100644
+index 0000000..e3f9a72
+--- /dev/null
++++ b/packages/pharmed_core/lib/src/features/report/domain/usecase/get_inert_materials_usecase.dart
+@@ -0,0 +1,16 @@
++// [SWREQ-CORE-STOCK-UC-004]
++// Sınıf: Class B
++
++import 'package:pharmed_core/pharmed_core.dart';
++import 'package:pharmed_data/pharmed_data.dart';
++
++/// Hareketsiz Malzeme raporunu getirir.
++/// İstasyon filtresi `params.filters` içinde `stationId` inList olarak gönderilir.
++class GetInertMaterialsUseCase {
++  final IReportRepository _repository;
++
++  GetInertMaterialsUseCase(this._repository);
++
++  Future<Result<ApiResponse<List<InertMaterial>>?>> call(PagedQueryParams params) =>
++      _repository.getInertMaterials(params: params.copyWith(searchFields: ['barcode', 'materialName']));
++}
+diff --git a/packages/pharmed_core/lib/src/features/report/dto/inert_material_dto.dart b/packages/pharmed_core/lib/src/features/report/dto/inert_material_dto.dart
+new file mode 100644
+index 0000000..1841121
+--- /dev/null
++++ b/packages/pharmed_core/lib/src/features/report/dto/inert_material_dto.dart
+@@ -0,0 +1,47 @@
++import 'package:pharmed_core/pharmed_core.dart';
++
++class InertMaterialDto {
++  final int? stationId;
++  final String? stationName;
++  final int? materialId;
++  final String? materialName;
++  final String? barcode;
++  final double? quantity;
++  final MedicineDto? material;
++
++  const InertMaterialDto({
++    this.stationId,
++    this.stationName,
++    this.materialId,
++    this.materialName,
++    this.barcode,
++    this.quantity,
++    this.material,
++  });
++
++  factory InertMaterialDto.fromJson(Map<String, dynamic> json) {
++    return InertMaterialDto(
++      stationId: json['stationId'] as int?,
++      stationName: json['stationName'] as String?,
++      materialId: json['materialId'] as int?,
++      materialName: json['materialName'] as String?,
++      barcode: json['barcode'] as String?,
++      quantity: (json['quantity'] as num?)?.toDouble(),
++      material: json['material'] is Map<String, dynamic>
++          ? MedicineDto.fromJson(json['material'] as Map<String, dynamic>)
++          : null,
++    );
++  }
++
++  Map<String, dynamic> toJson() {
++    return {
++      if (stationId != null) 'stationId': stationId,
++      if (stationName != null) 'stationName': stationName,
++      if (materialId != null) 'materialId': materialId,
++      if (materialName != null) 'materialName': materialName,
++      if (barcode != null) 'barcode': barcode,
++      if (quantity != null) 'quantity': quantity,
++      if (material != null) 'material': material!.toJson(),
++    };
++  }
++}
+diff --git a/packages/pharmed_core/lib/src/features/report/report.dart b/packages/pharmed_core/lib/src/features/report/report.dart
+index 6127995..bf4e575 100644
+--- a/packages/pharmed_core/lib/src/features/report/report.dart
++++ b/packages/pharmed_core/lib/src/features/report/report.dart
+@@ -7,6 +7,7 @@ export 'domain/entity/unordered_loaded_material.dart';
+ export 'domain/entity/ordered_not_loaded_material.dart';
+ export 'domain/entity/ordered_loaded_material.dart';
+ export 'domain/entity/station_empty_compartment.dart';
++export 'domain/entity/inert_material.dart';
+ 
+ export 'domain/usecase/get_expired_stocks_usecase.dart';
+ export 'domain/usecase/get_station_transactions_usecase.dart';
+@@ -20,6 +21,7 @@ export 'domain/usecase/get_unordered_loaded_materials_usecase.dart';
+ export 'domain/usecase/get_ordered_not_loaded_materials_usecase.dart';
+ export 'domain/usecase/get_ordered_loaded_materials_usecase.dart';
+ export 'domain/usecase/get_station_empty_compartments_usecase.dart';
++export 'domain/usecase/get_inert_materials_usecase.dart';
+ 
+ export 'dto/stock_transaction_dto.dart';
+ export 'dto/station_transaction_dto.dart';
+@@ -28,3 +30,4 @@ export 'dto/unordered_loaded_material_dto.dart';
+ export 'dto/ordered_not_loaded_material_dto.dart';
+ export 'dto/ordered_loaded_material_dto.dart';
+ export 'dto/station_empty_compartment_dto.dart';
++export 'dto/inert_material_dto.dart';
+diff --git a/packages/pharmed_data/lib/src/features/report/datasource/report_remote_datasource.dart b/packages/pharmed_data/lib/src/features/report/datasource/report_remote_datasource.dart
+index edfe6cb..6d26ef3 100644
+--- a/packages/pharmed_data/lib/src/features/report/datasource/report_remote_datasource.dart
++++ b/packages/pharmed_data/lib/src/features/report/datasource/report_remote_datasource.dart
+@@ -226,4 +226,17 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
+       parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDetailDto.fromJson),
+     );
+   }
++
++  Future<Result<ApiResponse<List<InertMaterialDto>>?>> getInertMaterials({PagedQueryParams? params}) async {
++    return await fetchRequest(
++      path: '$_basePath/inertMaterial',
++      skip: params?.skip,
++      take: params?.take,
++      searchQuery: params?.searchQuery,
++      searchFields: params?.searchFields,
++      filters: params?.filters,
++      envelope: ResponseEnvelope.raw,
++      parser: BaseRemoteDataSource.apiResponseListParser(InertMaterialDto.fromJson),
++    );
++  }
+ }
+diff --git a/packages/pharmed_data/lib/src/features/report/mapper/inert_material_mapper.dart b/packages/pharmed_data/lib/src/features/report/mapper/inert_material_mapper.dart
+new file mode 100644
+index 0000000..01369dd
+--- /dev/null
++++ b/packages/pharmed_data/lib/src/features/report/mapper/inert_material_mapper.dart
+@@ -0,0 +1,34 @@
++import 'package:pharmed_core/pharmed_core.dart';
++import 'package:pharmed_data/pharmed_data.dart';
++
++class InertMaterialMapper {
++  const InertMaterialMapper();
++
++  InertMaterial toEntity(InertMaterialDto dto) {
++    return InertMaterial(
++      stationId: dto.stationId,
++      stationName: dto.stationName,
++      materialId: dto.materialId,
++      materialName: dto.materialName,
++      barcode: dto.barcode,
++      quantity: dto.quantity,
++      medicine: const MedicineMapper().toEntityOrNull(dto.material),
++    );
++  }
++
++  InertMaterial? toEntityOrNull(InertMaterialDto? dto) => dto == null ? null : toEntity(dto);
++
++  List<InertMaterial> toEntityList(List<InertMaterialDto> dtos) => dtos.map(toEntity).toList();
++
++  InertMaterialDto toDto(InertMaterial entity) {
++    return InertMaterialDto(
++      stationId: entity.stationId,
++      stationName: entity.stationName,
++      materialId: entity.materialId,
++      materialName: entity.materialName,
++      barcode: entity.barcode,
++      quantity: entity.quantity,
++      material: const MedicineMapper().toDtoOrNull(entity.medicine),
++    );
++  }
++}
+diff --git a/packages/pharmed_data/lib/src/features/report/report.dart b/packages/pharmed_data/lib/src/features/report/report.dart
+index 938f91c..c602566 100644
+--- a/packages/pharmed_data/lib/src/features/report/report.dart
++++ b/packages/pharmed_data/lib/src/features/report/report.dart
+@@ -7,5 +7,6 @@ export 'mapper/unordered_loaded_material_mapper.dart';
+ export 'mapper/ordered_not_loaded_material_mapper.dart';
+ export 'mapper/ordered_loaded_material_mapper.dart';
+ export 'mapper/station_empty_compartment_mapper.dart';
++export 'mapper/inert_material_mapper.dart';
+ 
+ export 'repository/report_repository_impl.dart';
+diff --git a/packages/pharmed_data/lib/src/features/report/repository/report_repository_impl.dart b/packages/pharmed_data/lib/src/features/report/repository/report_repository_impl.dart
+index 6f45c08..7e0c357 100644
+--- a/packages/pharmed_data/lib/src/features/report/repository/report_repository_impl.dart
++++ b/packages/pharmed_data/lib/src/features/report/repository/report_repository_impl.dart
+@@ -16,6 +16,7 @@ class ReportRepositoryImpl implements IReportRepository {
+   final OrderedNotLoadedMaterialMapper _orderedNotLoadedMaterialMapper;
+   final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
+   final StationEmptyCompartmentMapper _stationEmptyCompartmentMapper;
++  final InertMaterialMapper _inertMaterialMapper;
+ 
+   ReportRepositoryImpl({
+     required ReportRemoteDataSource dataSource,
+@@ -32,6 +33,7 @@ class ReportRepositoryImpl implements IReportRepository {
+     required OrderedNotLoadedMaterialMapper orderedNotLoadedMaterialMapper,
+     required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
+     required StationEmptyCompartmentMapper stationEmptyCompartmentMapper,
++    required InertMaterialMapper inertMaterialMapper,
+   }) : _dataSource = dataSource,
+        _cabinStockMapper = cabinStockMapper,
+        _stockTransactionMapper = stockTransactionMapper,
+@@ -45,7 +47,8 @@ class ReportRepositoryImpl implements IReportRepository {
+        _unorderedLoadedMaterialMapper = unorderedLoadedMaterialMapper,
+        _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
+        _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper,
+-       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper;
++       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper,
++       _inertMaterialMapper = inertMaterialMapper;
+ 
+   @override
+   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
+@@ -259,4 +262,19 @@ class ReportRepositoryImpl implements IReportRepository {
+       error: (e) => Result.error(e),
+     );
+   }
++
++  @override
++  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params}) async {
++    final result = await _dataSource.getInertMaterials(params: params);
++    return result.when(
++      ok: (apiResponse) => Result.ok(
++        ApiResponse<List<InertMaterial>>(
++          data: apiResponse?.data != null ? _inertMaterialMapper.toEntityList(apiResponse!.data!) : null,
++          isSuccess: apiResponse?.isSuccess,
++          totalCount: apiResponse?.totalCount,
++        ),
++      ),
++      error: (e) => Result.error(e),
++    );
++  }
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index 1a6acf0..16bb5b3 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -5236,6 +5236,22 @@
+ "@report_stationEmptyCompartment_detailsEmpty": {
+   "description": "Empty state shown in the detail dialog when the drawer has no empty compartments"
+ },
++"tableCore_inertMaterialStationColumn": "Station",
++"@tableCore_inertMaterialStationColumn": {
++  "description": "Inert materials report table column header for the station name"
++},
++"tableCore_inertMaterialBarcodeColumn": "Barcode",
++"@tableCore_inertMaterialBarcodeColumn": {
++  "description": "Inert materials report table column header for the material barcode"
++},
++"tableCore_inertMaterialMaterialColumn": "Material",
++"@tableCore_inertMaterialMaterialColumn": {
++  "description": "Inert materials report table column header for the material name"
++},
++"tableCore_inertMaterialQuantityColumn": "Quantity",
++"@tableCore_inertMaterialQuantityColumn": {
++  "description": "Inert materials report table column header for the quantity of the inert material in the station"
++},
+ "report_stationTransaction_detailDialogTitle": "Transaction Detail",
+ "@report_stationTransaction_detailDialogTitle": {
+   "description": "Title of the detail dialog opened from a row in the station transaction report table"
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index 8733652..4e9dd95 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -4557,6 +4557,10 @@
+ "report_stationEmptyCompartment_detailsSectionTitle": "Emplacements vides",
+ "report_stationEmptyCompartment_detailsLoadError": "Impossible de charger le détail des emplacements vides.",
+ "report_stationEmptyCompartment_detailsEmpty": "Aucun emplacement vide dans ce tiroir.",
++"tableCore_inertMaterialStationColumn": "Station",
++"tableCore_inertMaterialBarcodeColumn": "Code-barres",
++"tableCore_inertMaterialMaterialColumn": "Article",
++"tableCore_inertMaterialQuantityColumn": "Quantité",
+ "report_stationTransaction_detailDialogTitle": "Détail de l'opération",
+ "report_stationTransaction_detailTooltip": "Voir le détail",
+ "report_stationTransaction_stepsSectionTitle": "Détail des emplacements",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_tr.arb b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+index ee92a02..6749383 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_tr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+@@ -3059,7 +3059,7 @@
+   },
+   "report_stationsCategoryTitle": "İstasyonlar",
+   "@report_stationsCategoryTitle": {
+-    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded, ordered loaded materials and station empty compartments report screens"
++    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded, ordered loaded materials, station empty compartments and inert materials report screens"
+   },
+   "refillList_cellValueYes": "Evet",
+   "@refillList_cellValueYes": {
+@@ -9530,6 +9530,10 @@
+ "report_stationEmptyCompartment_detailsSectionTitle": "Boş Gözler",
+ "report_stationEmptyCompartment_detailsLoadError": "Boş göz detayları yüklenemedi.",
+ "report_stationEmptyCompartment_detailsEmpty": "Bu çekmecede boş göz bulunmuyor.",
++"tableCore_inertMaterialStationColumn": "İstasyon",
++"tableCore_inertMaterialBarcodeColumn": "Barkod",
++"tableCore_inertMaterialMaterialColumn": "Malzeme",
++"tableCore_inertMaterialQuantityColumn": "Miktar",
+ "report_stationTransaction_detailDialogTitle": "İşlem Detayı",
+ "report_stationTransaction_detailTooltip": "Detayı Görüntüle",
+ "report_stationTransaction_stepsSectionTitle": "Göz Detayı",
+-- 
+2.43.0

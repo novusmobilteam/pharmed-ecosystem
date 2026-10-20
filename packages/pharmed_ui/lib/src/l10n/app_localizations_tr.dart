@@ -266,6 +266,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabin_unitDoseDrawerName => 'Birim Doz Çekmece';
 
   @override
+  String get cabin_closetDrawerName => 'Dolap';
+
+  @override
+  String get cabin_mobileDrawerName => 'Mobil Çekmece';
+
+  @override
   String get cabin_serumRackView => 'Raf görünümü';
 
   @override
@@ -7291,6 +7297,114 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tableCore_stationTransactionWitnessColumn => 'Tanık';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialQuantityColumn => 'Miktar';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialServiceColumn => 'Bölüm';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialDateColumn => 'Tarih';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialProtocolColumn => 'Protokol';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialQuantityColumn => 'Miktar';
+
+  @override
+  String get tableCore_orderedNotLoadedMaterialPatientColumn => 'Ad Soyad';
+
+  @override
+  String get tableCore_orderedLoadedMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_orderedLoadedMaterialCabinColumn => 'Kabin';
+
+  @override
+  String get tableCore_orderedLoadedMaterialServiceColumn => 'Bölüm';
+
+  @override
+  String get tableCore_orderedLoadedMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_orderedLoadedMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_stationEmptyCompartmentStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_stationEmptyCompartmentCabinColumn => 'Kabin';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDrawerColumn => 'Çekmece';
+
+  @override
+  String get tableCore_stationEmptyCompartmentEmptyColumn => 'Boş';
+
+  @override
+  String get tableCore_stationEmptyCompartmentOccupiedColumn => 'Dolu';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailLocationColumn => 'Konum';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailCompartmentCountColumn =>
+      'Göz Sayısı';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailStepCountColumn =>
+      'Kademe Sayısı';
+
+  @override
+  String get report_stationEmptyCompartment_detailTooltip =>
+      'Boş Gözleri Görüntüle';
+
+  @override
+  String get report_stationEmptyCompartment_detailDialogTitle =>
+      'Boş Göz Detayı';
+
+  @override
+  String get report_stationEmptyCompartment_detailsSectionTitle => 'Boş Gözler';
+
+  @override
+  String get report_stationEmptyCompartment_detailsLoadError =>
+      'Boş göz detayları yüklenemedi.';
+
+  @override
+  String get report_stationEmptyCompartment_detailsEmpty =>
+      'Bu çekmecede boş göz bulunmuyor.';
+
+  @override
+  String get tableCore_inertMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_inertMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_inertMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_inertMaterialQuantityColumn => 'Miktar';
 
   @override
   String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';

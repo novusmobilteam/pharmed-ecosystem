@@ -12,6 +12,11 @@ class ReportRepositoryImpl implements IReportRepository {
   final CabinTemperatureValueMapper _cabinTemperatureValueMapper;
   final StationTransactionMapper _stationTransactionMapper;
   final StationTransactionStepMapper _stepMapper;
+  final UnorderedLoadedMaterialMapper _unorderedLoadedMaterialMapper;
+  final OrderedNotLoadedMaterialMapper _orderedNotLoadedMaterialMapper;
+  final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
+  final StationEmptyCompartmentMapper _stationEmptyCompartmentMapper;
+  final InertMaterialMapper _inertMaterialMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -24,6 +29,11 @@ class ReportRepositoryImpl implements IReportRepository {
     required CabinTemperatureValueMapper cabinTemperatureValueMapper,
     required StationTransactionMapper stationTransactionMapper,
     required StationTransactionStepMapper stepMapper,
+    required UnorderedLoadedMaterialMapper unorderedLoadedMaterialMapper,
+    required OrderedNotLoadedMaterialMapper orderedNotLoadedMaterialMapper,
+    required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
+    required StationEmptyCompartmentMapper stationEmptyCompartmentMapper,
+    required InertMaterialMapper inertMaterialMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -33,7 +43,12 @@ class ReportRepositoryImpl implements IReportRepository {
        _authorizationDetailMapper = authorizationDetailMapper,
        _cabinTemperatureValueMapper = cabinTemperatureValueMapper,
        _stationTransactionMapper = stationTransactionMapper,
-       _stepMapper = stepMapper;
+       _stepMapper = stepMapper,
+       _unorderedLoadedMaterialMapper = unorderedLoadedMaterialMapper,
+       _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
+       _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper,
+       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper,
+       _inertMaterialMapper = inertMaterialMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -171,5 +186,95 @@ class ReportRepositoryImpl implements IReportRepository {
   Future<Result<List<StationTransactionStep>>> getTransactionSteps(int transactionId) async {
     final result = await _dataSource.getTransactionSteps(transactionId);
     return result.when(ok: (dtos) => Result.ok(_stepMapper.toEntityList(dtos ?? [])), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<ApiResponse<List<UnorderedLoadedMaterial>>?>> getUnorderedLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    final result = await _dataSource.getUnorderedLoadedMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<UnorderedLoadedMaterial>>(
+          data: apiResponse?.data != null ? _unorderedLoadedMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<OrderedNotLoadedMaterial>>?>> getOrderedNotLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
+    final result = await _dataSource.getOrderedNotLoadedMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<OrderedNotLoadedMaterial>>(
+          data: apiResponse?.data != null ? _orderedNotLoadedMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<OrderedLoadedMaterial>>?>> getOrderedLoadedMaterials({PagedQueryParams? params}) async {
+    final result = await _dataSource.getOrderedLoadedMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<OrderedLoadedMaterial>>(
+          data: apiResponse?.data != null ? _orderedLoadedMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({
+    PagedQueryParams? params,
+  }) async {
+    final result = await _dataSource.getStationEmptyCompartments(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<StationEmptyCompartment>>(
+          data: apiResponse?.data != null ? _stationEmptyCompartmentMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId) async {
+    final result = await _dataSource.getStationEmptyCompartmentDetails(cabinDesignId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(_stationEmptyCompartmentMapper.toDetailEntityList(apiResponse?.data ?? [])),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params}) async {
+    final result = await _dataSource.getInertMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<InertMaterial>>(
+          data: apiResponse?.data != null ? _inertMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
   }
 }
