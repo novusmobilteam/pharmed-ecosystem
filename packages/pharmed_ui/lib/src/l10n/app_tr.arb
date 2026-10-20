@@ -3059,7 +3059,7 @@
   },
   "report_stationsCategoryTitle": "İstasyonlar",
   "@report_stationsCategoryTitle": {
-    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded, ordered loaded materials and station empty compartments report screens"
+    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded, ordered loaded materials, station empty compartments and inert materials report screens"
   },
   "refillList_cellValueYes": "Evet",
   "@refillList_cellValueYes": {
@@ -9530,6 +9530,10 @@
 "report_stationEmptyCompartment_detailsSectionTitle": "Boş Gözler",
 "report_stationEmptyCompartment_detailsLoadError": "Boş göz detayları yüklenemedi.",
 "report_stationEmptyCompartment_detailsEmpty": "Bu çekmecede boş göz bulunmuyor.",
+"tableCore_inertMaterialStationColumn": "İstasyon",
+"tableCore_inertMaterialBarcodeColumn": "Barkod",
+"tableCore_inertMaterialMaterialColumn": "Malzeme",
+"tableCore_inertMaterialQuantityColumn": "Miktar",
 "report_stationTransaction_detailDialogTitle": "İşlem Detayı",
 "report_stationTransaction_detailTooltip": "Detayı Görüntüle",
 "report_stationTransaction_stepsSectionTitle": "Göz Detayı",

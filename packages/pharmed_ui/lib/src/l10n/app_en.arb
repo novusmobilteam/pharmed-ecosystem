@@ -5236,6 +5236,22 @@
 "@report_stationEmptyCompartment_detailsEmpty": {
   "description": "Empty state shown in the detail dialog when the drawer has no empty compartments"
 },
+"tableCore_inertMaterialStationColumn": "Station",
+"@tableCore_inertMaterialStationColumn": {
+  "description": "Inert materials report table column header for the station name"
+},
+"tableCore_inertMaterialBarcodeColumn": "Barcode",
+"@tableCore_inertMaterialBarcodeColumn": {
+  "description": "Inert materials report table column header for the material barcode"
+},
+"tableCore_inertMaterialMaterialColumn": "Material",
+"@tableCore_inertMaterialMaterialColumn": {
+  "description": "Inert materials report table column header for the material name"
+},
+"tableCore_inertMaterialQuantityColumn": "Quantity",
+"@tableCore_inertMaterialQuantityColumn": {
+  "description": "Inert materials report table column header for the quantity of the inert material in the station"
+},
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {
   "description": "Title of the detail dialog opened from a row in the station transaction report table"

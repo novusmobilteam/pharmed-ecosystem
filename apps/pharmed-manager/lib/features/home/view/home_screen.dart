@@ -13,6 +13,7 @@ import 'package:pharmed_manager/features/reports/unordered_loaded_materials/view
 import 'package:pharmed_manager/features/reports/ordered_not_loaded_materials/view/ordered_not_loaded_materials_report_screen.dart';
 import 'package:pharmed_manager/features/reports/ordered_loaded_materials/view/ordered_loaded_materials_report_screen.dart';
 import 'package:pharmed_manager/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart';
+import 'package:pharmed_manager/features/reports/inert_materials/view/inert_materials_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/settings/view/settings_view.dart';
 import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
@@ -214,6 +215,7 @@ class _HomeContent extends StatelessWidget {
       'ordered-unloaded-materials' => OrderedNotLoadedMaterialsReportScreen(menu: menu!),
       'ordered-loaded-materials' => OrderedLoadedMaterialsReportScreen(menu: menu!),
       'station-empty-compartments' => StationEmptyCompartmentsReportScreen(menu: menu!),
+      'inert-material' => InertMaterialsReportScreen(menu: menu!),
       'hospital-material-list' => HospitalStocksReportScreen(menu: menu!),
       //'refill' => RefillListScreen(menu: menu!),
       'tray' => AssignmentScreen(menu: menu!),

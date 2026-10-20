@@ -7629,6 +7629,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun emplacement vide dans ce tiroir.';
 
   @override
+  String get tableCore_inertMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_inertMaterialBarcodeColumn => 'Code-barres';
+
+  @override
+  String get tableCore_inertMaterialMaterialColumn => 'Article';
+
+  @override
+  String get tableCore_inertMaterialQuantityColumn => 'Quantité';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Détail de l\'opération';
 

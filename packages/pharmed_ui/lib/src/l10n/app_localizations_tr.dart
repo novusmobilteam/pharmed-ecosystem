@@ -7395,6 +7395,18 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu çekmecede boş göz bulunmuyor.';
 
   @override
+  String get tableCore_inertMaterialStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_inertMaterialBarcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_inertMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_inertMaterialQuantityColumn => 'Miktar';
+
+  @override
   String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';
 
   @override

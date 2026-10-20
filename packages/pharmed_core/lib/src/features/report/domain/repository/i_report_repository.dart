@@ -50,4 +50,7 @@ abstract interface class IReportRepository {
   /// İstasyon Boş Göz Listesi
   Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({PagedQueryParams? params});
   Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId);
+
+  /// Hareketsiz Malzeme
+  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params});
 }

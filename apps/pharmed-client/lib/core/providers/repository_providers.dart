@@ -347,6 +347,7 @@ final reportRepositoryProvider = Provider<IReportRepository>((ref) {
       orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
       orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
       stationEmptyCompartmentMapper: StationEmptyCompartmentMapper(),
+      inertMaterialMapper: InertMaterialMapper(),
     ),
     AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
       dataSource: ref.read(reportDataSourceProvider),
@@ -363,6 +364,7 @@ final reportRepositoryProvider = Provider<IReportRepository>((ref) {
       orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
       orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
       stationEmptyCompartmentMapper: StationEmptyCompartmentMapper(),
+      inertMaterialMapper: InertMaterialMapper(),
     ),
   };
 });

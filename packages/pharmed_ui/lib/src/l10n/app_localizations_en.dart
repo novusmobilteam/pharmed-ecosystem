@@ -7451,6 +7451,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no empty compartments in this drawer.';
 
   @override
+  String get tableCore_inertMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_inertMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_inertMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_inertMaterialQuantityColumn => 'Quantity';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Transaction Detail';
 

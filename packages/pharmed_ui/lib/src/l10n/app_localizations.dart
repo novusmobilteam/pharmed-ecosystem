@@ -13100,6 +13100,30 @@ abstract class AppLocalizations {
   /// **'There are no empty compartments in this drawer.'**
   String get report_stationEmptyCompartment_detailsEmpty;
 
+  /// Inert materials report table column header for the station name
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_inertMaterialStationColumn;
+
+  /// Inert materials report table column header for the material barcode
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_inertMaterialBarcodeColumn;
+
+  /// Inert materials report table column header for the material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_inertMaterialMaterialColumn;
+
+  /// Inert materials report table column header for the quantity of the inert material in the station
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_inertMaterialQuantityColumn;
+
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
   /// In en, this message translates to:

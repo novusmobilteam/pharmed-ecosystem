@@ -7,5 +7,6 @@ export 'mapper/unordered_loaded_material_mapper.dart';
 export 'mapper/ordered_not_loaded_material_mapper.dart';
 export 'mapper/ordered_loaded_material_mapper.dart';
 export 'mapper/station_empty_compartment_mapper.dart';
+export 'mapper/inert_material_mapper.dart';
 
 export 'repository/report_repository_impl.dart';

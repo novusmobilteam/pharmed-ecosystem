@@ -228,4 +228,17 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDetailDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<InertMaterialDto>>?>> getInertMaterials({PagedQueryParams? params}) async {
+    return await fetchRequest(
+      path: '$_basePath/inertMaterial',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(InertMaterialDto.fromJson),
+    );
+  }
 }

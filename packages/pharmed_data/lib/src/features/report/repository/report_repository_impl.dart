@@ -16,6 +16,7 @@ class ReportRepositoryImpl implements IReportRepository {
   final OrderedNotLoadedMaterialMapper _orderedNotLoadedMaterialMapper;
   final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
   final StationEmptyCompartmentMapper _stationEmptyCompartmentMapper;
+  final InertMaterialMapper _inertMaterialMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -32,6 +33,7 @@ class ReportRepositoryImpl implements IReportRepository {
     required OrderedNotLoadedMaterialMapper orderedNotLoadedMaterialMapper,
     required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
     required StationEmptyCompartmentMapper stationEmptyCompartmentMapper,
+    required InertMaterialMapper inertMaterialMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -45,7 +47,8 @@ class ReportRepositoryImpl implements IReportRepository {
        _unorderedLoadedMaterialMapper = unorderedLoadedMaterialMapper,
        _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
        _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper,
-       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper;
+       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper,
+       _inertMaterialMapper = inertMaterialMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -256,6 +259,21 @@ class ReportRepositoryImpl implements IReportRepository {
     final result = await _dataSource.getStationEmptyCompartmentDetails(cabinDesignId);
     return result.when(
       ok: (apiResponse) => Result.ok(_stationEmptyCompartmentMapper.toDetailEntityList(apiResponse?.data ?? [])),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params}) async {
+    final result = await _dataSource.getInertMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<InertMaterial>>(
+          data: apiResponse?.data != null ? _inertMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
       error: (e) => Result.error(e),
     );
   }
