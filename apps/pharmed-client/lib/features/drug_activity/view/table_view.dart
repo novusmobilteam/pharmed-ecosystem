@@ -48,7 +48,7 @@ List<TableColumnDef<PrescriptionItemMovement>> _buildColumnDefs(BuildContext con
     title: context.l10n.drugActivity_table_patientColumn,
     displayValue: (item) => item.prescriptionItem?.prescription?.hospitalization?.patient?.fullName,
   ),
-  TableColumnDef(title: context.l10n.drugActivity_table_userColumn, displayValue: (item) => item.performedBy?.fullName),
+  TableColumnDef(title: context.l10n.drugActivity_table_userColumn, displayValue: (item) => item.actorName),
   TableColumnDef(
     title: context.l10n.drugActivity_table_medicineColumn,
     displayValue: (item) => item.prescriptionItem?.medicine?.name,

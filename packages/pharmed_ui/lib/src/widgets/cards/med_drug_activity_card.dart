@@ -19,7 +19,7 @@ class MedDrugActivityCard extends StatelessWidget {
   }
 
   String get _medicine => movement.prescriptionItem?.medicine?.name ?? '-';
-  String get _performedBy => movement.performedBy?.fullName ?? '-';
+  String get _performedBy => movement.actorName ?? '-';
   String get _dateTime => movement.createdAt?.formattedDateTime ?? '-';
   PrescriptionMovementType get _type => movement.type;
 
