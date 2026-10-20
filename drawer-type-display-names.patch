@@ -1,0 +1,368 @@
+From a2d088b07793760b4243e29fc288efdfcbcb7c3c Mon Sep 17 00:00:00 2001
+From: Feyzullah Kodat <feyzkodat@gmail.com>
+Date: Tue, 20 Oct 2026 18:20:04 +0300
+Subject: [PATCH] feat(manager): show drawer type names in station empty
+ compartments report
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_012spz7B6ZtTGzotz5U81kFo
+---
+ .../lib/core/providers/usecase_providers.dart |  1 +
+ ...on_empty_compartments_report_notifier.dart | 29 ++++++++++++++++++-
+ ...ation_empty_compartment_detail_dialog.dart |  3 +-
+ ...tion_empty_compartments_report_screen.dart |  3 +-
+ .../view/table_view.dart                      |  9 ++++--
+ .../lib/src/features/cabin/cabin.dart         |  1 +
+ .../cabin/domain/entity/drawer_type.dart      | 19 +++++++++++-
+ .../usecase/get_drawer_types_usecase.dart     | 15 ++++++++++
+ .../features/cabin/dto/drawer_type_dto.dart   |  4 +++
+ .../cabin/mapper/drawer_type_mapper.dart      |  2 ++
+ packages/pharmed_ui/lib/src/l10n/app_en.arb   |  4 +++
+ packages/pharmed_ui/lib/src/l10n/app_fr.arb   |  2 ++
+ packages/pharmed_ui/lib/src/l10n/app_tr.arb   |  8 +++++
+ 13 files changed, 93 insertions(+), 7 deletions(-)
+ create mode 100644 packages/pharmed_core/lib/src/features/cabin/domain/usecase/get_drawer_types_usecase.dart
+
+diff --git a/apps/pharmed-manager/lib/core/providers/usecase_providers.dart b/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
+index f9eb712..f752d91 100644
+--- a/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
++++ b/apps/pharmed-manager/lib/core/providers/usecase_providers.dart
+@@ -209,6 +209,7 @@ class UsecaseProviders {
+       /// Dashboard
+       Provider(create: (context) => GetMissingStocksUseCase(context.read())),
+       Provider(create: (context) => GetCabinsUseCase(context.read())),
++      Provider(create: (context) => GetDrawerTypesUseCase(context.read())),
+       Provider(create: (context) => GetDashboardUnappliedPrescriptionsUseCase(context.read())),
+       Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
+       Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
+diff --git a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/notifier/station_empty_compartments_report_notifier.dart b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/notifier/station_empty_compartments_report_notifier.dart
+index 8b6a7be..b8b1ea5 100644
+--- a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/notifier/station_empty_compartments_report_notifier.dart
++++ b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/notifier/station_empty_compartments_report_notifier.dart
+@@ -11,18 +11,29 @@ class StationEmptyCompartmentsReportNotifier extends ChangeNotifier
+   final GetStationsUseCase _getStationsUseCase;
+   final GetStationEmptyCompartmentsUseCase _getStationEmptyCompartmentsUseCase;
+   final GetStationEmptyCompartmentDetailsUseCase _getStationEmptyCompartmentDetailsUseCase;
++  final GetDrawerTypesUseCase _getDrawerTypesUseCase;
+ 
+   StationEmptyCompartmentsReportNotifier({
+     required GetStationsUseCase getStationsUseCase,
+     required GetStationEmptyCompartmentsUseCase getStationEmptyCompartmentsUseCase,
+     required GetStationEmptyCompartmentDetailsUseCase getStationEmptyCompartmentDetailsUseCase,
++    required GetDrawerTypesUseCase getDrawerTypesUseCase,
+   }) : _getStationsUseCase = getStationsUseCase,
+        _getStationEmptyCompartmentsUseCase = getStationEmptyCompartmentsUseCase,
+-       _getStationEmptyCompartmentDetailsUseCase = getStationEmptyCompartmentDetailsUseCase;
++       _getStationEmptyCompartmentDetailsUseCase = getStationEmptyCompartmentDetailsUseCase,
++       _getDrawerTypesUseCase = getDrawerTypesUseCase;
+ 
+   OperationKey fetchStationsOp = OperationKey.fetch();
+   OperationKey fetchReportOp = OperationKey.custom('fetch-station-empty-compartments');
+   final OperationKey fetchDetailsOp = OperationKey.custom('fetch-station-empty-compartment-details');
++  final OperationKey fetchDrawerTypesOp = OperationKey.custom('fetch-drawer-types');
++
++  /// Rapordaki `drawerId` aslında çekmece tipi id'sidir (DrawerType.id).
++  Map<int, DrawerType> _drawerTypesById = {};
++
++  /// Çekmece tipinin okunur adı ("Kübik Çekmece" vb.); tip bulunamazsa servisteki kod.
++  String? drawerLabel(StationEmptyCompartment item) =>
++      _drawerTypesById[item.drawerId]?.displayName ?? item.drawerName;
+ 
+   List<Station> _stations = [];
+   List<Station> get stations => _stations;
+@@ -46,6 +57,22 @@ class StationEmptyCompartmentsReportNotifier extends ChangeNotifier
+   bool get isFetchingDetails => isLoading(fetchDetailsOp);
+   bool get isDetailsFailed => isFailed(fetchDetailsOp);
+ 
++  /// Ekran açılışı: çekmece tipleri (cache'li) ve istasyonlar paralel yüklenir.
++  Future<void> init() async {
++    await Future.wait([_getDrawerTypes(), getStations()]);
++  }
++
++  Future<void> _getDrawerTypes() async {
++    await execute(
++      fetchDrawerTypesOp,
++      operation: () => _getDrawerTypesUseCase.call(),
++      onData: (types) {
++        _drawerTypesById = {for (final t in types) if (t.id != null) t.id!: t};
++        notifyListeners();
++      },
++    );
++  }
++
+   Future<void> getStations() async {
+     await execute(
+       fetchStationsOp,
+diff --git a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartment_detail_dialog.dart b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartment_detail_dialog.dart
+index f9e7080..acd1f27 100644
+--- a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartment_detail_dialog.dart
++++ b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartment_detail_dialog.dart
+@@ -24,6 +24,7 @@ class StationEmptyCompartmentDetailDialog extends StatelessWidget {
+   Widget build(BuildContext context) {
+     final size = MediaQuery.sizeOf(context);
+     final l10n = context.l10n;
++    final drawerLabel = context.read<StationEmptyCompartmentsReportNotifier>().drawerLabel(item);
+     String v(Object? value) => (value == null || value.toString().isEmpty) ? '-' : value.toString();
+ 
+     return Dialog(
+@@ -37,7 +38,7 @@ class StationEmptyCompartmentDetailDialog extends StatelessWidget {
+           children: [
+             _DialogHeader(
+               title: l10n.report_stationEmptyCompartment_detailDialogTitle,
+-              subtitle: [item.stationName, item.cabinName, item.drawerName].whereType<String>().join(' · '),
++              subtitle: [item.stationName, item.cabinName, drawerLabel].whereType<String>().join(' · '),
+             ),
+             const Divider(height: 1, color: MedColors.border2),
+             Padding(
+diff --git a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart
+index ee2e0b2..cfe0047 100644
+--- a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart
++++ b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart
+@@ -20,7 +20,8 @@ class StationEmptyCompartmentsReportScreen extends StatelessWidget {
+         getStationsUseCase: context.read(),
+         getStationEmptyCompartmentsUseCase: context.read(),
+         getStationEmptyCompartmentDetailsUseCase: context.read(),
+-      )..getStations(),
++        getDrawerTypesUseCase: context.read(),
++      )..init(),
+       child: MedResponsiveLayout(
+         mobile: MedMobileLayout(),
+         tablet: MedTabletLayout(),
+diff --git a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/table_view.dart b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/table_view.dart
+index 5f54412..a431ac7 100644
+--- a/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/table_view.dart
++++ b/apps/pharmed-manager/lib/features/reports/station_empty_compartments/view/table_view.dart
+@@ -30,7 +30,7 @@ class TableView extends StatelessWidget {
+       onCategorySelectionChanged: notifier.onCategorySelectionChanged,
+       categoryTitle: context.l10n.report_stationsCategoryTitle,
+ 
+-      columnDefs: _buildColumnDefs(context),
++      columnDefs: _buildColumnDefs(context, notifier),
+ 
+       actions: [
+         TableActionItem<StationEmptyCompartment>(
+@@ -43,7 +43,10 @@ class TableView extends StatelessWidget {
+   }
+ }
+ 
+-List<TableColumnDef<StationEmptyCompartment>> _buildColumnDefs(BuildContext context) => [
++List<TableColumnDef<StationEmptyCompartment>> _buildColumnDefs(
++  BuildContext context,
++  StationEmptyCompartmentsReportNotifier notifier,
++) => [
+   TableColumnDef(
+     title: context.l10n.tableCore_stationEmptyCompartmentStationColumn,
+     displayValue: (item) => item.stationName,
+@@ -55,7 +58,7 @@ List<TableColumnDef<StationEmptyCompartment>> _buildColumnDefs(BuildContext cont
+   ),
+   TableColumnDef(
+     title: context.l10n.tableCore_stationEmptyCompartmentDrawerColumn,
+-    displayValue: (item) => item.drawerName,
++    displayValue: notifier.drawerLabel,
+   ),
+   TableColumnDef(
+     title: context.l10n.tableCore_stationEmptyCompartmentEmptyColumn,
+diff --git a/packages/pharmed_core/lib/src/features/cabin/cabin.dart b/packages/pharmed_core/lib/src/features/cabin/cabin.dart
+index a7636bd..2221fc6 100644
+--- a/packages/pharmed_core/lib/src/features/cabin/cabin.dart
++++ b/packages/pharmed_core/lib/src/features/cabin/cabin.dart
+@@ -41,6 +41,7 @@ export 'domain/usecase/save_mobile_cabin_design_usecase.dart';
+ export 'domain/usecase/save_serum_layout_usecase.dart';
+ export 'domain/usecase/scan_cabin_usecase.dart';
+ export 'domain/usecase/get_cabins_usecase.dart';
++export 'domain/usecase/get_drawer_types_usecase.dart';
+ export 'domain/usecase/set_return_drawer_usecase.dart';
+ export 'domain/usecase/update_cabin_usecase.dart';
+ 
+diff --git a/packages/pharmed_core/lib/src/features/cabin/domain/entity/drawer_type.dart b/packages/pharmed_core/lib/src/features/cabin/domain/entity/drawer_type.dart
+index 9ae5de4..94f3ce3 100644
+--- a/packages/pharmed_core/lib/src/features/cabin/domain/entity/drawer_type.dart
++++ b/packages/pharmed_core/lib/src/features/cabin/domain/entity/drawer_type.dart
+@@ -1,5 +1,7 @@
+ // pharmed_core/src/cabin/entity/drawer_type.dart
+ 
++import 'package:pharmed_ui/pharmed_ui.dart';
++
+ /// ÇEKMECE TİPİ ENTITY'Sİ
+ /// -----------------------
+ /// Çekmece tipini tanımlar (Kübik 4×4, Birim Doz 3 Göz vb.).
+@@ -19,6 +21,7 @@ class DrawerType {
+     this.compartmentCount,
+     this.isMultipleMaterialInput = false,
+     this.isKubik = false,
++    this.isMobileDrawer = false,
+     this.isActive = true,
+   });
+ 
+@@ -27,6 +30,7 @@ class DrawerType {
+   final int? compartmentCount; // 16 (4×4), 20 (4×5), 3, 6, ...
+   final bool isMultipleMaterialInput; // Çoklu ilaç girişine izin var mı
+   final bool isKubik; // Kübik mi (kapaklı göz)
++  final bool isMobileDrawer; // Mobil kabin çekmecesi mi
+   final bool isActive;
+ 
+   DrawerType copyWith({
+@@ -35,6 +39,7 @@ class DrawerType {
+     int? compartmentCount,
+     bool? isMultipleMaterialInput,
+     bool? isKubik,
++    bool? isMobileDrawer,
+     bool? isActive,
+   }) {
+     return DrawerType(
+@@ -43,10 +48,22 @@ class DrawerType {
+       compartmentCount: compartmentCount ?? this.compartmentCount,
+       isMultipleMaterialInput: isMultipleMaterialInput ?? this.isMultipleMaterialInput,
+       isKubik: isKubik ?? this.isKubik,
++      isMobileDrawer: isMobileDrawer ?? this.isMobileDrawer,
+       isActive: isActive ?? this.isActive,
+     );
+   }
+ 
++  /// Kullanıcıya gösterilen çekmece tipi adı (servisteki `name` tek harflik bir koddur).
++  ///
++  /// Öncelik: mobil → kübik → çoklu malzeme girişli (serum/dolap rafı, "Dolap") → birim doz.
++  String get displayName {
++    final l10n = contextlessL10n();
++    if (isMobileDrawer) return l10n.cabin_mobileDrawerName;
++    if (isKubik) return l10n.cabin_kubikDrawerName;
++    if (isMultipleMaterialInput) return l10n.cabin_closetDrawerName;
++    return l10n.cabin_unitDoseDrawerName;
++  }
++
+   @override
+   bool operator ==(Object other) =>
+       identical(this, other) || other is DrawerType && runtimeType == other.runtimeType && id == other.id;
+@@ -55,5 +72,5 @@ class DrawerType {
+   int get hashCode => id.hashCode;
+ 
+   @override
+-  String toString() => 'DrawerType(id: $id, name: $name, compartmentCount: $compartmentCount, isKubik: $isKubik)';
++  String toString() => 'DrawerType(id: $id, name: $name, compartmentCount: $compartmentCount, isKubik: $isKubik, isMobileDrawer: $isMobileDrawer)';
+ }
+diff --git a/packages/pharmed_core/lib/src/features/cabin/domain/usecase/get_drawer_types_usecase.dart b/packages/pharmed_core/lib/src/features/cabin/domain/usecase/get_drawer_types_usecase.dart
+new file mode 100644
+index 0000000..52ccb6e
+--- /dev/null
++++ b/packages/pharmed_core/lib/src/features/cabin/domain/usecase/get_drawer_types_usecase.dart
+@@ -0,0 +1,15 @@
++// [SWREQ-CORE-CABIN-UC-008]
++// Sınıf: Class B
++
++import 'package:pharmed_core/pharmed_core.dart';
++
++/// Sistemde tanımlı çekmece tiplerini getirir (repository local cache'i kullanır).
++class GetDrawerTypesUseCase {
++  final ICabinRepository _repository;
++
++  GetDrawerTypesUseCase(this._repository);
++
++  Future<Result<List<DrawerType>>> call({bool forceRefresh = false}) {
++    return _repository.getDrawerTypes(forceRefresh: forceRefresh);
++  }
++}
+diff --git a/packages/pharmed_core/lib/src/features/cabin/dto/drawer_type_dto.dart b/packages/pharmed_core/lib/src/features/cabin/dto/drawer_type_dto.dart
+index b01e1ca..bedba59 100644
+--- a/packages/pharmed_core/lib/src/features/cabin/dto/drawer_type_dto.dart
++++ b/packages/pharmed_core/lib/src/features/cabin/dto/drawer_type_dto.dart
+@@ -17,6 +17,7 @@ class DrawerTypeDTO {
+   final int? compartmentCount;
+   final bool? isMultipleMaterialInput;
+   final bool? isKubik;
++  final bool? isMobileDrawr;
+   final bool? isActive;
+   final bool? isDeleted;
+   final DateTime? createdDate;
+@@ -27,6 +28,7 @@ class DrawerTypeDTO {
+     this.compartmentCount,
+     this.isMultipleMaterialInput,
+     this.isKubik,
++    this.isMobileDrawr,
+     this.isActive,
+     this.isDeleted,
+     this.createdDate,
+@@ -39,6 +41,7 @@ class DrawerTypeDTO {
+       compartmentCount: json['compartmentCount'] as int?,
+       isMultipleMaterialInput: json['isMultipleMaterialInput'] as bool?,
+       isKubik: json['isKubik'] as bool?,
++      isMobileDrawr: json['isMobileDrawr'] as bool?,
+       isActive: json['isActive'] as bool?,
+       isDeleted: json['isDeleted'] as bool?,
+       createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,
+@@ -52,6 +55,7 @@ class DrawerTypeDTO {
+       'compartmentCount': compartmentCount,
+       'isMultipleMaterialInput': isMultipleMaterialInput,
+       'isKubik': isKubik,
++      'isMobileDrawr': isMobileDrawr,
+       'isActive': isActive,
+       'isDeleted': isDeleted,
+       'createdDate': createdDate?.toIso8601String(),
+diff --git a/packages/pharmed_data/lib/src/features/cabin/mapper/drawer_type_mapper.dart b/packages/pharmed_data/lib/src/features/cabin/mapper/drawer_type_mapper.dart
+index 342acce..4405ac0 100644
+--- a/packages/pharmed_data/lib/src/features/cabin/mapper/drawer_type_mapper.dart
++++ b/packages/pharmed_data/lib/src/features/cabin/mapper/drawer_type_mapper.dart
+@@ -13,6 +13,7 @@ class DrawerTypeMapper {
+       compartmentCount: dto.compartmentCount,
+       isMultipleMaterialInput: dto.isMultipleMaterialInput ?? false,
+       isKubik: dto.isKubik ?? false,
++      isMobileDrawer: dto.isMobileDrawr ?? false,
+       isActive: dto.isActive ?? true,
+     );
+   }
+@@ -28,6 +29,7 @@ class DrawerTypeMapper {
+       compartmentCount: entity.compartmentCount,
+       isMultipleMaterialInput: entity.isMultipleMaterialInput,
+       isKubik: entity.isKubik,
++      isMobileDrawr: entity.isMobileDrawer,
+       isActive: entity.isActive,
+     );
+   }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index d7113ab..1a6acf0 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -186,6 +186,10 @@
+   "@cabin_kubikDrawerName": {},
+   "cabin_unitDoseDrawerName": "Unit Dose Drawer",
+   "@cabin_unitDoseDrawerName": {},
++  "cabin_closetDrawerName": "Closet",
++  "@cabin_closetDrawerName": {},
++  "cabin_mobileDrawerName": "Mobile Drawer",
++  "@cabin_mobileDrawerName": {},
+   "cabin_serumRackView": "Rack view",
+   "@cabin_serumRackView": {},
+   "cabin_serumViewTitle": "Serum view",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index aca30cc..8733652 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -106,6 +106,8 @@
+   "cabin_serumDrawerName": "Tiroir sérum",
+   "cabin_kubikDrawerName": "Tiroir cubique",
+   "cabin_unitDoseDrawerName": "Tiroir dose unitaire",
++  "cabin_closetDrawerName": "Placard",
++  "cabin_mobileDrawerName": "Tiroir mobile",
+   "cabin_serumRackView": "Vue en rack",
+   "cabin_serumViewTitle": "Vue sérum",
+   "cabin_serumViewTodo": "À FAIRE : sera complété une fois la structure interne du sérum finalisée",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_tr.arb b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+index 32ae002..ee92a02 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_tr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+@@ -328,6 +328,14 @@
+   "@cabin_unitDoseDrawerName": {
+     "description": "Header name for unit-dose drawers in the master drawer panel"
+   },
++  "cabin_closetDrawerName": "Dolap",
++  "@cabin_closetDrawerName": {
++    "description": "Display name for drawer types that accept multiple materials (serum / closet shelves); used by DrawerType.displayName, e.g. in the station empty compartments report"
++  },
++  "cabin_mobileDrawerName": "Mobil Çekmece",
++  "@cabin_mobileDrawerName": {
++    "description": "Display name for mobile cabin drawer types; used by DrawerType.displayName, e.g. in the station empty compartments report"
++  },
+   "cabin_serumRackView": "Raf görünümü",
+   "@cabin_serumRackView": {
+     "description": "Sub-label shown below the serum drawer header in the master panel"
+-- 
+2.43.0

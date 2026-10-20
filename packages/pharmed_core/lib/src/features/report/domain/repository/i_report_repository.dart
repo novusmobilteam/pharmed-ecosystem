@@ -46,4 +46,8 @@ abstract interface class IReportRepository {
 
   /// Order Edilmiş / Yüklü Malzeme
   Future<Result<ApiResponse<List<OrderedLoadedMaterial>>?>> getOrderedLoadedMaterials({PagedQueryParams? params});
+
+  /// İstasyon Boş Göz Listesi
+  Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({PagedQueryParams? params});
+  Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId);
 }

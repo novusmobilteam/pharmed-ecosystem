@@ -15,6 +15,7 @@ class ReportRepositoryImpl implements IReportRepository {
   final UnorderedLoadedMaterialMapper _unorderedLoadedMaterialMapper;
   final OrderedNotLoadedMaterialMapper _orderedNotLoadedMaterialMapper;
   final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
+  final StationEmptyCompartmentMapper _stationEmptyCompartmentMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -30,6 +31,7 @@ class ReportRepositoryImpl implements IReportRepository {
     required UnorderedLoadedMaterialMapper unorderedLoadedMaterialMapper,
     required OrderedNotLoadedMaterialMapper orderedNotLoadedMaterialMapper,
     required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
+    required StationEmptyCompartmentMapper stationEmptyCompartmentMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -42,7 +44,8 @@ class ReportRepositoryImpl implements IReportRepository {
        _stepMapper = stepMapper,
        _unorderedLoadedMaterialMapper = unorderedLoadedMaterialMapper,
        _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
-       _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper;
+       _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper,
+       _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -227,6 +230,32 @@ class ReportRepositoryImpl implements IReportRepository {
           totalCount: apiResponse?.totalCount,
         ),
       ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<StationEmptyCompartment>>?>> getStationEmptyCompartments({
+    PagedQueryParams? params,
+  }) async {
+    final result = await _dataSource.getStationEmptyCompartments(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<StationEmptyCompartment>>(
+          data: apiResponse?.data != null ? _stationEmptyCompartmentMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<List<StationEmptyCompartmentDetail>>> getStationEmptyCompartmentDetails(int cabinDesignId) async {
+    final result = await _dataSource.getStationEmptyCompartmentDetails(cabinDesignId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(_stationEmptyCompartmentMapper.toDetailEntityList(apiResponse?.data ?? [])),
       error: (e) => Result.error(e),
     );
   }

@@ -328,6 +328,14 @@
   "@cabin_unitDoseDrawerName": {
     "description": "Header name for unit-dose drawers in the master drawer panel"
   },
+  "cabin_closetDrawerName": "Dolap",
+  "@cabin_closetDrawerName": {
+    "description": "Display name for drawer types that accept multiple materials (serum / closet shelves); used by DrawerType.displayName, e.g. in the station empty compartments report"
+  },
+  "cabin_mobileDrawerName": "Mobil Çekmece",
+  "@cabin_mobileDrawerName": {
+    "description": "Display name for mobile cabin drawer types; used by DrawerType.displayName, e.g. in the station empty compartments report"
+  },
   "cabin_serumRackView": "Raf görünümü",
   "@cabin_serumRackView": {
     "description": "Sub-label shown below the serum drawer header in the master panel"
@@ -3051,7 +3059,7 @@
   },
   "report_stationsCategoryTitle": "İstasyonlar",
   "@report_stationsCategoryTitle": {
-    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded and ordered loaded materials report screens"
+    "description": "Category title for the stations side-list, shared across refill list, expired items, station transaction, unordered loaded, ordered not loaded, ordered loaded materials and station empty compartments report screens"
   },
   "refillList_cellValueYes": "Evet",
   "@refillList_cellValueYes": {
@@ -9509,6 +9517,19 @@
 "tableCore_orderedLoadedMaterialServiceColumn": "Bölüm",
 "tableCore_orderedLoadedMaterialBarcodeColumn": "Barkod",
 "tableCore_orderedLoadedMaterialMaterialColumn": "Malzeme",
+"tableCore_stationEmptyCompartmentStationColumn": "İstasyon",
+"tableCore_stationEmptyCompartmentCabinColumn": "Kabin",
+"tableCore_stationEmptyCompartmentDrawerColumn": "Çekmece",
+"tableCore_stationEmptyCompartmentEmptyColumn": "Boş",
+"tableCore_stationEmptyCompartmentOccupiedColumn": "Dolu",
+"tableCore_stationEmptyCompartmentDetailLocationColumn": "Konum",
+"tableCore_stationEmptyCompartmentDetailCompartmentCountColumn": "Göz Sayısı",
+"tableCore_stationEmptyCompartmentDetailStepCountColumn": "Kademe Sayısı",
+"report_stationEmptyCompartment_detailTooltip": "Boş Gözleri Görüntüle",
+"report_stationEmptyCompartment_detailDialogTitle": "Boş Göz Detayı",
+"report_stationEmptyCompartment_detailsSectionTitle": "Boş Gözler",
+"report_stationEmptyCompartment_detailsLoadError": "Boş göz detayları yüklenemedi.",
+"report_stationEmptyCompartment_detailsEmpty": "Bu çekmecede boş göz bulunmuyor.",
 "report_stationTransaction_detailDialogTitle": "İşlem Detayı",
 "report_stationTransaction_detailTooltip": "Detayı Görüntüle",
 "report_stationTransaction_stepsSectionTitle": "Göz Detayı",

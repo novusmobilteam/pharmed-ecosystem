@@ -17,6 +17,7 @@ class DrawerTypeDTO {
   final int? compartmentCount;
   final bool? isMultipleMaterialInput;
   final bool? isKubik;
+  final bool? isMobileDrawr;
   final bool? isActive;
   final bool? isDeleted;
   final DateTime? createdDate;
@@ -27,6 +28,7 @@ class DrawerTypeDTO {
     this.compartmentCount,
     this.isMultipleMaterialInput,
     this.isKubik,
+    this.isMobileDrawr,
     this.isActive,
     this.isDeleted,
     this.createdDate,
@@ -39,6 +41,7 @@ class DrawerTypeDTO {
       compartmentCount: json['compartmentCount'] as int?,
       isMultipleMaterialInput: json['isMultipleMaterialInput'] as bool?,
       isKubik: json['isKubik'] as bool?,
+      isMobileDrawr: json['isMobileDrawr'] as bool?,
       isActive: json['isActive'] as bool?,
       isDeleted: json['isDeleted'] as bool?,
       createdDate: json['createdDate'] != null ? DateTime.parse(json['createdDate'] as String) : null,
@@ -52,6 +55,7 @@ class DrawerTypeDTO {
       'compartmentCount': compartmentCount,
       'isMultipleMaterialInput': isMultipleMaterialInput,
       'isKubik': isKubik,
+      'isMobileDrawr': isMobileDrawr,
       'isActive': isActive,
       'isDeleted': isDeleted,
       'createdDate': createdDate?.toIso8601String(),

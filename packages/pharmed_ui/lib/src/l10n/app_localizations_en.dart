@@ -267,6 +267,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabin_unitDoseDrawerName => 'Unit Dose Drawer';
 
   @override
+  String get cabin_closetDrawerName => 'Closet';
+
+  @override
+  String get cabin_mobileDrawerName => 'Mobile Drawer';
+
+  @override
   String get cabin_serumRackView => 'Rack view';
 
   @override
@@ -7396,6 +7402,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tableCore_orderedLoadedMaterialMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_stationEmptyCompartmentStationColumn => 'Station';
+
+  @override
+  String get tableCore_stationEmptyCompartmentCabinColumn => 'Cabin';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDrawerColumn => 'Drawer';
+
+  @override
+  String get tableCore_stationEmptyCompartmentEmptyColumn => 'Empty';
+
+  @override
+  String get tableCore_stationEmptyCompartmentOccupiedColumn => 'Occupied';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailLocationColumn =>
+      'Location';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailCompartmentCountColumn =>
+      'Compartment Count';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailStepCountColumn =>
+      'Step Count';
+
+  @override
+  String get report_stationEmptyCompartment_detailTooltip =>
+      'View Empty Compartments';
+
+  @override
+  String get report_stationEmptyCompartment_detailDialogTitle =>
+      'Empty Compartment Detail';
+
+  @override
+  String get report_stationEmptyCompartment_detailsSectionTitle =>
+      'Empty Compartments';
+
+  @override
+  String get report_stationEmptyCompartment_detailsLoadError =>
+      'Empty compartment details could not be loaded.';
+
+  @override
+  String get report_stationEmptyCompartment_detailsEmpty =>
+      'There are no empty compartments in this drawer.';
 
   @override
   String get report_stationTransaction_detailDialogTitle =>

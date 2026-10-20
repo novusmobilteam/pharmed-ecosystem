@@ -266,6 +266,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabin_unitDoseDrawerName => 'Birim Doz Çekmece';
 
   @override
+  String get cabin_closetDrawerName => 'Dolap';
+
+  @override
+  String get cabin_mobileDrawerName => 'Mobil Çekmece';
+
+  @override
   String get cabin_serumRackView => 'Raf görünümü';
 
   @override
@@ -7342,6 +7348,51 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tableCore_orderedLoadedMaterialMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_stationEmptyCompartmentStationColumn => 'İstasyon';
+
+  @override
+  String get tableCore_stationEmptyCompartmentCabinColumn => 'Kabin';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDrawerColumn => 'Çekmece';
+
+  @override
+  String get tableCore_stationEmptyCompartmentEmptyColumn => 'Boş';
+
+  @override
+  String get tableCore_stationEmptyCompartmentOccupiedColumn => 'Dolu';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailLocationColumn => 'Konum';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailCompartmentCountColumn =>
+      'Göz Sayısı';
+
+  @override
+  String get tableCore_stationEmptyCompartmentDetailStepCountColumn =>
+      'Kademe Sayısı';
+
+  @override
+  String get report_stationEmptyCompartment_detailTooltip =>
+      'Boş Gözleri Görüntüle';
+
+  @override
+  String get report_stationEmptyCompartment_detailDialogTitle =>
+      'Boş Göz Detayı';
+
+  @override
+  String get report_stationEmptyCompartment_detailsSectionTitle => 'Boş Gözler';
+
+  @override
+  String get report_stationEmptyCompartment_detailsLoadError =>
+      'Boş göz detayları yüklenemedi.';
+
+  @override
+  String get report_stationEmptyCompartment_detailsEmpty =>
+      'Bu çekmecede boş göz bulunmuyor.';
 
   @override
   String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';

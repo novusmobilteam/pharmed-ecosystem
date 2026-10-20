@@ -182,7 +182,9 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<OrderedLoadedMaterialDto>>?>> getOrderedLoadedMaterials({PagedQueryParams? params}) async {
+  Future<Result<ApiResponse<List<OrderedLoadedMaterialDto>>?>> getOrderedLoadedMaterials({
+    PagedQueryParams? params,
+  }) async {
     return await fetchRequest(
       path: '$_basePath/orderedLoadedMaterials',
       // Bu endpoint tarih aralığını DevExtreme filtresiyle değil query parametresiyle alır.
@@ -197,6 +199,33 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       filters: params?.filters,
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(OrderedLoadedMaterialDto.fromJson),
+    );
+  }
+
+  Future<Result<ApiResponse<List<StationEmptyCompartmentDto>>?>> getStationEmptyCompartments({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/stationEmptyCompartments',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDto.fromJson),
+    );
+  }
+
+  /// Seçilen çekmecenin (cabinDesignId) tüm boş gözleri — sayfalama yok.
+  Future<Result<ApiResponse<List<StationEmptyCompartmentDetailDto>>?>> getStationEmptyCompartmentDetails(
+    int cabinDesignId,
+  ) async {
+    return await fetchRequest(
+      path: '$_basePath/stationEmptyCompartments/details',
+      query: {'cabinDesignId': cabinDesignId},
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(StationEmptyCompartmentDetailDto.fromJson),
     );
   }
 }

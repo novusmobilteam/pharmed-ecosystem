@@ -209,6 +209,7 @@ class UsecaseProviders {
       /// Dashboard
       Provider(create: (context) => GetMissingStocksUseCase(context.read())),
       Provider(create: (context) => GetCabinsUseCase(context.read())),
+      Provider(create: (context) => GetDrawerTypesUseCase(context.read())),
       Provider(create: (context) => GetDashboardUnappliedPrescriptionsUseCase(context.read())),
       Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
       Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
@@ -256,6 +257,8 @@ class UsecaseProviders {
       Provider(create: (context) => GetUnorderedLoadedMaterialsUseCase(context.read())),
       Provider(create: (context) => GetOrderedNotLoadedMaterialsUseCase(context.read())),
       Provider(create: (context) => GetOrderedLoadedMaterialsUseCase(context.read())),
+      Provider(create: (context) => GetStationEmptyCompartmentsUseCase(context.read())),
+      Provider(create: (context) => GetStationEmptyCompartmentDetailsUseCase(context.read())),
 
       /// CabinTemperature
       Provider(create: (context) => GetCabinTemperatureUseCase(context.read())),

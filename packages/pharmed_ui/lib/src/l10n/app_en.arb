@@ -186,6 +186,10 @@
   "@cabin_kubikDrawerName": {},
   "cabin_unitDoseDrawerName": "Unit Dose Drawer",
   "@cabin_unitDoseDrawerName": {},
+  "cabin_closetDrawerName": "Closet",
+  "@cabin_closetDrawerName": {},
+  "cabin_mobileDrawerName": "Mobile Drawer",
+  "@cabin_mobileDrawerName": {},
   "cabin_serumRackView": "Rack view",
   "@cabin_serumRackView": {},
   "cabin_serumViewTitle": "Serum view",
@@ -5179,6 +5183,58 @@
 "tableCore_orderedLoadedMaterialMaterialColumn": "Material",
 "@tableCore_orderedLoadedMaterialMaterialColumn": {
   "description": "Ordered loaded materials report table column header for the material name"
+},
+"tableCore_stationEmptyCompartmentStationColumn": "Station",
+"@tableCore_stationEmptyCompartmentStationColumn": {
+  "description": "Station empty compartments report table column header for the station name"
+},
+"tableCore_stationEmptyCompartmentCabinColumn": "Cabin",
+"@tableCore_stationEmptyCompartmentCabinColumn": {
+  "description": "Station empty compartments report table column header for the cabin name"
+},
+"tableCore_stationEmptyCompartmentDrawerColumn": "Drawer",
+"@tableCore_stationEmptyCompartmentDrawerColumn": {
+  "description": "Station empty compartments report table column header for the drawer name"
+},
+"tableCore_stationEmptyCompartmentEmptyColumn": "Empty",
+"@tableCore_stationEmptyCompartmentEmptyColumn": {
+  "description": "Station empty compartments report column header (also detail dialog tile label) for the number of empty compartments in the drawer"
+},
+"tableCore_stationEmptyCompartmentOccupiedColumn": "Occupied",
+"@tableCore_stationEmptyCompartmentOccupiedColumn": {
+  "description": "Station empty compartments report column header (also detail dialog tile label) for the number of occupied compartments in the drawer"
+},
+"tableCore_stationEmptyCompartmentDetailLocationColumn": "Location",
+"@tableCore_stationEmptyCompartmentDetailLocationColumn": {
+  "description": "Station empty compartments detail dialog column header for the empty compartment location (drawer / order)"
+},
+"tableCore_stationEmptyCompartmentDetailCompartmentCountColumn": "Compartment Count",
+"@tableCore_stationEmptyCompartmentDetailCompartmentCountColumn": {
+  "description": "Station empty compartments detail dialog column header for the compartment count at the location"
+},
+"tableCore_stationEmptyCompartmentDetailStepCountColumn": "Step Count",
+"@tableCore_stationEmptyCompartmentDetailStepCountColumn": {
+  "description": "Station empty compartments detail dialog column header for the step (level) count at the location"
+},
+"report_stationEmptyCompartment_detailTooltip": "View Empty Compartments",
+"@report_stationEmptyCompartment_detailTooltip": {
+  "description": "Row action tooltip in the station empty compartments report that opens the empty compartment detail dialog"
+},
+"report_stationEmptyCompartment_detailDialogTitle": "Empty Compartment Detail",
+"@report_stationEmptyCompartment_detailDialogTitle": {
+  "description": "Title of the detail dialog listing the empty compartments of the selected drawer"
+},
+"report_stationEmptyCompartment_detailsSectionTitle": "Empty Compartments",
+"@report_stationEmptyCompartment_detailsSectionTitle": {
+  "description": "Section title above the empty compartment list in the detail dialog"
+},
+"report_stationEmptyCompartment_detailsLoadError": "Empty compartment details could not be loaded.",
+"@report_stationEmptyCompartment_detailsLoadError": {
+  "description": "Error message shown in the detail dialog when the empty compartment details request fails"
+},
+"report_stationEmptyCompartment_detailsEmpty": "There are no empty compartments in this drawer.",
+"@report_stationEmptyCompartment_detailsEmpty": {
+  "description": "Empty state shown in the detail dialog when the drawer has no empty compartments"
 },
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {

@@ -588,6 +588,18 @@ abstract class AppLocalizations {
   /// **'Unit Dose Drawer'**
   String get cabin_unitDoseDrawerName;
 
+  /// No description provided for @cabin_closetDrawerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Closet'**
+  String get cabin_closetDrawerName;
+
+  /// No description provided for @cabin_mobileDrawerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Drawer'**
+  String get cabin_mobileDrawerName;
+
   /// No description provided for @cabin_serumRackView.
   ///
   /// In en, this message translates to:
@@ -13009,6 +13021,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Material'**
   String get tableCore_orderedLoadedMaterialMaterialColumn;
+
+  /// Station empty compartments report table column header for the station name
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_stationEmptyCompartmentStationColumn;
+
+  /// Station empty compartments report table column header for the cabin name
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get tableCore_stationEmptyCompartmentCabinColumn;
+
+  /// Station empty compartments report table column header for the drawer name
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer'**
+  String get tableCore_stationEmptyCompartmentDrawerColumn;
+
+  /// Station empty compartments report column header (also detail dialog tile label) for the number of empty compartments in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get tableCore_stationEmptyCompartmentEmptyColumn;
+
+  /// Station empty compartments report column header (also detail dialog tile label) for the number of occupied compartments in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Occupied'**
+  String get tableCore_stationEmptyCompartmentOccupiedColumn;
+
+  /// Station empty compartments detail dialog column header for the empty compartment location (drawer / order)
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get tableCore_stationEmptyCompartmentDetailLocationColumn;
+
+  /// Station empty compartments detail dialog column header for the compartment count at the location
+  ///
+  /// In en, this message translates to:
+  /// **'Compartment Count'**
+  String get tableCore_stationEmptyCompartmentDetailCompartmentCountColumn;
+
+  /// Station empty compartments detail dialog column header for the step (level) count at the location
+  ///
+  /// In en, this message translates to:
+  /// **'Step Count'**
+  String get tableCore_stationEmptyCompartmentDetailStepCountColumn;
+
+  /// Row action tooltip in the station empty compartments report that opens the empty compartment detail dialog
+  ///
+  /// In en, this message translates to:
+  /// **'View Empty Compartments'**
+  String get report_stationEmptyCompartment_detailTooltip;
+
+  /// Title of the detail dialog listing the empty compartments of the selected drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Empty Compartment Detail'**
+  String get report_stationEmptyCompartment_detailDialogTitle;
+
+  /// Section title above the empty compartment list in the detail dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Empty Compartments'**
+  String get report_stationEmptyCompartment_detailsSectionTitle;
+
+  /// Error message shown in the detail dialog when the empty compartment details request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Empty compartment details could not be loaded.'**
+  String get report_stationEmptyCompartment_detailsLoadError;
+
+  /// Empty state shown in the detail dialog when the drawer has no empty compartments
+  ///
+  /// In en, this message translates to:
+  /// **'There are no empty compartments in this drawer.'**
+  String get report_stationEmptyCompartment_detailsEmpty;
 
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
