@@ -181,4 +181,22 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(OrderedNotLoadedMaterialDto.fromJson),
     );
   }
+
+  Future<Result<ApiResponse<List<OrderedLoadedMaterialDto>>?>> getOrderedLoadedMaterials({PagedQueryParams? params}) async {
+    return await fetchRequest(
+      path: '$_basePath/orderedLoadedMaterials',
+      // Bu endpoint tarih aralığını DevExtreme filtresiyle değil query parametresiyle alır.
+      query: {
+        if (params?.startDate != null) 'startDate': params!.startDate!.toIso8601String(),
+        if (params?.endDate != null) 'endDate': params!.endDate!.toIso8601String(),
+      },
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      filters: params?.filters,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(OrderedLoadedMaterialDto.fromJson),
+    );
+  }
 }

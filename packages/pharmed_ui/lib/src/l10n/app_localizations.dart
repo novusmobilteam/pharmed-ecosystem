@@ -12980,6 +12980,36 @@ abstract class AppLocalizations {
   /// **'Full Name'**
   String get tableCore_orderedNotLoadedMaterialPatientColumn;
 
+  /// Ordered loaded materials report table column header for the station name
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_orderedLoadedMaterialStationColumn;
+
+  /// Ordered loaded materials report table column header for the cabin name the material is loaded in
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin'**
+  String get tableCore_orderedLoadedMaterialCabinColumn;
+
+  /// Ordered loaded materials report table column header for the hospital department (service) of the order
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get tableCore_orderedLoadedMaterialServiceColumn;
+
+  /// Ordered loaded materials report table column header for the material barcode
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get tableCore_orderedLoadedMaterialBarcodeColumn;
+
+  /// Ordered loaded materials report table column header for the material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_orderedLoadedMaterialMaterialColumn;
+
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
   /// In en, this message translates to:

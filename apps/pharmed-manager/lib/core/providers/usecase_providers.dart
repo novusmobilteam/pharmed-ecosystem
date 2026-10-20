@@ -255,6 +255,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetCabinTemperatureValuesUseCase(context.read())),
       Provider(create: (context) => GetUnorderedLoadedMaterialsUseCase(context.read())),
       Provider(create: (context) => GetOrderedNotLoadedMaterialsUseCase(context.read())),
+      Provider(create: (context) => GetOrderedLoadedMaterialsUseCase(context.read())),
 
       /// CabinTemperature
       Provider(create: (context) => GetCabinTemperatureUseCase(context.read())),

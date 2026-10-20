@@ -14,6 +14,7 @@ class ReportRepositoryImpl implements IReportRepository {
   final StationTransactionStepMapper _stepMapper;
   final UnorderedLoadedMaterialMapper _unorderedLoadedMaterialMapper;
   final OrderedNotLoadedMaterialMapper _orderedNotLoadedMaterialMapper;
+  final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -28,6 +29,7 @@ class ReportRepositoryImpl implements IReportRepository {
     required StationTransactionStepMapper stepMapper,
     required UnorderedLoadedMaterialMapper unorderedLoadedMaterialMapper,
     required OrderedNotLoadedMaterialMapper orderedNotLoadedMaterialMapper,
+    required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -39,7 +41,8 @@ class ReportRepositoryImpl implements IReportRepository {
        _stationTransactionMapper = stationTransactionMapper,
        _stepMapper = stepMapper,
        _unorderedLoadedMaterialMapper = unorderedLoadedMaterialMapper,
-       _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper;
+       _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
+       _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -205,6 +208,21 @@ class ReportRepositoryImpl implements IReportRepository {
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<OrderedNotLoadedMaterial>>(
           data: apiResponse?.data != null ? _orderedNotLoadedMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<OrderedLoadedMaterial>>?>> getOrderedLoadedMaterials({PagedQueryParams? params}) async {
+    final result = await _dataSource.getOrderedLoadedMaterials(params: params);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<OrderedLoadedMaterial>>(
+          data: apiResponse?.data != null ? _orderedLoadedMaterialMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess,
           totalCount: apiResponse?.totalCount,
         ),

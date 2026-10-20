@@ -53,12 +53,13 @@ List<TableColumnDef<StockTransaction>> _buildColumnDefs(BuildContext context) =>
   ),
   TableColumnDef(
     title: context.l10n.tableCore_stockTransactionQuantityColumn,
-    displayValue: (item) => '${item.quantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.quantity,
   ),
   TableColumnDef(
     title: context.l10n.tableCore_stockTransactionPreviousQuantityColumn,
-    displayValue: (item) =>
-        '${item.beforeQuantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.beforeQuantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.beforeQuantity,
   ),
   TableColumnDef(
     title: context.l10n.tableCore_stockTransactionActorColumn,

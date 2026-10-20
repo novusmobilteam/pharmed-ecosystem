@@ -7383,6 +7383,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tableCore_orderedNotLoadedMaterialPatientColumn => 'Full Name';
 
   @override
+  String get tableCore_orderedLoadedMaterialStationColumn => 'Station';
+
+  @override
+  String get tableCore_orderedLoadedMaterialCabinColumn => 'Cabin';
+
+  @override
+  String get tableCore_orderedLoadedMaterialServiceColumn => 'Department';
+
+  @override
+  String get tableCore_orderedLoadedMaterialBarcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_orderedLoadedMaterialMaterialColumn => 'Material';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Transaction Detail';
 

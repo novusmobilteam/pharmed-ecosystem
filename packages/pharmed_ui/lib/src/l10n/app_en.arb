@@ -5160,6 +5160,26 @@
 "@tableCore_orderedNotLoadedMaterialPatientColumn": {
   "description": "Ordered but not loaded materials report table column header for the patient full name"
 },
+"tableCore_orderedLoadedMaterialStationColumn": "Station",
+"@tableCore_orderedLoadedMaterialStationColumn": {
+  "description": "Ordered loaded materials report table column header for the station name"
+},
+"tableCore_orderedLoadedMaterialCabinColumn": "Cabin",
+"@tableCore_orderedLoadedMaterialCabinColumn": {
+  "description": "Ordered loaded materials report table column header for the cabin name the material is loaded in"
+},
+"tableCore_orderedLoadedMaterialServiceColumn": "Department",
+"@tableCore_orderedLoadedMaterialServiceColumn": {
+  "description": "Ordered loaded materials report table column header for the hospital department (service) of the order"
+},
+"tableCore_orderedLoadedMaterialBarcodeColumn": "Barcode",
+"@tableCore_orderedLoadedMaterialBarcodeColumn": {
+  "description": "Ordered loaded materials report table column header for the material barcode"
+},
+"tableCore_orderedLoadedMaterialMaterialColumn": "Material",
+"@tableCore_orderedLoadedMaterialMaterialColumn": {
+  "description": "Ordered loaded materials report table column header for the material name"
+},
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {
   "description": "Title of the detail dialog opened from a row in the station transaction report table"

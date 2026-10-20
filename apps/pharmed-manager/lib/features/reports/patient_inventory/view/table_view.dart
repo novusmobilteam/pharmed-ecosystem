@@ -72,12 +72,12 @@ List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) =>
   ),
   TableColumnDef<PrescriptionItem>(
     title: context.l10n.patientInventory_table_requestedQuantityColumn,
-    displayValue: (i) => i.dosePiece?.formatFractional ?? '-',
+    displayValue: (i) => '${i.dosePiece.formatFractional} ${i.medicine?.pieceUnitLabel ?? ''}',
     sortValue: (i) => i.dosePiece,
   ),
   TableColumnDef<PrescriptionItem>(
     title: context.l10n.patientInventory_table_processedQuantityColumn,
-    displayValue: (i) => i.lastMovement?.quantity?.formatFractional ?? '-',
+    displayValue: (i) => '${(i.lastMovement?.quantity).formatFractional} ${i.medicine?.pieceUnitLabel ?? ''}',
     sortValue: (i) => i.lastMovement?.quantity,
   ),
   TableColumnDef<PrescriptionItem>(

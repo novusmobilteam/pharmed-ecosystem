@@ -57,19 +57,23 @@ List<TableColumnDef<CabinStock>> _buildColumnDefs(BuildContext context) => [
   ),
   TableColumnDef(
     title: context.l10n.expiredItems_table_minQuantityColumn,
-    displayValue: (item) => '${item.assignment?.minQuantity} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${(item.assignment?.minQuantity).formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.assignment?.minQuantity,
   ),
   TableColumnDef(
     title: context.l10n.expiredItems_table_maxQuantityColumn,
-    displayValue: (item) => '${item.assignment?.maxQuantity} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${(item.assignment?.maxQuantity).formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.assignment?.maxQuantity,
   ),
   TableColumnDef(
     title: context.l10n.expiredItems_table_criticalQuantityColumn,
-    displayValue: (item) => '${item.assignment?.criticalQuantity} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${(item.assignment?.criticalQuantity).formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.assignment?.criticalQuantity,
   ),
   TableColumnDef(
     title: context.l10n.expiredItems_table_quantityColumn,
-    displayValue: (item) => '${item.quantity?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.quantity,
   ),
   TableColumnDef(
     title: context.l10n.expiredItems_table_expiryDateColumn,

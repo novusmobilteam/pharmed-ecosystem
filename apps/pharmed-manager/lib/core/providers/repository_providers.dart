@@ -424,6 +424,7 @@ class RepositoryProviders {
             stepMapper: StationTransactionStepMapper(),
             unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
             orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
+            orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
           ),
           AppFlavor.dev || AppFlavor.prod => ReportRepositoryImpl(
             dataSource: context.read(),
@@ -438,6 +439,7 @@ class RepositoryProviders {
             stepMapper: StationTransactionStepMapper(),
             unorderedLoadedMaterialMapper: UnorderedLoadedMaterialMapper(),
             orderedNotLoadedMaterialMapper: OrderedNotLoadedMaterialMapper(),
+            orderedLoadedMaterialMapper: OrderedLoadedMaterialMapper(),
           ),
         },
       ),
