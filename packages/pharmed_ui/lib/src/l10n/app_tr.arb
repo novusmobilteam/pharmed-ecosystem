@@ -7550,6 +7550,141 @@
   "@cabinDesign_returnDrawer_noneInfo": {
     "description": "Info text shown when no return drawer has been designated yet"
   },
+  "cabinDesign_position_sectionTitle": "Çekmece Konumu",
+  "@cabinDesign_position_sectionTitle": {
+    "description": "Section header for the drawer position (swap) controls in the cabin design drawer detail panel"
+  },
+  "cabinDesign_position_swapHint": "Bu çekmeceyi kabindeki başka bir birim doz ya da kübik çekmeceyle yer değiştirir. Atama ve stoklar çekmeceyle birlikte taşınır.",
+  "@cabinDesign_position_swapHint": {
+    "description": "Explanation under the drawer position section; serum cabinets cannot be swapped"
+  },
+  "cabinDesign_position_swapButton": "Yer Değiştir",
+  "@cabinDesign_position_swapButton": {
+    "description": "Button that starts swap mode for the selected drawer; the target is then picked on the cabinet visual"
+  },
+  "cabinDesign_position_resetButton": "Sırayı Geri Al",
+  "@cabinDesign_position_resetButton": {
+    "description": "Button that discards all unsaved drawer position swaps"
+  },
+  "cabinDesign_position_selectTargetBanner": "{address} adresli çekmecenin yer değiştireceği çekmeceyi kabin görselinden seçin.",
+  "@cabinDesign_position_selectTargetBanner": {
+    "description": "Banner above the cabinet visual while swap mode is active, telling the user to pick the target drawer",
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_pendingInfo": "Çekmece sırası değiştirildi. Çekmeceleri fiziksel olarak yer değiştirdikten sonra kaydedin; kayıttan önce kabin taranarak doğrulanır.",
+  "@cabinDesign_position_pendingInfo": {
+    "description": "Info text shown when there are unsaved drawer position swaps"
+  },
+  "cabinDesign_position_connectionPendingInfo": "Bağlantı ayarı değişikliği kaydedilmeden çekmece yeri değiştirilemez.",
+  "@cabinDesign_position_connectionPendingInfo": {
+    "description": "Info text explaining why swapping is disabled while a COM port/address change is pending"
+  },
+  "cabinDesign_position_layoutMismatchError": "Taramada bulunan çekmeceler kayıtlı tasarımla uyuşmuyor (eksik ya da fazla çekmece var). Yer değiştirme kaydedilmedi.",
+  "@cabinDesign_position_layoutMismatchError": {
+    "description": "Save error when the pre-swap verification scan finds a different set of drawer addresses than the saved design"
+  },
+  "cabinDesign_position_notSwappedError": "{addresses} adreslerinde beklenen çekmece bulunamadı. Çekmeceleri fiziksel olarak yer değiştirdikten sonra tekrar kaydedin.",
+  "@cabinDesign_position_notSwappedError": {
+    "description": "Save error when the pre-swap verification scan shows the drawers were not physically swapped",
+    "placeholders": {
+      "addresses": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_sameTypeConfirmTitle": "Aynı Tipte Çekmeceler",
+  "@cabinDesign_position_sameTypeConfirmTitle": {
+    "description": "Title of the confirmation dialog shown before saving a swap between drawers of the same type"
+  },
+  "cabinDesign_position_sameTypeConfirmMessage": "{addresses} adreslerindeki çekmeceler aynı tipte olduğu için yer değişimi taramayla doğrulanamıyor. Yalnızca çekmeceleri fiziksel olarak yer değiştirdiyseniz onaylayın; aksi halde işlemlerde yanlış çekmece açılır.",
+  "@cabinDesign_position_sameTypeConfirmMessage": {
+    "description": "Message of the same-type swap confirmation dialog, explaining the scan can't verify the swap",
+    "placeholders": {
+      "addresses": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_sameTypeConfirmButton": "Yer Değiştirdim, Kaydet",
+  "@cabinDesign_position_sameTypeConfirmButton": {
+    "description": "Confirm button of the same-type swap confirmation dialog"
+  },
+  "cabinDesign_replace_scanButton": "Kabini Tara",
+  "@cabinDesign_replace_scanButton": {
+    "description": "Button that rescans the cabinet to detect a drawer replaced with a different type at the same address"
+  },
+  "cabinDesign_replace_sectionTitle": "Çekmece Değişimi",
+  "@cabinDesign_replace_sectionTitle": {
+    "description": "Title of the drawer replacement scan result box in the cabin design screen"
+  },
+  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
+  "@cabinDesign_replace_changeItem": {
+    "description": "One detected replacement: address, the saved drawer type and the newly scanned drawer type",
+    "placeholders": {
+      "address": {
+        "type": "String"
+      },
+      "oldType": {
+        "type": "String"
+      },
+      "newType": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerWithStock": "{medicineName} · stok: {quantity}",
+  "@cabinDesign_replace_blockerWithStock": {
+    "description": "A medicine still assigned to the removed drawer, with its remaining stock",
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · stok yok (atama var)",
+  "@cabinDesign_replace_blockerAssignmentOnly": {
+    "description": "A medicine still assigned to the removed drawer with no stock",
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockedInfo": "Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.",
+  "@cabinDesign_replace_blockedInfo": {
+    "description": "Info shown when a detected replacement is blocked by assignments or stock in the removed drawer"
+  },
+  "cabinDesign_replace_readyInfo": "Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.",
+  "@cabinDesign_replace_readyInfo": {
+    "description": "Info shown when a detected replacement can be saved"
+  },
+  "cabinDesign_replace_noChangeInfo": "Tarama tamamlandı; çekmece değişikliği bulunmadı.",
+  "@cabinDesign_replace_noChangeInfo": {
+    "description": "Info shown after a scan that found no drawer type change"
+  },
+  "cabinDesign_replace_addressMismatchError": "Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.",
+  "@cabinDesign_replace_addressMismatchError": {
+    "description": "Scan error when the set of drawer addresses differs from the saved design"
+  },
+  "cabinDesign_replace_serumError": "Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.",
+  "@cabinDesign_replace_serumError": {
+    "description": "Scan error when a detected replacement involves a serum drawer"
+  },
+  "cabinDesign_replace_scanChangedError": "Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.",
+  "@cabinDesign_replace_scanChangedError": {
+    "description": "Save error when the verification scan at save time no longer matches the pending replacement"
+  },
+  "cabinDesign_replace_blockedSaveError": "Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.",
+  "@cabinDesign_replace_blockedSaveError": {
+    "description": "Save error when the replaced drawer has assignments or stock at save time"
+  },
   "cabinDesign_serum_sectionTitle": "İç Dizayn",
   "@cabinDesign_serum_sectionTitle": {
     "description": "Section header for the serum cabinet's manual internal layout panel"

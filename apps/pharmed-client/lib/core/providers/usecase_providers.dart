@@ -531,6 +531,10 @@ final setReturnDrawerUseCaseProvider = Provider((ref) {
   return SetReturnDrawerUseCase(ref.read(cabinRepositoryProvider));
 });
 
+final changeDrawerPositionUseCaseProvider = Provider((ref) {
+  return ChangeDrawerPositionUseCase(ref.read(cabinRepositoryProvider));
+});
+
 final getReturnDrawerMedicinesUseCaseProvider = Provider((ref) {
   return GetReturnDrawerMedicinesUseCase(ref.read(unloadRepositoryProvider));
 });

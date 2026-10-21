@@ -124,8 +124,12 @@ class _CabinDesignRouteHandlerState extends State<_CabinDesignRouteHandler> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await CabinDesignDialog.show(context);
-      if (mounted) widget.notifier.navigateTo('dashboard');
+      final notifier = widget.notifier;
+      final persisted = await CabinDesignDialog.show(context);
+      if (mounted) notifier.navigateTo('dashboard');
+      // Kabin dizaynında kaydedilen değişiklikler dashboard'daki kabin
+      // verisine (ve ondan türeyen tüm route context'lerine) yansısın.
+      if (persisted) await notifier.reloadStationCabins();
     });
   }
 

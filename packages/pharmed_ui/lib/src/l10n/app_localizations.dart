@@ -11265,6 +11265,150 @@ abstract class AppLocalizations {
   /// **'Only one return drawer can be designated per cabinet. None designated yet.'**
   String get cabinDesign_returnDrawer_noneInfo;
 
+  /// No description provided for @cabinDesign_position_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Position'**
+  String get cabinDesign_position_sectionTitle;
+
+  /// No description provided for @cabinDesign_position_swapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swaps this drawer with another unit-dose or cubic drawer in the cabinet. Assignments and stock move with the drawer.'**
+  String get cabinDesign_position_swapHint;
+
+  /// No description provided for @cabinDesign_position_swapButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap Position'**
+  String get cabinDesign_position_swapButton;
+
+  /// No description provided for @cabinDesign_position_resetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo Order Change'**
+  String get cabinDesign_position_resetButton;
+
+  /// No description provided for @cabinDesign_position_selectTargetBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the drawer to swap with drawer {address} on the cabinet visual.'**
+  String cabinDesign_position_selectTargetBanner(String address);
+
+  /// No description provided for @cabinDesign_position_pendingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer order changed. Save after physically swapping the drawers; the cabinet is scanned to verify before saving.'**
+  String get cabinDesign_position_pendingInfo;
+
+  /// No description provided for @cabinDesign_position_connectionPendingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer positions can't be swapped while a connection change is unsaved.'**
+  String get cabinDesign_position_connectionPendingInfo;
+
+  /// No description provided for @cabinDesign_position_layoutMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawers found in the scan don't match the saved design (missing or extra drawers). The swap was not saved.'**
+  String get cabinDesign_position_layoutMismatchError;
+
+  /// No description provided for @cabinDesign_position_notSwappedError.
+  ///
+  /// In en, this message translates to:
+  /// **'The expected drawer was not found at addresses {addresses}. Physically swap the drawers, then save again.'**
+  String cabinDesign_position_notSwappedError(String addresses);
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawers of the Same Type'**
+  String get cabinDesign_position_sameTypeConfirmTitle;
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The drawers at addresses {addresses} are the same type, so the swap can't be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.'**
+  String cabinDesign_position_sameTypeConfirmMessage(String addresses);
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I Swapped Them, Save'**
+  String get cabinDesign_position_sameTypeConfirmButton;
+
+  /// No description provided for @cabinDesign_replace_scanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Cabinet'**
+  String get cabinDesign_replace_scanButton;
+
+  /// No description provided for @cabinDesign_replace_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Replacement'**
+  String get cabinDesign_replace_sectionTitle;
+
+  /// No description provided for @cabinDesign_replace_changeItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{address} · {oldType} → {newType}'**
+  String cabinDesign_replace_changeItem(String address, String oldType, String newType);
+
+  /// No description provided for @cabinDesign_replace_blockerWithStock.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicineName} · stock: {quantity}'**
+  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity);
+
+  /// No description provided for @cabinDesign_replace_blockerAssignmentOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicineName} · no stock (assigned)'**
+  String cabinDesign_replace_blockerAssignmentOnly(String medicineName);
+
+  /// No description provided for @cabinDesign_replace_blockedInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.'**
+  String get cabinDesign_replace_blockedInfo;
+
+  /// No description provided for @cabinDesign_replace_readyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'The new drawer will be applied to the cabinet design when you save.'**
+  String get cabinDesign_replace_readyInfo;
+
+  /// No description provided for @cabinDesign_replace_noChangeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan complete; no drawer change was found.'**
+  String get cabinDesign_replace_noChangeInfo;
+
+  /// No description provided for @cabinDesign_replace_addressMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.'**
+  String get cabinDesign_replace_addressMismatchError;
+
+  /// No description provided for @cabinDesign_replace_serumError.
+  ///
+  /// In en, this message translates to:
+  /// **'The serum cabinet can't be replaced; drawer replacement is only for unit-dose and cubic drawers.'**
+  String get cabinDesign_replace_serumError;
+
+  /// No description provided for @cabinDesign_replace_scanChangedError.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan before saving differs from the previous scan result. Please scan the cabinet again.'**
+  String get cabinDesign_replace_scanChangedError;
+
+  /// No description provided for @cabinDesign_replace_blockedSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.'**
+  String get cabinDesign_replace_blockedSaveError;
+
   /// No description provided for @cabinDesign_serum_sectionTitle.
   ///
   /// In en, this message translates to:

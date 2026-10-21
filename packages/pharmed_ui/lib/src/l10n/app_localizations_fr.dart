@@ -6534,6 +6534,90 @@ class AppLocalizationsFr extends AppLocalizations {
       'Un seul tiroir de retour peut être désigné par armoire. Aucun désigné pour le moment.';
 
   @override
+  String get cabinDesign_position_sectionTitle => 'Position du tiroir';
+
+  @override
+  String get cabinDesign_position_swapHint => 'Échange ce tiroir avec un autre tiroir dose unitaire ou cubique de l\'armoire. Les affectations et le stock suivent le tiroir.';
+
+  @override
+  String get cabinDesign_position_swapButton => 'Échanger la position';
+
+  @override
+  String get cabinDesign_position_resetButton => 'Annuler le changement d\'ordre';
+
+  @override
+  String cabinDesign_position_selectTargetBanner(String address) {
+    return 'Sélectionnez sur le visuel de l\'armoire le tiroir à échanger avec le tiroir $address.';
+  }
+
+  @override
+  String get cabinDesign_position_pendingInfo => 'L\'ordre des tiroirs a été modifié. Enregistrez après avoir physiquement échangé les tiroirs ; l\'armoire est scannée pour vérification avant l\'enregistrement.';
+
+  @override
+  String get cabinDesign_position_connectionPendingInfo => 'Impossible d\'échanger les tiroirs tant qu\'une modification de connexion n\'est pas enregistrée.';
+
+  @override
+  String get cabinDesign_position_layoutMismatchError => 'Les tiroirs détectés lors du scan ne correspondent pas à la conception enregistrée (tiroirs manquants ou en trop). L\'échange n\'a pas été enregistré.';
+
+  @override
+  String cabinDesign_position_notSwappedError(String addresses) {
+    return 'Le tiroir attendu est introuvable aux adresses $addresses. Échangez physiquement les tiroirs, puis enregistrez à nouveau.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmTitle => 'Tiroirs du même type';
+
+  @override
+  String cabinDesign_position_sameTypeConfirmMessage(String addresses) {
+    return 'Les tiroirs aux adresses $addresses sont du même type : l\'échange ne peut pas être vérifié par le scan. Confirmez uniquement si vous les avez physiquement échangés ; sinon, le mauvais tiroir s\'ouvrira lors des opérations.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmButton => 'Je les ai échangés, enregistrer';
+
+  @override
+  String get cabinDesign_replace_scanButton => 'Scanner l\'armoire';
+
+  @override
+  String get cabinDesign_replace_sectionTitle => 'Remplacement de tiroir';
+
+  @override
+  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
+    return '$address · $oldType → $newType';
+  }
+
+  @override
+  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
+    return '$medicineName · stock : $quantity';
+  }
+
+  @override
+  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
+    return '$medicineName · pas de stock (affecté)';
+  }
+
+  @override
+  String get cabinDesign_replace_blockedInfo => 'Le tiroir remplacé contient encore des affectations ou du stock. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau l\'armoire.';
+
+  @override
+  String get cabinDesign_replace_readyInfo => 'Le nouveau tiroir sera appliqué à la conception de l\'armoire lors de l\'enregistrement.';
+
+  @override
+  String get cabinDesign_replace_noChangeInfo => 'Scan terminé ; aucun changement de tiroir détecté.';
+
+  @override
+  String get cabinDesign_replace_addressMismatchError => 'Le nombre ou les adresses des tiroirs ont changé lors du scan. Seul le remplacement du type de tiroir à la même adresse est pris en charge.';
+
+  @override
+  String get cabinDesign_replace_serumError => 'L\'armoire à sérum ne peut pas être remplacée ; le remplacement concerne uniquement les tiroirs dose unitaire et cubiques.';
+
+  @override
+  String get cabinDesign_replace_scanChangedError => 'Le scan avant l\'enregistrement diffère du résultat précédent. Veuillez scanner à nouveau l\'armoire.';
+
+  @override
+  String get cabinDesign_replace_blockedSaveError => 'Des affectations ou du stock ont été trouvés dans le tiroir remplacé. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau.';
+
+  @override
   String get cabinDesign_serum_sectionTitle => 'Disposition interne';
 
   @override

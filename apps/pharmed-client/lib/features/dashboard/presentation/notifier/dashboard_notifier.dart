@@ -134,7 +134,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
         : cabins.firstWhereOrNull((c) => c.type == CabinType.master);
 
     if (targetCabin == null) return null;
-    return cabinVisualizerDataByCabin[targetCabin];
+    // Cabin'de == yok — istasyon yeniden çekilince nesneler değişir, id ile eşle.
+    return _dataForCabinId(targetCabin.id);
   }
 
   /// Order/tedavi uyarısının oturum durumundan bağımsız güncel kalması için
@@ -221,37 +222,97 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     operation: () => _getCurrentStation.call(),
     onData: (data) {
       _station = data;
+      _pruneRemovedCabins();
       notifyListeners();
-      _loadAllCabinData(forceRefresh: forceRefreshCabins);
+      unawaited(_loadAllCabinData(forceRefresh: forceRefreshCabins));
     },
   );
+
+  /// Kabin dizaynında kalıcı bir değişiklik kaydedildikten sonra çağrılır
+  /// (tasarım, ad/adres/port, iade çekmecesi, serum yerleşimi, yeni kabin,
+  /// aktif/pasif). İstasyon ve TÜM kabinlerin görselleştirme verisi cache'siz
+  /// yeniden çekilir; route context'leri bu state'ten türediği için diğer
+  /// ekranlar da güncel tasarımı görür. Master portu değiştiyse donanım
+  /// bağlantısı yeni portla yeniden kurulur.
+  Future<void> reloadStationCabins() async {
+    final previousMasterPort = _masterComPortLabel;
+
+    Station? refreshed;
+    await execute(
+      fetchCurrentStationKey,
+      operation: () => _getCurrentStation.call(),
+      onData: (data) => refreshed = data,
+    );
+    if (refreshed == null) return;
+
+    _station = refreshed;
+    _pruneRemovedCabins();
+    notifyListeners();
+    await _loadAllCabinData(forceRefresh: true);
+
+    MedLogger.info(
+      unit: 'SW-UNIT-DASHBOARD',
+      swreq: 'SWREQ-CLI-CABIN-DESIGN-001',
+      message: 'Kabin dizaynı sonrası istasyon kabinleri yenilendi',
+      context: {'cabinCount': cabins.length},
+    );
+
+    if (_masterComPortLabel != previousMasterPort) {
+      unawaited(_cabinConnectionNotifier.reconnect());
+    }
+  }
+
+  String? get _masterComPortLabel => cabins.firstWhereOrNull((c) => c.type == CabinType.master)?.comPort?.label;
+
+  CabinVisualizerData? _dataForCabinId(int? cabinId) =>
+      cabinId == null ? null : _cabinVisualizerDataByCabin.entries.firstWhereOrNull((e) => e.key.id == cabinId)?.value;
+
+  /// Aynı kabinin eski Cabin anahtarını atıp yenisiyle yazar (Cabin'de == yok;
+  /// yoksa yeniden yüklemede eski tasarım haritada kalır).
+  void _putCabinData(Cabin cabin, CabinVisualizerData data) {
+    _cabinVisualizerDataByCabin = {
+      for (final e in _cabinVisualizerDataByCabin.entries)
+        if (e.key.id != cabin.id) e.key: e.value,
+      cabin: data,
+    };
+  }
+
+  /// İstasyonda artık olmayan kabinlerin verisini haritadan çıkarır.
+  void _pruneRemovedCabins() {
+    final ids = cabins.map((c) => c.id).whereType<int>().toSet();
+    _cabinVisualizerDataByCabin = {
+      for (final e in _cabinVisualizerDataByCabin.entries)
+        if (ids.contains(e.key.id)) e.key: e.value,
+    };
+  }
 
   /// İstasyondaki tüm kabinlerin görselleştirme verisini paralel çeker.
   /// Her kabin kendi OperationKey'i ile izlenir — biri hata verse diğerleri
   /// etkilenmez, geldikçe haritaya eklenir.
-  void _loadAllCabinData({bool forceRefresh = true}) {
+  Future<void> _loadAllCabinData({bool forceRefresh = true}) {
     final currentStation = _station;
     final mode = _deviceMode;
-    if (currentStation == null || mode == null) return;
+    if (currentStation == null || mode == null) return Future.value();
 
-    for (final cabin in currentStation.cabins.where((c) => c.id != null)) {
-      execute(
-        fetchCabinVisualizerDataKey,
-        operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: forceRefresh),
-        onData: (data) {
-          if (data.cabin.comPort != null) {
-            _settings.saveComPort(data.cabin.comPort!.label);
-          }
-          _cabinVisualizerDataByCabin = {..._cabinVisualizerDataByCabin, cabin: data};
-          notifyListeners();
-        },
-      );
-    }
+    return Future.wait([
+      for (final cabin in currentStation.cabins.where((c) => c.id != null))
+        execute(
+          fetchCabinVisualizerDataKey,
+          operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: forceRefresh),
+          onData: (data) {
+            if (data.cabin.comPort != null) {
+              _settings.saveComPort(data.cabin.comPort!.label);
+            }
+            _putCabinData(cabin, data);
+            notifyListeners();
+          },
+        ),
+    ]);
   }
 
   /// Tüm kabinlerin görselleştirme verisini yeniden çeker — "Tekrar Dene"
   /// butonu bunu çağırır (bkz. dashboard_content.dart).
-  void refreshCabinData({bool forceRefresh = true}) => _loadAllCabinData(forceRefresh: forceRefresh);
+  void refreshCabinData({bool forceRefresh = true}) => unawaited(_loadAllCabinData(forceRefresh: forceRefresh));
 
   /// Tek bir kabinin görselleştirme verisini yeniden çeker — diğer
   /// kabinlere dokunmaz. Kabin ekranından "yenile" tetiklendiğinde kullanılır.
@@ -264,7 +325,7 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
       OperationKey.custom('fetch-cabin-visualizer-$cabinId'),
       operation: () => _getCabinVisualizer.call(deviceMode: mode, cabin: cabin, forceRefresh: true),
       onData: (data) {
-        _cabinVisualizerDataByCabin = {..._cabinVisualizerDataByCabin, cabin: data};
+        _putCabinData(cabin, data);
         notifyListeners();
       },
     );

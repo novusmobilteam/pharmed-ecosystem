@@ -78,6 +78,7 @@ class CabinPendingChanges {
     this.scanGroups,
     this.serumSlotId,
     this.serumShelves,
+    this.slotOrder,
   });
 
   static const none = CabinPendingChanges();
@@ -102,19 +103,31 @@ class CabinPendingChanges {
   final int? serumSlotId;
   final List<SerumShelfLayout>? serumShelves;
 
+  /// Çekmece yer değiştirmesi sonrası hedeflenen sıra (üstten alta slotId).
+  /// Kayıtlı sırayla aynıysa null. Kayıtta minimum takas sayısına çevrilip
+  /// `/CabinDesign/changePosition` ile tek tek uygulanır.
+  final List<int>? slotOrder;
+
   bool get hasNameChange => name != null;
   bool get hasConnectionChange => comPort != null || addressChar != null;
   bool get hasReturnChange => returnSlotId != null && returnValue != null;
   bool get hasDesignChange => scanGroups != null;
   bool get hasSerumLayoutChange => serumSlotId != null && serumShelves != null;
+  bool get hasOrderChange => slotOrder != null;
   bool get hasAny =>
-      hasNameChange || hasConnectionChange || hasReturnChange || hasDesignChange || hasSerumLayoutChange;
+      hasNameChange ||
+      hasConnectionChange ||
+      hasReturnChange ||
+      hasDesignChange ||
+      hasSerumLayoutChange ||
+      hasOrderChange;
 
   CabinPendingChanges withName(String? v) => _copy(name: () => v);
   CabinPendingChanges withComPort(ComPort? v) => _copy(comPort: () => v);
   CabinPendingChanges withAddressChar(String? v) => _copy(addressChar: () => v);
   CabinPendingChanges withReturn(int slotId, bool value) => _copy(returnSlotId: () => slotId, returnValue: () => value);
   CabinPendingChanges withScanGroups(List<DrawerGroup>? v) => _copy(scanGroups: () => v);
+  CabinPendingChanges withSlotOrder(List<int>? v) => _copy(slotOrder: () => v);
 
   /// [shelves] null ise serum değişikliği temizlenir.
   CabinPendingChanges withSerumLayout(int slotId, List<SerumShelfLayout>? shelves) =>
@@ -129,6 +142,7 @@ class CabinPendingChanges {
     List<DrawerGroup>? Function()? scanGroups,
     int? Function()? serumSlotId,
     List<SerumShelfLayout>? Function()? serumShelves,
+    List<int>? Function()? slotOrder,
   }) => CabinPendingChanges(
     name: name != null ? name() : this.name,
     comPort: comPort != null ? comPort() : this.comPort,
@@ -138,5 +152,47 @@ class CabinPendingChanges {
     scanGroups: scanGroups != null ? scanGroups() : this.scanGroups,
     serumSlotId: serumSlotId != null ? serumSlotId() : this.serumSlotId,
     serumShelves: serumShelves != null ? serumShelves() : this.serumShelves,
+    slotOrder: slotOrder != null ? slotOrder() : this.slotOrder,
   );
+}
+
+/// Tarama sonucunda aynı adreste tipi değişmiş bir çekmece: [current] kayıtlı
+/// tasarımdaki (sökülen), [scanned] karttan okunan (yeni takılan) çekmece.
+class DrawerReplacement {
+  const DrawerReplacement({required this.address, required this.current, required this.scanned, this.blockers = const []});
+
+  final String address;
+  final DrawerGroup current;
+  final DrawerGroup scanned;
+
+  /// Sökülen çekmecedeki atama/stoklar. Boş değilse değişim kaydedilemez:
+  /// kullanıcı önce çekmeceyi boşaltıp atamaları silmeli, sonra tekrar taramalı.
+  final List<DrawerReplacementBlocker> blockers;
+
+  bool get isBlocked => blockers.isNotEmpty;
+
+  String? get currentTypeName => current.slot.drawerConfig?.drawerType?.name;
+  String? get scannedTypeName => scanned.slot.drawerConfig?.drawerType?.name;
+
+  DrawerReplacement withBlockers(List<DrawerReplacementBlocker> value) =>
+      DrawerReplacement(address: address, current: current, scanned: scanned, blockers: value);
+}
+
+/// Sökülecek çekmecede değişimi engelleyen tek bir atama (ve varsa stoğu).
+class DrawerReplacementBlocker {
+  const DrawerReplacementBlocker({required this.medicineName, required this.stockQuantity});
+
+  final String medicineName;
+
+  /// Atamaya bağlı toplam stok; 0 ise yalnızca atama var.
+  final num stockQuantity;
+
+  bool get hasStock => stockQuantity > 0;
+
+  /// Tam sayıysa ondalıksız ("5"), değilse en fazla 2 hane ("2.5").
+  String get stockLabel {
+    final value = stockQuantity.toDouble();
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
+  }
 }

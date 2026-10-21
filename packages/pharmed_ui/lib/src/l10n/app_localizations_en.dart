@@ -6375,6 +6375,90 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only one return drawer can be designated per cabinet. None designated yet.';
 
   @override
+  String get cabinDesign_position_sectionTitle => 'Drawer Position';
+
+  @override
+  String get cabinDesign_position_swapHint => 'Swaps this drawer with another unit-dose or cubic drawer in the cabinet. Assignments and stock move with the drawer.';
+
+  @override
+  String get cabinDesign_position_swapButton => 'Swap Position';
+
+  @override
+  String get cabinDesign_position_resetButton => 'Undo Order Change';
+
+  @override
+  String cabinDesign_position_selectTargetBanner(String address) {
+    return 'Select the drawer to swap with drawer $address on the cabinet visual.';
+  }
+
+  @override
+  String get cabinDesign_position_pendingInfo => 'Drawer order changed. Save after physically swapping the drawers; the cabinet is scanned to verify before saving.';
+
+  @override
+  String get cabinDesign_position_connectionPendingInfo => 'Drawer positions can\'t be swapped while a connection change is unsaved.';
+
+  @override
+  String get cabinDesign_position_layoutMismatchError => 'Drawers found in the scan don\'t match the saved design (missing or extra drawers). The swap was not saved.';
+
+  @override
+  String cabinDesign_position_notSwappedError(String addresses) {
+    return 'The expected drawer was not found at addresses $addresses. Physically swap the drawers, then save again.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmTitle => 'Drawers of the Same Type';
+
+  @override
+  String cabinDesign_position_sameTypeConfirmMessage(String addresses) {
+    return 'The drawers at addresses $addresses are the same type, so the swap can\'t be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmButton => 'I Swapped Them, Save';
+
+  @override
+  String get cabinDesign_replace_scanButton => 'Scan Cabinet';
+
+  @override
+  String get cabinDesign_replace_sectionTitle => 'Drawer Replacement';
+
+  @override
+  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
+    return '$address · $oldType → $newType';
+  }
+
+  @override
+  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
+    return '$medicineName · stock: $quantity';
+  }
+
+  @override
+  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
+    return '$medicineName · no stock (assigned)';
+  }
+
+  @override
+  String get cabinDesign_replace_blockedInfo => 'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.';
+
+  @override
+  String get cabinDesign_replace_readyInfo => 'The new drawer will be applied to the cabinet design when you save.';
+
+  @override
+  String get cabinDesign_replace_noChangeInfo => 'Scan complete; no drawer change was found.';
+
+  @override
+  String get cabinDesign_replace_addressMismatchError => 'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.';
+
+  @override
+  String get cabinDesign_replace_serumError => 'The serum cabinet can\'t be replaced; drawer replacement is only for unit-dose and cubic drawers.';
+
+  @override
+  String get cabinDesign_replace_scanChangedError => 'The scan before saving differs from the previous scan result. Please scan the cabinet again.';
+
+  @override
+  String get cabinDesign_replace_blockedSaveError => 'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.';
+
+  @override
   String get cabinDesign_serum_sectionTitle => 'Internal Layout';
 
   @override
