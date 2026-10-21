@@ -32,6 +32,7 @@ class _DashboardViewState extends State<DashboardView> {
         getUnappliedPrescriptions: context.read(),
         getUpcomingTreatments: context.read(),
         getDrugActivities: context.read(),
+        getExpiredStocks: context.read(),
       )..init(),
       child: Consumer<DashboardNotifier>(
         builder: (context, notifier, _) {
@@ -64,11 +65,13 @@ class _DashboardViewState extends State<DashboardView> {
                   spacing: 16.0,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // TODO : Yapılacak.
                     Expanded(
                       child: notifier.isMobileSelected
                           ? MissingStockPanel(isLoggedIn: isLoggedIn)
-                          : Center(child: Text(context.l10n.dashboard_otherCabinPlaceholderText)),
+                          : ExpiredStockPanel(
+                              section: notifier.expiredStocks,
+                              onRetry: () => context.read<DashboardNotifier>().retryExpiredStocks(),
+                            ),
                     ),
 
                     Expanded(
@@ -206,6 +209,99 @@ class MissingStockPanel extends StatelessWidget {
               : [],
         );
       },
+    );
+  }
+}
+
+// [SWREQ-MGR-DASH-010]
+// Master kabin seçiliyken sol panel — SKT geçmiş malzemeler.
+// Sınıf: Class B (SKT bilgisini temsil eder)
+class ExpiredStockPanel extends StatelessWidget {
+  const ExpiredStockPanel({super.key, required this.section, this.onRetry});
+
+  final DashboardSection<List<CabinStock>> section;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = section.data ?? const <CabinStock>[];
+
+    return MedDashboardPanel<List<CabinStock>>(
+      key: const ValueKey('expired_stock_panel'),
+      title: context.l10n.dashboard_expiredStockPanelTitle,
+      section: section,
+      itemCount: items.length,
+      onRetry: onRetry,
+      itemBuilder: (context, index) => _ExpiredStockCard(stock: items[index]),
+    );
+  }
+}
+
+class _ExpiredStockCard extends StatelessWidget {
+  const _ExpiredStockCard({required this.stock});
+
+  final CabinStock stock;
+
+  @override
+  Widget build(BuildContext context) {
+    final unit = stock.medicine?.pieceUnitLabel ?? '';
+    final location = [
+      stock.assignment?.cabin?.name,
+      [stock.shelfNo, stock.corpartmentNo].whereType<Object>().join('/'),
+    ].whereType<String>().where((e) => e.isNotEmpty).join(' · ');
+
+    return Container(
+      padding: MedSpacing.insetXl,
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        borderRadius: MedRadius.mdAll,
+        border: Border.all(color: MedColors.border.withAlpha(120)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      stock.medicine?.name ?? '-',
+                      style: MedTextStyles.titleSm(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (stock.medicine?.barcode != null) ...[
+                      const SizedBox(height: 2),
+                      Text(stock.medicine!.barcode!, style: MedTextStyles.monoXs(color: MedColors.text3)),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              MedRemainingDayChip(days: stock.remainingDay ?? 0),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Divider(height: 1, color: MedColors.border2),
+          const SizedBox(height: 12),
+          MedInfoRow(
+            label: context.l10n.dashboard_expiredStockLocationLabel,
+            value: location.isEmpty ? '-' : location,
+          ),
+          const SizedBox(height: 6),
+          MedInfoRow(
+            label: context.l10n.dashboard_expiredStockQuantityLabel,
+            value: '${stock.quantity.formatFractional} $unit'.trim(),
+          ),
+          const SizedBox(height: 6),
+          MedInfoRow(
+            label: context.l10n.dashboard_expiredStockExpiryDateLabel,
+            value: stock.miadDate?.formattedDate ?? '-',
+          ),
+        ],
+      ),
     );
   }
 }

@@ -2056,8 +2056,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboard_missingStockRejectButton => 'Reddet';
 
   @override
-  String get dashboard_otherCabinPlaceholderText =>
-      'SKT geçmiş malzemeler & kritik stoklar (sonraki tur)';
+  String get dashboard_expiredStockPanelTitle => 'SKT GEÇMİŞ MALZEMELER';
+
+  @override
+  String get dashboard_expiredStockLocationLabel => 'KABİN / KONUM';
+
+  @override
+  String get dashboard_expiredStockQuantityLabel => 'MİKTAR';
+
+  @override
+  String get dashboard_expiredStockExpiryDateLabel => 'S.K.T';
 
   @override
   String get dashboard_unappliedPrescriptionsPanelTitle =>

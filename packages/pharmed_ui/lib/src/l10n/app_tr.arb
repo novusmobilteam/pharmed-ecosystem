@@ -2440,9 +2440,21 @@
   "@dashboard_missingStockRejectButton": {
     "description": "Reject action button in the missing-stock panel"
   },
-  "dashboard_otherCabinPlaceholderText": "SKT geçmiş malzemeler & kritik stoklar (sonraki tur)",
-  "@dashboard_otherCabinPlaceholderText": {
-    "description": "Placeholder text shown for the non-mobile-cabin panel, noting it's planned for a future iteration"
+  "dashboard_expiredStockPanelTitle": "SKT GEÇMİŞ MALZEMELER",
+  "@dashboard_expiredStockPanelTitle": {
+    "description": "Panel header title for the dashboard expired-materials panel, shown when a master cabin is selected"
+  },
+  "dashboard_expiredStockLocationLabel": "KABİN / KONUM",
+  "@dashboard_expiredStockLocationLabel": {
+    "description": "Info-row label on an expired-material card — cabin name and shelf/compartment of the stock"
+  },
+  "dashboard_expiredStockQuantityLabel": "MİKTAR",
+  "@dashboard_expiredStockQuantityLabel": {
+    "description": "Info-row label on an expired-material card — stock quantity with unit"
+  },
+  "dashboard_expiredStockExpiryDateLabel": "S.K.T",
+  "@dashboard_expiredStockExpiryDateLabel": {
+    "description": "Info-row label on an expired-material card — expiry date (CabinStock.miadDate)"
   },
   "dashboard_unappliedPrescriptionsPanelTitle": "UYGULANMAMIŞ REÇETELER",
   "@dashboard_unappliedPrescriptionsPanelTitle": {

@@ -2062,8 +2062,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboard_missingStockRejectButton => 'Reject';
 
   @override
-  String get dashboard_otherCabinPlaceholderText =>
-      'Expired materials & critical stock (coming next)';
+  String get dashboard_expiredStockPanelTitle => 'EXPIRED MATERIALS';
+
+  @override
+  String get dashboard_expiredStockLocationLabel => 'CABIN / LOCATION';
+
+  @override
+  String get dashboard_expiredStockQuantityLabel => 'QUANTITY';
+
+  @override
+  String get dashboard_expiredStockExpiryDateLabel => 'EXPIRY DATE';
 
   @override
   String get dashboard_unappliedPrescriptionsPanelTitle =>

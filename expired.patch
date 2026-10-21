@@ -1,0 +1,493 @@
+From 81f46f86ee190d8944e19587c6a2bd1f911dcc1b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 12:46:53 +0300
+Subject: [PATCH 2/2] feat(manager): show expired materials on dashboard for
+ master cabins
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01DtzaRZgTZ9HD9Wd8RdsZ67
+---
+ .../notifier/dashboard_notifier.dart          |  76 ++++++++++++-
+ .../dashboard/view/dashboard_view.dart        | 100 +++++++++++++++++-
+ packages/pharmed_ui/lib/src/l10n/app_en.arb   |  10 +-
+ packages/pharmed_ui/lib/src/l10n/app_fr.arb   |  10 +-
+ .../lib/src/l10n/app_localizations.dart       |  24 ++++-
+ .../lib/src/l10n/app_localizations_ar.dart    |  12 ++-
+ .../lib/src/l10n/app_localizations_en.dart    |  12 ++-
+ .../lib/src/l10n/app_localizations_fr.dart    |  12 ++-
+ .../lib/src/l10n/app_localizations_tr.dart    |  12 ++-
+ packages/pharmed_ui/lib/src/l10n/app_tr.arb   |  18 +++-
+ 10 files changed, 263 insertions(+), 23 deletions(-)
+
+diff --git a/apps/pharmed-manager/lib/features/dashboard/notifier/dashboard_notifier.dart b/apps/pharmed-manager/lib/features/dashboard/notifier/dashboard_notifier.dart
+index 8847981..6b4c250 100644
+--- a/apps/pharmed-manager/lib/features/dashboard/notifier/dashboard_notifier.dart
++++ b/apps/pharmed-manager/lib/features/dashboard/notifier/dashboard_notifier.dart
+@@ -17,13 +17,15 @@ class DashboardNotifier extends ChangeNotifier {
+     required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
+     required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
+     required GetDrugActivitiesUseCase getDrugActivities,
++    required GetExpiredStocksUseCase getExpiredStocks,
+   }) : _getCabins = getCabins,
+        _getMissingStocks = getMissingStocks,
+        _approveMissingStock = approveMissingStock,
+        _rejectMissingStock = rejectMissingStock,
+        _getUnappliedPrescriptions = getUnappliedPrescriptions,
+        _getUpcomingTreatments = getUpcomingTreatments,
+-       _getDrugActivities = getDrugActivities;
++       _getDrugActivities = getDrugActivities,
++       _getExpiredStocks = getExpiredStocks;
+ 
+   final GetDashboardCabinsUseCase _getCabins;
+   final GetMissingStocksUseCase _getMissingStocks;
+@@ -32,6 +34,7 @@ class DashboardNotifier extends ChangeNotifier {
+   final GetDashboardUnappliedPrescriptionsUseCase _getUnappliedPrescriptions;
+   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
+   final GetDrugActivitiesUseCase _getDrugActivities;
++  final GetExpiredStocksUseCase _getExpiredStocks;
+ 
+   bool _disposed = false;
+ 
+@@ -59,6 +62,9 @@ class DashboardNotifier extends ChangeNotifier {
+   DashboardSection<List<PrescriptionItem>> _shortage = const DashboardSection();
+   DashboardSection<List<PrescriptionItem>> get shortage => _shortage;
+ 
++  DashboardSection<List<CabinStock>> _expiredStocks = const DashboardSection();
++  DashboardSection<List<CabinStock>> get expiredStocks => _expiredStocks;
++
+   DashboardSection<List<PrescriptionItem>> _unappliedPrescriptions = const DashboardSection();
+   DashboardSection<List<PrescriptionItem>> get unappliedPrescriptions => _unappliedPrescriptions;
+ 
+@@ -136,7 +142,8 @@ class DashboardNotifier extends ChangeNotifier {
+   }
+ 
+   /// Seçili kabinin tüm bölüm verilerini çeker.
+-  /// Uygulanmamış reçete global; eksik stok yalnızca mobil; yaklaşan tedavi mac'e bağlı.
++  /// Uygulanmamış reçete global; eksik stok yalnızca mobil; SKT geçmiş yalnızca master
++  /// (istasyon id'ye bağlı); yaklaşan tedavi mac'e bağlı.
+   Future<void> _loadSelectedCabinData({required bool silent}) async {
+     final cabin = selectedCabin;
+     if (cabin == null) return;
+@@ -144,6 +151,13 @@ class DashboardNotifier extends ChangeNotifier {
+     // Uygulanmamış reçete global — mac'ten bağımsız, her turda çek
+     _loadUnapplied(silent: silent);
+ 
++    // SKT geçmiş malzemeler yalnızca master — istasyon id'ye bağlı, mac'ten bağımsız
++    if (cabin.type?.isMobile ?? false) {
++      _expiredStocks = const DashboardSection();
++    } else {
++      _loadExpiredStocks(_stationIdOf(cabin), silent: silent);
++    }
++
+     final mac = cabin.station?.macAddress;
+ 
+     // Mac yoksa mac'e bağlı bölümler çekilemez
+@@ -161,7 +175,7 @@ class DashboardNotifier extends ChangeNotifier {
+       return;
+     }
+ 
+-    // Eksik stok yalnızca mobil; değilse temizle (sonraki tur: SKT/kritik)
++    // Eksik stok yalnızca mobil; değilse temizle
+     if (cabin.type?.isMobile ?? false) {
+       _loadMissingStocks(mac, silent: silent);
+     } else {
+@@ -205,6 +219,57 @@ class DashboardNotifier extends ChangeNotifier {
+     _safeNotify();
+   }
+ 
++  /// Kabinin istasyon id'si — iç içe station nesnesi yoksa üst seviye stationId (dynamic) kullanılır.
++  int? _stationIdOf(Cabin cabin) {
++    final nested = cabin.station?.id;
++    if (nested != null) return nested;
++    final raw = cabin.stationId;
++    if (raw is int) return raw;
++    return int.tryParse(raw?.toString() ?? '');
++  }
++
++  /// [SWREQ-MGR-DASH-004] SKT geçmiş malzemeler — rapor ekranıyla aynı istek,
++  /// ancak tarih filtresi ve sayfalama gönderilmez (tüm SKT geçmiş kayıtlar).
++  Future<void> _loadExpiredStocks(int? stationId, {required bool silent}) async {
++    if (stationId == null) {
++      _expiredStocks = const DashboardSection(data: []);
++      _safeNotify();
++      MedLogger.error(
++        unit: 'DashboardNotifier',
++        swreq: 'SWREQ-MGR-DASH-004',
++        message: 'Seçili kabinin istasyon id\'si yok, SKT geçmiş malzemeler çekilemedi',
++        context: {'cabinId': _selectedCabinId},
++      );
++      return;
++    }
++
++    _expiredStocks = _expiredStocks.copyWith(isLoading: true, error: null);
++    _safeNotify();
++
++    final result = await _getExpiredStocks.call(const PagedQueryParams(), stationId: stationId);
++    if (_disposed) return;
++
++    result.when(
++      ok: (response) {
++        _expiredStocks = DashboardSection(data: response?.data ?? const [], isLoading: false);
++      },
++      error: (e) {
++        if (silent) {
++          _expiredStocks = _expiredStocks.copyWith(isLoading: false);
++          MedLogger.error(
++            unit: 'DashboardNotifier',
++            swreq: 'SWREQ-MGR-DASH-004',
++            message: 'Otomatik turda SKT geçmiş malzemeler yenilenemedi (sessiz)',
++            context: {'error': e.message},
++          );
++        } else {
++          _expiredStocks = _expiredStocks.copyWith(isLoading: false, error: e.message);
++        }
++      },
++    );
++    _safeNotify();
++  }
++
+   Future<void> _loadUnapplied({required bool silent}) async {
+     _unappliedPrescriptions = _unappliedPrescriptions.copyWith(isLoading: true, error: null);
+     _safeNotify();
+@@ -297,6 +362,11 @@ class DashboardNotifier extends ChangeNotifier {
+ 
+   Future<void> retryUnapplied() => _loadUnapplied(silent: false);
+ 
++  Future<void> retryExpiredStocks() async {
++    final cabin = selectedCabin;
++    if (cabin != null) await _loadExpiredStocks(_stationIdOf(cabin), silent: false);
++  }
++
+   Future<void> retryUpcoming() async {
+     final mac = selectedCabin?.station?.macAddress;
+     if (mac != null && mac.isNotEmpty) await _loadUpcoming(mac, silent: false);
+diff --git a/apps/pharmed-manager/lib/features/dashboard/view/dashboard_view.dart b/apps/pharmed-manager/lib/features/dashboard/view/dashboard_view.dart
+index c601afe..ca5a764 100644
+--- a/apps/pharmed-manager/lib/features/dashboard/view/dashboard_view.dart
++++ b/apps/pharmed-manager/lib/features/dashboard/view/dashboard_view.dart
+@@ -32,6 +32,7 @@ class _DashboardViewState extends State<DashboardView> {
+         getUnappliedPrescriptions: context.read(),
+         getUpcomingTreatments: context.read(),
+         getDrugActivities: context.read(),
++        getExpiredStocks: context.read(),
+       )..init(),
+       child: Consumer<DashboardNotifier>(
+         builder: (context, notifier, _) {
+@@ -64,11 +65,13 @@ class _DashboardViewState extends State<DashboardView> {
+                   spacing: 16.0,
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+-                    // TODO : Yapılacak.
+                     Expanded(
+                       child: notifier.isMobileSelected
+                           ? MissingStockPanel(isLoggedIn: isLoggedIn)
+-                          : Center(child: Text(context.l10n.dashboard_otherCabinPlaceholderText)),
++                          : ExpiredStockPanel(
++                              section: notifier.expiredStocks,
++                              onRetry: () => context.read<DashboardNotifier>().retryExpiredStocks(),
++                            ),
+                     ),
+ 
+                     Expanded(
+@@ -210,6 +213,99 @@ class MissingStockPanel extends StatelessWidget {
+   }
+ }
+ 
++// [SWREQ-MGR-DASH-010]
++// Master kabin seçiliyken sol panel — SKT geçmiş malzemeler.
++// Sınıf: Class B (SKT bilgisini temsil eder)
++class ExpiredStockPanel extends StatelessWidget {
++  const ExpiredStockPanel({super.key, required this.section, this.onRetry});
++
++  final DashboardSection<List<CabinStock>> section;
++  final VoidCallback? onRetry;
++
++  @override
++  Widget build(BuildContext context) {
++    final items = section.data ?? const <CabinStock>[];
++
++    return MedDashboardPanel<List<CabinStock>>(
++      key: const ValueKey('expired_stock_panel'),
++      title: context.l10n.dashboard_expiredStockPanelTitle,
++      section: section,
++      itemCount: items.length,
++      onRetry: onRetry,
++      itemBuilder: (context, index) => _ExpiredStockCard(stock: items[index]),
++    );
++  }
++}
++
++class _ExpiredStockCard extends StatelessWidget {
++  const _ExpiredStockCard({required this.stock});
++
++  final CabinStock stock;
++
++  @override
++  Widget build(BuildContext context) {
++    final unit = stock.medicine?.pieceUnitLabel ?? '';
++    final location = [
++      stock.assignment?.cabin?.name,
++      [stock.shelfNo, stock.corpartmentNo].whereType<Object>().join('/'),
++    ].whereType<String>().where((e) => e.isNotEmpty).join(' · ');
++
++    return Container(
++      padding: MedSpacing.insetXl,
++      decoration: BoxDecoration(
++        color: MedColors.surface,
++        borderRadius: MedRadius.mdAll,
++        border: Border.all(color: MedColors.border.withAlpha(120)),
++      ),
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          Row(
++            children: [
++              Expanded(
++                child: Column(
++                  crossAxisAlignment: CrossAxisAlignment.start,
++                  children: [
++                    Text(
++                      stock.medicine?.name ?? '-',
++                      style: MedTextStyles.titleSm(),
++                      maxLines: 2,
++                      overflow: TextOverflow.ellipsis,
++                    ),
++                    if (stock.medicine?.barcode != null) ...[
++                      const SizedBox(height: 2),
++                      Text(stock.medicine!.barcode!, style: MedTextStyles.monoXs(color: MedColors.text3)),
++                    ],
++                  ],
++                ),
++              ),
++              const SizedBox(width: 8),
++              MedRemainingDayChip(days: stock.remainingDay ?? 0),
++            ],
++          ),
++          const SizedBox(height: 12),
++          const Divider(height: 1, color: MedColors.border2),
++          const SizedBox(height: 12),
++          MedInfoRow(
++            label: context.l10n.dashboard_expiredStockLocationLabel,
++            value: location.isEmpty ? '-' : location,
++          ),
++          const SizedBox(height: 6),
++          MedInfoRow(
++            label: context.l10n.dashboard_expiredStockQuantityLabel,
++            value: '${stock.quantity.formatFractional} $unit'.trim(),
++          ),
++          const SizedBox(height: 6),
++          MedInfoRow(
++            label: context.l10n.dashboard_expiredStockExpiryDateLabel,
++            value: stock.miadDate?.formattedDate ?? '-',
++          ),
++        ],
++      ),
++    );
++  }
++}
++
+ class UnappliedPrescriptionPanel extends StatelessWidget {
+   const UnappliedPrescriptionPanel({super.key, required this.section});
+ 
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index 32d420a..c3ee8bc 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -1314,8 +1314,14 @@
+   "@dashboard_missingStockApproveButton": {},
+   "dashboard_missingStockRejectButton": "Reject",
+   "@dashboard_missingStockRejectButton": {},
+-  "dashboard_otherCabinPlaceholderText": "Expired materials & critical stock (coming next)",
+-  "@dashboard_otherCabinPlaceholderText": {},
++  "dashboard_expiredStockPanelTitle": "EXPIRED MATERIALS",
++  "@dashboard_expiredStockPanelTitle": {},
++  "dashboard_expiredStockLocationLabel": "CABIN / LOCATION",
++  "@dashboard_expiredStockLocationLabel": {},
++  "dashboard_expiredStockQuantityLabel": "QUANTITY",
++  "@dashboard_expiredStockQuantityLabel": {},
++  "dashboard_expiredStockExpiryDateLabel": "EXPIRY DATE",
++  "@dashboard_expiredStockExpiryDateLabel": {},
+   "dashboard_unappliedPrescriptionsPanelTitle": "UNAPPLIED PRESCRIPTIONS",
+   "@dashboard_unappliedPrescriptionsPanelTitle": {},
+   "dashboard_unappliedPrescriptionsEmptyTitle": "No unapplied prescriptions",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index 025459a..65964c1 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -1085,8 +1085,14 @@
+   "@dashboard_missingStockApproveButton": {},
+   "dashboard_missingStockRejectButton": "Rejeter",
+   "@dashboard_missingStockRejectButton": {},
+-  "dashboard_otherCabinPlaceholderText": "Matériaux périmés et stocks critiques (prochainement)",
+-  "@dashboard_otherCabinPlaceholderText": {},
++  "dashboard_expiredStockPanelTitle": "MATÉRIAUX PÉRIMÉS",
++  "@dashboard_expiredStockPanelTitle": {},
++  "dashboard_expiredStockLocationLabel": "CABINE / EMPLACEMENT",
++  "@dashboard_expiredStockLocationLabel": {},
++  "dashboard_expiredStockQuantityLabel": "QUANTITÉ",
++  "@dashboard_expiredStockQuantityLabel": {},
++  "dashboard_expiredStockExpiryDateLabel": "DATE D'EXPIRATION",
++  "@dashboard_expiredStockExpiryDateLabel": {},
+   "dashboard_unappliedPrescriptionsPanelTitle": "ORDONNANCES NON APPLIQUÉES",
+   "@dashboard_unappliedPrescriptionsPanelTitle": {},
+   "dashboard_unappliedPrescriptionsEmptyTitle": "Aucune ordonnance non appliquée",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+index a69df82..87e0977 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+@@ -3786,11 +3786,29 @@ abstract class AppLocalizations {
+   /// **'Reject'**
+   String get dashboard_missingStockRejectButton;
+ 
+-  /// No description provided for @dashboard_otherCabinPlaceholderText.
++  /// No description provided for @dashboard_expiredStockPanelTitle.
+   ///
+   /// In en, this message translates to:
+-  /// **'Expired materials & critical stock (coming next)'**
+-  String get dashboard_otherCabinPlaceholderText;
++  /// **'EXPIRED MATERIALS'**
++  String get dashboard_expiredStockPanelTitle;
++
++  /// No description provided for @dashboard_expiredStockLocationLabel.
++  ///
++  /// In en, this message translates to:
++  /// **'CABIN / LOCATION'**
++  String get dashboard_expiredStockLocationLabel;
++
++  /// No description provided for @dashboard_expiredStockQuantityLabel.
++  ///
++  /// In en, this message translates to:
++  /// **'QUANTITY'**
++  String get dashboard_expiredStockQuantityLabel;
++
++  /// No description provided for @dashboard_expiredStockExpiryDateLabel.
++  ///
++  /// In en, this message translates to:
++  /// **'EXPIRY DATE'**
++  String get dashboard_expiredStockExpiryDateLabel;
+ 
+   /// No description provided for @dashboard_unappliedPrescriptionsPanelTitle.
+   ///
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+index 1875fc6..55d5b2b 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+@@ -2062,8 +2062,16 @@ class AppLocalizationsAr extends AppLocalizations {
+   String get dashboard_missingStockRejectButton => 'Reject';
+ 
+   @override
+-  String get dashboard_otherCabinPlaceholderText =>
+-      'Expired materials & critical stock (coming next)';
++  String get dashboard_expiredStockPanelTitle => 'EXPIRED MATERIALS';
++
++  @override
++  String get dashboard_expiredStockLocationLabel => 'CABIN / LOCATION';
++
++  @override
++  String get dashboard_expiredStockQuantityLabel => 'QUANTITY';
++
++  @override
++  String get dashboard_expiredStockExpiryDateLabel => 'EXPIRY DATE';
+ 
+   @override
+   String get dashboard_unappliedPrescriptionsPanelTitle =>
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+index c1ef137..cda642c 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+@@ -2061,8 +2061,16 @@ class AppLocalizationsEn extends AppLocalizations {
+   String get dashboard_missingStockRejectButton => 'Reject';
+ 
+   @override
+-  String get dashboard_otherCabinPlaceholderText =>
+-      'Expired materials & critical stock (coming next)';
++  String get dashboard_expiredStockPanelTitle => 'EXPIRED MATERIALS';
++
++  @override
++  String get dashboard_expiredStockLocationLabel => 'CABIN / LOCATION';
++
++  @override
++  String get dashboard_expiredStockQuantityLabel => 'QUANTITY';
++
++  @override
++  String get dashboard_expiredStockExpiryDateLabel => 'EXPIRY DATE';
+ 
+   @override
+   String get dashboard_unappliedPrescriptionsPanelTitle =>
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+index 6a0ffac..9ec0536 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+@@ -2107,8 +2107,16 @@ class AppLocalizationsFr extends AppLocalizations {
+   String get dashboard_missingStockRejectButton => 'Rejeter';
+ 
+   @override
+-  String get dashboard_otherCabinPlaceholderText =>
+-      'Matériaux périmés et stocks critiques (prochainement)';
++  String get dashboard_expiredStockPanelTitle => 'MATÉRIAUX PÉRIMÉS';
++
++  @override
++  String get dashboard_expiredStockLocationLabel => 'CABINE / EMPLACEMENT';
++
++  @override
++  String get dashboard_expiredStockQuantityLabel => 'QUANTITÉ';
++
++  @override
++  String get dashboard_expiredStockExpiryDateLabel => 'DATE D\'EXPIRATION';
+ 
+   @override
+   String get dashboard_unappliedPrescriptionsPanelTitle =>
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+index 52d0983..c8a8aab 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+@@ -2056,8 +2056,16 @@ class AppLocalizationsTr extends AppLocalizations {
+   String get dashboard_missingStockRejectButton => 'Reddet';
+ 
+   @override
+-  String get dashboard_otherCabinPlaceholderText =>
+-      'SKT geçmiş malzemeler & kritik stoklar (sonraki tur)';
++  String get dashboard_expiredStockPanelTitle => 'SKT GEÇMİŞ MALZEMELER';
++
++  @override
++  String get dashboard_expiredStockLocationLabel => 'KABİN / KONUM';
++
++  @override
++  String get dashboard_expiredStockQuantityLabel => 'MİKTAR';
++
++  @override
++  String get dashboard_expiredStockExpiryDateLabel => 'S.K.T';
+ 
+   @override
+   String get dashboard_unappliedPrescriptionsPanelTitle =>
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_tr.arb b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+index e00960f..0d2b6bd 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_tr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+@@ -2440,9 +2440,21 @@
+   "@dashboard_missingStockRejectButton": {
+     "description": "Reject action button in the missing-stock panel"
+   },
+-  "dashboard_otherCabinPlaceholderText": "SKT geçmiş malzemeler & kritik stoklar (sonraki tur)",
+-  "@dashboard_otherCabinPlaceholderText": {
+-    "description": "Placeholder text shown for the non-mobile-cabin panel, noting it's planned for a future iteration"
++  "dashboard_expiredStockPanelTitle": "SKT GEÇMİŞ MALZEMELER",
++  "@dashboard_expiredStockPanelTitle": {
++    "description": "Panel header title for the dashboard expired-materials panel, shown when a master cabin is selected"
++  },
++  "dashboard_expiredStockLocationLabel": "KABİN / KONUM",
++  "@dashboard_expiredStockLocationLabel": {
++    "description": "Info-row label on an expired-material card — cabin name and shelf/compartment of the stock"
++  },
++  "dashboard_expiredStockQuantityLabel": "MİKTAR",
++  "@dashboard_expiredStockQuantityLabel": {
++    "description": "Info-row label on an expired-material card — stock quantity with unit"
++  },
++  "dashboard_expiredStockExpiryDateLabel": "S.K.T",
++  "@dashboard_expiredStockExpiryDateLabel": {
++    "description": "Info-row label on an expired-material card — expiry date (CabinStock.miadDate)"
+   },
+   "dashboard_unappliedPrescriptionsPanelTitle": "UYGULANMAMIŞ REÇETELER",
+   "@dashboard_unappliedPrescriptionsPanelTitle": {
+-- 
+2.43.0

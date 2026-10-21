@@ -3786,11 +3786,29 @@ abstract class AppLocalizations {
   /// **'Reject'**
   String get dashboard_missingStockRejectButton;
 
-  /// No description provided for @dashboard_otherCabinPlaceholderText.
+  /// No description provided for @dashboard_expiredStockPanelTitle.
   ///
   /// In en, this message translates to:
-  /// **'Expired materials & critical stock (coming next)'**
-  String get dashboard_otherCabinPlaceholderText;
+  /// **'EXPIRED MATERIALS'**
+  String get dashboard_expiredStockPanelTitle;
+
+  /// No description provided for @dashboard_expiredStockLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CABIN / LOCATION'**
+  String get dashboard_expiredStockLocationLabel;
+
+  /// No description provided for @dashboard_expiredStockQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'QUANTITY'**
+  String get dashboard_expiredStockQuantityLabel;
+
+  /// No description provided for @dashboard_expiredStockExpiryDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRY DATE'**
+  String get dashboard_expiredStockExpiryDateLabel;
 
   /// No description provided for @dashboard_unappliedPrescriptionsPanelTitle.
   ///

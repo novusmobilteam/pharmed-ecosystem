@@ -17,13 +17,15 @@ class DashboardNotifier extends ChangeNotifier {
     required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
     required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
     required GetDrugActivitiesUseCase getDrugActivities,
+    required GetExpiredStocksUseCase getExpiredStocks,
   }) : _getCabins = getCabins,
        _getMissingStocks = getMissingStocks,
        _approveMissingStock = approveMissingStock,
        _rejectMissingStock = rejectMissingStock,
        _getUnappliedPrescriptions = getUnappliedPrescriptions,
        _getUpcomingTreatments = getUpcomingTreatments,
-       _getDrugActivities = getDrugActivities;
+       _getDrugActivities = getDrugActivities,
+       _getExpiredStocks = getExpiredStocks;
 
   final GetDashboardCabinsUseCase _getCabins;
   final GetMissingStocksUseCase _getMissingStocks;
@@ -32,6 +34,7 @@ class DashboardNotifier extends ChangeNotifier {
   final GetDashboardUnappliedPrescriptionsUseCase _getUnappliedPrescriptions;
   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
   final GetDrugActivitiesUseCase _getDrugActivities;
+  final GetExpiredStocksUseCase _getExpiredStocks;
 
   bool _disposed = false;
 
@@ -58,6 +61,9 @@ class DashboardNotifier extends ChangeNotifier {
 
   DashboardSection<List<PrescriptionItem>> _shortage = const DashboardSection();
   DashboardSection<List<PrescriptionItem>> get shortage => _shortage;
+
+  DashboardSection<List<CabinStock>> _expiredStocks = const DashboardSection();
+  DashboardSection<List<CabinStock>> get expiredStocks => _expiredStocks;
 
   DashboardSection<List<PrescriptionItem>> _unappliedPrescriptions = const DashboardSection();
   DashboardSection<List<PrescriptionItem>> get unappliedPrescriptions => _unappliedPrescriptions;
@@ -136,13 +142,21 @@ class DashboardNotifier extends ChangeNotifier {
   }
 
   /// Seçili kabinin tüm bölüm verilerini çeker.
-  /// Uygulanmamış reçete global; eksik stok yalnızca mobil; yaklaşan tedavi mac'e bağlı.
+  /// Uygulanmamış reçete global; eksik stok yalnızca mobil; SKT geçmiş yalnızca master
+  /// (istasyon id'ye bağlı); yaklaşan tedavi mac'e bağlı.
   Future<void> _loadSelectedCabinData({required bool silent}) async {
     final cabin = selectedCabin;
     if (cabin == null) return;
 
     // Uygulanmamış reçete global — mac'ten bağımsız, her turda çek
     _loadUnapplied(silent: silent);
+
+    // SKT geçmiş malzemeler yalnızca master — istasyon id'ye bağlı, mac'ten bağımsız
+    if (cabin.type?.isMobile ?? false) {
+      _expiredStocks = const DashboardSection();
+    } else {
+      _loadExpiredStocks(_stationIdOf(cabin), silent: silent);
+    }
 
     final mac = cabin.station?.macAddress;
 
@@ -161,7 +175,7 @@ class DashboardNotifier extends ChangeNotifier {
       return;
     }
 
-    // Eksik stok yalnızca mobil; değilse temizle (sonraki tur: SKT/kritik)
+    // Eksik stok yalnızca mobil; değilse temizle
     if (cabin.type?.isMobile ?? false) {
       _loadMissingStocks(mac, silent: silent);
     } else {
@@ -199,6 +213,57 @@ class DashboardNotifier extends ChangeNotifier {
           );
         } else {
           _shortage = _shortage.copyWith(isLoading: false, error: e.message);
+        }
+      },
+    );
+    _safeNotify();
+  }
+
+  /// Kabinin istasyon id'si — iç içe station nesnesi yoksa üst seviye stationId (dynamic) kullanılır.
+  int? _stationIdOf(Cabin cabin) {
+    final nested = cabin.station?.id;
+    if (nested != null) return nested;
+    final raw = cabin.stationId;
+    if (raw is int) return raw;
+    return int.tryParse(raw?.toString() ?? '');
+  }
+
+  /// [SWREQ-MGR-DASH-004] SKT geçmiş malzemeler — rapor ekranıyla aynı istek,
+  /// ancak tarih filtresi ve sayfalama gönderilmez (tüm SKT geçmiş kayıtlar).
+  Future<void> _loadExpiredStocks(int? stationId, {required bool silent}) async {
+    if (stationId == null) {
+      _expiredStocks = const DashboardSection(data: []);
+      _safeNotify();
+      MedLogger.error(
+        unit: 'DashboardNotifier',
+        swreq: 'SWREQ-MGR-DASH-004',
+        message: 'Seçili kabinin istasyon id\'si yok, SKT geçmiş malzemeler çekilemedi',
+        context: {'cabinId': _selectedCabinId},
+      );
+      return;
+    }
+
+    _expiredStocks = _expiredStocks.copyWith(isLoading: true, error: null);
+    _safeNotify();
+
+    final result = await _getExpiredStocks.call(const PagedQueryParams(), stationId: stationId);
+    if (_disposed) return;
+
+    result.when(
+      ok: (response) {
+        _expiredStocks = DashboardSection(data: response?.data ?? const [], isLoading: false);
+      },
+      error: (e) {
+        if (silent) {
+          _expiredStocks = _expiredStocks.copyWith(isLoading: false);
+          MedLogger.error(
+            unit: 'DashboardNotifier',
+            swreq: 'SWREQ-MGR-DASH-004',
+            message: 'Otomatik turda SKT geçmiş malzemeler yenilenemedi (sessiz)',
+            context: {'error': e.message},
+          );
+        } else {
+          _expiredStocks = _expiredStocks.copyWith(isLoading: false, error: e.message);
         }
       },
     );
@@ -296,6 +361,11 @@ class DashboardNotifier extends ChangeNotifier {
   }
 
   Future<void> retryUnapplied() => _loadUnapplied(silent: false);
+
+  Future<void> retryExpiredStocks() async {
+    final cabin = selectedCabin;
+    if (cabin != null) await _loadExpiredStocks(_stationIdOf(cabin), silent: false);
+  }
 
   Future<void> retryUpcoming() async {
     final mac = selectedCabin?.station?.macAddress;
