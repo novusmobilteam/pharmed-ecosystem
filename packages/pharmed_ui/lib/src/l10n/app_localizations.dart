@@ -12316,6 +12316,54 @@ abstract class AppLocalizations {
   /// **'No unscanned QR codes left'**
   String get unscannedBarcodes_alertEmptyTitle;
 
+  /// No description provided for @dashboard_expiringAlertTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} expiring medicine} other{{count} expiring medicines}}'**
+  String dashboard_expiringAlertTooltip(int count);
+
+  /// No description provided for @dashboard_orderedNotLoadedAlertTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} out-of-cabin material} other{{count} out-of-cabin materials}}'**
+  String dashboard_orderedNotLoadedAlertTooltip(int count);
+
+  /// No description provided for @dashboard_expiringAlertDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring Medicines'**
+  String get dashboard_expiringAlertDialogTitle;
+
+  /// No description provided for @dashboard_expiringAlertDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin stocks with an approaching expiry date'**
+  String get dashboard_expiringAlertDialogSubtitle;
+
+  /// No description provided for @dashboard_expiringAlertEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No expiring medicines left'**
+  String get dashboard_expiringAlertEmptyTitle;
+
+  /// No description provided for @dashboard_orderedNotLoadedAlertDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Out-of-Cabin Materials'**
+  String get dashboard_orderedNotLoadedAlertDialogTitle;
+
+  /// No description provided for @dashboard_orderedNotLoadedAlertDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered materials with no stock in the station's cabins'**
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle;
+
+  /// No description provided for @dashboard_orderedNotLoadedAlertEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No out-of-cabin materials left'**
+  String get dashboard_orderedNotLoadedAlertEmptyTitle;
+
   /// No description provided for @urgentPatientTermination_listTitle.
   ///
   /// In en, this message translates to:

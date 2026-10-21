@@ -574,3 +574,7 @@ final createOverdueDescriptionUseCaseProvider = Provider<CreateOverdueDescriptio
 final getStationTransactionsUseCaseProvider = Provider<GetStationTransactionsUseCase>(
   (ref) => GetStationTransactionsUseCase(ref.read(reportRepositoryProvider)),
 );
+
+final getOrderedNotLoadedMaterialsUseCaseProvider = Provider<GetOrderedNotLoadedMaterialsUseCase>(
+  (ref) => GetOrderedNotLoadedMaterialsUseCase(ref.read(reportRepositoryProvider)),
+);

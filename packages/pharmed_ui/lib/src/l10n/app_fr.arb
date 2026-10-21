@@ -4378,6 +4378,28 @@
 },
 "unscannedBarcodes_scanButton": "Scanner le code QR",
 "unscannedBarcodes_alertEmptyTitle": "Plus aucun code QR non scanné",
+"dashboard_expiringAlertTooltip": "{count, plural, one{{count} médicament bientôt périmé} other{{count} médicaments bientôt périmés}}",
+"@dashboard_expiringAlertTooltip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_orderedNotLoadedAlertTooltip": "{count, plural, one{{count} matériau hors cabine} other{{count} matériaux hors cabine}}",
+"@dashboard_orderedNotLoadedAlertTooltip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_expiringAlertDialogTitle": "Médicaments bientôt périmés",
+"dashboard_expiringAlertDialogSubtitle": "Stocks de cabine dont la date d'expiration approche",
+"dashboard_expiringAlertEmptyTitle": "Plus aucun médicament bientôt périmé",
+"dashboard_orderedNotLoadedAlertDialogTitle": "Matériaux hors cabine",
+"dashboard_orderedNotLoadedAlertDialogSubtitle": "Matériaux commandés sans stock dans les cabines de la station",
+"dashboard_orderedNotLoadedAlertEmptyTitle": "Plus aucun matériau hors cabine",
 "urgentPatientTermination_listTitle": "Patients urgents",
 "urgentPatientTermination_selectHint": "Sélectionnez un patient urgent pour continuer",
 "urgentPatientTermination_takenMedicinesTitle": "Médicaments pris",

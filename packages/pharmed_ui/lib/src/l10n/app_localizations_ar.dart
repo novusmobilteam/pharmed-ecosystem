@@ -7010,6 +7010,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unscannedBarcodes_alertEmptyTitle => 'No unscanned QR codes left';
 
   @override
+  String dashboard_expiringAlertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count expiring medicines',
+      one: '$count expiring medicine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dashboard_orderedNotLoadedAlertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count out-of-cabin materials',
+      one: '$count out-of-cabin material',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_expiringAlertDialogTitle => 'Expiring Medicines';
+
+  @override
+  String get dashboard_expiringAlertDialogSubtitle => 'Cabin stocks with an approaching expiry date';
+
+  @override
+  String get dashboard_expiringAlertEmptyTitle => 'No expiring medicines left';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertDialogTitle => 'Out-of-Cabin Materials';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle => 'Ordered materials with no stock in the station\'s cabins';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertEmptyTitle => 'No out-of-cabin materials left';
+
+  @override
   String get urgentPatientTermination_listTitle => 'Emergency Patients';
 
   @override

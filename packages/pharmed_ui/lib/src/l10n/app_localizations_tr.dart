@@ -6959,6 +6959,44 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unscannedBarcodes_alertEmptyTitle => 'Okutulmayan karekod kalmadı';
 
   @override
+  String dashboard_expiringAlertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count SKT yaklaşan ilaç',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dashboard_orderedNotLoadedAlertTooltip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kabin dışı malzeme',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboard_expiringAlertDialogTitle => 'SKT Yaklaşan İlaçlar';
+
+  @override
+  String get dashboard_expiringAlertDialogSubtitle => 'Son kullanma tarihi yaklaşan kabin stokları';
+
+  @override
+  String get dashboard_expiringAlertEmptyTitle => 'SKT yaklaşan ilaç kalmadı';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertDialogTitle => 'Kabin Dışı Malzemeler';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle => 'Order edilmiş ancak istasyon kabinlerinde stoğu olmayan malzemeler';
+
+  @override
+  String get dashboard_orderedNotLoadedAlertEmptyTitle => 'Kabin dışı malzeme kalmadı';
+
+  @override
   String get urgentPatientTermination_listTitle => 'Acil Hastalar';
 
   @override

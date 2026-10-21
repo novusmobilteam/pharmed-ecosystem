@@ -9097,6 +9097,48 @@
 "@unscannedBarcodes_alertEmptyTitle": {
   "description": "Empty state of the client unscanned QR codes alert dialog after all items are scanned."
 },
+"dashboard_expiringAlertTooltip": "{count, plural, other{{count} SKT yaklaşan ilaç}}",
+"@dashboard_expiringAlertTooltip": {
+  "description": "Client dashboard app bar alert button tooltip; count of cabin stocks whose expiry date is approaching.",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_orderedNotLoadedAlertTooltip": "{count, plural, other{{count} kabin dışı malzeme}}",
+"@dashboard_orderedNotLoadedAlertTooltip": {
+  "description": "Client dashboard app bar alert button tooltip; count of ordered materials not loaded in the station cabins.",
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_expiringAlertDialogTitle": "SKT Yaklaşan İlaçlar",
+"@dashboard_expiringAlertDialogTitle": {
+  "description": "Title of the client dialog opened from the app bar alert, listing cabin stocks whose expiry date is approaching."
+},
+"dashboard_expiringAlertDialogSubtitle": "Son kullanma tarihi yaklaşan kabin stokları",
+"@dashboard_expiringAlertDialogSubtitle": {
+  "description": "Subtitle of the client expiring-medicines alert dialog."
+},
+"dashboard_expiringAlertEmptyTitle": "SKT yaklaşan ilaç kalmadı",
+"@dashboard_expiringAlertEmptyTitle": {
+  "description": "Empty state of the client expiring-medicines alert dialog."
+},
+"dashboard_orderedNotLoadedAlertDialogTitle": "Kabin Dışı Malzemeler",
+"@dashboard_orderedNotLoadedAlertDialogTitle": {
+  "description": "Title of the client dialog opened from the app bar alert, listing ordered materials that are not loaded in any cabin of the station (ordered-not-loaded)."
+},
+"dashboard_orderedNotLoadedAlertDialogSubtitle": "Order edilmiş ancak istasyon kabinlerinde stoğu olmayan malzemeler",
+"@dashboard_orderedNotLoadedAlertDialogSubtitle": {
+  "description": "Subtitle of the client out-of-cabin materials alert dialog."
+},
+"dashboard_orderedNotLoadedAlertEmptyTitle": "Kabin dışı malzeme kalmadı",
+"@dashboard_orderedNotLoadedAlertEmptyTitle": {
+  "description": "Empty state of the client out-of-cabin materials alert dialog."
+},
 "urgentPatientTermination_listTitle": "Acil Hastalar",
 "@urgentPatientTermination_listTitle": {
   "description": "Section title above the list of still-open urgent patient records (middle column of the termination screen)."

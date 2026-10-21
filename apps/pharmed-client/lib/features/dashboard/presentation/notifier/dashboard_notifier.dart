@@ -21,6 +21,8 @@ final dashboardNotifierProvider = ChangeNotifierProvider<DashboardNotifier>((ref
     getDrugActivities: ref.read(getDrugActivitiesUseCaseProvider),
     getUnappliedPrescriptions: ref.read(getUnappliedPrescriptionsUseCaseProvider),
     getUnreadQrCodes: ref.read(getUnreadQrCodesUseCaseProvider),
+    getExpiringStocks: ref.read(getExpiringStocksUseCaseProvider),
+    getOrderedNotLoadedMaterials: ref.read(getOrderedNotLoadedMaterialsUseCaseProvider),
     getCurrentStation: ref.read(getCurrentStationUseCaseProvider),
     getCabinVisualizer: ref.read(getCabinVisualizerDataUseCaseProvider),
     settings: ref.read(appSettingsCacheProvider),
@@ -37,6 +39,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     required GetDrugActivitiesUseCase getDrugActivities,
     required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
     required GetUnreadQrcodesUsecase getUnreadQrCodes,
+    required GetExpiringStocksUseCase getExpiringStocks,
+    required GetOrderedNotLoadedMaterialsUseCase getOrderedNotLoadedMaterials,
     required GetCurrentStationUseCase getCurrentStation,
     required GetCabinVisualizerDataUseCase getCabinVisualizer,
     required AppSettingsCache settings,
@@ -48,6 +52,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
        _getDrugActivities = getDrugActivities,
        _getUnapplied = getUnappliedPrescriptions,
        _getUnreadQrCodes = getUnreadQrCodes,
+       _getExpiringStocks = getExpiringStocks,
+       _getOrderedNotLoadedMaterials = getOrderedNotLoadedMaterials,
        _getCurrentStation = getCurrentStation,
        _getCabinVisualizer = getCabinVisualizer,
        _settings = settings,
@@ -60,6 +66,8 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetDrugActivitiesUseCase _getDrugActivities;
   final GetDashboardUnappliedPrescriptionsUseCase _getUnapplied;
   final GetUnreadQrcodesUsecase _getUnreadQrCodes;
+  final GetExpiringStocksUseCase _getExpiringStocks;
+  final GetOrderedNotLoadedMaterialsUseCase _getOrderedNotLoadedMaterials;
   final GetCurrentStationUseCase _getCurrentStation;
   final GetCabinVisualizerDataUseCase _getCabinVisualizer;
   final AuthNotifier _authNotifier;
@@ -116,6 +124,16 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
   List<PrescriptionItem> get unreadQrCodes => _unreadQrCodes;
 
   final OperationKey fetchUnreadQrCodesKey = OperationKey.custom('fetch-unread-qr-codes');
+
+  /// [SWREQ-UI-DASH-ALERT-001] SKT'si yaklaşan kabin stokları. Boşsa app bar'da
+  /// uyarı gösterilmez. İstasyon bazlıdır (sunucu istasyonu cihazdan çözer).
+  List<CabinStock> _expiringStocks = const [];
+  List<CabinStock> get expiringStocks => _expiringStocks;
+
+  /// [SWREQ-UI-DASH-ALERT-002] Kabin dışı malzemeler — aktif order'ı olup bu
+  /// istasyonun kabinlerinde stoğu olmayan malzemeler. Boşsa uyarı gösterilmez.
+  List<OrderedNotLoadedMaterial> _orderedNotLoadedMaterials = const [];
+  List<OrderedNotLoadedMaterial> get orderedNotLoadedMaterials => _orderedNotLoadedMaterials;
 
   AppUser? get currentUser => _authNotifier.currentUser;
 
@@ -359,7 +377,54 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
         },
       ),
       refreshUnreadQrCodes(),
+      refreshStockAlerts(),
     ]);
+  }
+
+  /// SKT yaklaşan ve kabin dışı malzeme uyarılarını yeniler. Uyarılar yalnızca
+  /// oturum açıkken gösterildiği için (hasta adı içerir) oturum yokken istek
+  /// atılmaz, listeler boşalır. Rapor ekranlarının aksine tarih filtresi ve
+  /// sayfalama gönderilmez — tüm aktif kayıtlar gelir.
+  Future<void> refreshStockAlerts() async {
+    if (currentUser == null) {
+      clearStockAlerts();
+      return;
+    }
+
+    final stationId = _station?.id;
+    await Future.wait([
+      execute(
+        OperationKey.custom('fetch-expiring-stocks-alert'),
+        operation: () => _getExpiringStocks.call(params: const PagedQueryParams()),
+        onData: (response) {
+          _expiringStocks = currentUser == null ? const [] : (response?.data ?? const []);
+          notifyListeners();
+        },
+      ),
+      if (stationId != null)
+        execute(
+          OperationKey.custom('fetch-ordered-not-loaded-alert'),
+          operation: () => _getOrderedNotLoadedMaterials.call(
+            PagedQueryParams(
+              filters: [
+                Filter.inList('stationId', [stationId]),
+              ],
+            ),
+          ),
+          onData: (response) {
+            _orderedNotLoadedMaterials = currentUser == null ? const [] : (response?.data ?? const []);
+            notifyListeners();
+          },
+        ),
+    ]);
+  }
+
+  /// Oturum kapanınca çağrılır — uyarılar bir sonraki kullanıcıya taşınmasın.
+  void clearStockAlerts() {
+    if (_expiringStocks.isEmpty && _orderedNotLoadedMaterials.isEmpty) return;
+    _expiringStocks = const [];
+    _orderedNotLoadedMaterials = const [];
+    notifyListeners();
   }
 
   /// Okutulmayan karekod uyarılarını yeniler. Kullanıcıya özgüdür (sunucu

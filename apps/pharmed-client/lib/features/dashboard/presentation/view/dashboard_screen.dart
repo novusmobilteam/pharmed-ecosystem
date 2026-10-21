@@ -42,6 +42,7 @@ import '../../../waste/waste.dart';
 import '../../dashboard.dart';
 import '../notifier/dashboard_notifier.dart';
 import '../widgets/dashboard_app_bar.dart';
+import '../widgets/stock_alert_dialogs.dart';
 import '../widgets/unread_qr_codes_dialog.dart';
 
 part 'dashboard_route_content.dart';
@@ -92,6 +93,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       if (previousUserId != null && nextUserId == null) {
         dashboard.navigateTo('dashboard', force: true);
         dashboard.clearUnreadQrCodes();
+        dashboard.clearStockAlerts();
         return;
       }
 
@@ -100,6 +102,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       if (nextUserId != null && nextUserId != previousUserId) {
         dashboard.reloadMenus();
         dashboard.refreshUnreadQrCodes();
+        dashboard.refreshStockAlerts();
       }
     });
 
@@ -146,6 +149,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       user: currentUser,
                       unreadQrCount: notifier.unreadQrCodes.length,
                       onUnreadQrTap: () => guarded(() => showUnreadQrCodesDialog(context)),
+                      expiringCount: notifier.expiringStocks.length,
+                      onExpiringTap: () => guarded(() => showExpiringStocksAlertDialog(context)),
+                      orderedNotLoadedCount: notifier.orderedNotLoadedMaterials.length,
+                      onOrderedNotLoadedTap: () => guarded(() => showOrderedNotLoadedAlertDialog(context)),
                       onHomeTap: () => guarded(() {
                         notifier.navigateTo('dashboard');
                         notifier.refresh(forceRefresh: false);

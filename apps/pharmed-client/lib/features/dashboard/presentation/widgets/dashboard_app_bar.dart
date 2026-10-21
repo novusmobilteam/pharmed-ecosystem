@@ -30,6 +30,10 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.user,
     this.unreadQrCount = 0,
     this.onUnreadQrTap,
+    this.expiringCount = 0,
+    this.onExpiringTap,
+    this.orderedNotLoadedCount = 0,
+    this.onOrderedNotLoadedTap,
     this.onHomeTap,
     this.onLoginTap,
     this.onLogoutTap,
@@ -52,6 +56,14 @@ class DashboardAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// gösterilmez.
   final int unreadQrCount;
   final VoidCallback? onUnreadQrTap;
+
+  /// SKT'si yaklaşan stok sayısı. 0 → buton gösterilmez.
+  final int expiringCount;
+  final VoidCallback? onExpiringTap;
+
+  /// Kabin dışı (order edilmiş, yüklenmemiş) malzeme sayısı. 0 → buton gösterilmez.
+  final int orderedNotLoadedCount;
+  final VoidCallback? onOrderedNotLoadedTap;
 
   final VoidCallback? onHomeTap;
   final VoidCallback? onLoginTap;
@@ -219,10 +231,39 @@ class _DashboardAppBarState extends State<DashboardAppBar> {
           ),
 
           SizedBox(width: 10),
+          if (widget.isLoggedIn && widget.orderedNotLoadedCount > 0) ...[
+            Opacity(
+              opacity: actionOpacity,
+              child: _AlertIconButton(
+                icon: PhosphorIcons.package(),
+                tooltip: context.l10n.dashboard_orderedNotLoadedAlertTooltip(widget.orderedNotLoadedCount),
+                count: widget.orderedNotLoadedCount,
+                onTap: _lockAware(widget.onOrderedNotLoadedTap),
+              ),
+            ),
+            const SizedBox(width: 10),
+          ],
+          if (widget.isLoggedIn && widget.expiringCount > 0) ...[
+            Opacity(
+              opacity: actionOpacity,
+              child: _AlertIconButton(
+                icon: PhosphorIcons.hourglass(),
+                tooltip: context.l10n.dashboard_expiringAlertTooltip(widget.expiringCount),
+                count: widget.expiringCount,
+                onTap: _lockAware(widget.onExpiringTap),
+              ),
+            ),
+            const SizedBox(width: 10),
+          ],
           if (widget.isLoggedIn && widget.unreadQrCount > 0) ...[
             Opacity(
               opacity: actionOpacity,
-              child: _UnreadQrAlertButton(count: widget.unreadQrCount, onTap: _lockAware(widget.onUnreadQrTap)),
+              child: _AlertIconButton(
+                icon: PhosphorIcons.qrCode(),
+                tooltip: context.l10n.unscannedBarcodes_alertTooltip(widget.unreadQrCount),
+                count: widget.unreadQrCount,
+                onTap: _lockAware(widget.onUnreadQrTap),
+              ),
             ),
             const SizedBox(width: 10),
           ],
@@ -379,10 +420,13 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-/// Okutulmayan karekod uyarısı: amber ikon butonu + sayaç rozeti.
-class _UnreadQrAlertButton extends StatelessWidget {
-  const _UnreadQrAlertButton({required this.count, this.onTap});
+/// App bar uyarı butonu (okutulmayan karekod, SKT yaklaşan, kabin dışı malzeme):
+/// amber ikon butonu + sayaç rozeti.
+class _AlertIconButton extends StatelessWidget {
+  const _AlertIconButton({required this.icon, required this.tooltip, required this.count, this.onTap});
 
+  final IconData icon;
+  final String tooltip;
   final int count;
   final VoidCallback? onTap;
 
@@ -392,8 +436,8 @@ class _UnreadQrAlertButton extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         MedRectangleIconButton(
-          iconData: PhosphorIcons.qrCode(),
-          tooltip: context.l10n.unscannedBarcodes_alertTooltip(count),
+          iconData: icon,
+          tooltip: tooltip,
           color: MedColors.amberLight,
           iconColor: MedColors.amber,
           borderColor: MedColors.amber,

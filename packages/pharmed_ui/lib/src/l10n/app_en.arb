@@ -4925,6 +4925,28 @@
 },
 "unscannedBarcodes_scanButton": "Scan QR Code",
 "unscannedBarcodes_alertEmptyTitle": "No unscanned QR codes left",
+"dashboard_expiringAlertTooltip": "{count, plural, one{{count} expiring medicine} other{{count} expiring medicines}}",
+"@dashboard_expiringAlertTooltip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_orderedNotLoadedAlertTooltip": "{count, plural, one{{count} out-of-cabin material} other{{count} out-of-cabin materials}}",
+"@dashboard_orderedNotLoadedAlertTooltip": {
+  "placeholders": {
+    "count": {
+      "type": "int"
+    }
+  }
+},
+"dashboard_expiringAlertDialogTitle": "Expiring Medicines",
+"dashboard_expiringAlertDialogSubtitle": "Cabin stocks with an approaching expiry date",
+"dashboard_expiringAlertEmptyTitle": "No expiring medicines left",
+"dashboard_orderedNotLoadedAlertDialogTitle": "Out-of-Cabin Materials",
+"dashboard_orderedNotLoadedAlertDialogSubtitle": "Ordered materials with no stock in the station's cabins",
+"dashboard_orderedNotLoadedAlertEmptyTitle": "No out-of-cabin materials left",
 "urgentPatientTermination_listTitle": "Emergency Patients",
 "urgentPatientTermination_selectHint": "Select an emergency patient to continue",
 "urgentPatientTermination_takenMedicinesTitle": "Medicines Taken",
