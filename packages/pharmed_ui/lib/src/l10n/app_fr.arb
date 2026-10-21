@@ -4325,6 +4325,7 @@
   "urgentPatient_intakeCompletedMessage": "Prise en charge du patient urgent terminée",
   "urgentPatient_intakeCompletedDescription": "Vous pouvez clôturer ce patient urgent depuis l'écran Clôturer le patient urgent.",
   "directedOrders_table_dateColumn": "Date",
+"directedOrders_table_patientColumn": "Patient",
 "directedOrders_table_materialColumn": "Matériel",
 "directedOrders_table_quantityColumn": "Quantité",
 "directedOrders_table_targetServiceColumn": "Service",

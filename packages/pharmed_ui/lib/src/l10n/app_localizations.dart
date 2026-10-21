@@ -11304,13 +11304,13 @@ abstract class AppLocalizations {
   /// No description provided for @cabinDesign_position_connectionPendingInfo.
   ///
   /// In en, this message translates to:
-  /// **'Drawer positions can't be swapped while a connection change is unsaved.'**
+  /// **'Drawer positions can\'t be swapped while a connection change is unsaved.'**
   String get cabinDesign_position_connectionPendingInfo;
 
   /// No description provided for @cabinDesign_position_layoutMismatchError.
   ///
   /// In en, this message translates to:
-  /// **'Drawers found in the scan don't match the saved design (missing or extra drawers). The swap was not saved.'**
+  /// **'Drawers found in the scan don\'t match the saved design (missing or extra drawers). The swap was not saved.'**
   String get cabinDesign_position_layoutMismatchError;
 
   /// No description provided for @cabinDesign_position_notSwappedError.
@@ -11328,7 +11328,7 @@ abstract class AppLocalizations {
   /// No description provided for @cabinDesign_position_sameTypeConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'The drawers at addresses {addresses} are the same type, so the swap can't be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.'**
+  /// **'The drawers at addresses {addresses} are the same type, so the swap can\'t be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.'**
   String cabinDesign_position_sameTypeConfirmMessage(String addresses);
 
   /// No description provided for @cabinDesign_position_sameTypeConfirmButton.
@@ -11353,13 +11353,20 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{address} · {oldType} → {newType}'**
-  String cabinDesign_replace_changeItem(String address, String oldType, String newType);
+  String cabinDesign_replace_changeItem(
+    String address,
+    String oldType,
+    String newType,
+  );
 
   /// No description provided for @cabinDesign_replace_blockerWithStock.
   ///
   /// In en, this message translates to:
   /// **'{medicineName} · stock: {quantity}'**
-  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity);
+  String cabinDesign_replace_blockerWithStock(
+    String medicineName,
+    String quantity,
+  );
 
   /// No description provided for @cabinDesign_replace_blockerAssignmentOnly.
   ///
@@ -11394,7 +11401,7 @@ abstract class AppLocalizations {
   /// No description provided for @cabinDesign_replace_serumError.
   ///
   /// In en, this message translates to:
-  /// **'The serum cabinet can't be replaced; drawer replacement is only for unit-dose and cubic drawers.'**
+  /// **'The serum cabinet can\'t be replaced; drawer replacement is only for unit-dose and cubic drawers.'**
   String get cabinDesign_replace_serumError;
 
   /// No description provided for @cabinDesign_replace_scanChangedError.
@@ -12134,6 +12141,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date'**
   String get directedOrders_table_dateColumn;
+
+  /// No description provided for @directedOrders_table_patientColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get directedOrders_table_patientColumn;
 
   /// No description provided for @directedOrders_table_materialColumn.
   ///

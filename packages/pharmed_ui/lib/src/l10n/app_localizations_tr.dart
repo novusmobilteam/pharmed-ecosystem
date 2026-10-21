@@ -6330,7 +6330,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_position_sectionTitle => 'Çekmece Konumu';
 
   @override
-  String get cabinDesign_position_swapHint => 'Bu çekmeceyi kabindeki başka bir birim doz ya da kübik çekmeceyle yer değiştirir. Atama ve stoklar çekmeceyle birlikte taşınır.';
+  String get cabinDesign_position_swapHint =>
+      'Bu çekmeceyi kabindeki başka bir birim doz ya da kübik çekmeceyle yer değiştirir. Atama ve stoklar çekmeceyle birlikte taşınır.';
 
   @override
   String get cabinDesign_position_swapButton => 'Yer Değiştir';
@@ -6344,13 +6345,16 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_position_pendingInfo => 'Çekmece sırası değiştirildi. Çekmeceleri fiziksel olarak yer değiştirdikten sonra kaydedin; kayıttan önce kabin taranarak doğrulanır.';
+  String get cabinDesign_position_pendingInfo =>
+      'Çekmece sırası değiştirildi. Çekmeceleri fiziksel olarak yer değiştirdikten sonra kaydedin; kayıttan önce kabin taranarak doğrulanır.';
 
   @override
-  String get cabinDesign_position_connectionPendingInfo => 'Bağlantı ayarı değişikliği kaydedilmeden çekmece yeri değiştirilemez.';
+  String get cabinDesign_position_connectionPendingInfo =>
+      'Bağlantı ayarı değişikliği kaydedilmeden çekmece yeri değiştirilemez.';
 
   @override
-  String get cabinDesign_position_layoutMismatchError => 'Taramada bulunan çekmeceler kayıtlı tasarımla uyuşmuyor (eksik ya da fazla çekmece var). Yer değiştirme kaydedilmedi.';
+  String get cabinDesign_position_layoutMismatchError =>
+      'Taramada bulunan çekmeceler kayıtlı tasarımla uyuşmuyor (eksik ya da fazla çekmece var). Yer değiştirme kaydedilmedi.';
 
   @override
   String cabinDesign_position_notSwappedError(String addresses) {
@@ -6358,7 +6362,8 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_position_sameTypeConfirmTitle => 'Aynı Tipte Çekmeceler';
+  String get cabinDesign_position_sameTypeConfirmTitle =>
+      'Aynı Tipte Çekmeceler';
 
   @override
   String cabinDesign_position_sameTypeConfirmMessage(String addresses) {
@@ -6366,7 +6371,8 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_position_sameTypeConfirmButton => 'Yer Değiştirdim, Kaydet';
+  String get cabinDesign_position_sameTypeConfirmButton =>
+      'Yer Değiştirdim, Kaydet';
 
   @override
   String get cabinDesign_replace_scanButton => 'Kabini Tara';
@@ -6375,12 +6381,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_replace_sectionTitle => 'Çekmece Değişimi';
 
   @override
-  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
+  String cabinDesign_replace_changeItem(
+    String address,
+    String oldType,
+    String newType,
+  ) {
     return '$address · $oldType → $newType';
   }
 
   @override
-  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
+  String cabinDesign_replace_blockerWithStock(
+    String medicineName,
+    String quantity,
+  ) {
     return '$medicineName · stok: $quantity';
   }
 
@@ -6390,25 +6403,32 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_replace_blockedInfo => 'Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.';
+  String get cabinDesign_replace_blockedInfo =>
+      'Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.';
 
   @override
-  String get cabinDesign_replace_readyInfo => 'Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.';
+  String get cabinDesign_replace_readyInfo =>
+      'Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.';
 
   @override
-  String get cabinDesign_replace_noChangeInfo => 'Tarama tamamlandı; çekmece değişikliği bulunmadı.';
+  String get cabinDesign_replace_noChangeInfo =>
+      'Tarama tamamlandı; çekmece değişikliği bulunmadı.';
 
   @override
-  String get cabinDesign_replace_addressMismatchError => 'Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.';
+  String get cabinDesign_replace_addressMismatchError =>
+      'Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.';
 
   @override
-  String get cabinDesign_replace_serumError => 'Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.';
+  String get cabinDesign_replace_serumError =>
+      'Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.';
 
   @override
-  String get cabinDesign_replace_scanChangedError => 'Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.';
+  String get cabinDesign_replace_scanChangedError =>
+      'Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.';
 
   @override
-  String get cabinDesign_replace_blockedSaveError => 'Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.';
+  String get cabinDesign_replace_blockedSaveError =>
+      'Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.';
 
   @override
   String get cabinDesign_serum_sectionTitle => 'İç Dizayn';
@@ -6826,6 +6846,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get directedOrders_table_dateColumn => 'Tarih';
+
+  @override
+  String get directedOrders_table_patientColumn => 'Hasta';
 
   @override
   String get directedOrders_table_materialColumn => 'Malzeme';

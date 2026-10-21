@@ -8966,6 +8966,10 @@
 "@directedOrders_table_dateColumn": {
   "description": "Column header — date the redirected order was received, in the redirected orders table (RedirectedOrder.receivedDate)."
 },
+"directedOrders_table_patientColumn": "Hasta",
+"@directedOrders_table_patientColumn": {
+  "description": "Column header — full name (name + surname) of the patient the redirected order belongs to (RedirectedOrder.patientName/patientSurname)."
+},
 "directedOrders_table_materialColumn": "Malzeme",
 "@directedOrders_table_materialColumn": {
   "description": "Column header — material/medicine name of the redirected order (RedirectedOrder.materialName)."

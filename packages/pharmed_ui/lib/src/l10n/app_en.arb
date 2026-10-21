@@ -4872,6 +4872,7 @@
   "urgentPatient_intakeCompletedMessage": "Emergency patient intake completed",
   "urgentPatient_intakeCompletedDescription": "You can close out this emergency patient from the Terminate Emergency Patient screen.",
   "directedOrders_table_dateColumn": "Date",
+"directedOrders_table_patientColumn": "Patient",
 "directedOrders_table_materialColumn": "Material",
 "directedOrders_table_quantityColumn": "Quantity",
 "directedOrders_table_targetServiceColumn": "Service",

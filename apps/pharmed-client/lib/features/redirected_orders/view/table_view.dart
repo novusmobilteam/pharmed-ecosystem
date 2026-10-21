@@ -34,6 +34,15 @@ List<TableColumnDef<RedirectedOrder>> _buildColumnDefs(BuildContext context) => 
   //   title: context.l10n.directedOrders_table_dateColumn,
   //   displayValue: (item) => item.receivedDate?.formattedDate,
   // ),
+  TableColumnDef(
+    title: context.l10n.directedOrders_table_patientColumn,
+    displayValue: (item) {
+      final fullName = [item.patientName, item.patientSurname]
+          .where((part) => part != null && part.trim().isNotEmpty)
+          .join(' ');
+      return fullName.isEmpty ? null : fullName;
+    },
+  ),
   TableColumnDef(title: context.l10n.directedOrders_table_materialColumn, displayValue: (item) => item.materialName),
   TableColumnDef(
     title: context.l10n.directedOrders_table_quantityColumn,
