@@ -181,7 +181,7 @@ class _UrgentPatientMedicineList extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         final item = items.elementAt(index);
-        final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}';
+        final dose = item.medicine?.prescriptionDoseText(context, item.dosePiece) ?? item.dosePiece.formatFractional;
         return Container(
           margin: EdgeInsets.only(bottom: 8.0),
           padding: MedSpacing.insetXl,

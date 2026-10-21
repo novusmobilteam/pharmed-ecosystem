@@ -339,8 +339,8 @@ class _ItemRow extends StatelessWidget {
                 Expanded(child: Text(item.medicine?.name ?? '—', style: MedTextStyles.titleSm())),
                 _MonoTag(
                   text:
-                      '${(item.dosePiece ?? 0).formatFractional} '
-                      '${item.medicine?.operationUnitLocalized(context) ?? l10n.common_defaultUnitFallback}',
+                      item.medicine?.prescriptionDoseText(context, item.dosePiece ?? 0) ??
+                      '${(item.dosePiece ?? 0).formatFractional} ${l10n.common_defaultUnitFallback}',
                 ),
               ],
             ),

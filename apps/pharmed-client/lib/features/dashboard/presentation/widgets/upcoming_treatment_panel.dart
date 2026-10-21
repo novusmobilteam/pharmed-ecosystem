@@ -359,7 +359,7 @@ class _TreatmentPatientTileState extends State<_TreatmentPatientTile> {
                   children: List.generate(treatments.length, (index) {
                     final treatment = treatments.elementAt(index);
                     final dose =
-                        '${treatment.dosePiece.formatFractional} ${treatment.medicine?.operationUnitLocalized(context)}';
+                        treatment.medicine?.prescriptionDoseText(context, treatment.dosePiece) ?? treatment.dosePiece.formatFractional;
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Row(

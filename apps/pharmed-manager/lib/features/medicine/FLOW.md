@@ -30,11 +30,12 @@ Medicine
 | Alan | Örnek | Anlamı |
 |---|---|---|
 | `dose` + `doseUnit` | 100 ml | Bu ilacın **1 adeti** kaç ml'dir |
-| `doseMeasureUnit` + `unitMeasure` | 25 ml | Reçete edilebilecek **en küçük birim** |
+| `doseMeasureUnit` + `unitMeasure` | 25 ml | Reçetenin **ölçü birimi** (1 reçete adedi) |
 
 > **Örnek:** Parol 100ml/doz, 25ml ölçü birimi.
 > Kabinde 40 adet var → 40 × 100ml = 4.000ml mevcut.
-> Reçetede en az 25ml, sonraki geçerli değer 50ml, 75ml, 100ml...
+> Reçetede 25ml için `dosePiece = 1`, 50ml için `2`, 75ml için `3`...
+> Gösterim: `1 Adet × 25 ml`, `3 Adet × 25 ml`.
 
 ---
 
@@ -50,14 +51,19 @@ Aşağıdaki ekranlar isMeasureUnit değerinden bağımsız olarak her zaman **a
 
 ### ÖLÇÜ BİRİMİ / ML kullanan ekranlar
 
-**Reçete Oluşturma**
-- Kullanıcıya `doseMeasureUnit` cinsinden giriş yaptırılır
-- Sadece `doseMeasureUnit`'in tam katları geçerlidir
-- Validasyon: `girilen % doseMeasureUnit == 0`
-- Örnek: doseMeasureUnit = 25ml → 25✅ 50✅ 75✅ 30❌ 40❌
+**Reçete Oluşturma** `[SWREQ-CORE-MED-RX-001]`
+- Kullanıcı **ölçü birimi adedi** girer (stepper 1'er artar, varsayılan 1)
+- `dosePiece` = ölçü birimi adedi → backend'e bu değer gider, ml'ye çevrilmez
+- Örnek: doseMeasureUnit = 100ml, 100ml isteniyor → `dosePiece = 1` (100 değil!)
+- Birim etiketi: `Medicine.prescriptionUnitLocalized` → `Adet × 100 ml`
 
 **Reçete Görüntüleme**
-- Reçetedeki miktar ml olarak gösterilir (ölçü birimi cinsinden)
+- `Medicine.prescriptionDoseText(context, dosePiece)` → `1 Adet × 100 ml`
+- Ölçü birimsiz ilaç / sarf → `2 Adet`
+
+**İlaç Alım**
+- Reçete dozu zaten adettir, çevrim yapılmaz
+- Yalnızca `dailyMaxUsage` (ml) `Drug.dosePieces` ile ölçü birimi adedine çevrilir
 
 **İlaç Boşaltma**
 - Kullanıcıya önce mevcut stok gösterilir: `adet × dose ml`
@@ -65,7 +71,7 @@ Aşağıdaki ekranlar isMeasureUnit değerinden bağımsız olarak her zaman **a
 - Yarım adet sonucu verebilir: `30ml ÷ 100ml = 0.3 adet` → geçerlidir
 
 **İade / Fire / İmha**
-- Reçeteden gelen değer referans alınır (ml cinsinden)
+- Reçeteden gelen değer referans alınır (ölçü birimi adedi)
 - Kullanıcı serbest ml girer, tam kat şartı yoktur
 - Bu ekranlar ters dolum gibi çalışır — ml → adete dönüşüm yapılır
 
@@ -77,8 +83,8 @@ Aşağıdaki ekranlar isMeasureUnit değerinden bağımsız olarak her zaman **a
 // Stok → ml gösterimi
 double stockInMl = adet * drug.dose;
 
-// Reçete validasyonu (tam kat kontrolü)
-bool isValidPrescription = girilen % drug.doseMeasureUnit == 0;
+// Reçete dozu (dosePiece) ölçü birimi adedidir — ml karşılığı yalnızca bilgi amaçlı
+double prescriptionMl = dosePiece * drug.doseMeasureUnit;
 
 // ml → adet (kesirli sonuç normaldir)
 double adetEquivalent = mlMiktar / drug.dose;
@@ -98,8 +104,8 @@ double stokDüşümü = mlMiktar / drug.dose;
 | İlaç Dolum | Adet | Adet |
 | İlaç Sayım | Adet | Adet (ml gösterimi opsiyonel) |
 | Dolum Listesi | Adet | Adet |
-| Reçete Oluşturma | Adet | doseMeasureUnit katları (ml) |
-| Reçete Görüntüleme | Adet | ml |
+| Reçete Oluşturma | Adet | Ölçü birimi adedi (`N Adet × 100 ml`) |
+| Reçete Görüntüleme | Adet | `N Adet × 100 ml` |
 | İlaç Boşaltma | Adet | Serbest ml (stok: adet×dose gösterilir) |
 | İade | Adet | Serbest ml |
 | Fire / İmha | Adet | Serbest ml |
@@ -113,7 +119,7 @@ Bir ekran `Medicine` nesnesiyle çalışıyorsa şu soruları sormak gerekir:
 1. Bu ekran hangi gruba giriyor? (Dolum grubu mu, Reçete grubu mu?)
 2. `isMeasureUnit` kontrolü yapılıyor mu?
 3. Dolum grubundaysa: ml gösterimi gerekmez, adet yeterli
-4. Reçete grubundaysa: `doseMeasureUnit` validasyonu var mı?
+4. Reçete grubundaysa: doz ölçü birimi adedi olarak mı tutuluyor, `prescriptionDoseText` ile mi gösteriliyor?
 5. Boşaltma/İade/Fire grubundaysa: serbest ml girişine izin veriliyor mu?
 
 ---
@@ -123,8 +129,11 @@ Bir ekran `Medicine` nesnesiyle çalışıyorsa şu soruları sormak gerekir:
 ❌ Boşaltma ekranında ölçü birimi katı validasyonu uygulamak
 → Boşaltmada serbest ml serbesttir, 30ml de girilebilir
 
-❌ Reçetede serbest ml girişine izin vermek
-→ Reçetede sadece `doseMeasureUnit` katları geçerlidir
+❌ Reçetede ml girmek / göndermek
+→ Reçetede `dosePiece` ölçü birimi adedidir; 100 ml ölçüde 100 ml için 1 gönderilir
+
+❌ Reçete dozuna `Drug.dosePieces` uygulamak
+→ Reçete dozu zaten adettir; ikinci kez bölmek 0.01 gibi yanlış değerler üretir
 
 ❌ İlaç dolumunda ml kullanmak
 → Dolum her zaman adettir, isMeasureUnit değeri dolumu etkilemez

@@ -96,11 +96,9 @@ class _CensusItemRow extends StatelessWidget {
   final _CensusItemStatus status;
   final VoidCallback? onToggleMissing;
 
-  String _doseText(BuildContext context) {
-    final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.refillList_defaultUnitFallback;
-    return '$piece $unit';
-  }
+  String _doseText(BuildContext context) =>
+      item.medicine?.prescriptionDoseText(context, item.dosePiece) ??
+      '${item.dosePiece?.formatFractional ?? '-'} ${context.l10n.refillList_defaultUnitFallback}';
 
   ItemCardColors get _colors => switch (status) {
     _CensusItemStatus.present => ItemCardColors.green,

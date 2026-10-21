@@ -50,30 +50,20 @@ class PrescriptionFormViewState extends State<PrescriptionFormView> {
                 context.read<GetMedicinesUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
           ),
           const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: MedDoseStepper(
-                  type: DoseStepperType.compact,
-                  platform: DoseStepperPlatform.desktop,
-                  value: selected.dosePiece?.toDouble() ?? 0,
-                  step: selected.medicine?.operationStep ?? 1.0,
-                  unit: selected.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback,
-                  onChanged: notifier.updateDosePiece,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: MedDropdownInputField<RequestType>(
-                  options: RequestType.values,
-                  initialValue: selected.requestType,
-                  labelBuilder: (t) => t?.label,
-                  onChanged: notifier.updateRequestType,
-                ),
-              ),
-            ],
+          MedDropdownInputField<RequestType>(
+            options: RequestType.values,
+            initialValue: selected.requestType,
+            labelBuilder: (t) => t?.label,
+            onChanged: notifier.updateRequestType,
+          ),
+          const SizedBox(height: 12),
+          MedDoseStepper(
+            type: DoseStepperType.large,
+            platform: DoseStepperPlatform.desktop,
+            value: selected.dosePiece?.toDouble() ?? 0,
+            step: 1.0,
+            unit: selected.medicine?.prescriptionUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback,
+            onChanged: notifier.updateDosePiece,
           ),
           const SizedBox(height: 12),
           _CheckboxRow(item: selected),

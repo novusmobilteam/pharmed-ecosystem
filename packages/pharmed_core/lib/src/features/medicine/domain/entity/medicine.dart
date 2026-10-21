@@ -162,6 +162,32 @@ extension MedicineDoseConfig on Medicine {
     return self.unitMeasure?.name ?? context.l10n.common_defaultUnitFallback;
   }
 
+  // ---------------------------------------------------------------------------
+  // Reçete dozu
+  // ---------------------------------------------------------------------------
+  //
+  // [SWREQ-CORE-MED-RX-001] Reçete kalemindeki `dosePiece` her zaman ADET'tir:
+  //  • Ölçü birimsiz ilaç / sarf → kaç adet
+  //  • Ölçü birimli ilaç (isMeasureUnit) → kaç ölçü birimi (doseMeasureUnit)
+  //    Örn: ölçü birimi 100 ml, reçetede 100 ml isteniyorsa dosePiece = 1.
+  // Backend'e de bu adet değeri gider; ml'ye çevrim yapılmaz.
+
+  /// Reçete dozunun birim etiketi.
+  /// Ölçü birimli ilaçta "Adet × 100 ml", değilse "Adet".
+  String prescriptionUnitLocalized(BuildContext context) {
+    final piece = context.l10n.common_defaultUnitFallback;
+    final self = this;
+    if (self is! Drug || !self.isMeasureUnit) return piece;
+    final measure = self.doseMeasureUnit;
+    if (measure == null || measure <= 0) return piece;
+    final label = self.unitMeasure?.name ?? '';
+    return '$piece × ${measure.formatFractional} $label'.trim();
+  }
+
+  /// Reçete dozunun tam gösterimi: "1 Adet × 100 ml" / "2 Adet".
+  String prescriptionDoseText(BuildContext context, num? dosePiece) =>
+      '${dosePiece?.formatFractional ?? '-'} ${prescriptionUnitLocalized(context)}';
+
   String fillingUnitLocalized(BuildContext context) {
     final self = this;
     if (self is! Drug) return context.l10n.common_defaultUnitFallback;

@@ -115,7 +115,7 @@ class _TopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dose = '${item.dosePiece?.formatFractional} ${item.medicine?.operationUnitLocalized(context)}';
+    final dose = item.medicine?.prescriptionDoseText(context, item.dosePiece) ?? item.dosePiece.formatFractional;
     final hour = item.time?.shortRelativeLabelOf(context) ?? '-';
 
     return Row(

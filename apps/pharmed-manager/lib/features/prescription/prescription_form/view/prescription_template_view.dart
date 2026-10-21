@@ -146,7 +146,7 @@ class _TemplateItemsList extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${(it.dosePiece ?? 0).toStringAsFixed(0)} ${it.medicine?.operationUnitLocalized(context) ?? ''}',
+                  it.medicine?.prescriptionDoseText(context, it.dosePiece) ?? '${(it.dosePiece ?? 0).formatFractional} ${context.l10n.common_defaultUnitFallback}',
                   style: MedTextStyles.bodySm(color: MedColors.text3),
                 ),
               ],

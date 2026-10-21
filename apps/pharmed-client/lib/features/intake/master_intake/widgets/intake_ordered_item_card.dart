@@ -64,7 +64,7 @@ class IntakeOrderedItemCard extends StatelessWidget {
                             style: MedTextStyles.titleMd(color: foreground),
                           ),
                           Text(
-                            item.medicine?.operationUnitLocalized(context) ?? '',
+                            item.medicine?.prescriptionUnitLocalized(context) ?? '',
                             style: MedTextStyles.bodySm(color: foreground),
                           ),
                         ],

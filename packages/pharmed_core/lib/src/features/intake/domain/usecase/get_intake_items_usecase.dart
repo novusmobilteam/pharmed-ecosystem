@@ -163,9 +163,10 @@ class GetIntakeItemsUseCase {
       );
 
       final medicine = task.medicine;
+      // Reçete dozu her zaman ADET (ölçü birimli ilaçta ölçü birimi adedi) —
+      // çevrim yapılmaz (SWREQ-CORE-MED-RX-001).
       final prescribed = task.dosePiece.toDouble();
-      // Reçete dozu ölçü birimli ilaçta ml — alınacak miktar ADET'e çevrilir.
-      final pieces = medicine is Drug ? medicine.dosePieces(prescribed) : prescribed;
+      final pieces = prescribed;
 
       return IntakeItem(
         id: task.id,

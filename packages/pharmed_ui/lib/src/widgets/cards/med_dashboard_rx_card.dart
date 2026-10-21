@@ -48,11 +48,9 @@ class MedDashboardRxCard extends StatelessWidget {
   /// Boşsa aksiyon alanı hiç render edilmiyor.
   final List<Widget> actionButtons;
 
-  String _doseText(BuildContext context) {
-    final piece = item.dosePiece?.formatFractional ?? '-';
-    final unit = item.medicine?.operationUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
-    return '$piece $unit';
-  }
+  String _doseText(BuildContext context) =>
+      item.medicine?.prescriptionDoseText(context, item.dosePiece) ??
+      '${item.dosePiece?.formatFractional ?? '-'} ${context.l10n.common_defaultUnitFallback}';
 
   bool get _hasAnyFlag => item.firstDoseEmergency == true || item.askDoctor == true || item.inCaseOfNecessity == true;
 

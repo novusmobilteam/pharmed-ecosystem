@@ -251,9 +251,11 @@ class Drug extends Medicine {
 }
 
 extension DrugDosePiecesX on Drug {
-  /// Reçete/doz miktarını (ölçü birimli ilaçta ml) adede çevirir.
-  /// Ölçü birimsiz ilaçta doz zaten adettir, olduğu gibi döner.
-  /// Alımın ml ↔ adet arasındaki TEK sınırı — başka yerde çevrim yapılmaz.
+  /// Ölçü birimli ilaçta ml cinsinden bir miktarı (ör. `dailyMaxUsage`)
+  /// ölçü birimi adedine çevirir. Ölçü birimsiz ilaçta olduğu gibi döner.
+  ///
+  /// ⚠️ Reçete dozu (`PrescriptionItem.dosePiece`) zaten ADET'tir
+  /// (bkz. SWREQ-CORE-MED-RX-001) — ona UYGULANMAZ.
   double dosePieces(double doseAmount) {
     final perPiece = doseMeasureUnit;
     if (!isMeasureUnit || perPiece == null || perPiece <= 0) return doseAmount;

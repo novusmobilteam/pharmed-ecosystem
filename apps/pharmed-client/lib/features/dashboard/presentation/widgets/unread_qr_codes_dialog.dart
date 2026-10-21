@@ -115,7 +115,7 @@ class _UnreadQrCodeRow extends StatelessWidget {
                 Text(
                   [
                     patientName,
-                    '${item.dosePiece.formatFractional} ${item.medicine?.operationUnitLocalized(context) ?? ''}'.trim(),
+                    item.medicine?.prescriptionDoseText(context, item.dosePiece) ?? item.dosePiece.formatFractional,
                     if (appliedAt != null) appliedAt.formattedDateTime,
                   ].join('  ·  '),
                   style: MedTextStyles.bodySm(color: MedColors.text3),

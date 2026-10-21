@@ -62,7 +62,7 @@ List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) =>
   TableColumnDef(title: context.l10n.movement_performedBy, displayValue: (item) => item.applicationUser?.fullName),
   TableColumnDef(
     title: context.l10n.movement_quantityLabel,
-    displayValue: (item) => '${item.dosePiece.formatFractional} ${item.medicine?.operationUnitLocalized(context)}',
+    displayValue: (item) => item.medicine?.prescriptionDoseText(context, item.dosePiece) ?? item.dosePiece.formatFractional,
   ),
   TableColumnDef(
     title: context.l10n.unscannedBarcodes_table_scannedCountColumn,

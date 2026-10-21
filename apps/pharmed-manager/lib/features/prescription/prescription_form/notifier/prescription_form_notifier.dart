@@ -131,7 +131,9 @@ class PrescriptionFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   void updateMedicine(Medicine? medicine) => _updateSelected(
-    (item) => item.copyWith(medicine: medicine, medicineId: medicine?.id, dosePiece: medicine?.operationStep ?? 1.0),
+    // Reçete dozu her zaman adet — ölçü birimli ilaçta ölçü birimi adedi
+    // (SWREQ-CORE-MED-RX-001). Varsayılan 1.
+    (item) => item.copyWith(medicine: medicine, medicineId: medicine?.id, dosePiece: 1.0),
   );
 
   void updateDosePiece(double? value) => _updateSelected((item) => item.copyWith(dosePiece: value));

@@ -8,8 +8,9 @@
 //
 // Expand kuralı:
 //   - medicine.isMeasureUnit = false (Adet bazlı) VE dosePiece > 1
-//     → dosePiece kadar kopya üret, her birinin dosePiece'i = operationStep (genellikle 1.0)
-//   - medicine.isMeasureUnit = true (ml, mg vb.) → dokunma, olduğu gibi gönder
+//     → dosePiece kadar kopya üret, her birinin dosePiece'i = 1
+//   - medicine.isMeasureUnit = true → dokunma, olduğu gibi gönder
+//     (dosePiece = ölçü birimi adedi, ör. 100 ml ölçüde 1; SWREQ-CORE-MED-RX-001)
 //   - times listesi her kopyaya aynen aktarılır
 //
 // Sınıf: Class B
@@ -58,8 +59,7 @@ class CreatePrescriptionUseCase {
   /// Adet bazlı item'ları expand eder.
   ///
   /// `isMeasureUnit = false` ve `dosePiece > 1` olan her item,
-  /// `dosePiece` kadar ayrı item'a bölünür. Her kopyanın `dosePiece`'i
-  /// `operationStep` değerine (genellikle 1.0) set edilir.
+  /// `dosePiece` kadar ayrı item'a bölünür. Her kopyanın `dosePiece`'i 1'dir.
   /// `times` listesi tüm kopyalara aynen aktarılır.
   List<PrescriptionItem> _expandItems(List<PrescriptionItem> items) {
     final result = <PrescriptionItem>[];
@@ -77,10 +77,8 @@ class CreatePrescriptionUseCase {
 
       // dosePiece kadar kopya üret
       final count = dosePiece.round();
-      final unitDose = medicine?.operationStep ?? 1.0;
-
       for (var i = 0; i < count; i++) {
-        result.add(item.copyWith(dosePiece: unitDose));
+        result.add(item.copyWith(dosePiece: 1.0));
       }
     }
 

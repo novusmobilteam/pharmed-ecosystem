@@ -492,8 +492,8 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
   /// Alım dozunun sınırları — tümü ADET cinsinden. `MedicalConsumable`'da
   /// yalnızca stok; `Drug`'da reçete dozu, düşürülebilirlik (`isCanLowerDose`),
-  /// günlük maksimum ve stoğun birleşik sınırı. Reçete ve günlük maksimum
-  /// (ölçü birimli ilaçta ml) burada adede çevrilir; stok zaten adettir.
+  /// günlük maksimum ve stoğun birleşik sınırı. Reçete dozu zaten adettir;
+  /// yalnızca günlük maksimum (ölçü birimli ilaçta ml) adede çevrilir.
   ({double min, double max}) _doseBounds(IntakeItem item) {
     final medicine = item.medicine;
     final stock = item.assignment?.totalQuantity ?? 0.0;
@@ -502,7 +502,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
     if (medicine is Drug) {
       final isOrdered = _intakeType == IntakeType.ordered;
-      final orderedPieces = medicine.dosePieces(item.prescriptionDose ?? 0);
+      final orderedPieces = item.prescriptionDose ?? 0;
 
       final dailyMax = medicine.dailyMaxUsage ?? 0;
       final dailyMaxPieces = dailyMax > 0 ? medicine.dosePieces(dailyMax.toDouble()) : double.infinity;
