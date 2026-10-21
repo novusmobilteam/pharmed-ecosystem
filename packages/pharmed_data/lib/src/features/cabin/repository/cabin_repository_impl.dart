@@ -365,4 +365,23 @@ class CabinRepositoryImpl implements ICabinRepository {
   Future<Result<void>> updateReturnDrawer(int id, bool status) {
     return _remote.updateReturnDrawer(id, status);
   }
+
+  @override
+  Future<Result<void>> changeDrawerPosition({
+    required int cabinId,
+    required int sourceSlotId,
+    required int targetSlotId,
+  }) async {
+    final result = await _remote.changeDrawerPosition(sourceSlotId: sourceSlotId, targetSlotId: targetSlotId);
+    return result.when(
+      ok: (_) async {
+        // Sıra (orderNumber) slot kaydında — slot cache'i bayatladı. Unit'ler
+        // slotId'ye bağlı ve slot'la birlikte taşındığı için unit cache geçerli.
+        await _local.clearSlots(cabinId);
+        _slotsCache.remove(cabinId);
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
 }

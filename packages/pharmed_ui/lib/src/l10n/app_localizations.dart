@@ -11265,6 +11265,78 @@ abstract class AppLocalizations {
   /// **'Only one return drawer can be designated per cabinet. None designated yet.'**
   String get cabinDesign_returnDrawer_noneInfo;
 
+  /// No description provided for @cabinDesign_position_sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer Position'**
+  String get cabinDesign_position_sectionTitle;
+
+  /// No description provided for @cabinDesign_position_swapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swaps this drawer with another unit-dose or cubic drawer in the cabinet. Assignments and stock move with the drawer.'**
+  String get cabinDesign_position_swapHint;
+
+  /// No description provided for @cabinDesign_position_swapButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap Position'**
+  String get cabinDesign_position_swapButton;
+
+  /// No description provided for @cabinDesign_position_resetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo Order Change'**
+  String get cabinDesign_position_resetButton;
+
+  /// No description provided for @cabinDesign_position_selectTargetBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the drawer to swap with drawer {address} on the cabinet visual.'**
+  String cabinDesign_position_selectTargetBanner(String address);
+
+  /// No description provided for @cabinDesign_position_pendingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer order changed. Save after physically swapping the drawers; the cabinet is scanned to verify before saving.'**
+  String get cabinDesign_position_pendingInfo;
+
+  /// No description provided for @cabinDesign_position_connectionPendingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer positions can't be swapped while a connection change is unsaved.'**
+  String get cabinDesign_position_connectionPendingInfo;
+
+  /// No description provided for @cabinDesign_position_layoutMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawers found in the scan don't match the saved design (missing or extra drawers). The swap was not saved.'**
+  String get cabinDesign_position_layoutMismatchError;
+
+  /// No description provided for @cabinDesign_position_notSwappedError.
+  ///
+  /// In en, this message translates to:
+  /// **'The expected drawer was not found at addresses {addresses}. Physically swap the drawers, then save again.'**
+  String cabinDesign_position_notSwappedError(String addresses);
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawers of the Same Type'**
+  String get cabinDesign_position_sameTypeConfirmTitle;
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The drawers at addresses {addresses} are the same type, so the swap can't be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.'**
+  String cabinDesign_position_sameTypeConfirmMessage(String addresses);
+
+  /// No description provided for @cabinDesign_position_sameTypeConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I Swapped Them, Save'**
+  String get cabinDesign_position_sameTypeConfirmButton;
+
   /// No description provided for @cabinDesign_serum_sectionTitle.
   ///
   /// In en, this message translates to:

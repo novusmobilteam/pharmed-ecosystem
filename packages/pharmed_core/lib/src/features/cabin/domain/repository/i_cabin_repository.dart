@@ -62,4 +62,12 @@ abstract interface class ICabinRepository {
   Future<Result<List<DrawerConfig>>> getDrawerConfigs({bool forceRefresh = false});
 
   Future<Result<void>> updateReturnDrawer(int id, bool status);
+
+  /// [cabinId] kabinindeki iki çekmecenin (DrawerSlot) sırasını takas eder.
+  /// Başarılıysa kabinin slot cache'i invalidate edilir.
+  Future<Result<void>> changeDrawerPosition({
+    required int cabinId,
+    required int sourceSlotId,
+    required int targetSlotId,
+  });
 }

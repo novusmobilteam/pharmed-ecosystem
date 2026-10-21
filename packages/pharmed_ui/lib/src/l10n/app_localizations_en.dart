@@ -6375,6 +6375,48 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only one return drawer can be designated per cabinet. None designated yet.';
 
   @override
+  String get cabinDesign_position_sectionTitle => 'Drawer Position';
+
+  @override
+  String get cabinDesign_position_swapHint => 'Swaps this drawer with another unit-dose or cubic drawer in the cabinet. Assignments and stock move with the drawer.';
+
+  @override
+  String get cabinDesign_position_swapButton => 'Swap Position';
+
+  @override
+  String get cabinDesign_position_resetButton => 'Undo Order Change';
+
+  @override
+  String cabinDesign_position_selectTargetBanner(String address) {
+    return 'Select the drawer to swap with drawer $address on the cabinet visual.';
+  }
+
+  @override
+  String get cabinDesign_position_pendingInfo => 'Drawer order changed. Save after physically swapping the drawers; the cabinet is scanned to verify before saving.';
+
+  @override
+  String get cabinDesign_position_connectionPendingInfo => 'Drawer positions can\'t be swapped while a connection change is unsaved.';
+
+  @override
+  String get cabinDesign_position_layoutMismatchError => 'Drawers found in the scan don\'t match the saved design (missing or extra drawers). The swap was not saved.';
+
+  @override
+  String cabinDesign_position_notSwappedError(String addresses) {
+    return 'The expected drawer was not found at addresses $addresses. Physically swap the drawers, then save again.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmTitle => 'Drawers of the Same Type';
+
+  @override
+  String cabinDesign_position_sameTypeConfirmMessage(String addresses) {
+    return 'The drawers at addresses $addresses are the same type, so the swap can\'t be verified by scanning. Confirm only if you have physically swapped them; otherwise the wrong drawer will open during operations.';
+  }
+
+  @override
+  String get cabinDesign_position_sameTypeConfirmButton => 'I Swapped Them, Save';
+
+  @override
   String get cabinDesign_serum_sectionTitle => 'Internal Layout';
 
   @override

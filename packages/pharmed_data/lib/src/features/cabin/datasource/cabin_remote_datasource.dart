@@ -205,4 +205,14 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.voidParser(),
     );
   }
+
+  /// Aynı kabindeki iki fiziksel çekmecenin (DrawerSlot) sırasını takas eder.
+  /// Atama/stok kayıtları slot'a bağlı olduğu için çekmeceyle birlikte taşınır.
+  Future<Result<void>> changeDrawerPosition({required int sourceSlotId, required int targetSlotId}) {
+    return putRequest(
+      path: '/CabinDesign/changePosition',
+      body: {'sourceCabinDesignId': sourceSlotId, 'targetCabinDesignId': targetSlotId},
+      parser: BaseRemoteDataSource.voidParser(),
+    );
+  }
 }

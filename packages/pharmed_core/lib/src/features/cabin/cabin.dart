@@ -43,6 +43,7 @@ export 'domain/usecase/scan_cabin_usecase.dart';
 export 'domain/usecase/get_cabins_usecase.dart';
 export 'domain/usecase/get_drawer_types_usecase.dart';
 export 'domain/usecase/set_return_drawer_usecase.dart';
+export 'domain/usecase/change_drawer_position_usecase.dart';
 export 'domain/usecase/update_cabin_usecase.dart';
 
 export 'domain/entity/drawer_slot_visual.dart';

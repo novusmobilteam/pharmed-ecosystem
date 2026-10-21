@@ -34,10 +34,21 @@ part 'camera_form_panel.dart';
 part 'camera_test_dialog.dart';
 
 class CabinDesignDialog extends ConsumerStatefulWidget {
-  const CabinDesignDialog({super.key});
+  const CabinDesignDialog({super.key, this.onPersisted});
 
-  static Future<void> show(BuildContext context) {
-    return showDialog<void>(context: context, builder: (_) => const CabinDesignDialog());
+  /// Backend'e kalıcı bir değişiklik yazıldığında çağrılır (birden fazla kez
+  /// gelebilir). Açan taraf, dialog kapanınca kendi kabin verisini yenilemek
+  /// için kullanır.
+  final VoidCallback? onPersisted;
+
+  /// Dialog kapanınca, açıkken herhangi bir kalıcı değişiklik kaydedildiyse true.
+  static Future<bool> show(BuildContext context) async {
+    var persisted = false;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CabinDesignDialog(onPersisted: () => persisted = true),
+    );
+    return persisted;
   }
 
   @override
@@ -58,6 +69,10 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
 
     notifier.setCallbacks(key: CabinDesignNotifier.loadOp, onError: showError);
     notifier.setCallbacks(key: CabinDesignNotifier.switchCabinOp, onError: showError);
+
+    ref.listenManual(cabinDesignNotifierProvider.select((n) => n.persistedVersion), (previous, next) {
+      if (next > (previous ?? 0)) widget.onPersisted?.call();
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => notifier.init());
   }
@@ -200,23 +215,69 @@ class _Body extends StatelessWidget {
         children: [
           Expanded(
             flex: 7,
-            child: Center(
-              child: SingleChildScrollView(
-                padding: MedSpacing.insetXl * 3,
-                child: MasterCabinDeviceVisual(
-                  groups: notifier.displayedGroups,
-                  selectedSlotId: notifier.selectedSlotId,
-                  isMaster: notifier.isMaster,
-                  onSlotTap: (g) {
-                    final id = g.slot.id;
-                    if (id != null) notifier.selectSlot(id);
-                  },
+            child: Column(
+              children: [
+                if (notifier.isSwapMode)
+                  _SwapModeBanner(
+                    address: notifier.selectedGroup?.address ?? '—',
+                    onCancel: notifier.cancelSwap,
+                  ),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: MedSpacing.insetXl * 3,
+                      child: MasterCabinDeviceVisual(
+                        groups: notifier.displayedGroups,
+                        selectedSlotId: notifier.selectedSlotId,
+                        isMaster: notifier.isMaster,
+                        onSlotTap: (g) {
+                          final id = g.slot.id;
+                          if (id != null) notifier.selectSlot(id);
+                        },
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           const VerticalDivider(width: 1),
           Expanded(flex: 5, child: CabinSettingsView(notifier: notifier)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Yer değiştirme modunda kabin görselinin üstünde: hedef çekmeceyi seçme talimatı.
+class _SwapModeBanner extends StatelessWidget {
+  const _SwapModeBanner({required this.address, required this.onCancel});
+
+  final String address;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: MedSpacing.insetXl,
+      padding: MedSpacing.insetLg,
+      decoration: BoxDecoration(
+        color: MedColors.blueLight,
+        border: Border.all(color: MedColors.blue),
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Row(
+        children: [
+          Icon(PhosphorIcons.arrowsDownUp(), size: 18, color: MedColors.blue),
+          const SizedBox(width: MedSpacing.md),
+          Expanded(
+            child: Text(
+              context.l10n.cabinDesign_position_selectTargetBanner(address),
+              style: MedTextStyles.bodyMd(color: MedColors.text),
+            ),
+          ),
+          TextButton(onPressed: onCancel, child: Text(context.l10n.common_cancelButton)),
         ],
       ),
     );
@@ -228,6 +289,26 @@ class _BottomBar extends StatelessWidget {
 
   final CabinDesignNotifier notifier;
 
+  /// Aynı tipte çekmeceler yer değiştirdiyse tarama bunu doğrulayamaz —
+  /// kayıttan önce kullanıcıdan fiziksel takası yaptığına dair açık onay alınır.
+  void _onSave(BuildContext context) {
+    final sameType = notifier.sameTypeSwapAddresses;
+    if (sameType.isEmpty) {
+      notifier.save();
+      return;
+    }
+    MessageUtils.showConfirmDialog(
+      context: context,
+      action: ConfirmAction.custom,
+      customTitle: context.l10n.cabinDesign_position_sameTypeConfirmTitle,
+      customMessage: context.l10n.cabinDesign_position_sameTypeConfirmMessage(sameType.join(', ')),
+      confirmButtonText: context.l10n.cabinDesign_position_sameTypeConfirmButton,
+      color: MedColors.amber,
+      iconData: PhosphorIcons.warning(),
+      onConfirm: notifier.save,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -238,7 +319,7 @@ class _BottomBar extends StatelessWidget {
         MedButton(
           label: context.l10n.common_saveButton,
           isLoading: notifier.isSaving,
-          onPressed: notifier.canSave ? notifier.save : null,
+          onPressed: notifier.canSave ? () => _onSave(context) : null,
         ),
       ],
     );

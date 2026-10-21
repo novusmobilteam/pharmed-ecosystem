@@ -74,6 +74,10 @@ class _DrawerDetailPanel extends StatelessWidget {
             ],
           ),
         ],
+        if (CabinDesignNotifier.isSwappable(group)) ...[
+          const SizedBox(height: MedSpacing.xl),
+          _DrawerPositionSection(group: group, notifier: notifier),
+        ],
       ],
     );
   }
@@ -148,6 +152,83 @@ class _ReturnDrawerToggle extends StatelessWidget {
           MedToggle(value: isOn, onChanged: disabled ? null : onChanged),
         ],
       ),
+    );
+  }
+}
+
+/// Seçili çekmecenin sırasını kabindeki başka bir birim doz / kübik
+/// çekmeceyle takas etme. Hedef, kabin görselinden seçilir.
+class _DrawerPositionSection extends StatelessWidget {
+  const _DrawerPositionSection({required this.group, required this.notifier});
+
+  final DrawerGroup group;
+  final CabinDesignNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isSource = notifier.swapSourceSlotId == group.slot.id;
+    final connectionPending = notifier.pending.hasConnectionChange || notifier.pending.hasDesignChange;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.cabinDesign_position_sectionTitle, style: MedTextStyles.titleSm(color: MedColors.text3)),
+        const SizedBox(height: MedSpacing.sm),
+        Text(l10n.cabinDesign_position_swapHint, style: MedTextStyles.bodySm(color: MedColors.text3)),
+        const SizedBox(height: MedSpacing.lg),
+        Row(
+          children: [
+            if (isSource)
+              MedButton(
+                label: l10n.common_cancelButton,
+                variant: MedButtonVariant.secondary,
+                onPressed: notifier.cancelSwap,
+              )
+            else
+              MedButton(
+                label: l10n.cabinDesign_position_swapButton,
+                variant: MedButtonVariant.secondary,
+                prefixIcon: Icon(PhosphorIcons.arrowsDownUp(), size: 16),
+                onPressed: notifier.canSwap(group) && !notifier.isSwapMode ? notifier.startSwap : null,
+              ),
+            if (notifier.pending.hasOrderChange) ...[
+              const SizedBox(width: MedSpacing.sm),
+              MedButton(
+                label: l10n.cabinDesign_position_resetButton,
+                variant: MedButtonVariant.ghost,
+                onPressed: notifier.isSaving ? null : notifier.resetSlotOrder,
+              ),
+            ],
+          ],
+        ),
+        if (connectionPending) ...[
+          const SizedBox(height: MedSpacing.sm),
+          _PositionInfo(text: l10n.cabinDesign_position_connectionPendingInfo, color: MedColors.text4),
+        ] else if (notifier.pending.hasOrderChange) ...[
+          const SizedBox(height: MedSpacing.sm),
+          _PositionInfo(text: l10n.cabinDesign_position_pendingInfo, color: MedColors.amber),
+        ],
+      ],
+    );
+  }
+}
+
+class _PositionInfo extends StatelessWidget {
+  const _PositionInfo({required this.text, required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.info_outline_rounded, size: 14, color: color),
+        const SizedBox(width: 6),
+        Expanded(child: Text(text, style: MedTextStyles.bodySm(color: color))),
+      ],
     );
   }
 }

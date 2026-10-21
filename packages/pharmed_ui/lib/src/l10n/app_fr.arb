@@ -4048,6 +4048,39 @@
     }
   },
   "cabinDesign_returnDrawer_noneInfo": "Un seul tiroir de retour peut être désigné par armoire. Aucun désigné pour le moment.",
+  "cabinDesign_position_sectionTitle": "Position du tiroir",
+  "cabinDesign_position_swapHint": "Échange ce tiroir avec un autre tiroir dose unitaire ou cubique de l'armoire. Les affectations et le stock suivent le tiroir.",
+  "cabinDesign_position_swapButton": "Échanger la position",
+  "cabinDesign_position_resetButton": "Annuler le changement d'ordre",
+  "cabinDesign_position_selectTargetBanner": "Sélectionnez sur le visuel de l'armoire le tiroir à échanger avec le tiroir {address}.",
+  "@cabinDesign_position_selectTargetBanner": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_pendingInfo": "L'ordre des tiroirs a été modifié. Enregistrez après avoir physiquement échangé les tiroirs ; l'armoire est scannée pour vérification avant l'enregistrement.",
+  "cabinDesign_position_connectionPendingInfo": "Impossible d'échanger les tiroirs tant qu'une modification de connexion n'est pas enregistrée.",
+  "cabinDesign_position_layoutMismatchError": "Les tiroirs détectés lors du scan ne correspondent pas à la conception enregistrée (tiroirs manquants ou en trop). L'échange n'a pas été enregistré.",
+  "cabinDesign_position_notSwappedError": "Le tiroir attendu est introuvable aux adresses {addresses}. Échangez physiquement les tiroirs, puis enregistrez à nouveau.",
+  "@cabinDesign_position_notSwappedError": {
+    "placeholders": {
+      "addresses": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_sameTypeConfirmTitle": "Tiroirs du même type",
+  "cabinDesign_position_sameTypeConfirmMessage": "Les tiroirs aux adresses {addresses} sont du même type : l'échange ne peut pas être vérifié par le scan. Confirmez uniquement si vous les avez physiquement échangés ; sinon, le mauvais tiroir s'ouvrira lors des opérations.",
+  "@cabinDesign_position_sameTypeConfirmMessage": {
+    "placeholders": {
+      "addresses": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_position_sameTypeConfirmButton": "Je les ai échangés, enregistrer",
   "cabinDesign_serum_sectionTitle": "Disposition interne",
   "cabinDesign_serum_manualBadge": "CONFIGURATION MANUELLE",
   "cabinDesign_serum_infoBanner": "La disposition interne d'une armoire à sérum n'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.",
