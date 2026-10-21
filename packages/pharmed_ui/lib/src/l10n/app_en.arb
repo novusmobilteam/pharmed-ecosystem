@@ -4584,6 +4584,48 @@
     }
   },
   "cabinDesign_position_sameTypeConfirmButton": "I Swapped Them, Save",
+  "cabinDesign_replace_scanButton": "Scan Cabinet",
+  "cabinDesign_replace_sectionTitle": "Drawer Replacement",
+  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
+  "@cabinDesign_replace_changeItem": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      },
+      "oldType": {
+        "type": "String"
+      },
+      "newType": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerWithStock": "{medicineName} · stock: {quantity}",
+  "@cabinDesign_replace_blockerWithStock": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · no stock (assigned)",
+  "@cabinDesign_replace_blockerAssignmentOnly": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockedInfo": "The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.",
+  "cabinDesign_replace_readyInfo": "The new drawer will be applied to the cabinet design when you save.",
+  "cabinDesign_replace_noChangeInfo": "Scan complete; no drawer change was found.",
+  "cabinDesign_replace_addressMismatchError": "The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.",
+  "cabinDesign_replace_serumError": "The serum cabinet can't be replaced; drawer replacement is only for unit-dose and cubic drawers.",
+  "cabinDesign_replace_scanChangedError": "The scan before saving differs from the previous scan result. Please scan the cabinet again.",
+  "cabinDesign_replace_blockedSaveError": "Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.",
   "cabinDesign_serum_sectionTitle": "Internal Layout",
   "cabinDesign_serum_manualBadge": "MANUAL SETUP",
   "cabinDesign_serum_infoBanner": "The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.",

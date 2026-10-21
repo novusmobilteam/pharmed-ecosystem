@@ -19,6 +19,7 @@ final cabinDesignNotifierProvider = ChangeNotifierProvider.autoDispose<CabinDesi
     getVisualizerData: ref.read(getCabinVisualizerDataUseCaseProvider),
     setReturnDrawer: ref.read(setReturnDrawerUseCaseProvider),
     changeDrawerPosition: ref.read(changeDrawerPositionUseCaseProvider),
+    getMedicineAssignments: ref.read(getMedicineAssignmentsUseCaseProvider),
     scanCabin: ref.read(scanCabinUseCaseProvider),
     createCabin: ref.read(createCabinUseCaseProvider),
     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
@@ -36,6 +37,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     required GetCabinVisualizerDataUseCase getVisualizerData,
     required SetReturnDrawerUseCase setReturnDrawer,
     required ChangeDrawerPositionUseCase changeDrawerPosition,
+    required GetMedicineAssignmentsUseCase getMedicineAssignments,
     required ScanCabinUseCase scanCabin,
     required CreateCabinUseCase createCabin,
     required SaveCabinDesignUseCase saveCabinDesign,
@@ -49,6 +51,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
        _getVisualizerData = getVisualizerData,
        _setReturnDrawer = setReturnDrawer,
        _changeDrawerPosition = changeDrawerPosition,
+       _getMedicineAssignments = getMedicineAssignments,
        _scanCabin = scanCabin,
        _createCabin = createCabin,
        _saveCabinDesign = saveCabinDesign,
@@ -61,6 +64,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetCabinVisualizerDataUseCase _getVisualizerData;
   final SetReturnDrawerUseCase _setReturnDrawer;
   final ChangeDrawerPositionUseCase _changeDrawerPosition;
+  final GetMedicineAssignmentsUseCase _getMedicineAssignments;
   final ScanCabinUseCase _scanCabin;
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
@@ -125,6 +129,16 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   /// yuvaya bağlı olduğu için yer değiştirmede sabit kalır; kısmi kayıtta
   /// `_groups` listesi yeniden sıralansa da pozisyonun adresi buradan okunur.
   List<String> _positionAddresses = const [];
+
+  /// Son çekmece değişimi taramasında aynı adreste tipi değişen çekmeceler.
+  /// `_pending.scanGroups` ile birlikte atanır/temizlenir.
+  List<DrawerReplacement> _replacements = const [];
+  List<DrawerReplacement> get replacements => _replacements;
+  bool get hasReplacementBlockers => _replacements.any((r) => r.isBlocked);
+
+  /// Son tarama tamamlandı ama kayıtlı tasarımdan farklı bir çekmece bulunmadı.
+  bool _scanFoundNoChange = false;
+  bool get scanFoundNoChange => _scanFoundNoChange;
   bool get isSwapMode => _swapSourceSlotId != null;
 
   CabinPendingChanges _pending = CabinPendingChanges.none;
@@ -230,7 +244,14 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isSwitchingCabin => isLoading(switchCabinOp);
   bool get isTogglingStatus => isLoading(_toggleStatusOp);
 
-  bool get canSave => _selection is SelectedCabin && _pending.hasAny && !isSaving && !isRescanning;
+  bool get canSave =>
+      _selection is SelectedCabin && _pending.hasAny && !isSaving && !isRescanning && !hasReplacementBlockers;
+
+  /// "Tekrar Tara": bağlantı değişikliği varsa yeni bağlantıyla tarar, yoksa
+  /// çekmece değişimi (aynı adreste tip değişimi) arar. Bekleyen yer
+  /// değiştirme ile birlikte yapılamaz (biri sırayı, diğeri tipi değiştirir).
+  bool get canRescan =>
+      _cabin != null && !isRescanning && !isSaving && !_pending.hasOrderChange && !isSwapMode;
 
   /// Seçili kabin panelindeki satır içi hata (kaydet / tara / durum değiştir).
   String? get inlineError => _inlineErrorOps.where(isFailed).map(message).firstOrNull;
@@ -287,6 +308,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
         _cabin = cabin;
         _groups = data.groups;
         _positionAddresses = data.groups.map((g) => g.address).toList();
+        _replacements = const [];
+        _scanFoundNoChange = false;
         _currentReturnSlotId = data.groups.firstWhereOrNull((g) => g.isReturnDrawer)?.slot.id;
         _selectedSlotId = data.groups.firstOrNull?.slot.id;
         _pending = CabinPendingChanges.none;
@@ -451,6 +474,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     // Bağlantı değişince yerleşim yeniden taranacağı için bekleyen sıra da geçersiz.
     _pending = _pending.withComPort(port == cabin.comPort ? null : port).withScanGroups(null).withSlotOrder(null);
     _swapSourceSlotId = null;
+    _replacements = const [];
+    _scanFoundNoChange = false;
     _clearInlineErrors(notify: false);
     notifyListeners();
   }
@@ -464,6 +489,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     final same = normalized == cabin.no?.trim().toUpperCase();
     _pending = _pending.withAddressChar(same ? null : normalized).withScanGroups(null).withSlotOrder(null);
     _swapSourceSlotId = null;
+    _replacements = const [];
+    _scanFoundNoChange = false;
     _clearInlineErrors(notify: false);
     notifyListeners();
   }
@@ -471,16 +498,119 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   /// "Tekrar Tara" — sadece kabin görselinin üzerinde loading.
   Future<void> rescanCabin() async {
     final cabin = _cabin;
-    if (cabin == null || isRescanning || isSaving || !_pending.hasConnectionChange) return;
+    if (cabin == null || !canRescan) return;
 
     _clearInlineErrors(notify: false);
-    await execute(
-      _rescanOp,
-      operation: () => _performRescan(cabin),
-      onData: (newGroups) {
-        _pending = _pending.withScanGroups(_isSameDrawerLayout(newGroups, _groups) ? null : newGroups);
+    _replacements = const [];
+    _scanFoundNoChange = false;
+
+    // Bağlantı (port/adres) değiştiyse yeni bağlantının yerleşimi okunur.
+    if (_pending.hasConnectionChange) {
+      await execute(
+        _rescanOp,
+        operation: () => _performRescan(cabin),
+        onData: (newGroups) {
+          _pending = _pending.withScanGroups(_isSameDrawerLayout(newGroups, _groups) ? null : newGroups);
+        },
+      );
+      return;
+    }
+
+    // Bağlantı aynı — çekmece değişimi taraması.
+    setLoading(_rescanOp);
+    final detected = await _detectReplacements(cabin);
+    detected.when(
+      ok: (d) {
+        _replacements = d.replacements;
+        _scanFoundNoChange = d.replacements.isEmpty;
+        _pending = _pending.withScanGroups(d.replacements.isEmpty ? null : d.scanGroups);
+        MedLogger.info(
+          unit: _unit,
+          swreq: _swreq,
+          message: 'Çekmece değişimi taraması tamamlandı',
+          context: {
+            'cabinId': cabin.id,
+            'replaced': [for (final r in d.replacements) r.address],
+            'blocked': [for (final r in d.replacements.where((r) => r.isBlocked)) r.address],
+          },
+        );
+        setSuccess(_rescanOp);
+      },
+      error: (e) {
+        _pending = _pending.withScanGroups(null);
+        MedLogger.warn(
+          unit: _unit,
+          swreq: _swreq,
+          message: 'Çekmece değişimi taraması reddedildi',
+          context: {'cabinId': cabin.id, 'error': e.message},
+        );
+        setFailed(_rescanOp, message: e.userMessage);
       },
     );
+  }
+
+  /// Kabini tarar ve kayıtlı tasarımla adres bazında karşılaştırır. Yalnızca
+  /// aynı adreste tip (DrawerConfig) değişimi desteklenir; adres seti
+  /// değiştiyse ya da serum çekmecesi işin içindeyse reddedilir. Değişen
+  /// çekmecelerin atama/stokları [DrawerReplacement.blockers] olarak eklenir.
+  Future<Result<({List<DrawerGroup> scanGroups, List<DrawerReplacement> replacements})>> _detectReplacements(
+    Cabin cabin,
+  ) async {
+    final scan = await _performRescan(cabin);
+    if (scan.isError) return Result.error(_errorOf(scan));
+    final scanned = scan.data!;
+
+    final currentByAddress = {for (final g in _groups) g.address: g};
+    final scannedByAddress = {for (final g in scanned) g.address: g};
+
+    if (!const SetEquality<String>().equals(currentByAddress.keys.toSet(), scannedByAddress.keys.toSet())) {
+      return Result.error(
+        BusinessRuleException(
+          message: contextlessL10n().cabinDesign_replace_addressMismatchError,
+          ruleCode: 'DRAWER_REPLACE_ADDRESS_MISMATCH',
+        ),
+      );
+    }
+
+    final replacements = [
+      for (final e in currentByAddress.entries)
+        if (scannedByAddress[e.key]!.slot.drawerConfigId != e.value.slot.drawerConfigId)
+          DrawerReplacement(address: e.key, current: e.value, scanned: scannedByAddress[e.key]!),
+    ];
+
+    if (replacements.any((r) => r.current.isSerum || r.scanned.isSerum)) {
+      return Result.error(
+        BusinessRuleException(
+          message: contextlessL10n().cabinDesign_replace_serumError,
+          ruleCode: 'DRAWER_REPLACE_SERUM',
+        ),
+      );
+    }
+
+    if (replacements.isEmpty) return Result.ok((scanGroups: scanned, replacements: const <DrawerReplacement>[]));
+
+    final assignments = await _getMedicineAssignments.call(cabin.id!);
+    if (assignments.isError) return Result.error(_errorOf(assignments));
+
+    return Result.ok((scanGroups: scanned, replacements: _withBlockers(replacements, assignments.data!)));
+  }
+
+  /// Sökülen çekmeceye (slot id) bağlı atamaları, stok toplamlarıyla birlikte ekler.
+  static List<DrawerReplacement> _withBlockers(
+    List<DrawerReplacement> replacements,
+    List<MedicineAssignment> assignments,
+  ) {
+    return [
+      for (final r in replacements)
+        r.withBlockers([
+          for (final a in assignments)
+            if ((a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId) == r.current.slot.id)
+              DrawerReplacementBlocker(
+                medicineName: a.medicine?.name ?? '—',
+                stockQuantity: (a.stocks ?? const <CabinStock>[]).fold<num>(0, (sum, st) => sum + (st.quantity ?? 0)),
+              ),
+        ]),
+    ];
   }
 
   /// Master: (bekleyen ?? mevcut) port + adres her zaman 'A'.
@@ -548,6 +678,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     _swapSourceSlotId = null;
     setLoading(_saveOp);
     final pending = _pending;
+    final returnSlotId = effectiveReturnSlotId;
 
     // ── 1. Bağlantı değişikliği varsa — kaydetmeden ÖNCE doğrula ──────
     // ("Tekrar Tara" tetiklenmemiş olsa bile kayıt anında mutlaka kontrol.)
@@ -557,6 +688,35 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
       if (rescan.isError) return _failSave(_errorOf(rescan));
       final newGroups = rescan.data!;
       finalScanGroups = _isSameDrawerLayout(newGroups, _groups) ? null : newGroups;
+    }
+
+    // ── 1a. Çekmece değişimi — kayıttan hemen önce yeniden doğrula ────
+    // Tarama ile kayıt arasında çekmece tekrar değişmiş ya da atama/stok
+    // eklenmiş olabilir; bayat sonuçla tasarım yazılmaz.
+    var isReplacementSave = false;
+    if (!pending.hasConnectionChange && pending.hasDesignChange) {
+      final detected = await _detectReplacements(cabin);
+      if (detected.isError) return _failSave(_errorOf(detected));
+      final d = detected.data!;
+      if (d.replacements.isEmpty || !_isSameDrawerLayout(d.scanGroups, pending.scanGroups!)) {
+        return _failSave(
+          BusinessRuleException(
+            message: contextlessL10n().cabinDesign_replace_scanChangedError,
+            ruleCode: 'DRAWER_REPLACE_SCAN_CHANGED',
+          ),
+        );
+      }
+      _replacements = d.replacements;
+      if (hasReplacementBlockers) {
+        return _failSave(
+          BusinessRuleException(
+            message: contextlessL10n().cabinDesign_replace_blockedSaveError,
+            ruleCode: 'DRAWER_REPLACE_BLOCKED',
+          ),
+        );
+      }
+      finalScanGroups = d.scanGroups;
+      isReplacementSave = true;
     }
 
     // ── 1b. Yer değiştirme varsa — fiziksel takası taramayla doğrula ──
@@ -624,7 +784,9 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     if (finalScanGroups != null) {
       final r = await _saveCabinDesign.call(
         cabinId: updatedCabin.id!,
-        scanResults: finalScanGroups.map((g) => g.slot).toList(),
+        scanResults: isReplacementSave
+            ? _replacementSlots(finalScanGroups, returnSlotId)
+            : finalScanGroups.map((g) => g.slot).toList(),
         isUpdate: true,
       );
       if (r.isError) return _failSave(_errorOf(r));
@@ -640,6 +802,25 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     MedLogger.error(unit: _unit, swreq: _swreq, message: 'Kabin dizaynı kaydedilemedi', error: e);
     setFailed(_saveOp, message: e.userMessage);
     return false;
+  }
+
+  /// Çekmece değişimi kaydı: PUT /CabinDesign/bulk adres bazlı eşleşir.
+  /// Her adres mevcut kaydın id'siyle gönderilir. Değişmeyen çekmeceler iade
+  /// bayrağını ve port yönünü korur; yeni takılan çekmecede iade bayrağı düşer.
+  List<DrawerSlot> _replacementSlots(List<DrawerGroup> scanned, int? returnSlotId) {
+    final currentByAddress = {for (final g in _groups) g.address: g.slot};
+    final replaced = _replacements.map((r) => r.address).toSet();
+    return [
+      for (final g in scanned)
+        g.slot.copyWith(
+          id: currentByAddress[g.address]?.id,
+          isReturnDrawerHere:
+              !replaced.contains(g.address) &&
+              returnSlotId != null &&
+              currentByAddress[g.address]?.id == returnSlotId,
+          isPortReversed: replaced.contains(g.address) ? null : currentByAddress[g.address]?.isPortReversed,
+        ),
+    ];
   }
 
   /// Kabini yeniden tarar ve hedef sıraya göre her adreste beklenen çekmece
@@ -915,6 +1096,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     _cabin = null;
     _groups = const [];
     _positionAddresses = const [];
+    _replacements = const [];
+    _scanFoundNoChange = false;
     _selectedSlotId = null;
     _currentReturnSlotId = null;
     _swapSourceSlotId = null;

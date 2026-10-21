@@ -1,0 +1,1007 @@
+From 42cd77d323385bb3419f06329d074b2439a86dc8 Mon Sep 17 00:00:00 2001
+From: Feyzullah <feyzkodat@gmail.com>
+Date: Wed, 21 Oct 2026 12:25:13 +0300
+Subject: [PATCH] feat(client): drawer replacement via rescan in cabin design
+
+- Detect same-address drawer type changes by rescanning the cabinet
+- Block replacement while the removed drawer has assignments or stock
+- Re-verify on save, keep slot ids and return drawer flag
+
+Refs #101
+
+---
+ .../notifier/cabin_design_models.dart         |  41 ++++
+ .../notifier/cabin_design_notifier.dart       | 199 +++++++++++++++++-
+ .../view/basic_settings_panel.dart            |  94 ++++++++-
+ .../usecase/save_cabin_design_usecase.dart    |   4 +-
+ packages/pharmed_ui/lib/src/l10n/app_en.arb   |  42 ++++
+ packages/pharmed_ui/lib/src/l10n/app_fr.arb   |  42 ++++
+ .../lib/src/l10n/app_localizations.dart       |  72 +++++++
+ .../lib/src/l10n/app_localizations_ar.dart    |  42 ++++
+ .../lib/src/l10n/app_localizations_en.dart    |  42 ++++
+ .../lib/src/l10n/app_localizations_fr.dart    |  42 ++++
+ .../lib/src/l10n/app_localizations_tr.dart    |  42 ++++
+ packages/pharmed_ui/lib/src/l10n/app_tr.arb   |  72 +++++++
+ 12 files changed, 715 insertions(+), 19 deletions(-)
+
+diff --git a/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_models.dart b/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_models.dart
+index ef826fc..07855f0 100644
+--- a/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_models.dart
++++ b/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_models.dart
+@@ -155,3 +155,44 @@ class CabinPendingChanges {
+     slotOrder: slotOrder != null ? slotOrder() : this.slotOrder,
+   );
+ }
++
++/// Tarama sonucunda aynı adreste tipi değişmiş bir çekmece: [current] kayıtlı
++/// tasarımdaki (sökülen), [scanned] karttan okunan (yeni takılan) çekmece.
++class DrawerReplacement {
++  const DrawerReplacement({required this.address, required this.current, required this.scanned, this.blockers = const []});
++
++  final String address;
++  final DrawerGroup current;
++  final DrawerGroup scanned;
++
++  /// Sökülen çekmecedeki atama/stoklar. Boş değilse değişim kaydedilemez:
++  /// kullanıcı önce çekmeceyi boşaltıp atamaları silmeli, sonra tekrar taramalı.
++  final List<DrawerReplacementBlocker> blockers;
++
++  bool get isBlocked => blockers.isNotEmpty;
++
++  String? get currentTypeName => current.slot.drawerConfig?.drawerType?.name;
++  String? get scannedTypeName => scanned.slot.drawerConfig?.drawerType?.name;
++
++  DrawerReplacement withBlockers(List<DrawerReplacementBlocker> value) =>
++      DrawerReplacement(address: address, current: current, scanned: scanned, blockers: value);
++}
++
++/// Sökülecek çekmecede değişimi engelleyen tek bir atama (ve varsa stoğu).
++class DrawerReplacementBlocker {
++  const DrawerReplacementBlocker({required this.medicineName, required this.stockQuantity});
++
++  final String medicineName;
++
++  /// Atamaya bağlı toplam stok; 0 ise yalnızca atama var.
++  final num stockQuantity;
++
++  bool get hasStock => stockQuantity > 0;
++
++  /// Tam sayıysa ondalıksız ("5"), değilse en fazla 2 hane ("2.5").
++  String get stockLabel {
++    final value = stockQuantity.toDouble();
++    if (value == value.roundToDouble()) return value.toInt().toString();
++    return value.toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
++  }
++}
+diff --git a/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_notifier.dart b/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_notifier.dart
+index 278ca6a..a33c3f2 100644
+--- a/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_notifier.dart
++++ b/apps/pharmed-client/lib/features/cabin_design/notifier/cabin_design_notifier.dart
+@@ -19,6 +19,7 @@ final cabinDesignNotifierProvider = ChangeNotifierProvider.autoDispose<CabinDesi
+     getVisualizerData: ref.read(getCabinVisualizerDataUseCaseProvider),
+     setReturnDrawer: ref.read(setReturnDrawerUseCaseProvider),
+     changeDrawerPosition: ref.read(changeDrawerPositionUseCaseProvider),
++    getMedicineAssignments: ref.read(getMedicineAssignmentsUseCaseProvider),
+     scanCabin: ref.read(scanCabinUseCaseProvider),
+     createCabin: ref.read(createCabinUseCaseProvider),
+     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
+@@ -36,6 +37,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     required GetCabinVisualizerDataUseCase getVisualizerData,
+     required SetReturnDrawerUseCase setReturnDrawer,
+     required ChangeDrawerPositionUseCase changeDrawerPosition,
++    required GetMedicineAssignmentsUseCase getMedicineAssignments,
+     required ScanCabinUseCase scanCabin,
+     required CreateCabinUseCase createCabin,
+     required SaveCabinDesignUseCase saveCabinDesign,
+@@ -49,6 +51,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+        _getVisualizerData = getVisualizerData,
+        _setReturnDrawer = setReturnDrawer,
+        _changeDrawerPosition = changeDrawerPosition,
++       _getMedicineAssignments = getMedicineAssignments,
+        _scanCabin = scanCabin,
+        _createCabin = createCabin,
+        _saveCabinDesign = saveCabinDesign,
+@@ -61,6 +64,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+   final GetCabinVisualizerDataUseCase _getVisualizerData;
+   final SetReturnDrawerUseCase _setReturnDrawer;
+   final ChangeDrawerPositionUseCase _changeDrawerPosition;
++  final GetMedicineAssignmentsUseCase _getMedicineAssignments;
+   final ScanCabinUseCase _scanCabin;
+   final CreateCabinUseCase _createCabin;
+   final SaveCabinDesignUseCase _saveCabinDesign;
+@@ -125,6 +129,16 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+   /// yuvaya bağlı olduğu için yer değiştirmede sabit kalır; kısmi kayıtta
+   /// `_groups` listesi yeniden sıralansa da pozisyonun adresi buradan okunur.
+   List<String> _positionAddresses = const [];
++
++  /// Son çekmece değişimi taramasında aynı adreste tipi değişen çekmeceler.
++  /// `_pending.scanGroups` ile birlikte atanır/temizlenir.
++  List<DrawerReplacement> _replacements = const [];
++  List<DrawerReplacement> get replacements => _replacements;
++  bool get hasReplacementBlockers => _replacements.any((r) => r.isBlocked);
++
++  /// Son tarama tamamlandı ama kayıtlı tasarımdan farklı bir çekmece bulunmadı.
++  bool _scanFoundNoChange = false;
++  bool get scanFoundNoChange => _scanFoundNoChange;
+   bool get isSwapMode => _swapSourceSlotId != null;
+ 
+   CabinPendingChanges _pending = CabinPendingChanges.none;
+@@ -230,7 +244,14 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+   bool get isSwitchingCabin => isLoading(switchCabinOp);
+   bool get isTogglingStatus => isLoading(_toggleStatusOp);
+ 
+-  bool get canSave => _selection is SelectedCabin && _pending.hasAny && !isSaving && !isRescanning;
++  bool get canSave =>
++      _selection is SelectedCabin && _pending.hasAny && !isSaving && !isRescanning && !hasReplacementBlockers;
++
++  /// "Tekrar Tara": bağlantı değişikliği varsa yeni bağlantıyla tarar, yoksa
++  /// çekmece değişimi (aynı adreste tip değişimi) arar. Bekleyen yer
++  /// değiştirme ile birlikte yapılamaz (biri sırayı, diğeri tipi değiştirir).
++  bool get canRescan =>
++      _cabin != null && !isRescanning && !isSaving && !_pending.hasOrderChange && !isSwapMode;
+ 
+   /// Seçili kabin panelindeki satır içi hata (kaydet / tara / durum değiştir).
+   String? get inlineError => _inlineErrorOps.where(isFailed).map(message).firstOrNull;
+@@ -287,6 +308,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+         _cabin = cabin;
+         _groups = data.groups;
+         _positionAddresses = data.groups.map((g) => g.address).toList();
++        _replacements = const [];
++        _scanFoundNoChange = false;
+         _currentReturnSlotId = data.groups.firstWhereOrNull((g) => g.isReturnDrawer)?.slot.id;
+         _selectedSlotId = data.groups.firstOrNull?.slot.id;
+         _pending = CabinPendingChanges.none;
+@@ -451,6 +474,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     // Bağlantı değişince yerleşim yeniden taranacağı için bekleyen sıra da geçersiz.
+     _pending = _pending.withComPort(port == cabin.comPort ? null : port).withScanGroups(null).withSlotOrder(null);
+     _swapSourceSlotId = null;
++    _replacements = const [];
++    _scanFoundNoChange = false;
+     _clearInlineErrors(notify: false);
+     notifyListeners();
+   }
+@@ -464,6 +489,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     final same = normalized == cabin.no?.trim().toUpperCase();
+     _pending = _pending.withAddressChar(same ? null : normalized).withScanGroups(null).withSlotOrder(null);
+     _swapSourceSlotId = null;
++    _replacements = const [];
++    _scanFoundNoChange = false;
+     _clearInlineErrors(notify: false);
+     notifyListeners();
+   }
+@@ -471,18 +498,121 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+   /// "Tekrar Tara" — sadece kabin görselinin üzerinde loading.
+   Future<void> rescanCabin() async {
+     final cabin = _cabin;
+-    if (cabin == null || isRescanning || isSaving || !_pending.hasConnectionChange) return;
++    if (cabin == null || !canRescan) return;
+ 
+     _clearInlineErrors(notify: false);
+-    await execute(
+-      _rescanOp,
+-      operation: () => _performRescan(cabin),
+-      onData: (newGroups) {
+-        _pending = _pending.withScanGroups(_isSameDrawerLayout(newGroups, _groups) ? null : newGroups);
++    _replacements = const [];
++    _scanFoundNoChange = false;
++
++    // Bağlantı (port/adres) değiştiyse yeni bağlantının yerleşimi okunur.
++    if (_pending.hasConnectionChange) {
++      await execute(
++        _rescanOp,
++        operation: () => _performRescan(cabin),
++        onData: (newGroups) {
++          _pending = _pending.withScanGroups(_isSameDrawerLayout(newGroups, _groups) ? null : newGroups);
++        },
++      );
++      return;
++    }
++
++    // Bağlantı aynı — çekmece değişimi taraması.
++    setLoading(_rescanOp);
++    final detected = await _detectReplacements(cabin);
++    detected.when(
++      ok: (d) {
++        _replacements = d.replacements;
++        _scanFoundNoChange = d.replacements.isEmpty;
++        _pending = _pending.withScanGroups(d.replacements.isEmpty ? null : d.scanGroups);
++        MedLogger.info(
++          unit: _unit,
++          swreq: _swreq,
++          message: 'Çekmece değişimi taraması tamamlandı',
++          context: {
++            'cabinId': cabin.id,
++            'replaced': [for (final r in d.replacements) r.address],
++            'blocked': [for (final r in d.replacements.where((r) => r.isBlocked)) r.address],
++          },
++        );
++        setSuccess(_rescanOp);
++      },
++      error: (e) {
++        _pending = _pending.withScanGroups(null);
++        MedLogger.warn(
++          unit: _unit,
++          swreq: _swreq,
++          message: 'Çekmece değişimi taraması reddedildi',
++          context: {'cabinId': cabin.id, 'error': e.message},
++        );
++        setFailed(_rescanOp, message: e.userMessage);
+       },
+     );
+   }
+ 
++  /// Kabini tarar ve kayıtlı tasarımla adres bazında karşılaştırır. Yalnızca
++  /// aynı adreste tip (DrawerConfig) değişimi desteklenir; adres seti
++  /// değiştiyse ya da serum çekmecesi işin içindeyse reddedilir. Değişen
++  /// çekmecelerin atama/stokları [DrawerReplacement.blockers] olarak eklenir.
++  Future<Result<({List<DrawerGroup> scanGroups, List<DrawerReplacement> replacements})>> _detectReplacements(
++    Cabin cabin,
++  ) async {
++    final scan = await _performRescan(cabin);
++    if (scan.isError) return Result.error(_errorOf(scan));
++    final scanned = scan.data!;
++
++    final currentByAddress = {for (final g in _groups) g.address: g};
++    final scannedByAddress = {for (final g in scanned) g.address: g};
++
++    if (!const SetEquality<String>().equals(currentByAddress.keys.toSet(), scannedByAddress.keys.toSet())) {
++      return Result.error(
++        BusinessRuleException(
++          message: contextlessL10n().cabinDesign_replace_addressMismatchError,
++          ruleCode: 'DRAWER_REPLACE_ADDRESS_MISMATCH',
++        ),
++      );
++    }
++
++    final replacements = [
++      for (final e in currentByAddress.entries)
++        if (scannedByAddress[e.key]!.slot.drawerConfigId != e.value.slot.drawerConfigId)
++          DrawerReplacement(address: e.key, current: e.value, scanned: scannedByAddress[e.key]!),
++    ];
++
++    if (replacements.any((r) => r.current.isSerum || r.scanned.isSerum)) {
++      return Result.error(
++        BusinessRuleException(
++          message: contextlessL10n().cabinDesign_replace_serumError,
++          ruleCode: 'DRAWER_REPLACE_SERUM',
++        ),
++      );
++    }
++
++    if (replacements.isEmpty) return Result.ok((scanGroups: scanned, replacements: const <DrawerReplacement>[]));
++
++    final assignments = await _getMedicineAssignments.call(cabin.id!);
++    if (assignments.isError) return Result.error(_errorOf(assignments));
++
++    return Result.ok((scanGroups: scanned, replacements: _withBlockers(replacements, assignments.data!)));
++  }
++
++  /// Sökülen çekmeceye (slot id) bağlı atamaları, stok toplamlarıyla birlikte ekler.
++  static List<DrawerReplacement> _withBlockers(
++    List<DrawerReplacement> replacements,
++    List<MedicineAssignment> assignments,
++  ) {
++    return [
++      for (final r in replacements)
++        r.withBlockers([
++          for (final a in assignments)
++            if ((a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId) == r.current.slot.id)
++              DrawerReplacementBlocker(
++                medicineName: a.medicine?.name ?? '—',
++                stockQuantity: (a.stocks ?? const <CabinStock>[]).fold<num>(0, (sum, st) => sum + (st.quantity ?? 0)),
++              ),
++        ]),
++    ];
++  }
++
+   /// Master: (bekleyen ?? mevcut) port + adres her zaman 'A'.
+   /// Slave: master'ın portu (hat paylaşılıyor) + (bekleyen ?? mevcut) adres.
+   Future<Result<List<DrawerGroup>>> _performRescan(Cabin cabin) {
+@@ -548,6 +678,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     _swapSourceSlotId = null;
+     setLoading(_saveOp);
+     final pending = _pending;
++    final returnSlotId = effectiveReturnSlotId;
+ 
+     // ── 1. Bağlantı değişikliği varsa — kaydetmeden ÖNCE doğrula ──────
+     // ("Tekrar Tara" tetiklenmemiş olsa bile kayıt anında mutlaka kontrol.)
+@@ -559,6 +690,35 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+       finalScanGroups = _isSameDrawerLayout(newGroups, _groups) ? null : newGroups;
+     }
+ 
++    // ── 1a. Çekmece değişimi — kayıttan hemen önce yeniden doğrula ────
++    // Tarama ile kayıt arasında çekmece tekrar değişmiş ya da atama/stok
++    // eklenmiş olabilir; bayat sonuçla tasarım yazılmaz.
++    var isReplacementSave = false;
++    if (!pending.hasConnectionChange && pending.hasDesignChange) {
++      final detected = await _detectReplacements(cabin);
++      if (detected.isError) return _failSave(_errorOf(detected));
++      final d = detected.data!;
++      if (d.replacements.isEmpty || !_isSameDrawerLayout(d.scanGroups, pending.scanGroups!)) {
++        return _failSave(
++          BusinessRuleException(
++            message: contextlessL10n().cabinDesign_replace_scanChangedError,
++            ruleCode: 'DRAWER_REPLACE_SCAN_CHANGED',
++          ),
++        );
++      }
++      _replacements = d.replacements;
++      if (hasReplacementBlockers) {
++        return _failSave(
++          BusinessRuleException(
++            message: contextlessL10n().cabinDesign_replace_blockedSaveError,
++            ruleCode: 'DRAWER_REPLACE_BLOCKED',
++          ),
++        );
++      }
++      finalScanGroups = d.scanGroups;
++      isReplacementSave = true;
++    }
++
+     // ── 1b. Yer değiştirme varsa — fiziksel takası taramayla doğrula ──
+     // Açma komutları slot.address (yönetim kartının satırı = fiziksel yuva)
+     // ile gider. Çekmeceler gerçekten takılmadan kayıt yapılırsa atamalar
+@@ -624,7 +784,9 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     if (finalScanGroups != null) {
+       final r = await _saveCabinDesign.call(
+         cabinId: updatedCabin.id!,
+-        scanResults: finalScanGroups.map((g) => g.slot).toList(),
++        scanResults: isReplacementSave
++            ? _replacementSlots(finalScanGroups, returnSlotId)
++            : finalScanGroups.map((g) => g.slot).toList(),
+         isUpdate: true,
+       );
+       if (r.isError) return _failSave(_errorOf(r));
+@@ -642,6 +804,25 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     return false;
+   }
+ 
++  /// Çekmece değişimi kaydı: PUT /CabinDesign/bulk adres bazlı eşleşir.
++  /// Her adres mevcut kaydın id'siyle gönderilir. Değişmeyen çekmeceler iade
++  /// bayrağını ve port yönünü korur; yeni takılan çekmecede iade bayrağı düşer.
++  List<DrawerSlot> _replacementSlots(List<DrawerGroup> scanned, int? returnSlotId) {
++    final currentByAddress = {for (final g in _groups) g.address: g.slot};
++    final replaced = _replacements.map((r) => r.address).toSet();
++    return [
++      for (final g in scanned)
++        g.slot.copyWith(
++          id: currentByAddress[g.address]?.id,
++          isReturnDrawerHere:
++              !replaced.contains(g.address) &&
++              returnSlotId != null &&
++              currentByAddress[g.address]?.id == returnSlotId,
++          isPortReversed: replaced.contains(g.address) ? null : currentByAddress[g.address]?.isPortReversed,
++        ),
++    ];
++  }
++
+   /// Kabini yeniden tarar ve hedef sıraya göre her adreste beklenen çekmece
+   /// tipinin (DrawerConfig) bulunduğunu doğrular. Adres konuma bağlıdır: i.
+   /// pozisyonun adresinde, takastan sonra [desired]'ın i. slot'unun çekmecesi
+@@ -915,6 +1096,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
+     _cabin = null;
+     _groups = const [];
+     _positionAddresses = const [];
++    _replacements = const [];
++    _scanFoundNoChange = false;
+     _selectedSlotId = null;
+     _currentReturnSlotId = null;
+     _swapSourceSlotId = null;
+diff --git a/apps/pharmed-client/lib/features/cabin_design/view/basic_settings_panel.dart b/apps/pharmed-client/lib/features/cabin_design/view/basic_settings_panel.dart
+index c40ddb1..5d72492 100644
+--- a/apps/pharmed-client/lib/features/cabin_design/view/basic_settings_panel.dart
++++ b/apps/pharmed-client/lib/features/cabin_design/view/basic_settings_panel.dart
+@@ -24,16 +24,18 @@ class _BasicSettingsPanel extends StatelessWidget {
+               style: MedTextStyles.titleSm(color: MedColors.text3),
+             ),
+             const Spacer(),
+-            if (notifier.pending.hasConnectionChange) ...[
+-              MedButton(
+-                label: context.l10n.cabinDesign_basicSettings_rescanButton,
+-                onPressed: isRescanning ? null : notifier.rescanCabin,
+-                isLoading: isRescanning,
+-                size: MedButtonSize.sm,
+-                variant: MedButtonVariant.secondary,
+-              ),
+-              const SizedBox(width: 4.0),
+-            ],
++            // Bağlantı değişikliği varsa yeni bağlantıyı, yoksa çekmece
++            // değişimini (aynı adreste tip değişimi) tarar.
++            MedButton(
++              label: notifier.pending.hasConnectionChange
++                  ? context.l10n.cabinDesign_basicSettings_rescanButton
++                  : context.l10n.cabinDesign_replace_scanButton,
++              onPressed: notifier.canRescan ? notifier.rescanCabin : null,
++              isLoading: isRescanning,
++              size: MedButtonSize.sm,
++              variant: MedButtonVariant.secondary,
++            ),
++            const SizedBox(width: 4.0),
+             if (!isMaster)
+               MedButton(
+                 label: cabin.status == Status.passive
+@@ -61,6 +63,13 @@ class _BasicSettingsPanel extends StatelessWidget {
+             ),
+           ),
+         ],
++        if (notifier.replacements.isNotEmpty) ...[
++          const SizedBox(height: MedSpacing.md),
++          _DrawerReplacementSummary(replacements: notifier.replacements),
++        ] else if (notifier.scanFoundNoChange) ...[
++          const SizedBox(height: MedSpacing.md),
++          Text(context.l10n.cabinDesign_replace_noChangeInfo, style: MedTextStyles.bodySm(color: MedColors.text3)),
++        ],
+         const SizedBox(height: MedSpacing.lg),
+         MedTextInputField(
+           onChanged: notifier.updatePendingName,
+@@ -145,3 +154,68 @@ class _CabinCameraRow extends StatelessWidget {
+     );
+   }
+ }
++
++/// Çekmece değişimi taramasının sonucu: aynı adreste tipi değişen çekmeceler
++/// ve (varsa) sökülen çekmecede kalan atama/stoklar. Engel varsa kayıt kapalıdır.
++class _DrawerReplacementSummary extends StatelessWidget {
++  const _DrawerReplacementSummary({required this.replacements});
++
++  final List<DrawerReplacement> replacements;
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = context.l10n;
++    final blocked = replacements.any((r) => r.isBlocked);
++    final accent = blocked ? MedColors.red : MedColors.blue;
++
++    return Container(
++      padding: MedSpacing.insetLg,
++      decoration: BoxDecoration(
++        color: blocked ? MedColors.redLight : MedColors.blueLight,
++        border: Border.all(color: accent),
++        borderRadius: MedRadius.mdAll,
++      ),
++      child: Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          Text(
++            l10n.cabinDesign_replace_sectionTitle,
++            style: MedTextStyles.bodyMd(color: MedColors.text).copyWith(fontWeight: FontWeight.bold),
++          ),
++          const SizedBox(height: MedSpacing.sm),
++          for (final r in replacements) ...[
++            Text(
++              l10n.cabinDesign_replace_changeItem(r.address, r.currentTypeName ?? '—', r.scannedTypeName ?? '—'),
++              style: MedTextStyles.monoMd(color: MedColors.text),
++            ),
++            for (final b in r.blockers)
++              Padding(
++                padding: const EdgeInsets.only(left: MedSpacing.lg, top: 2),
++                child: Text(
++                  b.hasStock
++                      ? l10n.cabinDesign_replace_blockerWithStock(b.medicineName, b.stockLabel)
++                      : l10n.cabinDesign_replace_blockerAssignmentOnly(b.medicineName),
++                  style: MedTextStyles.bodySm(color: MedColors.red),
++                ),
++              ),
++            const SizedBox(height: MedSpacing.xs),
++          ],
++          const SizedBox(height: MedSpacing.xs),
++          Row(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: [
++              Icon(Icons.info_outline_rounded, size: 14, color: accent),
++              const SizedBox(width: 6),
++              Expanded(
++                child: Text(
++                  blocked ? l10n.cabinDesign_replace_blockedInfo : l10n.cabinDesign_replace_readyInfo,
++                  style: MedTextStyles.bodySm(color: blocked ? MedColors.red : MedColors.text2),
++                ),
++              ),
++            ],
++          ),
++        ],
++      ),
++    );
++  }
++}
+diff --git a/packages/pharmed_core/lib/src/features/cabin/domain/usecase/save_cabin_design_usecase.dart b/packages/pharmed_core/lib/src/features/cabin/domain/usecase/save_cabin_design_usecase.dart
+index 0700282..f1ee1bc 100644
+--- a/packages/pharmed_core/lib/src/features/cabin/domain/usecase/save_cabin_design_usecase.dart
++++ b/packages/pharmed_core/lib/src/features/cabin/domain/usecase/save_cabin_design_usecase.dart
+@@ -24,7 +24,9 @@ class SaveCabinDesignUseCase {
+ 
+     final slots = sorted.indexed.map((entry) {
+       final (i, slot) = entry;
+-      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: false);
++      // Taramadan gelen slot'ta bayrak null → false. Çekmece değişimi kaydı
++      // değişmeyen iade çekmecesinin bayrağını taşır; ezilmemeli.
++      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: slot.isReturnDrawerHere ?? false);
+     }).toList();
+ 
+     final result = isUpdate
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index e6ec1e3..43fa88a 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -4584,6 +4584,48 @@
+     }
+   },
+   "cabinDesign_position_sameTypeConfirmButton": "I Swapped Them, Save",
++  "cabinDesign_replace_scanButton": "Scan Cabinet",
++  "cabinDesign_replace_sectionTitle": "Drawer Replacement",
++  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
++  "@cabinDesign_replace_changeItem": {
++    "placeholders": {
++      "address": {
++        "type": "String"
++      },
++      "oldType": {
++        "type": "String"
++      },
++      "newType": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerWithStock": "{medicineName} · stock: {quantity}",
++  "@cabinDesign_replace_blockerWithStock": {
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      },
++      "quantity": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · no stock (assigned)",
++  "@cabinDesign_replace_blockerAssignmentOnly": {
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockedInfo": "The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.",
++  "cabinDesign_replace_readyInfo": "The new drawer will be applied to the cabinet design when you save.",
++  "cabinDesign_replace_noChangeInfo": "Scan complete; no drawer change was found.",
++  "cabinDesign_replace_addressMismatchError": "The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.",
++  "cabinDesign_replace_serumError": "The serum cabinet can't be replaced; drawer replacement is only for unit-dose and cubic drawers.",
++  "cabinDesign_replace_scanChangedError": "The scan before saving differs from the previous scan result. Please scan the cabinet again.",
++  "cabinDesign_replace_blockedSaveError": "Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.",
+   "cabinDesign_serum_sectionTitle": "Internal Layout",
+   "cabinDesign_serum_manualBadge": "MANUAL SETUP",
+   "cabinDesign_serum_infoBanner": "The internal layout of a serum cabinet is not read from the card; define its drawers and equipment placement here.",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index 8058c5e..a4b4a11 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -4081,6 +4081,48 @@
+     }
+   },
+   "cabinDesign_position_sameTypeConfirmButton": "Je les ai échangés, enregistrer",
++  "cabinDesign_replace_scanButton": "Scanner l'armoire",
++  "cabinDesign_replace_sectionTitle": "Remplacement de tiroir",
++  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
++  "@cabinDesign_replace_changeItem": {
++    "placeholders": {
++      "address": {
++        "type": "String"
++      },
++      "oldType": {
++        "type": "String"
++      },
++      "newType": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerWithStock": "{medicineName} · stock : {quantity}",
++  "@cabinDesign_replace_blockerWithStock": {
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      },
++      "quantity": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · pas de stock (affecté)",
++  "@cabinDesign_replace_blockerAssignmentOnly": {
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockedInfo": "Le tiroir remplacé contient encore des affectations ou du stock. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau l'armoire.",
++  "cabinDesign_replace_readyInfo": "Le nouveau tiroir sera appliqué à la conception de l'armoire lors de l'enregistrement.",
++  "cabinDesign_replace_noChangeInfo": "Scan terminé ; aucun changement de tiroir détecté.",
++  "cabinDesign_replace_addressMismatchError": "Le nombre ou les adresses des tiroirs ont changé lors du scan. Seul le remplacement du type de tiroir à la même adresse est pris en charge.",
++  "cabinDesign_replace_serumError": "L'armoire à sérum ne peut pas être remplacée ; le remplacement concerne uniquement les tiroirs dose unitaire et cubiques.",
++  "cabinDesign_replace_scanChangedError": "Le scan avant l'enregistrement diffère du résultat précédent. Veuillez scanner à nouveau l'armoire.",
++  "cabinDesign_replace_blockedSaveError": "Des affectations ou du stock ont été trouvés dans le tiroir remplacé. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau.",
+   "cabinDesign_serum_sectionTitle": "Disposition interne",
+   "cabinDesign_serum_manualBadge": "CONFIGURATION MANUELLE",
+   "cabinDesign_serum_infoBanner": "La disposition interne d'une armoire à sérum n'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+index 890d4e0..ce67dce 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+@@ -11337,6 +11337,78 @@ abstract class AppLocalizations {
+   /// **'I Swapped Them, Save'**
+   String get cabinDesign_position_sameTypeConfirmButton;
+ 
++  /// No description provided for @cabinDesign_replace_scanButton.
++  ///
++  /// In en, this message translates to:
++  /// **'Scan Cabinet'**
++  String get cabinDesign_replace_scanButton;
++
++  /// No description provided for @cabinDesign_replace_sectionTitle.
++  ///
++  /// In en, this message translates to:
++  /// **'Drawer Replacement'**
++  String get cabinDesign_replace_sectionTitle;
++
++  /// No description provided for @cabinDesign_replace_changeItem.
++  ///
++  /// In en, this message translates to:
++  /// **'{address} · {oldType} → {newType}'**
++  String cabinDesign_replace_changeItem(String address, String oldType, String newType);
++
++  /// No description provided for @cabinDesign_replace_blockerWithStock.
++  ///
++  /// In en, this message translates to:
++  /// **'{medicineName} · stock: {quantity}'**
++  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity);
++
++  /// No description provided for @cabinDesign_replace_blockerAssignmentOnly.
++  ///
++  /// In en, this message translates to:
++  /// **'{medicineName} · no stock (assigned)'**
++  String cabinDesign_replace_blockerAssignmentOnly(String medicineName);
++
++  /// No description provided for @cabinDesign_replace_blockedInfo.
++  ///
++  /// In en, this message translates to:
++  /// **'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.'**
++  String get cabinDesign_replace_blockedInfo;
++
++  /// No description provided for @cabinDesign_replace_readyInfo.
++  ///
++  /// In en, this message translates to:
++  /// **'The new drawer will be applied to the cabinet design when you save.'**
++  String get cabinDesign_replace_readyInfo;
++
++  /// No description provided for @cabinDesign_replace_noChangeInfo.
++  ///
++  /// In en, this message translates to:
++  /// **'Scan complete; no drawer change was found.'**
++  String get cabinDesign_replace_noChangeInfo;
++
++  /// No description provided for @cabinDesign_replace_addressMismatchError.
++  ///
++  /// In en, this message translates to:
++  /// **'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.'**
++  String get cabinDesign_replace_addressMismatchError;
++
++  /// No description provided for @cabinDesign_replace_serumError.
++  ///
++  /// In en, this message translates to:
++  /// **'The serum cabinet can't be replaced; drawer replacement is only for unit-dose and cubic drawers.'**
++  String get cabinDesign_replace_serumError;
++
++  /// No description provided for @cabinDesign_replace_scanChangedError.
++  ///
++  /// In en, this message translates to:
++  /// **'The scan before saving differs from the previous scan result. Please scan the cabinet again.'**
++  String get cabinDesign_replace_scanChangedError;
++
++  /// No description provided for @cabinDesign_replace_blockedSaveError.
++  ///
++  /// In en, this message translates to:
++  /// **'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.'**
++  String get cabinDesign_replace_blockedSaveError;
++
+   /// No description provided for @cabinDesign_serum_sectionTitle.
+   ///
+   /// In en, this message translates to:
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+index 3cb835b..a9f9dc1 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+@@ -6417,6 +6417,48 @@ class AppLocalizationsAr extends AppLocalizations {
+   @override
+   String get cabinDesign_position_sameTypeConfirmButton => 'I Swapped Them, Save';
+ 
++  @override
++  String get cabinDesign_replace_scanButton => 'Scan Cabinet';
++
++  @override
++  String get cabinDesign_replace_sectionTitle => 'Drawer Replacement';
++
++  @override
++  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
++    return '$address · $oldType → $newType';
++  }
++
++  @override
++  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
++    return '$medicineName · stock: $quantity';
++  }
++
++  @override
++  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
++    return '$medicineName · no stock (assigned)';
++  }
++
++  @override
++  String get cabinDesign_replace_blockedInfo => 'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.';
++
++  @override
++  String get cabinDesign_replace_readyInfo => 'The new drawer will be applied to the cabinet design when you save.';
++
++  @override
++  String get cabinDesign_replace_noChangeInfo => 'Scan complete; no drawer change was found.';
++
++  @override
++  String get cabinDesign_replace_addressMismatchError => 'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.';
++
++  @override
++  String get cabinDesign_replace_serumError => 'The serum cabinet can\'t be replaced; drawer replacement is only for unit-dose and cubic drawers.';
++
++  @override
++  String get cabinDesign_replace_scanChangedError => 'The scan before saving differs from the previous scan result. Please scan the cabinet again.';
++
++  @override
++  String get cabinDesign_replace_blockedSaveError => 'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.';
++
+   @override
+   String get cabinDesign_serum_sectionTitle => 'Internal Layout';
+ 
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+index e677eee..e7ddd5b 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+@@ -6416,6 +6416,48 @@ class AppLocalizationsEn extends AppLocalizations {
+   @override
+   String get cabinDesign_position_sameTypeConfirmButton => 'I Swapped Them, Save';
+ 
++  @override
++  String get cabinDesign_replace_scanButton => 'Scan Cabinet';
++
++  @override
++  String get cabinDesign_replace_sectionTitle => 'Drawer Replacement';
++
++  @override
++  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
++    return '$address · $oldType → $newType';
++  }
++
++  @override
++  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
++    return '$medicineName · stock: $quantity';
++  }
++
++  @override
++  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
++    return '$medicineName · no stock (assigned)';
++  }
++
++  @override
++  String get cabinDesign_replace_blockedInfo => 'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.';
++
++  @override
++  String get cabinDesign_replace_readyInfo => 'The new drawer will be applied to the cabinet design when you save.';
++
++  @override
++  String get cabinDesign_replace_noChangeInfo => 'Scan complete; no drawer change was found.';
++
++  @override
++  String get cabinDesign_replace_addressMismatchError => 'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.';
++
++  @override
++  String get cabinDesign_replace_serumError => 'The serum cabinet can\'t be replaced; drawer replacement is only for unit-dose and cubic drawers.';
++
++  @override
++  String get cabinDesign_replace_scanChangedError => 'The scan before saving differs from the previous scan result. Please scan the cabinet again.';
++
++  @override
++  String get cabinDesign_replace_blockedSaveError => 'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.';
++
+   @override
+   String get cabinDesign_serum_sectionTitle => 'Internal Layout';
+ 
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+index de982dc..60a03a6 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+@@ -6575,6 +6575,48 @@ class AppLocalizationsFr extends AppLocalizations {
+   @override
+   String get cabinDesign_position_sameTypeConfirmButton => 'Je les ai échangés, enregistrer';
+ 
++  @override
++  String get cabinDesign_replace_scanButton => 'Scanner l\'armoire';
++
++  @override
++  String get cabinDesign_replace_sectionTitle => 'Remplacement de tiroir';
++
++  @override
++  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
++    return '$address · $oldType → $newType';
++  }
++
++  @override
++  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
++    return '$medicineName · stock : $quantity';
++  }
++
++  @override
++  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
++    return '$medicineName · pas de stock (affecté)';
++  }
++
++  @override
++  String get cabinDesign_replace_blockedInfo => 'Le tiroir remplacé contient encore des affectations ou du stock. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau l\'armoire.';
++
++  @override
++  String get cabinDesign_replace_readyInfo => 'Le nouveau tiroir sera appliqué à la conception de l\'armoire lors de l\'enregistrement.';
++
++  @override
++  String get cabinDesign_replace_noChangeInfo => 'Scan terminé ; aucun changement de tiroir détecté.';
++
++  @override
++  String get cabinDesign_replace_addressMismatchError => 'Le nombre ou les adresses des tiroirs ont changé lors du scan. Seul le remplacement du type de tiroir à la même adresse est pris en charge.';
++
++  @override
++  String get cabinDesign_replace_serumError => 'L\'armoire à sérum ne peut pas être remplacée ; le remplacement concerne uniquement les tiroirs dose unitaire et cubiques.';
++
++  @override
++  String get cabinDesign_replace_scanChangedError => 'Le scan avant l\'enregistrement diffère du résultat précédent. Veuillez scanner à nouveau l\'armoire.';
++
++  @override
++  String get cabinDesign_replace_blockedSaveError => 'Des affectations ou du stock ont été trouvés dans le tiroir remplacé. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau.';
++
+   @override
+   String get cabinDesign_serum_sectionTitle => 'Disposition interne';
+ 
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+index aeab7e6..1083915 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+@@ -6368,6 +6368,48 @@ class AppLocalizationsTr extends AppLocalizations {
+   @override
+   String get cabinDesign_position_sameTypeConfirmButton => 'Yer Değiştirdim, Kaydet';
+ 
++  @override
++  String get cabinDesign_replace_scanButton => 'Kabini Tara';
++
++  @override
++  String get cabinDesign_replace_sectionTitle => 'Çekmece Değişimi';
++
++  @override
++  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
++    return '$address · $oldType → $newType';
++  }
++
++  @override
++  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
++    return '$medicineName · stok: $quantity';
++  }
++
++  @override
++  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
++    return '$medicineName · stok yok (atama var)';
++  }
++
++  @override
++  String get cabinDesign_replace_blockedInfo => 'Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.';
++
++  @override
++  String get cabinDesign_replace_readyInfo => 'Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.';
++
++  @override
++  String get cabinDesign_replace_noChangeInfo => 'Tarama tamamlandı; çekmece değişikliği bulunmadı.';
++
++  @override
++  String get cabinDesign_replace_addressMismatchError => 'Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.';
++
++  @override
++  String get cabinDesign_replace_serumError => 'Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.';
++
++  @override
++  String get cabinDesign_replace_scanChangedError => 'Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.';
++
++  @override
++  String get cabinDesign_replace_blockedSaveError => 'Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.';
++
+   @override
+   String get cabinDesign_serum_sectionTitle => 'İç Dizayn';
+ 
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_tr.arb b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+index 2190e9f..ea63bcd 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_tr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+@@ -7613,6 +7613,78 @@
+   "@cabinDesign_position_sameTypeConfirmButton": {
+     "description": "Confirm button of the same-type swap confirmation dialog"
+   },
++  "cabinDesign_replace_scanButton": "Kabini Tara",
++  "@cabinDesign_replace_scanButton": {
++    "description": "Button that rescans the cabinet to detect a drawer replaced with a different type at the same address"
++  },
++  "cabinDesign_replace_sectionTitle": "Çekmece Değişimi",
++  "@cabinDesign_replace_sectionTitle": {
++    "description": "Title of the drawer replacement scan result box in the cabin design screen"
++  },
++  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
++  "@cabinDesign_replace_changeItem": {
++    "description": "One detected replacement: address, the saved drawer type and the newly scanned drawer type",
++    "placeholders": {
++      "address": {
++        "type": "String"
++      },
++      "oldType": {
++        "type": "String"
++      },
++      "newType": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerWithStock": "{medicineName} · stok: {quantity}",
++  "@cabinDesign_replace_blockerWithStock": {
++    "description": "A medicine still assigned to the removed drawer, with its remaining stock",
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      },
++      "quantity": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · stok yok (atama var)",
++  "@cabinDesign_replace_blockerAssignmentOnly": {
++    "description": "A medicine still assigned to the removed drawer with no stock",
++    "placeholders": {
++      "medicineName": {
++        "type": "String"
++      }
++    }
++  },
++  "cabinDesign_replace_blockedInfo": "Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.",
++  "@cabinDesign_replace_blockedInfo": {
++    "description": "Info shown when a detected replacement is blocked by assignments or stock in the removed drawer"
++  },
++  "cabinDesign_replace_readyInfo": "Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.",
++  "@cabinDesign_replace_readyInfo": {
++    "description": "Info shown when a detected replacement can be saved"
++  },
++  "cabinDesign_replace_noChangeInfo": "Tarama tamamlandı; çekmece değişikliği bulunmadı.",
++  "@cabinDesign_replace_noChangeInfo": {
++    "description": "Info shown after a scan that found no drawer type change"
++  },
++  "cabinDesign_replace_addressMismatchError": "Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.",
++  "@cabinDesign_replace_addressMismatchError": {
++    "description": "Scan error when the set of drawer addresses differs from the saved design"
++  },
++  "cabinDesign_replace_serumError": "Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.",
++  "@cabinDesign_replace_serumError": {
++    "description": "Scan error when a detected replacement involves a serum drawer"
++  },
++  "cabinDesign_replace_scanChangedError": "Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.",
++  "@cabinDesign_replace_scanChangedError": {
++    "description": "Save error when the verification scan at save time no longer matches the pending replacement"
++  },
++  "cabinDesign_replace_blockedSaveError": "Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.",
++  "@cabinDesign_replace_blockedSaveError": {
++    "description": "Save error when the replaced drawer has assignments or stock at save time"
++  },
+   "cabinDesign_serum_sectionTitle": "İç Dizayn",
+   "@cabinDesign_serum_sectionTitle": {
+     "description": "Section header for the serum cabinet's manual internal layout panel"
+-- 
+2.43.0
+

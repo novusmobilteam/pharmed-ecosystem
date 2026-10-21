@@ -24,16 +24,18 @@ class _BasicSettingsPanel extends StatelessWidget {
               style: MedTextStyles.titleSm(color: MedColors.text3),
             ),
             const Spacer(),
-            if (notifier.pending.hasConnectionChange) ...[
-              MedButton(
-                label: context.l10n.cabinDesign_basicSettings_rescanButton,
-                onPressed: isRescanning ? null : notifier.rescanCabin,
-                isLoading: isRescanning,
-                size: MedButtonSize.sm,
-                variant: MedButtonVariant.secondary,
-              ),
-              const SizedBox(width: 4.0),
-            ],
+            // Bağlantı değişikliği varsa yeni bağlantıyı, yoksa çekmece
+            // değişimini (aynı adreste tip değişimi) tarar.
+            MedButton(
+              label: notifier.pending.hasConnectionChange
+                  ? context.l10n.cabinDesign_basicSettings_rescanButton
+                  : context.l10n.cabinDesign_replace_scanButton,
+              onPressed: notifier.canRescan ? notifier.rescanCabin : null,
+              isLoading: isRescanning,
+              size: MedButtonSize.sm,
+              variant: MedButtonVariant.secondary,
+            ),
+            const SizedBox(width: 4.0),
             if (!isMaster)
               MedButton(
                 label: cabin.status == Status.passive
@@ -60,6 +62,13 @@ class _BasicSettingsPanel extends StatelessWidget {
               style: MedTextStyles.bodyMd(color: MedColors.red, weight: FontWeight.bold),
             ),
           ),
+        ],
+        if (notifier.replacements.isNotEmpty) ...[
+          const SizedBox(height: MedSpacing.md),
+          _DrawerReplacementSummary(replacements: notifier.replacements),
+        ] else if (notifier.scanFoundNoChange) ...[
+          const SizedBox(height: MedSpacing.md),
+          Text(context.l10n.cabinDesign_replace_noChangeInfo, style: MedTextStyles.bodySm(color: MedColors.text3)),
         ],
         const SizedBox(height: MedSpacing.lg),
         MedTextInputField(
@@ -139,6 +148,71 @@ class _CabinCameraRow extends StatelessWidget {
             onPressed: camera == null
                 ? () => notifier.startAddCamera(forCabinId: cabin.id)
                 : () => notifier.selectCamera(camera.id),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Çekmece değişimi taramasının sonucu: aynı adreste tipi değişen çekmeceler
+/// ve (varsa) sökülen çekmecede kalan atama/stoklar. Engel varsa kayıt kapalıdır.
+class _DrawerReplacementSummary extends StatelessWidget {
+  const _DrawerReplacementSummary({required this.replacements});
+
+  final List<DrawerReplacement> replacements;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final blocked = replacements.any((r) => r.isBlocked);
+    final accent = blocked ? MedColors.red : MedColors.blue;
+
+    return Container(
+      padding: MedSpacing.insetLg,
+      decoration: BoxDecoration(
+        color: blocked ? MedColors.redLight : MedColors.blueLight,
+        border: Border.all(color: accent),
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.cabinDesign_replace_sectionTitle,
+            style: MedTextStyles.bodyMd(color: MedColors.text).copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: MedSpacing.sm),
+          for (final r in replacements) ...[
+            Text(
+              l10n.cabinDesign_replace_changeItem(r.address, r.currentTypeName ?? '—', r.scannedTypeName ?? '—'),
+              style: MedTextStyles.monoMd(color: MedColors.text),
+            ),
+            for (final b in r.blockers)
+              Padding(
+                padding: const EdgeInsets.only(left: MedSpacing.lg, top: 2),
+                child: Text(
+                  b.hasStock
+                      ? l10n.cabinDesign_replace_blockerWithStock(b.medicineName, b.stockLabel)
+                      : l10n.cabinDesign_replace_blockerAssignmentOnly(b.medicineName),
+                  style: MedTextStyles.bodySm(color: MedColors.red),
+                ),
+              ),
+            const SizedBox(height: MedSpacing.xs),
+          ],
+          const SizedBox(height: MedSpacing.xs),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.info_outline_rounded, size: 14, color: accent),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  blocked ? l10n.cabinDesign_replace_blockedInfo : l10n.cabinDesign_replace_readyInfo,
+                  style: MedTextStyles.bodySm(color: blocked ? MedColors.red : MedColors.text2),
+                ),
+              ),
+            ],
           ),
         ],
       ),

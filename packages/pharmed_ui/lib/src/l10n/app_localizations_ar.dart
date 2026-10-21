@@ -6418,6 +6418,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cabinDesign_position_sameTypeConfirmButton => 'I Swapped Them, Save';
 
   @override
+  String get cabinDesign_replace_scanButton => 'Scan Cabinet';
+
+  @override
+  String get cabinDesign_replace_sectionTitle => 'Drawer Replacement';
+
+  @override
+  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
+    return '$address · $oldType → $newType';
+  }
+
+  @override
+  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
+    return '$medicineName · stock: $quantity';
+  }
+
+  @override
+  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
+    return '$medicineName · no stock (assigned)';
+  }
+
+  @override
+  String get cabinDesign_replace_blockedInfo => 'The replaced drawer still has assignments or stock. Unload the drawer and delete its assignments, then scan the cabinet again.';
+
+  @override
+  String get cabinDesign_replace_readyInfo => 'The new drawer will be applied to the cabinet design when you save.';
+
+  @override
+  String get cabinDesign_replace_noChangeInfo => 'Scan complete; no drawer change was found.';
+
+  @override
+  String get cabinDesign_replace_addressMismatchError => 'The number or addresses of drawers changed in the scan. Only replacing a drawer type at the same address is supported.';
+
+  @override
+  String get cabinDesign_replace_serumError => 'The serum cabinet can\'t be replaced; drawer replacement is only for unit-dose and cubic drawers.';
+
+  @override
+  String get cabinDesign_replace_scanChangedError => 'The scan before saving differs from the previous scan result. Please scan the cabinet again.';
+
+  @override
+  String get cabinDesign_replace_blockedSaveError => 'Assignments or stock were found in the replaced drawer. Unload the drawer and delete its assignments, then scan again.';
+
+  @override
   String get cabinDesign_serum_sectionTitle => 'Internal Layout';
 
   @override

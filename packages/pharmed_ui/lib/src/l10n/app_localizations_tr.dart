@@ -6369,6 +6369,48 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_position_sameTypeConfirmButton => 'Yer Değiştirdim, Kaydet';
 
   @override
+  String get cabinDesign_replace_scanButton => 'Kabini Tara';
+
+  @override
+  String get cabinDesign_replace_sectionTitle => 'Çekmece Değişimi';
+
+  @override
+  String cabinDesign_replace_changeItem(String address, String oldType, String newType) {
+    return '$address · $oldType → $newType';
+  }
+
+  @override
+  String cabinDesign_replace_blockerWithStock(String medicineName, String quantity) {
+    return '$medicineName · stok: $quantity';
+  }
+
+  @override
+  String cabinDesign_replace_blockerAssignmentOnly(String medicineName) {
+    return '$medicineName · stok yok (atama var)';
+  }
+
+  @override
+  String get cabinDesign_replace_blockedInfo => 'Değiştirilen çekmecede atama veya stok var. Çekmeceyi boşaltıp atamaları sildikten sonra kabini tekrar tarayın.';
+
+  @override
+  String get cabinDesign_replace_readyInfo => 'Kaydettiğinizde yeni çekmece kabin tasarımına işlenecek.';
+
+  @override
+  String get cabinDesign_replace_noChangeInfo => 'Tarama tamamlandı; çekmece değişikliği bulunmadı.';
+
+  @override
+  String get cabinDesign_replace_addressMismatchError => 'Taramada çekmece sayısı ya da adresleri değişmiş. Yalnızca aynı adreste çekmece tipi değişimi desteklenir.';
+
+  @override
+  String get cabinDesign_replace_serumError => 'Serum kabini değiştirilemez; çekmece değişimi yalnızca birim doz ve kübik çekmecelerde yapılabilir.';
+
+  @override
+  String get cabinDesign_replace_scanChangedError => 'Kayıt öncesi tarama, önceki tarama sonucundan farklı. Lütfen kabini tekrar tarayın.';
+
+  @override
+  String get cabinDesign_replace_blockedSaveError => 'Değiştirilen çekmecede atama veya stok bulundu. Çekmeceyi boşaltıp atamaları sildikten sonra tekrar tarayın.';
+
+  @override
   String get cabinDesign_serum_sectionTitle => 'İç Dizayn';
 
   @override

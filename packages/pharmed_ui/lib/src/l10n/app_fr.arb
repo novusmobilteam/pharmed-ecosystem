@@ -4081,6 +4081,48 @@
     }
   },
   "cabinDesign_position_sameTypeConfirmButton": "Je les ai échangés, enregistrer",
+  "cabinDesign_replace_scanButton": "Scanner l'armoire",
+  "cabinDesign_replace_sectionTitle": "Remplacement de tiroir",
+  "cabinDesign_replace_changeItem": "{address} · {oldType} → {newType}",
+  "@cabinDesign_replace_changeItem": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      },
+      "oldType": {
+        "type": "String"
+      },
+      "newType": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerWithStock": "{medicineName} · stock : {quantity}",
+  "@cabinDesign_replace_blockerWithStock": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockerAssignmentOnly": "{medicineName} · pas de stock (affecté)",
+  "@cabinDesign_replace_blockerAssignmentOnly": {
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      }
+    }
+  },
+  "cabinDesign_replace_blockedInfo": "Le tiroir remplacé contient encore des affectations ou du stock. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau l'armoire.",
+  "cabinDesign_replace_readyInfo": "Le nouveau tiroir sera appliqué à la conception de l'armoire lors de l'enregistrement.",
+  "cabinDesign_replace_noChangeInfo": "Scan terminé ; aucun changement de tiroir détecté.",
+  "cabinDesign_replace_addressMismatchError": "Le nombre ou les adresses des tiroirs ont changé lors du scan. Seul le remplacement du type de tiroir à la même adresse est pris en charge.",
+  "cabinDesign_replace_serumError": "L'armoire à sérum ne peut pas être remplacée ; le remplacement concerne uniquement les tiroirs dose unitaire et cubiques.",
+  "cabinDesign_replace_scanChangedError": "Le scan avant l'enregistrement diffère du résultat précédent. Veuillez scanner à nouveau l'armoire.",
+  "cabinDesign_replace_blockedSaveError": "Des affectations ou du stock ont été trouvés dans le tiroir remplacé. Videz le tiroir et supprimez ses affectations, puis scannez à nouveau.",
   "cabinDesign_serum_sectionTitle": "Disposition interne",
   "cabinDesign_serum_manualBadge": "CONFIGURATION MANUELLE",
   "cabinDesign_serum_infoBanner": "La disposition interne d'une armoire à sérum n'est pas lue depuis la carte ; définissez ici ses tiroirs et la disposition du matériel.",

@@ -24,7 +24,9 @@ class SaveCabinDesignUseCase {
 
     final slots = sorted.indexed.map((entry) {
       final (i, slot) = entry;
-      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: false);
+      // Taramadan gelen slot'ta bayrak null → false. Çekmece değişimi kaydı
+      // değişmeyen iade çekmecesinin bayrağını taşır; ezilmemeli.
+      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: slot.isReturnDrawerHere ?? false);
     }).toList();
 
     final result = isUpdate

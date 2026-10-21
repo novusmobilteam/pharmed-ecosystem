@@ -155,3 +155,44 @@ class CabinPendingChanges {
     slotOrder: slotOrder != null ? slotOrder() : this.slotOrder,
   );
 }
+
+/// Tarama sonucunda aynı adreste tipi değişmiş bir çekmece: [current] kayıtlı
+/// tasarımdaki (sökülen), [scanned] karttan okunan (yeni takılan) çekmece.
+class DrawerReplacement {
+  const DrawerReplacement({required this.address, required this.current, required this.scanned, this.blockers = const []});
+
+  final String address;
+  final DrawerGroup current;
+  final DrawerGroup scanned;
+
+  /// Sökülen çekmecedeki atama/stoklar. Boş değilse değişim kaydedilemez:
+  /// kullanıcı önce çekmeceyi boşaltıp atamaları silmeli, sonra tekrar taramalı.
+  final List<DrawerReplacementBlocker> blockers;
+
+  bool get isBlocked => blockers.isNotEmpty;
+
+  String? get currentTypeName => current.slot.drawerConfig?.drawerType?.name;
+  String? get scannedTypeName => scanned.slot.drawerConfig?.drawerType?.name;
+
+  DrawerReplacement withBlockers(List<DrawerReplacementBlocker> value) =>
+      DrawerReplacement(address: address, current: current, scanned: scanned, blockers: value);
+}
+
+/// Sökülecek çekmecede değişimi engelleyen tek bir atama (ve varsa stoğu).
+class DrawerReplacementBlocker {
+  const DrawerReplacementBlocker({required this.medicineName, required this.stockQuantity});
+
+  final String medicineName;
+
+  /// Atamaya bağlı toplam stok; 0 ise yalnızca atama var.
+  final num stockQuantity;
+
+  bool get hasStock => stockQuantity > 0;
+
+  /// Tam sayıysa ondalıksız ("5"), değilse en fazla 2 hane ("2.5").
+  String get stockLabel {
+    final value = stockQuantity.toDouble();
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
+  }
+}
