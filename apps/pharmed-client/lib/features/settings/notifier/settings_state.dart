@@ -4,11 +4,11 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
-enum SettingsSection { general, appearance, fingerprint, printer, debug }
+enum SettingsSection { appearance, password, fingerprint, printer, debug }
 
 class SettingsState {
   const SettingsState({
-    this.activeSection = SettingsSection.general,
+    this.activeSection = SettingsSection.appearance,
     this.debugCabin,
     this.cabins = const [],
     this.isLoadingCabins = false,

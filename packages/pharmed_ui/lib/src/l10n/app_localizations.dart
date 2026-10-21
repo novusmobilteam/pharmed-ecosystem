@@ -2994,6 +2994,30 @@ abstract class AppLocalizations {
   /// **'Change Password'**
   String get changePassword_submitButton;
 
+  /// No description provided for @changePassword_settingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the password of the account you are signed in with. Your new password takes effect from your next sign-in.'**
+  String get changePassword_settingsDescription;
+
+  /// No description provided for @changePassword_successMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been changed successfully.'**
+  String get changePassword_successMessage;
+
+  /// No description provided for @changePassword_errorFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Password could not be changed. Please try again.'**
+  String get changePassword_errorFallback;
+
+  /// No description provided for @settingsView_passwordNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get settingsView_passwordNav;
+
   /// No description provided for @home_appBarBadgeLabel.
   ///
   /// In en, this message translates to:

@@ -1640,6 +1640,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get changePassword_submitButton => 'Changer le mot de passe';
 
   @override
+  String get changePassword_settingsDescription => 'Modifiez le mot de passe du compte avec lequel vous êtes connecté. Le nouveau mot de passe s\'applique dès votre prochaine connexion.';
+
+  @override
+  String get changePassword_successMessage => 'Votre mot de passe a été modifié avec succès.';
+
+  @override
+  String get changePassword_errorFallback => 'Le mot de passe n\'a pas pu être modifié. Veuillez réessayer.';
+
+  @override
+  String get settingsView_passwordNav => 'Changer le mot de passe';
+
+  @override
   String get home_appBarBadgeLabel => 'PANNEAU DE GESTION';
 
   @override

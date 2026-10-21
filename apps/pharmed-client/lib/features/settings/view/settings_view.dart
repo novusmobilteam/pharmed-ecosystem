@@ -5,13 +5,13 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../change_password/change_password.dart';
 import '../../fingerprint_enrollment/fingerprint_enrollment.dart';
 import '../../fingerprint_test/fingerprint_test.dart';
 import '../../printer_settings/printer_settings.dart';
 import '../notifier/settings_notifier.dart';
 import '../notifier/settings_state.dart';
 
-part 'general_settings_view.dart';
 part 'appearance_settings_view.dart';
 part 'debug_settings_view.dart';
 
@@ -34,14 +34,14 @@ class _SettingsModalBody extends ConsumerWidget {
       MedSettingsNavGroup(
         items: [
           MedSettingsNavItem(
-            id: SettingsSection.general.name,
-            label: context.l10n.settingsView_generalNav,
-            icon: PhosphorIcons.house(),
-          ),
-          MedSettingsNavItem(
             id: SettingsSection.appearance.name,
             label: context.l10n.settingsView_appearanceNav,
             icon: PhosphorIcons.slidersHorizontal(),
+          ),
+          MedSettingsNavItem(
+            id: SettingsSection.password.name,
+            label: context.l10n.settingsView_passwordNav,
+            icon: PhosphorIcons.lockKey(),
           ),
           MedSettingsNavItem(
             id: SettingsSection.fingerprint.name,
@@ -83,8 +83,8 @@ class _SettingsModalBody extends ConsumerWidget {
 
   static Widget _content(SettingsSection section) {
     return switch (section) {
-      SettingsSection.general => const GeneralSettingsView(),
       SettingsSection.appearance => const AppearanceSettingsView(),
+      SettingsSection.password => const ChangePasswordSettingsView(),
       SettingsSection.fingerprint => const FingerprintSettingsView(),
       SettingsSection.printer => const PrinterSettingsView(),
       SettingsSection.debug => const DebugSettingsView(),

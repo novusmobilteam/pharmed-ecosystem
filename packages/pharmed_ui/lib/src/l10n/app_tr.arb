@@ -1889,6 +1889,22 @@
   "@changePassword_submitButton": {
     "description": "Submit button label on the change-password form"
   },
+  "changePassword_settingsDescription": "Oturum açmış olduğunuz hesabın şifresini değiştirin. Yeni şifreniz bir sonraki girişinizden itibaren geçerli olur.",
+  "@changePassword_settingsDescription": {
+    "description": "Description paragraph of the client Settings › Change Password section."
+  },
+  "changePassword_successMessage": "Şifreniz başarıyla değiştirildi.",
+  "@changePassword_successMessage": {
+    "description": "Inline success notice shown after the password is changed in client settings."
+  },
+  "changePassword_errorFallback": "Şifre değiştirilemedi. Lütfen tekrar deneyin.",
+  "@changePassword_errorFallback": {
+    "description": "Fallback error notice when the change-password request fails without a server message."
+  },
+  "settingsView_passwordNav": "Şifre Değiştir",
+  "@settingsView_passwordNav": {
+    "description": "Client settings modal navigation item for the change-password section."
+  },
   "home_appBarBadgeLabel": "YÖNETİM PANELİ",
   "@home_appBarBadgeLabel": {
     "description": "Small badge label shown in the manager app bar"

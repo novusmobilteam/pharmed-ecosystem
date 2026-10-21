@@ -578,3 +578,7 @@ final getStationTransactionsUseCaseProvider = Provider<GetStationTransactionsUse
 final getOrderedNotLoadedMaterialsUseCaseProvider = Provider<GetOrderedNotLoadedMaterialsUseCase>(
   (ref) => GetOrderedNotLoadedMaterialsUseCase(ref.read(reportRepositoryProvider)),
 );
+
+final changePasswordUseCaseProvider = Provider<ChangePasswordUseCase>(
+  (ref) => ChangePasswordUseCase(ref.read(userManagerProvider)),
+);

@@ -1615,6 +1615,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePassword_submitButton => 'Change Password';
 
   @override
+  String get changePassword_settingsDescription => 'Change the password of the account you are signed in with. Your new password takes effect from your next sign-in.';
+
+  @override
+  String get changePassword_successMessage => 'Your password has been changed successfully.';
+
+  @override
+  String get changePassword_errorFallback => 'Password could not be changed. Please try again.';
+
+  @override
+  String get settingsView_passwordNav => 'Change Password';
+
+  @override
   String get home_appBarBadgeLabel => 'MANAGEMENT PANEL';
 
   @override

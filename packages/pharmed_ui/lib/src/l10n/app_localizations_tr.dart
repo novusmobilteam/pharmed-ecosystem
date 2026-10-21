@@ -1614,6 +1614,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get changePassword_submitButton => 'Şifre Değiştir';
 
   @override
+  String get changePassword_settingsDescription => 'Oturum açmış olduğunuz hesabın şifresini değiştirin. Yeni şifreniz bir sonraki girişinizden itibaren geçerli olur.';
+
+  @override
+  String get changePassword_successMessage => 'Şifreniz başarıyla değiştirildi.';
+
+  @override
+  String get changePassword_errorFallback => 'Şifre değiştirilemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get settingsView_passwordNav => 'Şifre Değiştir';
+
+  @override
   String get home_appBarBadgeLabel => 'YÖNETİM PANELİ';
 
   @override
