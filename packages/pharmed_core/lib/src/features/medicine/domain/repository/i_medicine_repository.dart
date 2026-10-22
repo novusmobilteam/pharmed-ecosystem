@@ -12,8 +12,13 @@ abstract class IMedicineRepository {
   /// ID'si verilen ilacı getirir.
   Future<Result<Drug?>> getDrug(int id);
 
-  /// Yeni bir ilaç oluşturur.
-  Future<Result<void>> createMedicine(Medicine medicine);
+  /// Yeni bir ilaç oluşturur ve oluşturulan kaydı (id ile) döner.
+  /// Backend kaydı dönmezse `Result.ok(null)`.
+  Future<Result<Medicine?>> createMedicine(Medicine medicine);
+
+  /// Serbest ilacın alınabileceği servisleri kaydeder (ekle/güncelle/sil tek istek).
+  /// Boş [services] listesi ilacın tüm servislerini kaldırır.
+  Future<Result<void>> saveIndependentServices(int materialId, List<IndependentMaterialService> services);
 
   /// Mevcut bir ilacı günceller.
   Future<Result<void>> updateMedicine(Medicine medicine);

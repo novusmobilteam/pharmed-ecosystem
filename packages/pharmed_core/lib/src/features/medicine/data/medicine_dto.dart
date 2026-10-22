@@ -3,6 +3,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 part 'drug_dto.dart';
 part 'medical_consumable_dto.dart';
+part 'independent_material_service_dto.dart';
 
 /// İlaç/Tıbbi Sarf Tanım ekranında İlaç(Drug) ve Tıbbi Sarf(MedicalConsumable)
 /// tipindeki verileri tek bir listede gösteriyoruz. Verile /material/all adlı servisten

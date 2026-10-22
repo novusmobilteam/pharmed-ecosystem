@@ -5,6 +5,7 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 
 part 'drug.dart';
 part 'medical_consumable.dart';
+part 'independent_material_service.dart';
 
 /// Tek üst entity: ilaç da olabilir sarf da.
 /// UI ve iş kuralları katmanında union gibi kullanman için 'when' sağlıyor.

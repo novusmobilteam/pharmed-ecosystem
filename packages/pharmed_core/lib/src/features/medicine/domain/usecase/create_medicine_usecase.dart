@@ -8,7 +8,7 @@ class CreateMedicineUseCase {
 
   CreateMedicineUseCase(this._repository);
 
-  Future<Result<void>> call(Medicine medicine) {
+  Future<Result<Medicine?>> call(Medicine medicine) {
     return _repository.createMedicine(medicine);
   }
 }

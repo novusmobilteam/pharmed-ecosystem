@@ -1617,6 +1617,32 @@
   "@medicine_fieldStation": {},
   "medicine_fieldUnit": "Unit",
   "@medicine_fieldUnit": {},
+  "medicine_section_basicInfoTitle": "Basic Information",
+  "@medicine_section_basicInfoTitle": {},
+  "medicine_section_classificationTitle": "Classification",
+  "@medicine_section_classificationTitle": {},
+  "medicine_section_doseUnitTitle": "Dose & Unit",
+  "@medicine_section_doseUnitTitle": {},
+  "medicine_section_purchaseReturnTitle": "Purchase & Return",
+  "@medicine_section_purchaseReturnTitle": {},
+  "medicine_section_witnessTitle": "Witness & Destruction",
+  "@medicine_section_witnessTitle": {},
+  "medicine_section_cabinBehaviorTitle": "Cabin Behavior",
+  "@medicine_section_cabinBehaviorTitle": {},
+  "medicine_section_notesTitle": "Notes",
+  "@medicine_section_notesTitle": {},
+  "medicine_fieldIndependentServices": "Allowed Services",
+  "@medicine_fieldIndependentServices": {},
+  "medicine_independentServicesDialogSelectTitle": "Select Services",
+  "@medicine_independentServicesDialogSelectTitle": {},
+  "medicine_independentServicesSaveError": "The drug was saved, but its free drug services could not be saved: {detail}",
+  "@medicine_independentServicesSaveError": {
+    "placeholders": {
+      "detail": {
+        "type": "Object"
+      }
+    }
+  },
   "refillList_dialogTitle": "Drug Refill List",
   "@refillList_dialogTitle": {},
   "refillList_recordNoLabel": "Refill Record No: {id}",

@@ -2603,6 +2603,38 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicine_fieldUnit => 'Unité';
 
   @override
+  String get medicine_section_basicInfoTitle => 'Informations de base';
+
+  @override
+  String get medicine_section_classificationTitle => 'Classification';
+
+  @override
+  String get medicine_section_doseUnitTitle => 'Dose et unité';
+
+  @override
+  String get medicine_section_purchaseReturnTitle => 'Prise et retour';
+
+  @override
+  String get medicine_section_witnessTitle => 'Témoins et destruction';
+
+  @override
+  String get medicine_section_cabinBehaviorTitle => 'Comportement de l\'armoire';
+
+  @override
+  String get medicine_section_notesTitle => 'Notes';
+
+  @override
+  String get medicine_fieldIndependentServices => 'Services autorisés';
+
+  @override
+  String get medicine_independentServicesDialogSelectTitle => 'Sélectionner des services';
+
+  @override
+  String medicine_independentServicesSaveError(Object detail) {
+    return 'Le médicament a été enregistré, mais ses services de médicament libre n\'ont pas pu être enregistrés : $detail';
+  }
+
+  @override
   String get refillList_dialogTitle => 'Liste de remplissage de médicaments';
 
   @override

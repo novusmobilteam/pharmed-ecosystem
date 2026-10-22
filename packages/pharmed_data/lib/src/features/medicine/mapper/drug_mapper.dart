@@ -65,6 +65,10 @@ class DrugMapper {
       isNotCubicDrawrMaxValue: dto.isNotCubicDrawrMaxValue,
       isRfidEnable: dto.isRfidEnable,
       isTakeGiveButtonActive: dto.isTakeGiveButtonActive,
+      independentServices: (dto.independentServices ?? const [])
+          .map((s) => s.toEntityOrNull())
+          .whereType<IndependentMaterialService>()
+          .toList(),
     );
   }
 
@@ -126,6 +130,7 @@ class DrugMapper {
       isIndependentMaterial: entity.isIndependentMaterial,
       isRfidEnable: entity.isRfidEnable,
       isTakeGiveButtonActive: entity.isTakeGiveButtonActive,
+      independentServices: entity.independentServices.map(IndependentMaterialServiceDto.fromEntity).toList(),
     );
   }
 
