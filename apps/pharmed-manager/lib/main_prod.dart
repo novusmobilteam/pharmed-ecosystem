@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/flavor/app_flavor.dart';
@@ -7,6 +8,7 @@ import 'main.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized(); // operasyon kaydı oynatıcısı
   final prefs = await SharedPreferences.getInstance();
   FlavorConfig.initialize(AppFlavor.prod);
   await Hive.initFlutter();

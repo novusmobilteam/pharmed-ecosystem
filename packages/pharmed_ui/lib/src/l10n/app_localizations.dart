@@ -4890,6 +4890,264 @@ abstract class AppLocalizations {
   /// **'Unresolved'**
   String get inconsistency_statusUnsolvedBadge;
 
+  /// No description provided for @inconsistency_watchRecordingTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Recording'**
+  String get inconsistency_watchRecordingTooltip;
+
+  /// No description provided for @operationRecording_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation Recording'**
+  String get operationRecording_dialogTitle;
+
+  /// No description provided for @operationRecording_dialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{operationType} · {date}'**
+  String operationRecording_dialogSubtitle(String operationType, String date);
+
+  /// No description provided for @operationRecording_loadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The recording could not be loaded.'**
+  String get operationRecording_loadErrorMessage;
+
+  /// No description provided for @operationRecording_notFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recording for this operation'**
+  String get operationRecording_notFoundTitle;
+
+  /// No description provided for @operationRecording_notFoundDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation was not recorded by a camera, or the recording has not been uploaded yet.'**
+  String get operationRecording_notFoundDescription;
+
+  /// No description provided for @operationRecording_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload in progress — the station has not finished uploading this video yet.'**
+  String get operationRecording_status_pending;
+
+  /// No description provided for @operationRecording_status_purged.
+  ///
+  /// In en, this message translates to:
+  /// **'This video was deleted at the end of the retention period.'**
+  String get operationRecording_status_purged;
+
+  /// No description provided for @operationRecording_status_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no video for this camera.'**
+  String get operationRecording_status_unavailable;
+
+  /// No description provided for @operationRecording_cameraFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera could not start recording ({reason}).'**
+  String operationRecording_cameraFailedMessage(String reason);
+
+  /// No description provided for @operationRecording_playbackErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The video could not be played.'**
+  String get operationRecording_playbackErrorMessage;
+
+  /// No description provided for @operationRecording_eventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get operationRecording_eventsTitle;
+
+  /// No description provided for @operationRecording_noEventsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No events were recorded.'**
+  String get operationRecording_noEventsMessage;
+
+  /// No description provided for @operationRecording_operationIdsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Operations'**
+  String get operationRecording_operationIdsLabel;
+
+  /// No description provided for @operationRecording_endReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ending'**
+  String get operationRecording_endReasonLabel;
+
+  /// No description provided for @operationRecording_seekTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to this moment'**
+  String get operationRecording_seekTooltip;
+
+  /// No description provided for @operationRecording_marker_drawerOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer opened'**
+  String get operationRecording_marker_drawerOpened;
+
+  /// No description provided for @operationRecording_marker_drawerClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer closed'**
+  String get operationRecording_marker_drawerClosed;
+
+  /// No description provided for @operationRecording_marker_drawerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer error'**
+  String get operationRecording_marker_drawerFailed;
+
+  /// No description provided for @operationRecording_marker_lidOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Lid opened'**
+  String get operationRecording_marker_lidOpened;
+
+  /// No description provided for @operationRecording_marker_lidClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Lid closed'**
+  String get operationRecording_marker_lidClosed;
+
+  /// No description provided for @operationRecording_marker_lidFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Lid could not open'**
+  String get operationRecording_marker_lidFailed;
+
+  /// No description provided for @operationRecording_marker_recordingInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording interrupted'**
+  String get operationRecording_marker_recordingInterrupted;
+
+  /// No description provided for @operationRecording_marker_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get operationRecording_marker_unknown;
+
+  /// No description provided for @operationRecording_type_refill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get operationRecording_type_refill;
+
+  /// No description provided for @operationRecording_type_census.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get operationRecording_type_census;
+
+  /// No description provided for @operationRecording_type_intake.
+  ///
+  /// In en, this message translates to:
+  /// **'Intake'**
+  String get operationRecording_type_intake;
+
+  /// No description provided for @operationRecording_type_refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get operationRecording_type_refund;
+
+  /// No description provided for @operationRecording_type_waste.
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction'**
+  String get operationRecording_type_waste;
+
+  /// No description provided for @operationRecording_type_unload.
+  ///
+  /// In en, this message translates to:
+  /// **'Unload'**
+  String get operationRecording_type_unload;
+
+  /// No description provided for @operationRecording_endReason_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get operationRecording_endReason_completed;
+
+  /// No description provided for @operationRecording_endReason_stoppedByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped by the user'**
+  String get operationRecording_endReason_stoppedByUser;
+
+  /// No description provided for @operationRecording_endReason_abortedAfterError.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended after an error'**
+  String get operationRecording_endReason_abortedAfterError;
+
+  /// No description provided for @operationRecording_endReason_screenClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen closed'**
+  String get operationRecording_endReason_screenClosed;
+
+  /// No description provided for @operationRecording_endReason_superseded.
+  ///
+  /// In en, this message translates to:
+  /// **'Interrupted by a new operation'**
+  String get operationRecording_endReason_superseded;
+
+  /// No description provided for @operationRecording_endReason_recovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovered after the app closed'**
+  String get operationRecording_endReason_recovered;
+
+  /// No description provided for @operationRecording_startedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Started'**
+  String get operationRecording_startedAtLabel;
+
+  /// No description provided for @operationRecording_durationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get operationRecording_durationLabel;
+
+  /// No description provided for @operationRecording_camerasLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cameras'**
+  String get operationRecording_camerasLabel;
+
+  /// No description provided for @operationRecording_eventCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get operationRecording_eventCountLabel;
+
+  /// No description provided for @operationRecording_playTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get operationRecording_playTooltip;
+
+  /// No description provided for @operationRecording_pauseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get operationRecording_pauseTooltip;
+
+  /// No description provided for @operationRecording_speedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get operationRecording_speedTooltip;
+
   /// No description provided for @hospitalization_formTitleNew.
   ///
   /// In en, this message translates to:
@@ -12379,7 +12637,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboard_orderedNotLoadedAlertDialogSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Ordered materials with no stock in the station's cabins'**
+  /// **'Ordered materials with no stock in the station\'s cabins'**
   String get dashboard_orderedNotLoadedAlertDialogSubtitle;
 
   /// No description provided for @dashboard_orderedNotLoadedAlertEmptyTitle.

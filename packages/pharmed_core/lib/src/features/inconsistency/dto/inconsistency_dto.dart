@@ -2,6 +2,10 @@ import 'package:pharmed_manager/core/core.dart';
 
 class InconsistencyDTO {
   final int? id;
+
+  /// Tutarsızlığı oluşturan kabin işleminin sunucu kimliği — kamera kaydı
+  /// bununla açılır.
+  final int? operationId;
   final int? stationId;
   final DrawerCellDTO? drawerCell;
   final MedicineDto? medicine;
@@ -20,6 +24,7 @@ class InconsistencyDTO {
 
   InconsistencyDTO({
     this.id,
+    this.operationId,
     this.stationId,
     this.drawerCell,
     this.medicine,
@@ -40,6 +45,7 @@ class InconsistencyDTO {
   factory InconsistencyDTO.fromJson(Map<String, dynamic> json) {
     return InconsistencyDTO(
       id: json['id'] as int?,
+      operationId: (json['operationId'] as num?)?.toInt(),
       stationId: json['stationId'] as int?,
       drawerCell: json['cabinDrawrDetail'] != null ? DrawerCellDTO.fromJson(json['cabinDrawrDetail']) : null,
       medicine: json['material'] != null ? MedicineDto.fromJson(json['material']) : null,

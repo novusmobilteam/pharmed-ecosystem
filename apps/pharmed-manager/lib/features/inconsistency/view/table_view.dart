@@ -32,6 +32,13 @@ class TableView extends StatelessWidget {
       columnDefs: _buildColumnDefs(context, notifier),
 
       actions: [
+        TableActionItem(
+          icon: PhosphorIcons.videoCamera(),
+          tooltip: context.l10n.inconsistency_watchRecordingTooltip,
+          // operationId yoksa (backend değişikliği öncesi kayıtlar) izlenecek kayıt yok.
+          isVisible: (item) => item.operationId != null,
+          onPressed: (item) => showOperationRecordingDialog(context, operationId: item.operationId!),
+        ),
         if (notifier.showSolved)
           TableActionItem(
             icon: PhosphorIcons.pen(),

@@ -3213,6 +3213,194 @@
 "@inconsistency_statusUnsolvedBadge": {
   "description": "Status badge shown in the inconsistency detail dialog when the inconsistency is not yet resolved"
 },
+  "inconsistency_watchRecordingTooltip": "Kaydı İzle",
+  "@inconsistency_watchRecordingTooltip": {
+    "description": "Tooltip on the inconsistency table action that opens the camera recording of the cabin operation that produced the row"
+  },
+  "operationRecording_dialogTitle": "İşlem Kaydı",
+  "@operationRecording_dialogTitle": {
+    "description": "Title of the dialog that plays the camera recording of a cabin operation (shared viewer, opened from operation-linked tables)"
+  },
+  "operationRecording_dialogSubtitle": "{operationType} · {date}",
+  "@operationRecording_dialogSubtitle": {
+    "description": "Subtitle of the operation recording dialog: operation type and start date/time",
+    "placeholders": {
+      "operationType": {
+        "type": "String",
+        "description": "Localized operation type, e.g. 'Sayım'"
+      },
+      "date": {
+        "type": "String",
+        "description": "Formatted operation start date and time"
+      }
+    }
+  },
+  "operationRecording_loadErrorMessage": "Kayıt yüklenemedi.",
+  "@operationRecording_loadErrorMessage": {
+    "description": "Error shown in the operation recording dialog when the recording metadata request fails"
+  },
+  "operationRecording_notFoundTitle": "Bu işlem için kayıt yok",
+  "@operationRecording_notFoundTitle": {
+    "description": "Empty-state title in the operation recording dialog when the server has no recording for the operation"
+  },
+  "operationRecording_notFoundDescription": "Bu işlem kamerayla kaydedilmemiş ya da kayıt henüz yüklenmemiş.",
+  "@operationRecording_notFoundDescription": {
+    "description": "Empty-state description in the operation recording dialog when the server has no recording for the operation"
+  },
+  "operationRecording_status_pending": "Yükleme sürüyor — istasyon bu videoyu henüz yüklemedi.",
+  "@operationRecording_status_pending": {
+    "description": "Shown in place of the player when the selected camera's video is expected but not yet uploaded"
+  },
+  "operationRecording_status_purged": "Bu video saklama süresi dolduğu için silindi.",
+  "@operationRecording_status_purged": {
+    "description": "Shown in place of the player when the selected camera's video was purged on the server"
+  },
+  "operationRecording_status_unavailable": "Bu kamera için video yok.",
+  "@operationRecording_status_unavailable": {
+    "description": "Shown in place of the player when the selected camera has no video"
+  },
+  "operationRecording_cameraFailedMessage": "Kamera kayda başlayamadı ({reason}).",
+  "@operationRecording_cameraFailedMessage": {
+    "description": "Shown under the unavailable-video message when the camera failed to start recording",
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "Technical failure reason code"
+      }
+    }
+  },
+  "operationRecording_playbackErrorMessage": "Video oynatılamadı.",
+  "@operationRecording_playbackErrorMessage": {
+    "description": "Shown over the player when video playback fails (network, auth or codec error)"
+  },
+  "operationRecording_eventsTitle": "Olaylar",
+  "@operationRecording_eventsTitle": {
+    "description": "Header of the event (marker) list next to the player; clicking an event seeks the video"
+  },
+  "operationRecording_noEventsMessage": "Kayıtlı olay yok.",
+  "@operationRecording_noEventsMessage": {
+    "description": "Shown in the event list when the recording has no markers"
+  },
+  "operationRecording_operationIdsLabel": "İşlemler",
+  "@operationRecording_operationIdsLabel": {
+    "description": "Info row label listing the server operation ids linked to the recording"
+  },
+  "operationRecording_endReasonLabel": "Bitiş",
+  "@operationRecording_endReasonLabel": {
+    "description": "Info row label for how the cabin operation ended"
+  },
+  "operationRecording_seekTooltip": "Bu ana git",
+  "@operationRecording_seekTooltip": {
+    "description": "Tooltip on an event row that seeks the video to the event time"
+  },
+  "operationRecording_marker_drawerOpened": "Çekmece açıldı",
+  "@operationRecording_marker_drawerOpened": {
+    "description": "Event list label: a drawer was opened"
+  },
+  "operationRecording_marker_drawerClosed": "Çekmece kapandı",
+  "@operationRecording_marker_drawerClosed": {
+    "description": "Event list label: a drawer was closed"
+  },
+  "operationRecording_marker_drawerFailed": "Çekmece hatası",
+  "@operationRecording_marker_drawerFailed": {
+    "description": "Event list label: a drawer failed to open or close"
+  },
+  "operationRecording_marker_lidOpened": "Kapak açıldı",
+  "@operationRecording_marker_lidOpened": {
+    "description": "Event list label: a cubic drawer lid was opened"
+  },
+  "operationRecording_marker_lidClosed": "Kapak kapandı",
+  "@operationRecording_marker_lidClosed": {
+    "description": "Event list label: a cubic drawer lid was closed"
+  },
+  "operationRecording_marker_lidFailed": "Kapak açılamadı",
+  "@operationRecording_marker_lidFailed": {
+    "description": "Event list label: a cubic drawer lid failed to open"
+  },
+  "operationRecording_marker_recordingInterrupted": "Kayıt kesildi",
+  "@operationRecording_marker_recordingInterrupted": {
+    "description": "Event list label: a camera stream dropped before the operation ended"
+  },
+  "operationRecording_marker_unknown": "Olay",
+  "@operationRecording_marker_unknown": {
+    "description": "Event list label for an event type this app version does not know"
+  },
+  "operationRecording_type_refill": "Dolum",
+  "@operationRecording_type_refill": {
+    "description": "Operation type label in the recording dialog: refill"
+  },
+  "operationRecording_type_census": "Sayım",
+  "@operationRecording_type_census": {
+    "description": "Operation type label in the recording dialog: census/count"
+  },
+  "operationRecording_type_intake": "Alım",
+  "@operationRecording_type_intake": {
+    "description": "Operation type label in the recording dialog: intake"
+  },
+  "operationRecording_type_refund": "İade",
+  "@operationRecording_type_refund": {
+    "description": "Operation type label in the recording dialog: refund/return"
+  },
+  "operationRecording_type_waste": "İmha",
+  "@operationRecording_type_waste": {
+    "description": "Operation type label in the recording dialog: destruction/waste"
+  },
+  "operationRecording_type_unload": "Boşaltma",
+  "@operationRecording_type_unload": {
+    "description": "Operation type label in the recording dialog: unload"
+  },
+  "operationRecording_endReason_completed": "Tamamlandı",
+  "@operationRecording_endReason_completed": {
+    "description": "Operation end reason: queue processed to the end"
+  },
+  "operationRecording_endReason_stoppedByUser": "Kullanıcı durdurdu",
+  "@operationRecording_endReason_stoppedByUser": {
+    "description": "Operation end reason: user stopped the queue"
+  },
+  "operationRecording_endReason_abortedAfterError": "Hata sonrası sonlandırıldı",
+  "@operationRecording_endReason_abortedAfterError": {
+    "description": "Operation end reason: user ended the queue after an error"
+  },
+  "operationRecording_endReason_screenClosed": "Ekran kapatıldı",
+  "@operationRecording_endReason_screenClosed": {
+    "description": "Operation end reason: the operation screen was closed mid-operation"
+  },
+  "operationRecording_endReason_superseded": "Yeni işlemle kesildi",
+  "@operationRecording_endReason_superseded": {
+    "description": "Operation end reason: a new operation started before this one was closed"
+  },
+  "operationRecording_endReason_recovered": "Uygulama kapandıktan sonra kurtarıldı",
+  "@operationRecording_endReason_recovered": {
+    "description": "Operation end reason: recording recovered on startup after the app closed/crashed"
+  },
+  "operationRecording_startedAtLabel": "Başlangıç",
+  "@operationRecording_startedAtLabel": {
+    "description": "Summary card label in the recording dialog: operation start time"
+  },
+  "operationRecording_durationLabel": "Süre",
+  "@operationRecording_durationLabel": {
+    "description": "Summary card label in the recording dialog: operation duration"
+  },
+  "operationRecording_camerasLabel": "Kameralar",
+  "@operationRecording_camerasLabel": {
+    "description": "Summary card label in the recording dialog: number of cameras that recorded"
+  },
+  "operationRecording_eventCountLabel": "Olay",
+  "@operationRecording_eventCountLabel": {
+    "description": "Summary card label in the recording dialog: number of recorded events"
+  },
+  "operationRecording_playTooltip": "Oynat",
+  "@operationRecording_playTooltip": {
+    "description": "Tooltip on the play button of the recording player"
+  },
+  "operationRecording_pauseTooltip": "Duraklat",
+  "@operationRecording_pauseTooltip": {
+    "description": "Tooltip on the pause button of the recording player"
+  },
+  "operationRecording_speedTooltip": "Oynatma hızı",
+  "@operationRecording_speedTooltip": {
+    "description": "Tooltip on the playback speed toggle of the recording player"
+  },
   "hospitalization_formTitleNew": "Yeni Yatış Gir",
   "@hospitalization_formTitleNew": {
     "description": "Side panel title / tooltip / button label when creating a new hospitalization"

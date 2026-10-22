@@ -475,6 +475,11 @@ class RepositoryProviders {
           ),
         },
       ),
+
+      /// Operation Recording (kamera kaydı izleme)
+      Provider<IOperationRecordingRepository>(
+        create: (context) => OperationRecordingRepositoryImpl(dataSource: context.read()),
+      ),
     ];
   }
 }

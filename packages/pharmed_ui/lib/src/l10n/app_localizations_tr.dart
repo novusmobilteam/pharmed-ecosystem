@@ -1614,13 +1614,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get changePassword_submitButton => 'Şifre Değiştir';
 
   @override
-  String get changePassword_settingsDescription => 'Oturum açmış olduğunuz hesabın şifresini değiştirin. Yeni şifreniz bir sonraki girişinizden itibaren geçerli olur.';
+  String get changePassword_settingsDescription =>
+      'Oturum açmış olduğunuz hesabın şifresini değiştirin. Yeni şifreniz bir sonraki girişinizden itibaren geçerli olur.';
 
   @override
-  String get changePassword_successMessage => 'Şifreniz başarıyla değiştirildi.';
+  String get changePassword_successMessage =>
+      'Şifreniz başarıyla değiştirildi.';
 
   @override
-  String get changePassword_errorFallback => 'Şifre değiştirilemedi. Lütfen tekrar deneyin.';
+  String get changePassword_errorFallback =>
+      'Şifre değiştirilemedi. Lütfen tekrar deneyin.';
 
   @override
   String get settingsView_passwordNav => 'Şifre Değiştir';
@@ -2643,6 +2646,145 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get inconsistency_statusUnsolvedBadge => 'Çözülmedi';
+
+  @override
+  String get inconsistency_watchRecordingTooltip => 'Kaydı İzle';
+
+  @override
+  String get operationRecording_dialogTitle => 'İşlem Kaydı';
+
+  @override
+  String operationRecording_dialogSubtitle(String operationType, String date) {
+    return '$operationType · $date';
+  }
+
+  @override
+  String get operationRecording_loadErrorMessage => 'Kayıt yüklenemedi.';
+
+  @override
+  String get operationRecording_notFoundTitle => 'Bu işlem için kayıt yok';
+
+  @override
+  String get operationRecording_notFoundDescription =>
+      'Bu işlem kamerayla kaydedilmemiş ya da kayıt henüz yüklenmemiş.';
+
+  @override
+  String get operationRecording_status_pending =>
+      'Yükleme sürüyor — istasyon bu videoyu henüz yüklemedi.';
+
+  @override
+  String get operationRecording_status_purged =>
+      'Bu video saklama süresi dolduğu için silindi.';
+
+  @override
+  String get operationRecording_status_unavailable =>
+      'Bu kamera için video yok.';
+
+  @override
+  String operationRecording_cameraFailedMessage(String reason) {
+    return 'Kamera kayda başlayamadı ($reason).';
+  }
+
+  @override
+  String get operationRecording_playbackErrorMessage => 'Video oynatılamadı.';
+
+  @override
+  String get operationRecording_eventsTitle => 'Olaylar';
+
+  @override
+  String get operationRecording_noEventsMessage => 'Kayıtlı olay yok.';
+
+  @override
+  String get operationRecording_operationIdsLabel => 'İşlemler';
+
+  @override
+  String get operationRecording_endReasonLabel => 'Bitiş';
+
+  @override
+  String get operationRecording_seekTooltip => 'Bu ana git';
+
+  @override
+  String get operationRecording_marker_drawerOpened => 'Çekmece açıldı';
+
+  @override
+  String get operationRecording_marker_drawerClosed => 'Çekmece kapandı';
+
+  @override
+  String get operationRecording_marker_drawerFailed => 'Çekmece hatası';
+
+  @override
+  String get operationRecording_marker_lidOpened => 'Kapak açıldı';
+
+  @override
+  String get operationRecording_marker_lidClosed => 'Kapak kapandı';
+
+  @override
+  String get operationRecording_marker_lidFailed => 'Kapak açılamadı';
+
+  @override
+  String get operationRecording_marker_recordingInterrupted => 'Kayıt kesildi';
+
+  @override
+  String get operationRecording_marker_unknown => 'Olay';
+
+  @override
+  String get operationRecording_type_refill => 'Dolum';
+
+  @override
+  String get operationRecording_type_census => 'Sayım';
+
+  @override
+  String get operationRecording_type_intake => 'Alım';
+
+  @override
+  String get operationRecording_type_refund => 'İade';
+
+  @override
+  String get operationRecording_type_waste => 'İmha';
+
+  @override
+  String get operationRecording_type_unload => 'Boşaltma';
+
+  @override
+  String get operationRecording_endReason_completed => 'Tamamlandı';
+
+  @override
+  String get operationRecording_endReason_stoppedByUser => 'Kullanıcı durdurdu';
+
+  @override
+  String get operationRecording_endReason_abortedAfterError =>
+      'Hata sonrası sonlandırıldı';
+
+  @override
+  String get operationRecording_endReason_screenClosed => 'Ekran kapatıldı';
+
+  @override
+  String get operationRecording_endReason_superseded => 'Yeni işlemle kesildi';
+
+  @override
+  String get operationRecording_endReason_recovered =>
+      'Uygulama kapandıktan sonra kurtarıldı';
+
+  @override
+  String get operationRecording_startedAtLabel => 'Başlangıç';
+
+  @override
+  String get operationRecording_durationLabel => 'Süre';
+
+  @override
+  String get operationRecording_camerasLabel => 'Kameralar';
+
+  @override
+  String get operationRecording_eventCountLabel => 'Olay';
+
+  @override
+  String get operationRecording_playTooltip => 'Oynat';
+
+  @override
+  String get operationRecording_pauseTooltip => 'Duraklat';
+
+  @override
+  String get operationRecording_speedTooltip => 'Oynatma hızı';
 
   @override
   String get hospitalization_formTitleNew => 'Yeni Yatış Gir';
@@ -6994,19 +7136,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboard_expiringAlertDialogTitle => 'SKT Yaklaşan İlaçlar';
 
   @override
-  String get dashboard_expiringAlertDialogSubtitle => 'Son kullanma tarihi yaklaşan kabin stokları';
+  String get dashboard_expiringAlertDialogSubtitle =>
+      'Son kullanma tarihi yaklaşan kabin stokları';
 
   @override
   String get dashboard_expiringAlertEmptyTitle => 'SKT yaklaşan ilaç kalmadı';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogTitle => 'Kabin Dışı Malzemeler';
+  String get dashboard_orderedNotLoadedAlertDialogTitle =>
+      'Kabin Dışı Malzemeler';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogSubtitle => 'Order edilmiş ancak istasyon kabinlerinde stoğu olmayan malzemeler';
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle =>
+      'Order edilmiş ancak istasyon kabinlerinde stoğu olmayan malzemeler';
 
   @override
-  String get dashboard_orderedNotLoadedAlertEmptyTitle => 'Kabin dışı malzeme kalmadı';
+  String get dashboard_orderedNotLoadedAlertEmptyTitle =>
+      'Kabin dışı malzeme kalmadı';
 
   @override
   String get urgentPatientTermination_listTitle => 'Acil Hastalar';

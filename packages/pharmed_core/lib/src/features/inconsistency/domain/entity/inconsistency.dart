@@ -2,6 +2,10 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 class Inconsistency {
   final int? id;
+
+  /// Tutarsızlığı oluşturan kabin işleminin sunucu kimliği — kamera kaydı
+  /// bununla açılır. Eski kayıtlarda null olabilir.
+  final int? operationId;
   final int? stationId;
   final DrawerCell? cabinDrawerDetail;
   final Medicine? medicine;
@@ -20,6 +24,7 @@ class Inconsistency {
 
   const Inconsistency({
     this.id,
+    this.operationId,
     this.stationId,
     this.cabinDrawerDetail,
     this.medicine,

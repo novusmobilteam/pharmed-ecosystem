@@ -1616,13 +1616,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePassword_submitButton => 'Change Password';
 
   @override
-  String get changePassword_settingsDescription => 'Change the password of the account you are signed in with. Your new password takes effect from your next sign-in.';
+  String get changePassword_settingsDescription =>
+      'Change the password of the account you are signed in with. Your new password takes effect from your next sign-in.';
 
   @override
-  String get changePassword_successMessage => 'Your password has been changed successfully.';
+  String get changePassword_successMessage =>
+      'Your password has been changed successfully.';
 
   @override
-  String get changePassword_errorFallback => 'Password could not be changed. Please try again.';
+  String get changePassword_errorFallback =>
+      'Password could not be changed. Please try again.';
 
   @override
   String get settingsView_passwordNav => 'Change Password';
@@ -2651,6 +2654,151 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get inconsistency_statusUnsolvedBadge => 'Unresolved';
+
+  @override
+  String get inconsistency_watchRecordingTooltip => 'Watch Recording';
+
+  @override
+  String get operationRecording_dialogTitle => 'Operation Recording';
+
+  @override
+  String operationRecording_dialogSubtitle(String operationType, String date) {
+    return '$operationType · $date';
+  }
+
+  @override
+  String get operationRecording_loadErrorMessage =>
+      'The recording could not be loaded.';
+
+  @override
+  String get operationRecording_notFoundTitle =>
+      'No recording for this operation';
+
+  @override
+  String get operationRecording_notFoundDescription =>
+      'This operation was not recorded by a camera, or the recording has not been uploaded yet.';
+
+  @override
+  String get operationRecording_status_pending =>
+      'Upload in progress — the station has not finished uploading this video yet.';
+
+  @override
+  String get operationRecording_status_purged =>
+      'This video was deleted at the end of the retention period.';
+
+  @override
+  String get operationRecording_status_unavailable =>
+      'There is no video for this camera.';
+
+  @override
+  String operationRecording_cameraFailedMessage(String reason) {
+    return 'The camera could not start recording ($reason).';
+  }
+
+  @override
+  String get operationRecording_playbackErrorMessage =>
+      'The video could not be played.';
+
+  @override
+  String get operationRecording_eventsTitle => 'Events';
+
+  @override
+  String get operationRecording_noEventsMessage => 'No events were recorded.';
+
+  @override
+  String get operationRecording_operationIdsLabel => 'Operations';
+
+  @override
+  String get operationRecording_endReasonLabel => 'Ending';
+
+  @override
+  String get operationRecording_seekTooltip => 'Go to this moment';
+
+  @override
+  String get operationRecording_marker_drawerOpened => 'Drawer opened';
+
+  @override
+  String get operationRecording_marker_drawerClosed => 'Drawer closed';
+
+  @override
+  String get operationRecording_marker_drawerFailed => 'Drawer error';
+
+  @override
+  String get operationRecording_marker_lidOpened => 'Lid opened';
+
+  @override
+  String get operationRecording_marker_lidClosed => 'Lid closed';
+
+  @override
+  String get operationRecording_marker_lidFailed => 'Lid could not open';
+
+  @override
+  String get operationRecording_marker_recordingInterrupted =>
+      'Recording interrupted';
+
+  @override
+  String get operationRecording_marker_unknown => 'Event';
+
+  @override
+  String get operationRecording_type_refill => 'Refill';
+
+  @override
+  String get operationRecording_type_census => 'Count';
+
+  @override
+  String get operationRecording_type_intake => 'Intake';
+
+  @override
+  String get operationRecording_type_refund => 'Return';
+
+  @override
+  String get operationRecording_type_waste => 'Destruction';
+
+  @override
+  String get operationRecording_type_unload => 'Unload';
+
+  @override
+  String get operationRecording_endReason_completed => 'Completed';
+
+  @override
+  String get operationRecording_endReason_stoppedByUser =>
+      'Stopped by the user';
+
+  @override
+  String get operationRecording_endReason_abortedAfterError =>
+      'Ended after an error';
+
+  @override
+  String get operationRecording_endReason_screenClosed => 'Screen closed';
+
+  @override
+  String get operationRecording_endReason_superseded =>
+      'Interrupted by a new operation';
+
+  @override
+  String get operationRecording_endReason_recovered =>
+      'Recovered after the app closed';
+
+  @override
+  String get operationRecording_startedAtLabel => 'Started';
+
+  @override
+  String get operationRecording_durationLabel => 'Duration';
+
+  @override
+  String get operationRecording_camerasLabel => 'Cameras';
+
+  @override
+  String get operationRecording_eventCountLabel => 'Events';
+
+  @override
+  String get operationRecording_playTooltip => 'Play';
+
+  @override
+  String get operationRecording_pauseTooltip => 'Pause';
+
+  @override
+  String get operationRecording_speedTooltip => 'Playback speed';
 
   @override
   String get hospitalization_formTitleNew => 'Enter New Admission';
@@ -7047,19 +7195,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboard_expiringAlertDialogTitle => 'Expiring Medicines';
 
   @override
-  String get dashboard_expiringAlertDialogSubtitle => 'Cabin stocks with an approaching expiry date';
+  String get dashboard_expiringAlertDialogSubtitle =>
+      'Cabin stocks with an approaching expiry date';
 
   @override
   String get dashboard_expiringAlertEmptyTitle => 'No expiring medicines left';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogTitle => 'Out-of-Cabin Materials';
+  String get dashboard_orderedNotLoadedAlertDialogTitle =>
+      'Out-of-Cabin Materials';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogSubtitle => 'Ordered materials with no stock in the station\'s cabins';
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle =>
+      'Ordered materials with no stock in the station\'s cabins';
 
   @override
-  String get dashboard_orderedNotLoadedAlertEmptyTitle => 'No out-of-cabin materials left';
+  String get dashboard_orderedNotLoadedAlertEmptyTitle =>
+      'No out-of-cabin materials left';
 
   @override
   String get urgentPatientTermination_listTitle => 'Emergency Patients';

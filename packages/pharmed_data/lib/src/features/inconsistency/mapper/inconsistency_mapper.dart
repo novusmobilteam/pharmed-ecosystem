@@ -7,6 +7,7 @@ class InconsistencyMapper {
   Inconsistency toEntity(InconsistencyDTO dto) {
     return Inconsistency(
       id: dto.id,
+      operationId: dto.operationId,
       cabinDrawerDetail: dto.drawerCell != null ? _drawerCellMapper.toEntity(dto.drawerCell!) : null,
       medicine: dto.medicine != null ? _medicineMapper.toEntity(dto.medicine!) : null,
       quantity: dto.quantity,

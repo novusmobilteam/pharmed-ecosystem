@@ -1640,13 +1640,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get changePassword_submitButton => 'Changer le mot de passe';
 
   @override
-  String get changePassword_settingsDescription => 'Modifiez le mot de passe du compte avec lequel vous êtes connecté. Le nouveau mot de passe s\'applique dès votre prochaine connexion.';
+  String get changePassword_settingsDescription =>
+      'Modifiez le mot de passe du compte avec lequel vous êtes connecté. Le nouveau mot de passe s\'applique dès votre prochaine connexion.';
 
   @override
-  String get changePassword_successMessage => 'Votre mot de passe a été modifié avec succès.';
+  String get changePassword_successMessage =>
+      'Votre mot de passe a été modifié avec succès.';
 
   @override
-  String get changePassword_errorFallback => 'Le mot de passe n\'a pas pu être modifié. Veuillez réessayer.';
+  String get changePassword_errorFallback =>
+      'Le mot de passe n\'a pas pu être modifié. Veuillez réessayer.';
 
   @override
   String get settingsView_passwordNav => 'Changer le mot de passe';
@@ -2724,6 +2727,153 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get inconsistency_statusUnsolvedBadge => 'Non résolu';
+
+  @override
+  String get inconsistency_watchRecordingTooltip => 'Voir l\'enregistrement';
+
+  @override
+  String get operationRecording_dialogTitle => 'Enregistrement de l\'opération';
+
+  @override
+  String operationRecording_dialogSubtitle(String operationType, String date) {
+    return '$operationType · $date';
+  }
+
+  @override
+  String get operationRecording_loadErrorMessage =>
+      'Impossible de charger l\'enregistrement.';
+
+  @override
+  String get operationRecording_notFoundTitle =>
+      'Aucun enregistrement pour cette opération';
+
+  @override
+  String get operationRecording_notFoundDescription =>
+      'Cette opération n\'a pas été filmée ou l\'enregistrement n\'a pas encore été téléversé.';
+
+  @override
+  String get operationRecording_status_pending =>
+      'Téléversement en cours — la station n\'a pas encore terminé l\'envoi de cette vidéo.';
+
+  @override
+  String get operationRecording_status_purged =>
+      'Cette vidéo a été supprimée à la fin de la durée de conservation.';
+
+  @override
+  String get operationRecording_status_unavailable =>
+      'Aucune vidéo pour cette caméra.';
+
+  @override
+  String operationRecording_cameraFailedMessage(String reason) {
+    return 'La caméra n\'a pas pu démarrer l\'enregistrement ($reason).';
+  }
+
+  @override
+  String get operationRecording_playbackErrorMessage =>
+      'Impossible de lire la vidéo.';
+
+  @override
+  String get operationRecording_eventsTitle => 'Événements';
+
+  @override
+  String get operationRecording_noEventsMessage =>
+      'Aucun événement enregistré.';
+
+  @override
+  String get operationRecording_operationIdsLabel => 'Opérations';
+
+  @override
+  String get operationRecording_endReasonLabel => 'Fin';
+
+  @override
+  String get operationRecording_seekTooltip => 'Aller à ce moment';
+
+  @override
+  String get operationRecording_marker_drawerOpened => 'Tiroir ouvert';
+
+  @override
+  String get operationRecording_marker_drawerClosed => 'Tiroir fermé';
+
+  @override
+  String get operationRecording_marker_drawerFailed => 'Erreur de tiroir';
+
+  @override
+  String get operationRecording_marker_lidOpened => 'Couvercle ouvert';
+
+  @override
+  String get operationRecording_marker_lidClosed => 'Couvercle fermé';
+
+  @override
+  String get operationRecording_marker_lidFailed =>
+      'Le couvercle n\'a pas pu s\'ouvrir';
+
+  @override
+  String get operationRecording_marker_recordingInterrupted =>
+      'Enregistrement interrompu';
+
+  @override
+  String get operationRecording_marker_unknown => 'Événement';
+
+  @override
+  String get operationRecording_type_refill => 'Remplissage';
+
+  @override
+  String get operationRecording_type_census => 'Inventaire';
+
+  @override
+  String get operationRecording_type_intake => 'Prélèvement';
+
+  @override
+  String get operationRecording_type_refund => 'Retour';
+
+  @override
+  String get operationRecording_type_waste => 'Destruction';
+
+  @override
+  String get operationRecording_type_unload => 'Déchargement';
+
+  @override
+  String get operationRecording_endReason_completed => 'Terminée';
+
+  @override
+  String get operationRecording_endReason_stoppedByUser =>
+      'Arrêtée par l\'utilisateur';
+
+  @override
+  String get operationRecording_endReason_abortedAfterError =>
+      'Terminée après une erreur';
+
+  @override
+  String get operationRecording_endReason_screenClosed => 'Écran fermé';
+
+  @override
+  String get operationRecording_endReason_superseded =>
+      'Interrompue par une nouvelle opération';
+
+  @override
+  String get operationRecording_endReason_recovered =>
+      'Récupérée après la fermeture de l\'application';
+
+  @override
+  String get operationRecording_startedAtLabel => 'Début';
+
+  @override
+  String get operationRecording_durationLabel => 'Durée';
+
+  @override
+  String get operationRecording_camerasLabel => 'Caméras';
+
+  @override
+  String get operationRecording_eventCountLabel => 'Événements';
+
+  @override
+  String get operationRecording_playTooltip => 'Lire';
+
+  @override
+  String get operationRecording_pauseTooltip => 'Pause';
+
+  @override
+  String get operationRecording_speedTooltip => 'Vitesse de lecture';
 
   @override
   String get hospitalization_formTitleNew => 'Saisir une nouvelle admission';
@@ -7211,22 +7361,28 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get dashboard_expiringAlertDialogTitle => 'Médicaments bientôt périmés';
+  String get dashboard_expiringAlertDialogTitle =>
+      'Médicaments bientôt périmés';
 
   @override
-  String get dashboard_expiringAlertDialogSubtitle => 'Stocks de cabine dont la date d\'expiration approche';
+  String get dashboard_expiringAlertDialogSubtitle =>
+      'Stocks de cabine dont la date d\'expiration approche';
 
   @override
-  String get dashboard_expiringAlertEmptyTitle => 'Plus aucun médicament bientôt périmé';
+  String get dashboard_expiringAlertEmptyTitle =>
+      'Plus aucun médicament bientôt périmé';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogTitle => 'Matériaux hors cabine';
+  String get dashboard_orderedNotLoadedAlertDialogTitle =>
+      'Matériaux hors cabine';
 
   @override
-  String get dashboard_orderedNotLoadedAlertDialogSubtitle => 'Matériaux commandés sans stock dans les cabines de la station';
+  String get dashboard_orderedNotLoadedAlertDialogSubtitle =>
+      'Matériaux commandés sans stock dans les cabines de la station';
 
   @override
-  String get dashboard_orderedNotLoadedAlertEmptyTitle => 'Plus aucun matériau hors cabine';
+  String get dashboard_orderedNotLoadedAlertEmptyTitle =>
+      'Plus aucun matériau hors cabine';
 
   @override
   String get urgentPatientTermination_listTitle => 'Patients urgents';

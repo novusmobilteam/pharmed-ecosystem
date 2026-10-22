@@ -276,6 +276,10 @@ class UsecaseProviders {
       Provider(create: (context) => CreateMailPreferenceUsecase(context.read())),
       Provider(create: (context) => UpdateMailPreferenceUsecase(context.read())),
       Provider(create: (context) => DeleteMailPreferenceUsecase(context.read())),
+
+      /// Operation Recording
+      Provider(create: (context) => GetOperationRecordingUseCase(context.read())),
+      Provider(create: (context) => GetRecordingVideoSourceUseCase(context.read())),
     ];
   }
 }

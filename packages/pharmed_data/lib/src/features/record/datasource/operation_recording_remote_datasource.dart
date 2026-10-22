@@ -24,6 +24,23 @@ class OperationRecordingRemoteDataSource extends BaseRemoteDataSource {
   static String _video(String operationId, String cameraId) =>
       '$_base/${Uri.encodeComponent(operationId)}/videos/${Uri.encodeComponent(cameraId)}';
 
+  /// GET /OperationRecording/{operationId} — kayda bağlı operationId'lerden
+  /// herhangi biriyle. Çıplak JSON döner (zarfsız). [SWREQ-DATA-CAM-002]
+  Future<Result<OperationRecordingDetailDTO?>> getRecording(int operationId) =>
+      apiManager.get<OperationRecordingDetailDTO?>(
+        '$_base/$operationId',
+        parser: (json) => json is Map ? OperationRecordingDetailDTO.fromJson(json.cast<String, dynamic>()) : null,
+      );
+
+  /// GET /OperationRecording/{operationId}/videos/{cameraId} — mp4 akışı.
+  /// Oynatıcı Dio dışında çektiği için tam adres ve kimlik header'ları döner.
+  ({Uri uri, Map<String, String> headers}) videoRequest(int operationId, String cameraId) {
+    final base = apiManager.baseUrl.endsWith('/')
+        ? apiManager.baseUrl.substring(0, apiManager.baseUrl.length - 1)
+        : apiManager.baseUrl;
+    return (uri: Uri.parse('$base${_video('$operationId', cameraId)}'), headers: apiManager.authHeaders);
+  }
+
   /// POST /OperationRecording — idempotent (aynı operationId tekrar gelirse günceller).
   Future<Result<void>> submitMetadata(OperationRecordingMetadataDTO dto) {
     final body = dto.toJson();

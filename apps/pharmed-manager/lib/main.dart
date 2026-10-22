@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:pharmed_manager/core/flavor/app_flavor.dart';
 
 import 'package:pharmed_manager/features/home/notifier/home_notifier.dart';
@@ -15,6 +16,7 @@ import 'core/providers/providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized(); // operasyon kaydı oynatıcısı
   final prefs = await SharedPreferences.getInstance();
   FlavorConfig.initialize(AppFlavor.dev); // geliştirme için
   await Hive.initFlutter();

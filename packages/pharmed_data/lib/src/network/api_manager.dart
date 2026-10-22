@@ -20,7 +20,8 @@ class APIManager {
     Duration connectTimeout = const Duration(seconds: 60),
     Duration receiveTimeout = const Duration(seconds: 0),
     List<Interceptor>? extraInterceptors,
-  }) : _dio = Dio(
+  }) : _tokenProvider = tokenProvider,
+       _dio = Dio(
          BaseOptions(
            baseUrl: baseUrl,
            connectTimeout: connectTimeout,
@@ -32,6 +33,19 @@ class APIManager {
   }
 
   final Dio _dio;
+  final AuthTokenProvider _tokenProvider;
+
+  String get baseUrl => _dio.options.baseUrl;
+
+  /// Dio dışı istemcilerin (ör. video oynatıcı) aynı oturumla istek atabilmesi
+  /// için kimlik header'ları. TokenInterceptor ile aynı içerik.
+  Map<String, String> get authHeaders {
+    final token = _tokenProvider.accessToken;
+    return {
+      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      'Accept-Language': _tokenProvider.currentLocale,
+    };
+  }
 
   // ── Public HTTP metodları ─────────────────────────────────────
 
