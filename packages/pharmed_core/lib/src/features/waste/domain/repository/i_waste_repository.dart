@@ -16,7 +16,7 @@ abstract interface class IWasteRepository {
   Future<Result<void>> masterDestruction(Map<String, dynamic> data);
 
   /// Master kabinde imha edilebilir ilaçları imha eder.
-  Future<Result<void>> masterDisposeMaterial(List<Map<String, dynamic>> data);
+  Future<Result<int?>> masterDisposeMaterial(List<Map<String, dynamic>> data);
 
   // ─── Mobil Kabin ────────────────────────────────────────────────
 

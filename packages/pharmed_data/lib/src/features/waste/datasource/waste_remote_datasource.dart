@@ -36,10 +36,12 @@ class WasteRemoteDataSource extends BaseRemoteDataSource {
     return await postRequest(path: '$_base/destruction', parser: BaseRemoteDataSource.voidParser(), body: data);
   }
 
-  Future<Result<void>> masterDisposeMaterial(List<Map<String, dynamic>> data) async {
+  /// Master kabin imha — sunucu işlem kaydının operationId'sini döner.
+  Future<Result<int?>> masterDisposeMaterial(List<Map<String, dynamic>> data) async {
     return await postRequest(
       path: '/CabinDrawrStock/destruction',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }

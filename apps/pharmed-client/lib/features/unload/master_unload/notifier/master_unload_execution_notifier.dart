@@ -78,7 +78,10 @@ class MasterUnloadExecutionNotifier extends ChangeNotifier
 
     final result = await _completeUnload.call(CabinOperationParamsMapper.toParamsForTarget(target));
     return result.when(
-      ok: (_) => true,
+      ok: (operationId) {
+        recordServerOperationId(operationId); // [SWREQ-CAM-024] video ↔ sunucu işlemi
+        return true;
+      },
       error: (e) {
         setQueueFailure(CabinApiFailure(message: e.message), isQueueError: true);
         return false;

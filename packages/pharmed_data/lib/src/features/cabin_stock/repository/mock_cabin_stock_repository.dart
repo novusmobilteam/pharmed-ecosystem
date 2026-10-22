@@ -73,10 +73,14 @@ class MockCabinStockRepository implements ICabinStockRepository {
   }
 
   @override
-  Future<Result<void>> refillMasterCabin(List<dynamic> data) async {
+  Future<Result<int?>> refillMasterCabin(List<dynamic> data) async {
     await Future.delayed(_delay);
-    return const Result.ok(null);
+    return Result.ok(_nextOperationId++);
   }
+
+  /// Sunucunun işlem kaydı id'si gibi davranır (kayıt upload'ı mock'ta da
+  /// çalışsın diye). [SWREQ-CAM-024]
+  int _nextOperationId = 1;
 
   @override
   Future<Result<List<StationStock>>> getStationStocks(int stationId) async {

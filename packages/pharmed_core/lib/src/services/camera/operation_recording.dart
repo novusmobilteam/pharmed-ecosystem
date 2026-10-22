@@ -102,6 +102,7 @@ class OperationRecordingStart extends Equatable {
     required this.cameras,
     this.userId,
     this.userFullName,
+    this.serverOperationIds = const [],
   });
 
   final String operationId;
@@ -114,8 +115,33 @@ class OperationRecordingStart extends Equatable {
   final int? userId;
   final String? userFullName;
 
+  /// Operasyon sürerken sunucudan dönen operationId'ler. Her geldiğinde
+  /// manifest yeniden yazılır; çökme sonrası kurtarılan kayıt bunlarla
+  /// sunucuya bağlanabilir. [SWREQ-CAM-024]
+  final List<int> serverOperationIds;
+
+  OperationRecordingStart withServerOperationIds(List<int> ids) => OperationRecordingStart(
+    operationId: operationId,
+    type: type,
+    cabinIds: cabinIds,
+    startedAt: startedAt,
+    cameras: cameras,
+    userId: userId,
+    userFullName: userFullName,
+    serverOperationIds: ids,
+  );
+
   @override
-  List<Object?> get props => [operationId, type, cabinIds, startedAt, cameras, userId, userFullName];
+  List<Object?> get props => [
+    operationId,
+    type,
+    cabinIds,
+    startedAt,
+    cameras,
+    userId,
+    userFullName,
+    serverOperationIds,
+  ];
 }
 
 /// Bir kabin operasyonunun kayıt özeti — outbox'a giden birim.
@@ -134,10 +160,22 @@ class OperationRecording extends Equatable {
     required this.tracks,
     this.userId,
     this.userFullName,
+    this.serverOperationIds = const [],
   });
 
+  /// İstemcinin ürettiği kayıt kimliği — lokal arşiv anahtarı ve upload
+  /// URL'indeki kimlik. Sunucudaki işlem kayıtları [serverOperationIds]'tir.
   final String operationId;
   final RecordedOperationType type;
+
+  /// Operasyon boyunca kabin işlem servislerinin döndürdüğü operationId'ler
+  /// (her hedef kaydı bir id döner; geliş sırasıyla, tekrarsız). Boşsa
+  /// sunucuda bu videoya bağlanacak bir işlem yoktur ve kayıt yüklenmez,
+  /// yalnızca lokal arşivde kalır. [SWREQ-CAM-024]
+  final List<int> serverOperationIds;
+
+  /// Sunucuya yüklenecek mi? (En az bir işlem kaydına bağlanabiliyor mu?)
+  bool get isLinkedToServerOperation => serverOperationIds.isNotEmpty;
 
   /// Operasyonun dokunduğu kabinler (dolum listesi gibi işlemler birden
   /// fazla kabine yayılabilir).
@@ -169,6 +207,7 @@ class OperationRecording extends Equatable {
     tracks: tracks,
     userId: userId,
     userFullName: userFullName,
+    serverOperationIds: serverOperationIds,
   );
 
   @override
@@ -183,5 +222,6 @@ class OperationRecording extends Equatable {
     tracks,
     userId,
     userFullName,
+    serverOperationIds,
   ];
 }

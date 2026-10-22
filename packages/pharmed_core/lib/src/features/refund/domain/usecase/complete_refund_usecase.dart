@@ -15,7 +15,7 @@ class CompleteRefundUseCase {
 
   CompleteRefundUseCase(this._repository);
 
-  Future<Result<void>> call(CompleteRefundParams params) async {
+  Future<Result<int?>> call(CompleteRefundParams params) async {
     switch (params.type) {
       case ReturnType.toDrawer:
         return _repository.refundToDrawer(id: params.id, quantity: params.quantity);

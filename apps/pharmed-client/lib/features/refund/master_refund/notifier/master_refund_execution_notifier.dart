@@ -201,7 +201,10 @@ class MasterRefundExecutionNotifier extends ChangeNotifier
     );
 
     return result.when(
-      ok: (_) => true,
+      ok: (operationId) {
+        recordServerOperationId(operationId); // [SWREQ-CAM-024] video ↔ sunucu işlemi
+        return true;
+      },
       error: (e) {
         // Eskiden isQueueError verilmiyordu — yalnızca snackbar çıkıyor,
         // kullanıcıya devam/sonlandır seçeneği sunulmuyordu.

@@ -58,5 +58,5 @@ class CompleteEquivalentIntakeUseCase {
   const CompleteEquivalentIntakeUseCase(this._repository);
   final IIntakeRepository _repository;
 
-  Future<Result<void>> call(EquivalentIntakeParams params) => _repository.completeEquivalentIntake(params.toJson());
+  Future<Result<int?>> call(EquivalentIntakeParams params) => _repository.completeEquivalentIntake(params.toJson());
 }

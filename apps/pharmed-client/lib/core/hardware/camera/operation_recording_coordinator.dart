@@ -86,23 +86,23 @@ class OperationRecordingCoordinator {
     final cameras = await _pool.resolveFor(cabinIds);
 
     // [SWREQ-CAM-021] Write-ahead: kayıt başlamadan operasyon bilgisi diske.
-    await _outbox.stage(
-      OperationRecordingStart(
-        operationId: operationId,
-        type: type,
-        cabinIds: cabinIds,
-        startedAt: startedAt,
-        cameras: {for (final c in cameras) c.device.id: c.device.name},
-        userId: user.id,
-        userFullName: user.fullName,
-      ),
+    final start = OperationRecordingStart(
+      operationId: operationId,
+      type: type,
+      cabinIds: cabinIds,
+      startedAt: startedAt,
+      cameras: {for (final c in cameras) c.device.id: c.device.name},
+      userId: user.id,
+      userFullName: user.fullName,
     );
+    await _outbox.stage(start);
 
     // Kameralar paralel başlar — toplam bekleme en yavaş kamera kadar.
     final tracks = await Future.wait(cameras.map((c) => _startTrack(operationId, c)));
 
     final handle = OperationRecordingHandle._(
       this,
+      start: start,
       operationId: operationId,
       type: type,
       cabinIds: cabinIds,
@@ -163,6 +163,15 @@ class OperationRecordingCoordinator {
     );
   }
 
+  /// Sunucu operationId'si geldikçe manifest güncellenir — çökmede kurtarılan
+  /// kayıt da sunucu işlemine bağlanabilsin. Sıraya girer: kayıt kapanıp
+  /// manifest arşive taşındıysa ([_finalized]) yeniden YAZILMAZ, yoksa
+  /// açılışta aynı operasyon bir kez daha "kurtarılırdı". [SWREQ-CAM-024]
+  Future<void> _persistServerOperationIds(OperationRecordingHandle handle) => _serialize(() async {
+    if (handle._finalized) return;
+    await _outbox.stage(handle._start.withServerOperationIds(List.unmodifiable(handle._serverOperationIds)));
+  });
+
   Future<void> _scheduleEnd(OperationRecordingHandle handle, OperationEndReason reason) {
     final endedAt = _clock(); // operasyonun bittiği an, sıra beklemesinden bağımsız
     return _serialize(() => _doEnd(handle, reason, endedAt));
@@ -192,6 +201,8 @@ class OperationRecordingCoordinator {
       }),
     );
 
+    // Bu noktadan sonra gelen sunucu id'si bu kayda giremez.
+    handle._serverIdsSealed = true;
     final recording = OperationRecording(
       operationId: handle.operationId,
       type: handle.type,
@@ -203,6 +214,7 @@ class OperationRecordingCoordinator {
       tracks: tracks,
       userId: handle.userId,
       userFullName: handle.userFullName,
+      serverOperationIds: List.unmodifiable(handle._serverOperationIds),
     );
 
     final committed = await _outbox.commit(recording);
@@ -216,6 +228,7 @@ class OperationRecordingCoordinator {
           'endReason': reason.name,
           'videos': tracks.where((t) => t.hasVideo).length,
           'markers': recording.markers.length,
+          'serverOperationIds': recording.serverOperationIds,
         },
       ),
       error: (e) => MedLogger.error(
@@ -262,6 +275,7 @@ class _TrackState {
 final class OperationRecordingHandle {
   OperationRecordingHandle._(
     this._coordinator, {
+    required OperationRecordingStart start,
     required this.operationId,
     required this.type,
     required this.cabinIds,
@@ -269,9 +283,11 @@ final class OperationRecordingHandle {
     required List<_TrackState> tracks,
     this.userId,
     this.userFullName,
-  }) : _tracks = tracks;
+  }) : _start = start,
+       _tracks = tracks;
 
   final OperationRecordingCoordinator _coordinator;
+  final OperationRecordingStart _start;
   final String operationId;
   final RecordedOperationType type;
   final Set<int> cabinIds;
@@ -282,11 +298,19 @@ final class OperationRecordingHandle {
 
   final _markers = <RecordingMarker>[];
 
+  /// Kabin işlem servislerinin döndürdüğü operationId'ler (geliş sırasıyla).
+  final _serverOperationIds = <int>[];
+
+  List<int> get serverOperationIds => List.unmodifiable(_serverOperationIds);
+
   /// end() çağrıldı (yeni işaret kabul edilmez).
   bool _ended = false;
 
   /// Koordinatör kaydı durdurup outbox'a verdi.
   bool _finalized = false;
+
+  /// Kayıt özeti oluşturuldu; [addServerOperationId] artık etkisiz.
+  bool _serverIdsSealed = false;
 
   /// Operasyonun kabinlerine atanmış kamera var mı?
   bool get hasCameras => _tracks.isNotEmpty;
@@ -311,6 +335,25 @@ final class OperationRecordingHandle {
       _ => null,
     };
     if (type != null) _addMarker(type, cabinDrawerId: cabinDrawerId);
+  }
+
+  /// Bir hedefin kaydı sunucuda başarılı olup operationId döndüğünde
+  /// çağrılır; video bu id'lerle sunucu işlemlerine bağlanır. Tekrar gelen id
+  /// yok sayılır. end() çağrılmış olsa da kayıt özeti oluşana kadar (kameralar
+  /// dururken) id yine alınır — kuyruk biterken sürmekte olan son kayıt. [SWREQ-CAM-024]
+  void addServerOperationId(int id) {
+    if (_serverIdsSealed) {
+      MedLogger.warn(
+        unit: OperationRecordingCoordinator._unit,
+        swreq: 'SWREQ-CAM-024',
+        message: 'Kayıt kapandıktan sonra sunucu operationId geldi; videoya bağlanamadı',
+        context: {'operationId': operationId, 'serverOperationId': id},
+      );
+      return;
+    }
+    if (_serverOperationIds.contains(id)) return;
+    _serverOperationIds.add(id);
+    unawaited(_coordinator._persistServerOperationIds(this));
   }
 
   /// Operasyonu kapatır: kayıtları durdurur ve outbox'a verir. İdempotent —

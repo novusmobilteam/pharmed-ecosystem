@@ -14,7 +14,7 @@ abstract class ICabinStockRepository {
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiringStocks({PagedQueryParams? params});
 
   /// Master kabin dolum işlemi
-  Future<Result<void>> refillMasterCabin(List<dynamic> data);
+  Future<Result<int?>> refillMasterCabin(List<dynamic> data);
 
   /// Mobil kabin dolum işlemi
   Future<Result<void>> refillMobileCabin(List<dynamic> data);

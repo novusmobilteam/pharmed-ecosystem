@@ -8,7 +8,7 @@ class UnloadRepositoryImpl implements IUnloadRepository {
   UnloadRepositoryImpl({required UnloadRemoteDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<Result<void>> masterUnload(List<Map<String, dynamic>> data) async {
+  Future<Result<int?>> masterUnload(List<Map<String, dynamic>> data) async {
     return _dataSource.masterUnload(data);
   }
 

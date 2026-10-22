@@ -8,7 +8,7 @@ class CompleteMasterUnloadUseCase {
 
   CompleteMasterUnloadUseCase(this._repository);
 
-  Future<Result<void>> call(List<CabinOperationMedicineParams> params) {
+  Future<Result<int?>> call(List<CabinOperationMedicineParams> params) {
     final data = params.map((p) => p.toJson()).toList();
     return _repository.masterUnload(data);
   }

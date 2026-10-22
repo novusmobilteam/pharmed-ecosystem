@@ -10,13 +10,14 @@ import 'package:pharmed_core/pharmed_core.dart';
 class OperationRecordingJsonMapper {
   const OperationRecordingJsonMapper();
 
-  static const schemaVersion = 2; // v2: çoklu kamera (tracks)
+  static const schemaVersion = 3; // v2: çoklu kamera (tracks), v3: serverOperationIds
 
   // ── Sidecar ───────────────────────────────────────────────────────────────
 
   Map<String, Object?> toJson(OperationRecording r) => {
     'schemaVersion': schemaVersion,
     'operationId': r.operationId,
+    'serverOperationIds': r.serverOperationIds,
     'type': r.type.name,
     'cabinIds': r.cabinIds.toList()..sort(),
     'userId': r.userId,
@@ -71,6 +72,7 @@ class OperationRecordingJsonMapper {
     final fileExists = exists ?? (_) => true;
     return OperationRecording(
       operationId: operationId,
+      serverOperationIds: _serverOperationIds(json),
       type: _enum(RecordedOperationType.values, json['type'], RecordedOperationType.refill),
       cabinIds: _cabinIds(json),
       userId: json['userId'] as int?,
@@ -121,6 +123,7 @@ class OperationRecordingJsonMapper {
   Map<String, Object?> startToJson(OperationRecordingStart s) => {
     'schemaVersion': schemaVersion,
     'operationId': s.operationId,
+    'serverOperationIds': s.serverOperationIds,
     'type': s.type.name,
     'cabinIds': s.cabinIds.toList()..sort(),
     'cameras': s.cameras,
@@ -131,6 +134,7 @@ class OperationRecordingJsonMapper {
 
   OperationRecordingStart startFromJson(Map<String, Object?> json) => OperationRecordingStart(
     operationId: json['operationId']! as String,
+    serverOperationIds: _serverOperationIds(json),
     type: _enum(RecordedOperationType.values, json['type'], RecordedOperationType.refill),
     cabinIds: _cabinIds(json),
     cameras: (json['cameras'] as Map<String, Object?>? ?? const {}).cast<String, String>(),
@@ -145,6 +149,10 @@ class OperationRecordingJsonMapper {
     final single = json['cabinId'] as int?; // schemaVersion 1
     return single == null ? <int>{} : {single};
   }
+
+  /// schemaVersion < 3 dosyalarda alan yoktur → boş (kayıt yüklenmez).
+  static List<int> _serverOperationIds(Map<String, Object?> json) =>
+      [for (final id in (json['serverOperationIds'] as List<Object?>? ?? const [])) (id! as num).toInt()];
 
   static String _ts(DateTime d) => d.toUtc().toIso8601String();
 

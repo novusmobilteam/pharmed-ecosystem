@@ -12,11 +12,12 @@ class CensusRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-CENSUS';
 
-  /// Master kabin sayım işlemi
-  Future<Result<void>> masterCensus(List<dynamic> data) async {
+  /// Master kabin sayım işlemi — sunucu işlem kaydının operationId'sini döner.
+  Future<Result<int?>> masterCensus(List<dynamic> data) async {
     return await putRequest(
       path: '$_base/censusQuantity',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
       successLog: 'Census quantity updated',
     );

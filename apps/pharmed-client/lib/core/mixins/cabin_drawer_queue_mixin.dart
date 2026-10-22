@@ -323,7 +323,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
     final nextIndex = _currentIndex + 1;
     if (nextIndex >= _jobs.length) {
-      _finishQueue(reason: QueueFinishReason.abortedAfterError);
+      _finishQueue(reason: QueueFinishReason.completed);
       return;
     }
     await _openJobAt(jobIndex: nextIndex, targetIndex: 0);
@@ -530,7 +530,9 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
 
     final nextIndex = _currentIndex + 1;
     if (nextIndex >= _jobs.length) {
-      _finishQueue(reason: QueueFinishReason.abortedAfterError);
+      // Hatalı job atlanıp kuyruk sonuna kadar işlendi — başarısız çekmece
+      // job durumunda (failed) ve kayıt işaretlerinde görünür.
+      _finishQueue(reason: QueueFinishReason.completed);
       return;
     }
     _currentIndex = nextIndex;
@@ -558,7 +560,7 @@ mixin CabinDrawerQueueMixin<TJob extends DrawerJob<TTarget>, TTarget extends Dra
         context: {'reason': reason, 'error': e.toString(), 'stage': drawerStage.toString()},
       );
     } finally {
-      _finishQueue(reason: QueueFinishReason.abortedAfterError);
+      _finishQueue(reason: reason);
     }
   }
 

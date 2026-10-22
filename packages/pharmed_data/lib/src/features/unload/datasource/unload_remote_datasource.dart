@@ -12,10 +12,12 @@ class UnloadRemoteDataSource extends BaseRemoteDataSource {
   @override
   String get logUnit => 'SW-UNIT-UNLOAD';
 
-  Future<Result<void>> masterUnload(List<Map<String, dynamic>> data) async {
+  /// Master kabin boşaltma — sunucu işlem kaydının operationId'sini döner.
+  Future<Result<int?>> masterUnload(List<Map<String, dynamic>> data) async {
     return await postRequest(
       path: '$_base/emptying',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
       successLog: 'Unload process completed',
     );

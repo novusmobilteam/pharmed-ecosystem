@@ -3,9 +3,16 @@
 /// Yükleyen kullanıcı sunucuda JWT'den alınır. Upload arka planda ve sonradan
 /// yapıldığı için yükleyen, işlemi yapan kişiden farklı olabilir; bu yüzden
 /// işlemi yapan kullanıcı [operatorUserId] ile ayrıca gönderilir.
+///
+/// Videonun bağlandığı sunucu işlem kayıtları, kabin işlem servislerinin
+/// döndürdüğü [operationIds]'tir; video uçlarında bunlardan biri (ilki)
+/// kimlik olarak kullanılır. [operationId] istemcinin ürettiği LOKAL kayıt
+/// kimliğidir — sunucuya GÖNDERİLMEZ (sözleşme gereği; gönderilirse 400).
+/// [SWREQ-CAM-024]
 class OperationRecordingMetadataDTO {
   const OperationRecordingMetadataDTO({
     this.operationId,
+    this.operationIds,
     this.operationType,
     this.cabinIds,
     this.startedAt,
@@ -17,6 +24,9 @@ class OperationRecordingMetadataDTO {
   });
 
   final String? operationId;
+
+  /// Kabin işlem servislerinin bu kayıt boyunca döndürdüğü operationId'ler.
+  final List<int>? operationIds;
   final String? operationType;
   final List<int>? cabinIds;
   final String? startedAt;
@@ -30,6 +40,7 @@ class OperationRecordingMetadataDTO {
 
   factory OperationRecordingMetadataDTO.fromJson(Map<String, dynamic> json) => OperationRecordingMetadataDTO(
     operationId: json['operationId'] as String?,
+    operationIds: (json['operationIds'] as List?)?.map((e) => (e as num).toInt()).toList(),
     operationType: json['operationType'] as String?,
     cabinIds: (json['cabinIds'] as List?)?.cast<int>(),
     startedAt: json['startedAt'] as String?,
@@ -45,7 +56,7 @@ class OperationRecordingMetadataDTO {
   );
 
   Map<String, dynamic> toJson() => {
-    'operationId': operationId,
+    'operationIds': operationIds,
     'operationType': operationType,
     'cabinIds': cabinIds,
     'startedAt': startedAt,

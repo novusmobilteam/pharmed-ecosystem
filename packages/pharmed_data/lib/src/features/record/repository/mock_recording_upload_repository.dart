@@ -33,9 +33,16 @@ class MockRecordingUploadRepository implements IRecordingUploadRepository {
 
   @override
   Future<Result<void>> submitMetadata(OperationRecording recording, {required Set<String> videoCameraIds}) async {
+    if (recording.serverOperationIds.isEmpty) {
+      // Gerçek istemci id'siz kaydı göndermez; gelirse sözleşme ihlali.
+      return const Result.error(ServiceException(message: 'operationIds boş olamaz', statusCode: 400));
+    }
     final fail = await _simulate();
     if (fail != null) return Result.error(fail);
-    _expected[recording.operationId] = videoCameraIds; // idempotent: tekrar gelirse günceller
+    // Gerçek sunucu gibi: video uçları operationIds'ten herhangi biriyle gelebilir.
+    for (final id in recording.serverOperationIds) {
+      _expected['$id'] = videoCameraIds; // idempotent: tekrar gelirse günceller
+    }
     return const Result.ok(null);
   }
 

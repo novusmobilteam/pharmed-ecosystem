@@ -7,6 +7,7 @@ class OperationRecordingMetadataMapper {
   OperationRecordingMetadataDTO toDto(OperationRecording r, {required Set<String> videoCameraIds}) =>
       OperationRecordingMetadataDTO(
         operationId: r.operationId,
+        operationIds: List.of(r.serverOperationIds),
         operationType: r.type.name,
         cabinIds: r.cabinIds.toList()..sort(),
         startedAt: _ts(r.startedAt),

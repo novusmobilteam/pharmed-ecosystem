@@ -155,6 +155,13 @@ class RecordingUploadWorker {
     var current = entry;
     final recording = await _storage.readSidecar(current.sidecarPath);
 
+    // 0) Sunucuda bağlanacak işlem kaydı yoksa (hiç operationId dönmedi /
+    //    v3 öncesi ya da id'siz kurtarılmış kayıt) yüklenmez. [SWREQ-CAM-024]
+    if (!recording.isLinkedToServerOperation) {
+      await _markLocalOnly(current);
+      return;
+    }
+
     // 1) Metadata
     if (current.state == RecordingUploadState.pending) {
       final result = await _submitMetadata(
@@ -165,7 +172,10 @@ class RecordingUploadWorker {
       await _outbox.update(current);
     }
 
-    // 2) Videolar — tamamlanmamış olanlar, sırayla
+    // 2) Videolar — tamamlanmamış olanlar, sırayla. Sunucu video uçlarında
+    //    kaydı operationIds'ten herhangi biriyle bulur; deterministik olsun
+    //    diye hep ilki kullanılır (yeniden denemede aynı adres). [SWREQ-CAM-024]
+    final serverKey = recording.serverOperationIds.first.toString();
     for (final video in current.pendingVideos) {
       final track = recording.tracks.where((t) => t.cameraId == video.cameraId).firstOrNull;
       final sha = track?.video?.sha256;
@@ -174,7 +184,7 @@ class RecordingUploadWorker {
         return;
       }
 
-      final outcome = await _uploadVideo(current, video, sha);
+      final outcome = await _uploadVideo(current, video, sha, serverKey: serverKey);
       switch (outcome) {
         case _VideoOutcome.done:
           current = current.copyWith(completedVideos: {...current.completedVideos, video.cameraId});
@@ -189,12 +199,17 @@ class RecordingUploadWorker {
     await _markVerified(current);
   }
 
-  Future<_VideoOutcome> _uploadVideo(RecordingOutboxEntry entry, OutboxVideo video, String sha256) async {
+  Future<_VideoOutcome> _uploadVideo(
+    RecordingOutboxEntry entry,
+    OutboxVideo video,
+    String sha256, {
+    required String serverKey,
+  }) async {
     final file = File(video.path);
     final size = await file.length();
     final totalChunks = max(1, (size / _config.chunkSize).ceil());
 
-    final ref = RecordingVideoRef(operationId: entry.operationId, cameraId: video.cameraId);
+    final ref = RecordingVideoRef(operationId: serverKey, cameraId: video.cameraId);
     final received = await _getReceivedChunks(ref);
     if (await _handleError(entry, received)) return _VideoOutcome.failed;
     final have = received.data ?? const <int>{};
@@ -247,6 +262,18 @@ class RecordingUploadWorker {
           ? 'Operasyon kaydı upload akışından geçti (API yok — sunucuya GÖNDERİLMEDİ)'
           : 'Operasyon kaydı sunucuya yüklendi ve doğrulandı',
       context: {'operationId': e.operationId, 'videos': e.completedVideos.length, 'videoBytes': e.videoBytes},
+    );
+  }
+
+  Future<void> _markLocalOnly(RecordingOutboxEntry e) async {
+    await _outbox.update(
+      e.copyWith(state: RecordingUploadState.localOnly, attempts: 0, clearNextAttempt: true, clearError: true),
+    );
+    MedLogger.info(
+      unit: _unit,
+      swreq: 'SWREQ-CAM-024',
+      message: 'Operasyon kaydının sunucu operationId\'si yok; yüklenmeyecek, lokal arşivde kalacak',
+      context: {'operationId': e.operationId},
     );
   }
 

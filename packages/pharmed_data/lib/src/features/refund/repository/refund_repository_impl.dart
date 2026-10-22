@@ -49,22 +49,22 @@ class RefundRepositoryImpl implements IRefundRepository {
   }
 
   @override
-  Future<Result<void>> refundToBox({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToBox({required int id, required double quantity}) async {
     return await _dataSource.refundToBox(id: id, quantity: quantity);
   }
 
   @override
-  Future<Result<void>> refundToPharmacy({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToPharmacy({required int id, required double quantity}) async {
     return await _dataSource.refundToPharmacy(id: id, quantity: quantity);
   }
 
   @override
-  Future<Result<void>> refundToDrawer({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToDrawer({required int id, required double quantity}) async {
     return await _dataSource.refundToDrawer(id: id, quantity: quantity);
   }
 
   @override
-  Future<Result<void>> refundToOrigin({
+  Future<Result<int?>> refundToOrigin({
     required int id,
     required double quantity,
     required int cabinDrawerDetailId,

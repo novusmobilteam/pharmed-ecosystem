@@ -38,14 +38,15 @@ class WindowsDiskSpaceProbe implements IDiskSpaceProbe {
 /// Lokal arşivin saklama politikası. [SWREQ-CAM-040]
 ///
 /// Sıra (her sweep'te):
-///  1. YAŞ: sunucuda (gerçekten) doğrulanmış ve [maxAge]'den eski kayıtlar
+///  1. YAŞ: sunucuda (gerçekten) doğrulanmış ya da hiç yüklenmeyecek
+///     (localOnly — sunucu operationId'si yok) ve [maxAge]'den eski kayıtlar
 ///     silinir. API yokken sahte yanıtla doğrulananlar (verifiedByStub) bu
 ///     kurala girmez.
 ///  2. KORUMA: yüklenmemiş kayıtlar yaşları ne olursa olsun SİLİNMEZ
 ///     (denetim kanıtı) — ama süreyi aşanlar için uyarı loglanır.
 ///  3. KOTA / BOŞ ALAN: toplam boyut [maxTotalBytes]'ı aşıyorsa veya disk
 ///     boş alanı [minFreeDiskBytes]'ın altındaysa en eskiden başlayarak:
-///       a) önce doğrulanmış kayıtlar (süreleri dolmamış olsa bile) silinir,
+///       a) önce doğrulanmış / localOnly kayıtlar (süreleri dolmamış olsa bile) silinir,
 ///       b) yetmezse, son çare olarak yüklenmemiş kayıtların VİDEOSU silinir
 ///          (tahliye); metadata korunur ve sunucuya "video yok" diye gider.
 ///          Bu durum ERROR seviyesinde loglanır.
@@ -104,11 +105,11 @@ class RecordingRetentionSweeper {
     final cutoff = now.subtract(_config.maxAge);
     final entries = (await _outbox.entries())..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-    // 1) Yaş kuralı — yalnızca doğrulanmışlar
+    // 1) Yaş kuralı — yalnızca silinebilirler (doğrulanmış / localOnly)
     var deletedByAge = 0;
     final remaining = <RecordingOutboxEntry>[];
     for (final e in entries) {
-      if (e.isServerVerified && e.createdAt.isBefore(cutoff)) {
+      if (e.isDisposable && e.createdAt.isBefore(cutoff)) {
         await _deleteAll(e);
         deletedByAge++;
       } else {
@@ -117,7 +118,7 @@ class RecordingRetentionSweeper {
     }
 
     // 2) Süreyi aşmış ama yüklenmemiş kayıtlar — korunur, uyarılır
-    final overdue = remaining.where((e) => !e.isServerVerified && e.createdAt.isBefore(cutoff)).length;
+    final overdue = remaining.where((e) => !e.isDisposable && e.createdAt.isBefore(cutoff)).length;
     if (overdue > 0) {
       MedLogger.warn(
         unit: _unit,
@@ -135,8 +136,8 @@ class RecordingRetentionSweeper {
     var deletedByQuota = 0;
     var evicted = 0;
     if (pressure()) {
-      // a) doğrulanmışlar, en eski önce
-      for (final e in remaining.where((e) => e.isServerVerified).toList()) {
+      // a) silinebilirler (doğrulanmış / localOnly), en eski önce
+      for (final e in remaining.where((e) => e.isDisposable).toList()) {
         if (!pressure()) break;
         final freed = e.videoBytes;
         await _deleteAll(e);

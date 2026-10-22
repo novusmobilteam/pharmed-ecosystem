@@ -58,34 +58,39 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> completeFreeIntake(Map<String, dynamic> data) async {
+  // Alım tamamlama uçları sunucu işlem kaydının operationId'sini döner.
+  Future<Result<int?>> completeFreeIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/PatientIndependentMaterial',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }
 
-  Future<Result<void>> completeOrderedIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeOrderedIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/Prescription/detail/collect',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }
 
-  Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeOrderlessIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/Prescription/detail/OrderlessCollect',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }
 
-  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeUrgentIntake(Map<String, dynamic> data) async {
     return await postRequest(
       path: '/Prescription/detail/UrgentOrderlessCollect',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }
@@ -131,10 +136,11 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data) {
+  Future<Result<int?>> completeEquivalentIntake(Map<String, dynamic> data) {
     return postRequest(
       path: '/Prescription/detail/equivalent/collect',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       body: data,
     );
   }
@@ -164,10 +170,11 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity}) async {
+  Future<Result<int?>> completeRedirectedIntake({required int referralId, double? censusQuantity}) async {
     return await postRequest(
       path: '/Prescription/referral/collect/$referralId',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       query: {'censusQuantity': censusQuantity},
     );
   }

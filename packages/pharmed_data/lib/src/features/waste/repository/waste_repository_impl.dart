@@ -40,7 +40,7 @@ class WasteRepositoryImpl implements IWasteRepository {
   }
 
   @override
-  Future<Result<void>> masterDisposeMaterial(List<Map<String, dynamic>> data) async {
+  Future<Result<int?>> masterDisposeMaterial(List<Map<String, dynamic>> data) async {
     return await _dataSource.masterDisposeMaterial(data);
   }
 

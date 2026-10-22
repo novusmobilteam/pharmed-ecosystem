@@ -57,38 +57,42 @@ class RefundRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> refundToBox({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToBox({required int id, required double quantity}) async {
     return await postRequest(
       path: '/Prescription/detail/$id/refundReturnBox',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       query: {'id': id, 'quantity': quantity},
     );
   }
 
-  Future<Result<void>> refundToPharmacy({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToPharmacy({required int id, required double quantity}) async {
     return await postRequest(
       path: '/Prescription/detail/$id/refundPharmacy',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       query: {'id': id, 'quantity': quantity},
     );
   }
 
-  Future<Result<void>> refundToOrigin({
+  Future<Result<int?>> refundToOrigin({
     required int id,
     required double quantity,
     required int cabinDrawerDetailId,
   }) async {
     return await postRequest(
       path: '/Prescription/detail/$id/refundInstead', // instead :D
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       query: {'id': id, 'quantity': quantity, 'cabinDrawrDetailId': cabinDrawerDetailId},
     );
   }
 
-  Future<Result<void>> refundToDrawer({required int id, required double quantity}) async {
+  Future<Result<int?>> refundToDrawer({required int id, required double quantity}) async {
     return await postRequest(
       path: '/Prescription/detail/$id/refundDrawr',
-      parser: BaseRemoteDataSource.voidParser(),
+      parser: BaseRemoteDataSource.operationIdParser(),
+      envelope: ResponseEnvelope.apiResponseRoot,
       query: {'id': id, 'quantity': quantity},
     );
   }

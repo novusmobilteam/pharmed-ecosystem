@@ -16,7 +16,7 @@ class MasterDisposeMaterialUseCase {
 
   MasterDisposeMaterialUseCase(this._repository);
 
-  Future<Result<void>> call(List<DisposeMaterialParams> params) async {
+  Future<Result<int?>> call(List<DisposeMaterialParams> params) async {
     final data = params.map((p) => p.toJson()).toList();
     return _repository.masterDisposeMaterial(data);
   }

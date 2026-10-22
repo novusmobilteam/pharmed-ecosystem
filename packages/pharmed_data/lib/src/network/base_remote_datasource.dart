@@ -6,7 +6,16 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 enum HttpMethod { GET, POST, PUT, DELETE }
 
-enum ResponseEnvelope { auto, apiResponse, raw }
+enum ResponseEnvelope {
+  auto,
+  apiResponse,
+  raw,
+
+  /// Zarf (`isSuccess`) kontrol edilir ama parser `data` yerine yanıtın
+  /// TAMAMINI alır. Zarfın kök seviyesinde ek alan taşıyan yanıtlar için:
+  /// `{statusCode, isSuccess, data: true, operationId: 332}`.
+  apiResponseRoot,
+}
 
 typedef Parser<T> = T? Function(Object? data);
 
@@ -70,6 +79,16 @@ abstract class BaseRemoteDataSource {
   }
 
   static Parser<void> voidParser() => (_) {};
+
+  /// Kabin işlem servislerinin yanıtındaki `operationId` (zarfın kökünde:
+  /// `{statusCode, isSuccess, data, operationId}`) — [ResponseEnvelope.apiResponseRoot]
+  /// ile kullanılır. Alan yoksa null döner — işlem yine başarılı sayılır,
+  /// yalnızca video sunucu işlemine bağlanamaz. [SWREQ-CAM-024]
+  static Parser<int> operationIdParser() => (obj) => switch (obj) {
+    {'operationId': final num id} => id.toInt(),
+    num id => id.toInt(),
+    _ => null,
+  };
 
   // ── İstek Metodları ────────────────────────────────────────────────────────
   // ── Create (POST) ──────────────────────────────────────────────────────────
@@ -277,10 +296,31 @@ abstract class BaseRemoteDataSource {
           // Veri Map ise ApiResponse kontrolü yapıyoruz (Envelope mantığı)
           if (rawData is Map<String, dynamic>) {
             final shouldTreatAsApiResponse = switch (envelope) {
-              ResponseEnvelope.apiResponse => true,
+              ResponseEnvelope.apiResponse || ResponseEnvelope.apiResponseRoot => true,
               ResponseEnvelope.raw => false,
               ResponseEnvelope.auto => _looksLikeApiResponse(rawData),
             };
+
+            if (shouldTreatAsApiResponse && envelope == ResponseEnvelope.apiResponseRoot) {
+              if ((rawData['isSuccess'] as bool?) ?? true) {
+                try {
+                  final parsed = parser != null ? parser(rawData) : null;
+                  MedLogger.info(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
+                  return Result.ok(parsed);
+                } catch (e) {
+                  MedLogger.error(unit: logUnit, swreq: logSwreq, message: 'Parse Hatası', error: e);
+                  return Result.error(MalformedDataException(cause: e, message: ''));
+                }
+              }
+              final apiError = ApiError.fromJson(rawData);
+              MedLogger.warn(unit: logUnit, swreq: logSwreq, message: apiError.message ?? 'Hata');
+              return Result.error(
+                ServiceException(
+                  message: apiError.message ?? apiError.error ?? contextlessL10n().dataError_envelopeErrorFallback,
+                  statusCode: apiError.statusCode ?? 0,
+                ),
+              );
+            }
 
             if (shouldTreatAsApiResponse) {
               final apiRes = parser != null ? ApiResponse<T?>.fromJson(rawData, parser) : null;

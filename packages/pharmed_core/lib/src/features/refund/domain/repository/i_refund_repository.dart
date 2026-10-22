@@ -18,16 +18,16 @@ abstract class IRefundRepository {
   Future<Result<void>> refundMobile({required int id, required double quantity});
 
   // İlaç İade İşlemi - İade Kutusuna İade
-  Future<Result<void>> refundToBox({required int id, required double quantity});
+  Future<Result<int?>> refundToBox({required int id, required double quantity});
 
   // İlaç İade İşlemi - Eczaneye İade
-  Future<Result<void>> refundToPharmacy({required int id, required double quantity});
+  Future<Result<int?>> refundToPharmacy({required int id, required double quantity});
 
   // İlaç İade İşlemi - Çekmeceye İade
-  Future<Result<void>> refundToDrawer({required int id, required double quantity});
+  Future<Result<int?>> refundToDrawer({required int id, required double quantity});
 
   // İlaç İade İşlemi - Çekmeceye İade
-  Future<Result<void>> refundToOrigin({required int id, required double quantity, required int cabinDrawerDetailId});
+  Future<Result<int?>> refundToOrigin({required int id, required double quantity, required int cabinDrawerDetailId});
 
   // Eczaneye iade edilen ilaçları getirir
   Future<Result<ApiResponse<List<Refund>>?>> getPharmacyRefunds({PagedQueryParams? params, required int stationId});

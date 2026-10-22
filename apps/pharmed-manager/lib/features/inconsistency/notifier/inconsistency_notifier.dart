@@ -76,6 +76,8 @@ class InconsistencyNotifier extends ChangeNotifier with ApiRequestMixin, Paginat
           skip: skip,
           take: take,
           searchQuery: searchQuery,
+          startDate: startDate,
+          endDate: endDate,
           filters: [Filter.eq('isSolved', !_showSolved)],
         ),
       ),

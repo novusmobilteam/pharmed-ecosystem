@@ -24,6 +24,11 @@ enum RecordingUploadState {
   /// Kalıcı hata (4xx, tekrarlayan hash uyuşmazlığı). Otomatik denenmez;
   /// inceleme gerektirir. Dosyalar korunur.
   rejected,
+
+  /// Operasyon boyunca sunucudan hiç operationId dönmedi (ör. ilk hedef
+  /// kaydedilmeden durduruldu): videonun bağlanacağı işlem kaydı yok.
+  /// Yüklenmez; yalnızca saklama süresi boyunca lokal arşivde kalır. [SWREQ-CAM-024]
+  localOnly,
 }
 
 class OutboxVideo {
@@ -77,8 +82,13 @@ class RecordingOutboxEntry {
   /// API açılınca kayıt yeniden kuyruğa girer.
   final bool verifiedByStub;
 
-  /// Sunucu gerçekten doğruladı mı? Saklama kuralları buna bakar.
+  /// Sunucu gerçekten doğruladı mı?
   bool get isServerVerified => state == RecordingUploadState.verified && !verifiedByStub;
+
+  /// Saklama kuralları açısından silinebilir mi? Sunucuda doğrulanmış ya da
+  /// hiç yüklenmeyecek (localOnly) kayıtlar süre/kota dolunca silinir;
+  /// yüklenmeyi bekleyenler denetim kanıtı olarak korunur.
+  bool get isDisposable => isServerVerified || state == RecordingUploadState.localOnly;
 
   final int attempts;
   final int hashMismatches;
@@ -172,7 +182,7 @@ class RecordingOutboxEntry {
     type: r.type,
     createdAt: r.startedAt,
     sidecarPath: sidecarPath,
-    state: RecordingUploadState.pending,
+    state: r.isLinkedToServerOperation ? RecordingUploadState.pending : RecordingUploadState.localOnly,
     videos: [
       for (final t in r.tracks)
         if (t.video case final v?) OutboxVideo(cameraId: t.cameraId, path: v.path, bytes: v.sizeBytes),
@@ -227,6 +237,8 @@ class HiveRecordingOutbox implements IOperationRecordingOutbox {
         message: 'Operasyon kaydı arşivlendi',
         context: {
           'operationId': recording.operationId,
+          'serverOperationIds': recording.serverOperationIds,
+          'upload': recording.isLinkedToServerOperation,
           'sidecar': archived.sidecarPath,
           'videos': archived.recording.tracks.where((t) => t.hasVideo).length,
         },
@@ -361,6 +373,7 @@ class HiveRecordingOutbox implements IOperationRecordingOutbox {
         await commit(
           OperationRecording(
             operationId: start.operationId,
+            serverOperationIds: start.serverOperationIds,
             type: start.type,
             cabinIds: start.cabinIds,
             userId: start.userId,

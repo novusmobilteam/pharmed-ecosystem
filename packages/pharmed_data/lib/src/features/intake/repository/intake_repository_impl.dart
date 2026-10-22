@@ -47,22 +47,22 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
-  Future<Result<void>> completeFreeIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeFreeIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeFreeIntake(data);
   }
 
   @override
-  Future<Result<void>> completeOrderedIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeOrderedIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeOrderedIntake(data);
   }
 
   @override
-  Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeOrderlessIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeOrderlessIntake(data);
   }
 
   @override
-  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeUrgentIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeUrgentIntake(data);
   }
 
@@ -110,7 +110,7 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
-  Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data) async {
+  Future<Result<int?>> completeEquivalentIntake(Map<String, dynamic> data) async {
     return await _dataSource.completeEquivalentIntake(data);
   }
 
@@ -152,7 +152,7 @@ class IntakeRepositoryImpl implements IIntakeRepository {
   }
 
   @override
-  Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity}) async {
+  Future<Result<int?>> completeRedirectedIntake({required int referralId, double? censusQuantity}) async {
     return await _dataSource.completeRedirectedIntake(referralId: referralId, censusQuantity: censusQuantity);
   }
 

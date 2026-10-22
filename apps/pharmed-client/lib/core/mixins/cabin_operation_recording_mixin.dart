@@ -38,6 +38,10 @@ mixin CabinOperationRecordingMixin<TJob extends DrawerJob<TTarget>, TTarget exte
   static int? _cabinIdOf(MedicineAssignment a) => a.drawerUnit?.drawerSlot?.cabinId;
 
   OperationRecordingHandle? _recording;
+
+  /// end() çağrılmış son kayıt. Kuyruk biterken sürmekte olan son hedef
+  /// kaydının operationId'si buna eklenir (handle kapanana kadar kabul eder).
+  OperationRecordingHandle? _endingRecording;
   bool _beginInFlight = false;
 
   /// begin() sürerken kuyruk bitti / ekran kapandıysa, gelen handle hemen
@@ -48,6 +52,36 @@ mixin CabinOperationRecordingMixin<TJob extends DrawerJob<TTarget>, TTarget exte
   /// UI/feature `cameraStarted` değerine buradan bakabilir.
   OperationRecordingHandle? get activeRecording => _recording;
 
+  /// Feature, bir hedefin kaydı sunucuda başarılı olunca dönen operationId'yi
+  /// buraya verir; video bu id'lerle sunucu işlemlerine bağlanır. Hiç id
+  /// gelmeyen kayıt sunucuya yüklenmez, lokalde kalır. [SWREQ-CAM-024]
+  ///
+  /// id null ise (servis beklenen alanı döndürmedi) uyarı loglanır — kayıt o
+  /// hedef için sunucuya bağlanamaz.
+  void recordServerOperationId(int? id) {
+    if (id == null) {
+      MedLogger.warn(
+        unit: 'SW-UNIT-CAM',
+        swreq: 'SWREQ-CAM-024',
+        message: 'Kabin işlem servisi operationId döndürmedi; bu hedef videoya bağlanamayacak',
+        context: {'type': recordedOperationType.name, 'recordingId': _recording?.operationId},
+      );
+      return;
+    }
+    final handle = _recording ?? _endingRecording;
+    if (handle == null) {
+      // Kayıt hiç başlamadıysa (begin hatası vb.) bağlanacak video yok.
+      MedLogger.warn(
+        unit: 'SW-UNIT-CAM',
+        swreq: 'SWREQ-CAM-024',
+        message: 'Aktif kayıt yokken sunucu operationId geldi',
+        context: {'type': recordedOperationType.name, 'serverOperationId': id},
+      );
+      return;
+    }
+    handle.addServerOperationId(id);
+  }
+
   @override
   Future<void> onQueueStarting() async {
     await super.onQueueStarting();
@@ -55,6 +89,7 @@ mixin CabinOperationRecordingMixin<TJob extends DrawerJob<TTarget>, TTarget exte
     // [SWREQ-CAM-010] İlk çekmece açılmadan önce, ~1,4 sn.
     _beginInFlight = true;
     _endedDuringBegin = null;
+    _endingRecording = null;
     try {
       final cabinIds = recordingCabinIds;
       if (cabinIds.isEmpty && jobs.isNotEmpty) {
@@ -114,7 +149,10 @@ mixin CabinOperationRecordingMixin<TJob extends DrawerJob<TTarget>, TTarget exte
     }
     final handle = _recording;
     _recording = null;
-    if (handle != null) unawaited(handle.end(reason));
+    if (handle != null) {
+      _endingRecording = handle;
+      unawaited(handle.end(reason));
+    }
   }
 
   /// Queue builder'lardaki fiziksel çekmece id'si ile aynı fallback zinciri.

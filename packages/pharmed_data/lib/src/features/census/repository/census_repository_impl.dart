@@ -8,7 +8,7 @@ class CensusRepositoryImpl implements ICensusRepository {
   CensusRepositoryImpl({required CensusRemoteDataSource dataSource}) : _dataSource = dataSource;
 
   @override
-  Future<Result<void>> masterCensus(List<dynamic> data) async {
+  Future<Result<int?>> masterCensus(List<dynamic> data) async {
     return _dataSource.masterCensus(data);
   }
 

@@ -26,15 +26,15 @@ abstract interface class IIntakeRepository {
   /// İlaç Alım İşlemi - Tamamlama
   /// Kontrol işlemleri başarılı olursa alım türüne göre ilgili servis ile
   /// alım işlemini tamamlıyoruz.
-  Future<Result<void>> completeOrderedIntake(Map<String, dynamic> data);
-  Future<Result<void>> completeOrderlessIntake(Map<String, dynamic> data);
-  Future<Result<void>> completeFreeIntake(Map<String, dynamic> data);
-  Future<Result<void>> completeUrgentIntake(Map<String, dynamic> data);
+  Future<Result<int?>> completeOrderedIntake(Map<String, dynamic> data);
+  Future<Result<int?>> completeOrderlessIntake(Map<String, dynamic> data);
+  Future<Result<int?>> completeFreeIntake(Map<String, dynamic> data);
+  Future<Result<int?>> completeUrgentIntake(Map<String, dynamic> data);
 
   Future<Result<void>> submitIntakeQrCodes(SubmitIntakeQrCodesParams params);
 
   /// POST /Prescription/detail/equivalent/collect
-  Future<Result<void>> completeEquivalentIntake(Map<String, dynamic> data);
+  Future<Result<int?>> completeEquivalentIntake(Map<String, dynamic> data);
 
   Future<Result<void>> definePatientMedicine(Map<String, dynamic> data);
 
@@ -53,7 +53,7 @@ abstract interface class IIntakeRepository {
 
   Future<Result<List<RedirectedIntakeOrder>>> getRedirectedIntakeOrders(int hospitalizationId);
   Future<Result<void>> checkRedirectedIntake(int referralId);
-  Future<Result<void>> completeRedirectedIntake({required int referralId, double? censusQuantity});
+  Future<Result<int?>> completeRedirectedIntake({required int referralId, double? censusQuantity});
 
   Future<Result<List<RedirectedOrder>>> getRedirectedOrders();
   Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId);

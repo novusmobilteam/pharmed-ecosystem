@@ -44,6 +44,6 @@ class CompleteRedirectedIntakeUseCase {
 
   final IIntakeRepository _repository;
 
-  Future<Result<void>> call({required int referralId, double? censusQuantity}) =>
+  Future<Result<int?>> call({required int referralId, double? censusQuantity}) =>
       _repository.completeRedirectedIntake(referralId: referralId, censusQuantity: censusQuantity);
 }
