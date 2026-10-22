@@ -87,14 +87,27 @@ class MedicineRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<void>> createMedicine(MedicineDto dto) {
+  /// Oluşturulan kaydı döner. Yanıtın `data` alanı nesne değilse (eski backend
+  /// sürümü `data: true` dönebilir) sonuç `Result.ok(null)` olur.
+  Future<Result<MedicineDto?>> createMedicine(MedicineDto dto) {
     final path = dto.when(drug: (_) => '/Material', consumable: (_) => '/MedicalConsumables');
+    final Parser<MedicineDto> parser = dto.when(
+      drug: (_) => (obj) => obj is Map<String, dynamic> ? DrugDTO.fromJson(obj) : null,
+      consumable: (_) => (obj) => obj is Map<String, dynamic> ? MedicalConsumableDTO.fromJson(obj) : null,
+    );
 
-    return postRequest(
-      path: path,
-      body: dto.toJson(),
+    return postRequest<MedicineDto>(path: path, body: dto.toJson(), parser: parser, successLog: 'Malzeme oluşturuldu');
+  }
+
+  /// [SWREQ-DATA-MEDICINE-003] Serbest ilacın alınabileceği servisleri kaydeder.
+  /// id'li elemanlar güncellenir, id'siz elemanlar eklenir, gönderilmeyenler silinir.
+  /// Boş liste tüm servisleri kaldırır.
+  Future<Result<void>> saveIndependentServices(SaveIndependentServicesRequestDto request) {
+    return putRequest(
+      path: '$_base/independentServices',
+      body: request.toJson(),
       parser: BaseRemoteDataSource.voidParser(),
-      successLog: 'Malzeme oluşturuldu',
+      successLog: 'Serbest ilaç servisleri kaydedildi',
     );
   }
 

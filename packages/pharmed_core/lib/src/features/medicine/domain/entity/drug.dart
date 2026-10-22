@@ -74,6 +74,10 @@ class Drug extends Medicine {
   final List<Station> witnessedPurchaseStations;
   final List<Station> wastageWitnessedPurchaseStations;
 
+  /// Serbest ilacın alınabileceği servisler. Yalnızca [isIndependentMaterial]
+  /// true iken anlamlıdır; PUT /Material/independentServices ile ayrı kaydedilir.
+  final List<IndependentMaterialService> independentServices;
+
   Status get status => isActive ? Status.active : Status.passive;
 
   static Drug? fromIdAndName({int? id, String? name, String? barcode}) {
@@ -136,6 +140,7 @@ class Drug extends Medicine {
     this.wastageWitnessedPurchaseStations = const [],
     this.destroyableUsers = const [],
     this.materialOrderlessTakingUsers = const [],
+    this.independentServices = const [],
     this.equivalentCode,
   }) : super(title: name?.toString() ?? "-", subtitle: barcode);
 
@@ -192,6 +197,9 @@ class Drug extends Medicine {
     List<Station>? wastageWitnessedPurchaseStations,
     List<User>? destroyableUsers,
     List<User>? materialOrderlessTakingUsers,
+    List<IndependentMaterialService>? independentServices,
+    /// [dailyMaxUsage] null ile temizlenemediği için açık temizleme bayrağı.
+    bool clearDailyMaxUsage = false,
   }) {
     return Drug(
       id: id ?? this.id,
@@ -212,7 +220,7 @@ class Drug extends Medicine {
       drugType: drugType ?? this.drugType,
       drugClass: drugClass ?? this.drugClass,
       purchaseType: purchaseType ?? this.purchaseType,
-      dailyMaxUsage: dailyMaxUsage,
+      dailyMaxUsage: clearDailyMaxUsage ? null : (dailyMaxUsage ?? this.dailyMaxUsage),
       isQrCode: isQrCode ?? this.isQrCode,
       piece: piece ?? this.piece,
       isOrderlessStation: isOrderlessStation ?? this.isOrderlessStation,
@@ -245,6 +253,7 @@ class Drug extends Medicine {
       isNotSerumCabinetMaxValue: isNotSerumCabinetMaxValue ?? this.isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: isNotCubicDrawrMaxValue ?? this.isNotCubicDrawrMaxValue,
       materialOrderlessTakingUsers: materialOrderlessTakingUsers ?? this.materialOrderlessTakingUsers,
+      independentServices: independentServices ?? this.independentServices,
       equivalentCode: equivalentCode ?? this.equivalentCode,
     );
   }

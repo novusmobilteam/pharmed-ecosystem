@@ -3034,6 +3034,51 @@
   "@medicine_fieldUnit": {
     "description": "Text field label opening the unit picker"
   },
+  "medicine_section_basicInfoTitle": "Temel Bilgiler",
+  "@medicine_section_basicInfoTitle": {
+    "description": "Drug form section title grouping identity fields (name, barcode, codes, manufacturer, status)"
+  },
+  "medicine_section_classificationTitle": "Sınıflandırma",
+  "@medicine_section_classificationTitle": {
+    "description": "Drug form section title grouping prescription type, drug type/class, dosage form and active ingredients"
+  },
+  "medicine_section_doseUnitTitle": "Doz ve Birim",
+  "@medicine_section_doseUnitTitle": {
+    "description": "Drug form section title grouping dose, volume, measurement unit and daily max usage"
+  },
+  "medicine_section_purchaseReturnTitle": "Alım ve İade",
+  "@medicine_section_purchaseReturnTitle": {
+    "description": "Drug form section title grouping purchase type, return type, count type and QR code settings"
+  },
+  "medicine_section_witnessTitle": "Şahitli İşlemler ve İmha",
+  "@medicine_section_witnessTitle": {
+    "description": "Drug form section title grouping witnessed purchase, witnessed waste and destroyable settings"
+  },
+  "medicine_section_cabinBehaviorTitle": "Kabin Davranışı",
+  "@medicine_section_cabinBehaviorTitle": {
+    "description": "Drug form section title grouping cabin-side behavior checkboxes (RFID, camera, single use, etc.)"
+  },
+  "medicine_section_notesTitle": "Notlar",
+  "@medicine_section_notesTitle": {
+    "description": "Drug form section title grouping collect, return and destruction notes"
+  },
+  "medicine_fieldIndependentServices": "Alınabileceği Servisler",
+  "@medicine_fieldIndependentServices": {
+    "description": "Multi-selection field label for the hospital services a free (independent) drug can be taken from; shown when the Free Drug toggle is on"
+  },
+  "medicine_independentServicesDialogSelectTitle": "Servis Seçin",
+  "@medicine_independentServicesDialogSelectTitle": {
+    "description": "Selection dialog title for picking the services a free drug can be taken from"
+  },
+  "medicine_independentServicesSaveError": "İlaç kaydedildi ancak serbest ilaç servisleri kaydedilemedi: {detail}",
+  "@medicine_independentServicesSaveError": {
+    "description": "Error shown when the drug create/update succeeded but the follow-up request saving its free drug services failed; detail is the backend error message",
+    "placeholders": {
+      "detail": {
+        "type": "Object"
+      }
+    }
+  },
   "refillList_dialogTitle": "İlaç Dolum Listesi",
   "@refillList_dialogTitle": {
     "description": "Dialog title for the refill list detail/refill view"

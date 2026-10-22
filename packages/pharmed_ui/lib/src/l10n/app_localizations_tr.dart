@@ -2526,6 +2526,38 @@ class AppLocalizationsTr extends AppLocalizations {
   String get medicine_fieldUnit => 'Birim';
 
   @override
+  String get medicine_section_basicInfoTitle => 'Temel Bilgiler';
+
+  @override
+  String get medicine_section_classificationTitle => 'Sınıflandırma';
+
+  @override
+  String get medicine_section_doseUnitTitle => 'Doz ve Birim';
+
+  @override
+  String get medicine_section_purchaseReturnTitle => 'Alım ve İade';
+
+  @override
+  String get medicine_section_witnessTitle => 'Şahitli İşlemler ve İmha';
+
+  @override
+  String get medicine_section_cabinBehaviorTitle => 'Kabin Davranışı';
+
+  @override
+  String get medicine_section_notesTitle => 'Notlar';
+
+  @override
+  String get medicine_fieldIndependentServices => 'Alınabileceği Servisler';
+
+  @override
+  String get medicine_independentServicesDialogSelectTitle => 'Servis Seçin';
+
+  @override
+  String medicine_independentServicesSaveError(Object detail) {
+    return 'İlaç kaydedildi ancak serbest ilaç servisleri kaydedilemedi: $detail';
+  }
+
+  @override
   String get refillList_dialogTitle => 'İlaç Dolum Listesi';
 
   @override

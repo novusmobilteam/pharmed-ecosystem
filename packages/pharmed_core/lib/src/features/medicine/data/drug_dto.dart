@@ -87,6 +87,10 @@ class DrugDTO extends MedicineDto {
   final List<StationDTO>? wastageWitnessedPurchaseStations;
   final List<StationDTO>? witnessedPurchaseStations;
 
+  /// GET /Material/{id} → `materialIndependentService`. toJson'a yazılmaz;
+  /// PUT /Material/independentServices ile ayrı kaydedilir.
+  final List<IndependentMaterialServiceDto>? independentServices;
+
   const DrugDTO({
     this.id,
     this.definition,
@@ -149,6 +153,7 @@ class DrugDTO extends MedicineDto {
     this.equivalentCode,
     this.isRfidEnable = false,
     this.isTakeGiveButtonActive = false,
+    this.independentServices,
   });
 
   factory DrugDTO.fromJson(Map<String, dynamic> json) {
@@ -234,6 +239,7 @@ class DrugDTO extends MedicineDto {
                 .map((e) => UserDto.fromJson(e as Map<String, dynamic>))
                 .toList()
           : null,
+      independentServices: IndependentMaterialServiceDto.listFromJson(json['materialIndependentService']),
     );
   }
 
@@ -366,6 +372,10 @@ class DrugDTO extends MedicineDto {
       equivalentCode: equivalentCode,
       isNotSerumCabinetMaxValue: isNotSerumCabinetMaxValue,
       isNotCubicDrawrMaxValue: isNotCubicDrawrMaxValue,
+      independentServices: (independentServices ?? const [])
+          .map((s) => s.toEntityOrNull())
+          .whereType<IndependentMaterialService>()
+          .toList(),
     );
   }
 }

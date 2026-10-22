@@ -99,8 +99,18 @@ class MedicineRepositoryImpl implements IMedicineRepository {
   }
 
   @override
-  Future<Result<void>> createMedicine(Medicine entity) async {
+  Future<Result<Medicine?>> createMedicine(Medicine entity) async {
     final result = await _dataSource.createMedicine(_mapper.toDto(entity));
+    return result.when(ok: (dto) => Result.ok(dto?.toEntity()), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<void>> saveIndependentServices(int materialId, List<IndependentMaterialService> services) async {
+    final request = SaveIndependentServicesRequestDto(
+      materialId: materialId,
+      services: services.map(IndependentMaterialServiceDto.fromEntity).toList(),
+    );
+    final result = await _dataSource.saveIndependentServices(request);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 

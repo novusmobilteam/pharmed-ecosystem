@@ -2535,6 +2535,38 @@ class AppLocalizationsAr extends AppLocalizations {
   String get medicine_fieldUnit => 'Unit';
 
   @override
+  String get medicine_section_basicInfoTitle => 'Basic Information';
+
+  @override
+  String get medicine_section_classificationTitle => 'Classification';
+
+  @override
+  String get medicine_section_doseUnitTitle => 'Dose & Unit';
+
+  @override
+  String get medicine_section_purchaseReturnTitle => 'Purchase & Return';
+
+  @override
+  String get medicine_section_witnessTitle => 'Witness & Destruction';
+
+  @override
+  String get medicine_section_cabinBehaviorTitle => 'Cabin Behavior';
+
+  @override
+  String get medicine_section_notesTitle => 'Notes';
+
+  @override
+  String get medicine_fieldIndependentServices => 'Allowed Services';
+
+  @override
+  String get medicine_independentServicesDialogSelectTitle => 'Select Services';
+
+  @override
+  String medicine_independentServicesSaveError(Object detail) {
+    return 'The drug was saved, but its free drug services could not be saved: $detail';
+  }
+
+  @override
   String get refillList_dialogTitle => 'Drug Refill List';
 
   @override

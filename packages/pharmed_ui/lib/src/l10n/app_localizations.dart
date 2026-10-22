@@ -4662,6 +4662,66 @@ abstract class AppLocalizations {
   /// **'Unit'**
   String get medicine_fieldUnit;
 
+  /// No description provided for @medicine_section_basicInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get medicine_section_basicInfoTitle;
+
+  /// No description provided for @medicine_section_classificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get medicine_section_classificationTitle;
+
+  /// No description provided for @medicine_section_doseUnitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose & Unit'**
+  String get medicine_section_doseUnitTitle;
+
+  /// No description provided for @medicine_section_purchaseReturnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase & Return'**
+  String get medicine_section_purchaseReturnTitle;
+
+  /// No description provided for @medicine_section_witnessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Witness & Destruction'**
+  String get medicine_section_witnessTitle;
+
+  /// No description provided for @medicine_section_cabinBehaviorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Behavior'**
+  String get medicine_section_cabinBehaviorTitle;
+
+  /// No description provided for @medicine_section_notesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get medicine_section_notesTitle;
+
+  /// No description provided for @medicine_fieldIndependentServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed Services'**
+  String get medicine_fieldIndependentServices;
+
+  /// No description provided for @medicine_independentServicesDialogSelectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Services'**
+  String get medicine_independentServicesDialogSelectTitle;
+
+  /// No description provided for @medicine_independentServicesSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'The drug was saved, but its free drug services could not be saved: {detail}'**
+  String medicine_independentServicesSaveError(Object detail);
+
   /// No description provided for @refillList_dialogTitle.
   ///
   /// In en, this message translates to:

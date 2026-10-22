@@ -7,12 +7,18 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final UpdateMedicineUseCase _updateMedicineUseCase;
   final GetDrugUseCase _getDrugUseCase;
   final GetActiveIngredientsUseCase _getActiveIngredientsUseCase;
+  final SaveIndependentServicesUseCase _saveIndependentServicesUseCase;
+  final GetServicesUseCase _getServicesUseCase;
+
+  static const _swreq = 'SWREQ-MGR-MEDICINE-001';
 
   DrugFormNotifier({
     required CreateMedicineUseCase createMedicineUseCase,
     required UpdateMedicineUseCase updateMedicineUseCase,
     required GetDrugUseCase getDrugUseCase,
     required GetActiveIngredientsUseCase getActiveIngredientsUseCase,
+    required SaveIndependentServicesUseCase saveIndependentServicesUseCase,
+    required GetServicesUseCase getServicesUseCase,
     required IUserManager userRepository,
     required IStationRepository stationRepository,
     Drug? drug,
@@ -20,6 +26,8 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
        _updateMedicineUseCase = updateMedicineUseCase,
        _getDrugUseCase = getDrugUseCase,
        _getActiveIngredientsUseCase = getActiveIngredientsUseCase,
+       _saveIndependentServicesUseCase = saveIndependentServicesUseCase,
+       _getServicesUseCase = getServicesUseCase,
        _drug = drug ?? Drug(returnType: ReturnType.toOrigin, isCameraRecording: true) {
     _initialize();
   }
@@ -29,6 +37,12 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   List<ActiveIngredient> _activeIngredients = [];
   List<ActiveIngredient> get activeIngredients => _activeIngredients;
+
+  /// Serbest ilaç için formda seçili servisler. Backend'deki kayıtlar
+  /// (`_drug.independentServices`) kayıt başarılı olana kadar değiştirilmez;
+  /// PUT gövdesi bu iki liste karşılaştırılarak üretilir.
+  List<HospitalService> _independentServices = [];
+  List<HospitalService> get independentServices => _independentServices;
 
   OperationKey fetchOp = OperationKey.fetch();
   OperationKey submitOp = OperationKey.custom('submit');
@@ -50,9 +64,12 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
         onData: (data) async {
           if (data != null) {
             _drug = data;
+            _independentServices = _drug.independentServices
+                .map((s) => HospitalService(id: s.serviceId, name: s.serviceName))
+                .toList();
 
             notifyListeners();
-            await _getActiveIngredients();
+            await Future.wait([_getActiveIngredients(), _resolveIndependentServiceNames()]);
           }
         },
       );
@@ -73,18 +90,128 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     );
   }
 
-  Future<void> submit({Function(String? message)? onSuccess, Function(String? message)? onFailed}) async {
-    await executeVoid(
+  /// `GET /Material/{id}` servis adını dönmezse seçili servislerin adlarını
+  /// servis listesinden tamamlar. Hata olursa id ile gösterime devam edilir.
+  Future<void> _resolveIndependentServiceNames() async {
+    if (_independentServices.every((s) => s.name != null)) return;
+
+    final res = await _getServicesUseCase.call(PagedQueryParams());
+    res.when(
+      ok: (response) {
+        final byId = {for (final s in response.data ?? <HospitalService>[]) s.id: s};
+        _independentServices = _independentServices.map((s) => byId[s.id] ?? s).toList();
+        notifyListeners();
+      },
+      error: (_) {},
+    );
+  }
+
+  /// İlacın servis kayıtlarının senkronize edilmesi gerekiyor mu?
+  /// - Serbest ilaçsa: her zaman (eklenen/çıkarılan servisler).
+  /// - Serbest değilse: yalnızca backend'de kalan servis varsa (temizlemek için).
+  bool get _needsIndependentServiceSync => _drug.isIndependentMaterial || _drug.independentServices.isNotEmpty;
+
+  /// PUT /Material/independentServices gövdesindeki `services` listesi.
+  /// Mevcut kaydı olan servis id'siyle (güncelle), yeni servis id'siz (ekle) gönderilir;
+  /// listede olmayan kayıtlar backend tarafından silinir.
+  List<IndependentMaterialService> _buildIndependentServicePayload() {
+    if (!_drug.isIndependentMaterial) return const [];
+
+    final persisted = {for (final s in _drug.independentServices) s.serviceId: s};
+    return _independentServices
+        .where((s) => s.id != null)
+        .map((s) => IndependentMaterialService(id: persisted[s.id]?.id, serviceId: s.id!, serviceName: s.name))
+        .toList();
+  }
+
+  /// [SWREQ-MGR-MEDICINE-001] İlaç kaydı + serbest ilaç servisleri.
+  ///
+  /// Sıra: 1) ilaç oluştur/güncelle → 2) gerekiyorsa servisleri kaydet.
+  /// 2. adım 1. adımın döndüğü id'ye bağlıdır; 1. adım başarısızsa 2. adım
+  /// çalıştırılmaz. 2. adım başarısız olursa ilaç kayıtlı kalır ve notifier
+  /// düzenleme moduna geçer — tekrar kaydet ilacı yeniden OLUŞTURMAZ, günceller.
+  Future<void> submit() async {
+    final wasCreate = isCreate;
+    setLoading(submitOp);
+    MedLogger.info(unit: 'SW-UNIT-UI', swreq: _swreq, message: 'DrugFormNotifier.submit başlatıldı (create: $wasCreate)');
+
+    // ── 1. İlaç kaydı ────────────────────────────────────────────
+    AppException? saveError;
+    int? savedId = _drug.id;
+    if (wasCreate) {
+      final res = await _createMedicineUseCase.call(_drug);
+      res.when(ok: (created) => savedId = created?.id, error: (e) => saveError = e);
+    } else {
+      final res = await _updateMedicineUseCase.call(_drug);
+      res.when(ok: (_) {}, error: (e) => saveError = e);
+    }
+
+    final drugError = saveError;
+    if (drugError != null) {
+      _logSubmitError('İlaç kaydı başarısız', drugError);
+      setFailed(submitOp, message: drugError.userMessage);
+      return;
+    }
+
+    final materialId = savedId;
+    if (materialId != null && wasCreate) {
+      _drug = _drug.copyWith(id: materialId);
+    }
+
+    // ── 2. Serbest ilaç servisleri ───────────────────────────────
+    if (_needsIndependentServiceSync) {
+      if (materialId == null) {
+        // Backend oluşturulan ilacı dönmedi — servisler bağlanamaz. [HAZ-004]
+        MedLogger.error(
+          unit: 'SW-UNIT-UI',
+          swreq: _swreq,
+          message: 'Oluşturulan ilacın id\'si dönmedi, serbest ilaç servisleri kaydedilemedi',
+        );
+        setFailed(
+          submitOp,
+          message: contextlessL10n().medicine_independentServicesSaveError(contextlessL10n().common_genericErrorMessage),
+        );
+        return;
+      }
+
+      final payload = _buildIndependentServicePayload();
+      final res = await _saveIndependentServicesUseCase.call(materialId: materialId, services: payload);
+      AppException? serviceError;
+      res.when(ok: (_) {}, error: (e) => serviceError = e);
+
+      final syncError = serviceError;
+      if (syncError != null) {
+        _logSubmitError('Serbest ilaç servisleri kaydedilemedi', syncError, materialId: materialId);
+        setFailed(submitOp, message: contextlessL10n().medicine_independentServicesSaveError(syncError.userMessage));
+        return;
+      }
+
+      MedLogger.info(
+        unit: 'SW-UNIT-UI',
+        swreq: _swreq,
+        message: 'Serbest ilaç servisleri kaydedildi',
+        context: {'materialId': materialId, 'serviceIds': payload.map((s) => s.serviceId).toList()},
+      );
+    }
+
+    setSuccess(
       submitOp,
-      operation: () async {
-        final result = isCreate ? await _createMedicineUseCase.call(_drug) : await _updateMedicineUseCase.call(_drug);
-        return result;
+      message: wasCreate ? contextlessL10n().medicine_successCreated : contextlessL10n().medicine_successUpdated,
+    );
+  }
+
+  void _logSubmitError(String message, AppException error, {int? materialId}) {
+    // [HAZ-004] Hata her zaman loglanır, sessiz geçmez
+    MedLogger.error(
+      unit: 'SW-UNIT-UI',
+      swreq: _swreq,
+      message: 'DrugFormNotifier.submit: $message',
+      context: {
+        if (materialId != null) 'materialId': materialId,
+        'errorType': error.runtimeType.toString(),
+        'message': error.message,
       },
-      onSuccess: () {
-        final msg = isCreate ? contextlessL10n().medicine_successCreated : contextlessL10n().medicine_successUpdated;
-        onSuccess?.call(msg);
-      },
-      onFailed: (error) => onFailed?.call(error.message),
+      error: error,
     );
   }
 
@@ -129,8 +256,8 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   void updateDailyUsage(String? value) {
-    var usage = int.tryParse(value ?? '0');
-    _drug = _drug.copyWith(dailyMaxUsage: usage);
+    final usage = int.tryParse(value ?? '');
+    _drug = _drug.copyWith(dailyMaxUsage: usage, clearDailyMaxUsage: usage == null);
     notifyListeners();
   }
 
@@ -160,8 +287,12 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
+  /// "Order'lı" seçildiğinde order'sız alım personeli alanı kilitlenir ve temizlenir.
   void updatePurchaseType(PurchaseType? value) {
-    _drug = _drug.copyWith(purchaseType: value);
+    _drug = _drug.copyWith(
+      purchaseType: value,
+      materialOrderlessTakingUsers: value == PurchaseType.ordered ? [] : null,
+    );
     notifyListeners();
   }
 
@@ -299,8 +430,16 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
+  /// Kapatıldığında seçili servisler temizlenir; kayıtta backend'e boş liste
+  /// gönderilerek mevcut servisler kaldırılır.
   void toggleIndependentMaterial() {
     _drug = _drug.copyWith(isIndependentMaterial: !_drug.isIndependentMaterial);
+    if (!_drug.isIndependentMaterial) _independentServices = [];
+    notifyListeners();
+  }
+
+  void updateIndependentServices(List<HospitalService>? services) {
+    _independentServices = services ?? [];
     notifyListeners();
   }
 

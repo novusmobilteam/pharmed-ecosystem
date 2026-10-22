@@ -93,6 +93,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetMedicinesUseCase(context.read())),
       Provider(create: (context) => UpdateMedicineUseCase(context.read())),
       Provider(create: (context) => GetDrugUseCase(context.read())),
+      Provider(create: (context) => SaveIndependentServicesUseCase(context.read())),
 
       /// Menu
       Provider(create: (context) => GetFilteredMenusUseCase(context.read(), isManager: true)),
