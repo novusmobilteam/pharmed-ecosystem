@@ -8,7 +8,7 @@ class GetIndependentMaterialsUseCase {
 
   GetIndependentMaterialsUseCase(this._assignmentRepository);
 
-  Future<Result<List<MedicineAssignment>>> call() async {
-    return await _assignmentRepository.getIndependentMaterials();
+  Future<Result<List<MedicineAssignment>>> call({required int serviceId}) async {
+    return await _assignmentRepository.getIndependentMaterials(serviceId: serviceId);
   }
 }

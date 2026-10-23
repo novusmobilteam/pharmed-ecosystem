@@ -7487,6 +7487,12 @@ abstract class AppLocalizations {
   /// **'The ID of the medicine to delete cannot be empty'**
   String get dataGuard_deleteMedicineIdEmpty;
 
+  /// No description provided for @dataGuard_activeServiceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'An active service must be selected to list free drugs'**
+  String get dataGuard_activeServiceRequired;
+
   /// No description provided for @dataGuard_deletePatientIdEmpty.
   ///
   /// In en, this message translates to:

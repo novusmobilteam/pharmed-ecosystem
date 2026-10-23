@@ -4245,6 +4245,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'The ID of the medicine to delete cannot be empty';
 
   @override
+  String get dataGuard_activeServiceRequired =>
+      'An active service must be selected to list free drugs';
+
+  @override
   String get dataGuard_deletePatientIdEmpty =>
       'The ID of the patient to delete cannot be empty';
 

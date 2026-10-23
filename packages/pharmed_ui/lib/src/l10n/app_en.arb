@@ -2949,6 +2949,8 @@
   "@dataGuard_deleteMaterialTypeIdEmpty": {},
   "dataGuard_deleteMedicineIdEmpty": "The ID of the medicine to delete cannot be empty",
   "@dataGuard_deleteMedicineIdEmpty": {},
+  "dataGuard_activeServiceRequired": "An active service must be selected to list free drugs",
+  "@dataGuard_activeServiceRequired": {},
   "dataGuard_deletePatientIdEmpty": "The ID of the patient to delete cannot be empty",
   "@dataGuard_deletePatientIdEmpty": {},
   "dataGuard_deleteRoleIdEmpty": "The ID of the role to delete cannot be empty",

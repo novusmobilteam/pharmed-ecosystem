@@ -5280,6 +5280,10 @@
   "@dataGuard_deleteMedicineIdEmpty": {
     "description": "Validation guard before deleting a medicine with a null/empty id"
   },
+  "dataGuard_activeServiceRequired": "Serbest ilaçları listelemek için aktif servis seçilmelidir",
+  "@dataGuard_activeServiceRequired": {
+    "description": "Validation guard before fetching free (independent) drugs in intake when no active service is selected"
+  },
   "dataGuard_deletePatientIdEmpty": "Silinecek hastanın id'si boş olamaz",
   "@dataGuard_deletePatientIdEmpty": {
     "description": "Validation guard before deleting a patient with a null/empty id"

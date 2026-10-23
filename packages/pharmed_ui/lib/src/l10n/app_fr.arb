@@ -2720,6 +2720,8 @@
   "@dataGuard_deleteMaterialTypeIdEmpty": {},
   "dataGuard_deleteMedicineIdEmpty": "L'ID du médicament à supprimer ne peut pas être vide",
   "@dataGuard_deleteMedicineIdEmpty": {},
+  "dataGuard_activeServiceRequired": "Un service actif doit être sélectionné pour lister les médicaments libres",
+  "@dataGuard_activeServiceRequired": {},
   "dataGuard_deletePatientIdEmpty": "L'ID du patient à supprimer ne peut pas être vide",
   "@dataGuard_deletePatientIdEmpty": {},
   "dataGuard_deleteRoleIdEmpty": "L'ID du rôle à supprimer ne peut pas être vide",

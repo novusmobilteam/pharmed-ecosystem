@@ -102,10 +102,12 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (list) => Result.ok(list ?? const <MedicineAssignmentDto>[]), error: Result.error);
   }
 
-  /// Bağımsız (reçetesiz) malzemeleri getirir.
-  Future<Result<List<MedicineAssignmentDto>>> getIndependentMaterials() async {
+  /// Bağımsız (reçetesiz / serbest) malzemeleri getirir.
+  /// [serviceId]: aktif servis — yalnızca bu servise tanımlı serbest ilaçlar döner.
+  Future<Result<List<MedicineAssignmentDto>>> getIndependentMaterials({required int serviceId}) async {
     final res = await fetchRequest<List<MedicineAssignmentDto>>(
       path: '$_medicineBase/cabinInMaterialsIndependent',
+      query: {'serviceId': serviceId},
       parser: BaseRemoteDataSource.listParser(MedicineAssignmentDto.fromJson),
     );
 

@@ -4353,6 +4353,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'ID du médicament à supprimer ne peut pas être vide';
 
   @override
+  String get dataGuard_activeServiceRequired =>
+      'Un service actif doit être sélectionné pour lister les médicaments libres';
+
+  @override
   String get dataGuard_deletePatientIdEmpty =>
       'L\'ID du patient à supprimer ne peut pas être vide';
 

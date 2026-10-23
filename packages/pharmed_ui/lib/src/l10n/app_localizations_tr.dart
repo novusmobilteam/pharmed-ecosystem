@@ -4200,6 +4200,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Silinecek ilacın id\'si boş olamaz';
 
   @override
+  String get dataGuard_activeServiceRequired =>
+      'Serbest ilaçları listelemek için aktif servis seçilmelidir';
+
+  @override
   String get dataGuard_deletePatientIdEmpty =>
       'Silinecek hastanın id\'si boş olamaz';
 

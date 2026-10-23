@@ -13,12 +13,14 @@ import '../../../../core/cache/witness_session_store.dart';
 import '../../../../core/mixins/witness_mixin.dart';
 import '../../../auth/auth.dart';
 import '../../../dashboard/dashboard.dart';
+import '../../../service_selection/notifier/active_service_notifier.dart';
 
 final masterIntakeSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterIntakeSelectionNotifier>((ref) {
   ref.onDispose(() => debugPrint('MasterIntakeSelectionNotifier DISPOSED'));
 
   return MasterIntakeSelectionNotifier(
     authNotifier: ref.read(authNotifierProvider.notifier),
+    activeServiceNotifier: ref.read(activeServiceNotifierProvider),
     getIntakeItemsUseCase: ref.read(getIntakeItemsUseCaseProvider),
     getEquivalentsUseCase: ref.read(getEquivalentIntakesUseCaseProvider),
     getOtherStationsUseCase: ref.read(getOtherStationMedicinesUseCaseProvider),
@@ -35,6 +37,7 @@ final masterIntakeSelectionNotifierProvider = ChangeNotifierProvider.autoDispose
 class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin, WitnessMixin<IntakeItem> {
   MasterIntakeSelectionNotifier({
     required AuthNotifier authNotifier,
+    required ActiveServiceNotifier activeServiceNotifier,
     required GetIntakeItemsUseCase getIntakeItemsUseCase,
     required GetEquivalentIntakesUseCase getEquivalentsUseCase,
     required GetOtherStationMedicinesUseCase getOtherStationsUseCase,
@@ -46,6 +49,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     required GetStationAssignmentsUseCase getStationAssignmentsUseCase,
     required WitnessSessionStore witnessStore,
   }) : _authNotifier = authNotifier,
+       _activeServiceNotifier = activeServiceNotifier,
        _getIntakeItemsUseCase = getIntakeItemsUseCase,
        _getEquivalentsUseCase = getEquivalentsUseCase,
        _getOtherStationsUseCase = getOtherStationsUseCase,
@@ -61,6 +65,9 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
   /// Aktif kullanıcıyı okumak için (yetki kontrolleri, şahit karşılaştırması).
   final AuthNotifier _authNotifier;
+
+  /// Serbest ilaçlar aktif servise göre listelenir.
+  final ActiveServiceNotifier _activeServiceNotifier;
 
   /// Hasta için alım kalemlerini (ilaç listesi) çeker.
   final GetIntakeItemsUseCase _getIntakeItemsUseCase;
@@ -397,6 +404,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
           refreshAssignments: false,
           hospitalizationId: _hospitalization?.id,
           filter: _intakeType == IntakeType.ordered ? _patientFilter : PatientFilterType.ordersDue,
+          serviceId: _activeServiceNotifier.activeService?.id,
         ),
       ),
       onData: (items) => _applyFetchedItems(items, autoSelectAll: _intakeType == IntakeType.ordered),

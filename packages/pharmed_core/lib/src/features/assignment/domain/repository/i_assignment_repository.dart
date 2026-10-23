@@ -29,8 +29,9 @@ abstract class IAssignmentRepository {
   /// Giriş yapmış kullanıcının ordersız alım yapabileceği ilaçları getirir.
   Future<Result<List<MedicineAssignment>>> getOrderlessCabinAssignments();
 
-  /// Bağımsız (reçetesiz) malzemeleri getirir.
-  Future<Result<List<MedicineAssignment>>> getIndependentMaterials();
+  /// Bağımsız (reçetesiz / serbest) malzemelerden [serviceId] servisine
+  /// tanımlı olanları getirir.
+  Future<Result<List<MedicineAssignment>>> getIndependentMaterials({required int serviceId});
 
   /// Belirtilen kabindeki tüm yatak atamalarını getirir.
   Future<Result<List<BedAssignment>>> getBedAssignments();

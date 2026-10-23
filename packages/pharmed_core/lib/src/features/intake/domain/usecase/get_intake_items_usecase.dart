@@ -13,11 +13,16 @@ class GetIntakeItemsParams {
 
   final PatientFilterType filter;
 
+  /// Aktif servis. Serbest ilaç ([IntakeType.free]) alımında zorunludur —
+  /// yalnızca bu servise tanımlı serbest ilaçlar listelenir.
+  final int? serviceId;
+
   GetIntakeItemsParams({
     required this.type,
     this.hospitalizationId,
     this.filter = PatientFilterType.ordersDue,
     required this.refreshAssignments,
+    this.serviceId,
   });
 }
 
@@ -46,7 +51,7 @@ class GetIntakeItemsUseCase {
       case IntakeType.urgent:
         return await _getUrgent();
       case IntakeType.free:
-        return await _getFree();
+        return await _getFree(params.serviceId);
     }
   }
 
@@ -78,8 +83,23 @@ class GetIntakeItemsUseCase {
     );
   }
 
-  Future<Result<List<IntakeItem>>> _getFree() async {
-    final result = await _assignmentRepository.getIndependentMaterials();
+  /// [SWREQ-CORE-INTAKE-UC-001] Serbest ilaçlar aktif servise göre filtrelenir.
+  /// Servis yoksa istek atılmaz: filtresiz istek, servise tanımlı olmayan
+  /// serbest ilaçları da listelerdi.
+  Future<Result<List<IntakeItem>>> _getFree(int? serviceId) async {
+    if (serviceId == null || serviceId <= 0) {
+      MedLogger.warn(
+        unit: 'SW-UNIT-DOMAIN',
+        swreq: 'SWREQ-CORE-INTAKE-UC-001',
+        message: 'Serbest ilaç listesi istendi ancak aktif servis yok',
+        context: {'serviceId': serviceId},
+      );
+      return Result.error(
+        ValidationException(message: contextlessL10n().dataGuard_activeServiceRequired, field: 'serviceId', value: serviceId),
+      );
+    }
+
+    final result = await _assignmentRepository.getIndependentMaterials(serviceId: serviceId);
     return result.when(
       ok: (data) async {
         if (data.any((d) => d.medicine == null)) {

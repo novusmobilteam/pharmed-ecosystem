@@ -83,8 +83,8 @@ class AssignmentRepositoryImpl implements IAssignmentRepository {
   }
 
   @override
-  Future<Result<List<MedicineAssignment>>> getIndependentMaterials() async {
-    final result = await _dataSource.getIndependentMaterials();
+  Future<Result<List<MedicineAssignment>>> getIndependentMaterials({required int serviceId}) async {
+    final result = await _dataSource.getIndependentMaterials(serviceId: serviceId);
     return result.when(
       ok: (data) => Result.ok(_medicineAssignmentMapper.toEntityList(data)),
       error: (e) => Result.error(e),
