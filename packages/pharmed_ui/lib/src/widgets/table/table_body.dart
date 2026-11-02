@@ -46,18 +46,57 @@ class _TableBody<T extends Object> extends StatelessWidget {
   bool get _showActions => actions.isNotEmpty;
   double get _selColW => _showMulti ? _multiColW : _singleColW;
 
+  // Header hücresinin başlık metni dışında kapladığı alan (bkz. _HeaderCell).
+  static const double _headerPaddingX = 20.0; // 10 + 10
+  static const double _sortIconW = 15.0; // 3 boşluk + 12 ikon
+  static const double _filterIconW = 21.0; // 4 margin + 2*2 padding + 13 ikon
+  static const TextStyle _headerTextStyle = TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
+
+  /// Kolon başlığının kırpılmadan sığması için gereken genişlik.
+  ///
+  /// Ölçüm, başlığın ekranda çizildiği stille yapılmalı: _HeaderCell'deki Text
+  /// fontu temadan (DefaultTextStyle — DM Sans) alır. Çıplak TextStyle ile
+  /// ölçülürse sistem fontu (Windows'ta daha dar Segoe UI) kullanılır, genişlik
+  /// eksik çıkar ve başlık yine "…" ile kırpılır.
+  double _headerMinWidth(BuildContext context, _ColMeta<T> col) {
+    final style = DefaultTextStyle.of(context).style.merge(_headerTextStyle);
+    final painter = TextPainter(
+      text: TextSpan(text: col.title, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final width = painter.width;
+    painter.dispose();
+    return width.ceilToDouble() +
+        _headerPaddingX +
+        (col.sortable ? _sortIconW : 0) +
+        (col.filterable ? _filterIconW : 0) +
+        4; // yuvarlama / alt-piksel payı
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final contentWidth = horizontalScroll
+        // Elle istenen yatay kaydırma (horizontalScroll + minRowWidth) korunur.
+        final baseWidth = horizontalScroll
             ? math.max(constraints.maxWidth, minRowWidth ?? 800.0)
             : constraints.maxWidth;
 
         final fixedW = (_showSelCol ? _selColW : 0.0) + (_showActions ? _actionColW * actions.length : 0.0);
-        final available = contentWidth - fixedW;
+        final available = baseWidth - fixedW;
         final unit = totalFlex > 0 ? available / totalFlex : 0.0;
-        final widths = cols.map((c) => c.flex * unit).toList();
+
+        // Kolonlar flex oranında paylaşılır; bir kolonun payı başlığını tam
+        // göstermeye yetmiyorsa o kolon başlık genişliğine çıkarılır. Toplam
+        // ekranı aşarsa tablo otomatik yatay kaydırmaya geçer — böylece tüm
+        // kolon başlıkları her zaman okunur.
+        final widths = [for (final c in cols) math.max(c.flex * unit, _headerMinWidth(context, c))];
+        final requiredWidth = fixedW + widths.fold<double>(0, (sum, w) => sum + w);
+        final overflows = requiredWidth > baseWidth + 0.5;
+        final scrolls = horizontalScroll || overflows;
+        final contentWidth = overflows ? requiredWidth : baseWidth;
 
         final allSelected = data.isNotEmpty && data.every(selectedItems.contains);
         final someSelected = selectedItems.isNotEmpty && !allSelected;
@@ -153,15 +192,48 @@ class _TableBody<T extends Object> extends StatelessWidget {
           ],
         );
 
-        if (horizontalScroll) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const ClampingScrollPhysics(),
-            child: SizedBox(width: contentWidth, child: table),
-          );
-        }
+        if (scrolls) return _HorizontalTableScroll(width: contentWidth, child: table);
         return table;
       },
+    );
+  }
+}
+
+/// Tablo ekrana sığmadığında yatay kaydırma. Masaüstünde fareyle kaydırılabilsin
+/// diye kaydırma çubuğu her zaman görünür.
+class _HorizontalTableScroll extends StatefulWidget {
+  const _HorizontalTableScroll({required this.width, required this.child});
+
+  final double width;
+  final Widget child;
+
+  @override
+  State<_HorizontalTableScroll> createState() => _HorizontalTableScrollState();
+}
+
+class _HorizontalTableScrollState extends State<_HorizontalTableScroll> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      controller: _controller,
+      thumbVisibility: true,
+      // Yalnızca yatay kaydırmayı dinle — içteki dikey listenin bildirimleri
+      // bu çubuğu oynatmasın.
+      notificationPredicate: (n) => n.depth == 0 && n.metrics.axis == Axis.horizontal,
+      child: SingleChildScrollView(
+        controller: _controller,
+        scrollDirection: Axis.horizontal,
+        physics: const ClampingScrollPhysics(),
+        child: SizedBox(width: widget.width, child: widget.child),
+      ),
     );
   }
 }

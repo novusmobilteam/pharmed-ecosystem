@@ -11,9 +11,6 @@ class TableView extends StatelessWidget {
       data: notifier.items,
       isLoading: notifier.isFetching,
       enableExcel: true,
-      // Kolon sayısı arttı — dar ekranda sıkışmasın diye yatay kaydırma.
-      horizontalScroll: true,
-      minTableWidth: 1600,
       enableSearch: true,
       enablePDF: true,
       enableDateFilter: true,
