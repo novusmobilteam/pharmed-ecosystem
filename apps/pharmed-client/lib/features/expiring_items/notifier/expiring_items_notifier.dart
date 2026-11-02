@@ -20,7 +20,7 @@ class ExpiringItemsNotifier extends Notifier<ExpiringItemsState> {
   int _currentPage = 1;
   int get currentPage => _currentPage;
 
-  final int _pageSize = 15;
+  final int _pageSize = 50;
   int get pageSize => _pageSize;
 
   int _totalCount = 0;

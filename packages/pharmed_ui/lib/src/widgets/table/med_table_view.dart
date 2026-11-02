@@ -100,6 +100,7 @@ class MedTable<T extends Object> extends StatefulWidget {
     this.cellBuilder,
     // Pagination
     this.enablePagination = false,
+    this.pagedScroll = true,
     this.enableInfiniteScroll = false,
     this.hasMore = false,
     this.isLoadingMore = false,
@@ -199,7 +200,17 @@ class MedTable<T extends Object> extends StatefulWidget {
   // ── Pagination ───────────────────────────────────────────────────────────────
   final bool enablePagination;
 
-  // ── Sonsuz kaydırma (enablePagination yerine) ───────────────────────────────
+  /// [enablePagination] açıkken sayfa footer'ı yerine kaydırdıkça yükleme:
+  /// tablo gelen sayfaları kendi içinde biriktirir ve listenin sonuna
+  /// yaklaşınca [onPageChanged] ile sıradaki sayfayı ister. Notifier tarafında
+  /// değişiklik gerekmez — sayfa 1'e dönen her istek (filtre/arama/kategori)
+  /// listeyi baştan başlatır. false → klasik sayfa footer'ı.
+  ///
+  /// [currentPage] verilmezse hangi sayfanın geldiği bilinemeyeceği için
+  /// klasik sayfalamaya düşülür.
+  final bool pagedScroll;
+
+  // ── Sonsuz kaydırma (dışarıdan yönetilen; enablePagination yerine) ──────────
   /// true → sayfa footer'ı yerine liste sonuna yaklaşınca [onLoadMore] çağrılır.
   final bool enableInfiniteScroll;
 
@@ -261,6 +272,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
   void initState() {
     super.initState();
     _searchController.addListener(() => setState(() {}));
+    _absorbPage();
 
     // Initial date range varsa uygula
     if (widget.initialDateRange != null) {
@@ -281,9 +293,12 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
   @override
   void didUpdateWidget(MedTable<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.data != widget.data) {
-      _colFilters.clear();
-      _selectedItems.removeWhere((item) => !widget.data.contains(item));
+    if (!identical(oldWidget.data, widget.data)) {
+      final appended = _absorbPage();
+      // Kaydırarak sonraki sayfa eklendiyse kullanıcının kolon filtreleri korunur.
+      if (!appended) _colFilters.clear();
+      final data = _data;
+      _selectedItems.removeWhere((item) => !data.contains(item));
     }
     // columnDefs değişince sort/filter sıfırla
     if (oldWidget.columnDefs != widget.columnDefs) {
@@ -344,8 +359,81 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
 
   // ── Filtreleme ve sıralama ───────────────────────────────────────────────────
 
+  // ── Kaydırdıkça sayfa yükleme (pagedScroll) ─────────────────────────────────
+
+  /// Sayfa no → o sayfanın kayıtları. Yalnızca [_pagedMode]'da kullanılır.
+  final Map<int, List<T>> _pages = {};
+
+  /// İstenip henüz gelmemiş sayfa — aynı kaydırma hareketinde tekrar istenmesin.
+  int? _requestedPage;
+
+  bool get _pagedMode =>
+      widget.enablePagination && widget.pagedScroll && !widget.enableInfiniteScroll && widget.currentPage != null;
+
+  int get _lastLoadedPage => _pages.isEmpty ? 0 : _pages.keys.reduce(math.max);
+
+  /// Tablonun gösterdiği tüm kayıtlar.
+  List<T> get _data {
+    if (!_pagedMode) return widget.data;
+    if (_pages.isEmpty) return widget.data;
+    final keys = _pages.keys.toList()..sort();
+    return [for (final k in keys) ..._pages[k]!];
+  }
+
+  /// Yeni gelen [widget.data]'yı [widget.currentPage] sayfası olarak işler.
+  /// true → sayfa mevcut listenin sonuna eklendi (sıfırlama değil).
+  bool _absorbPage() {
+    if (!_pagedMode) {
+      _pages.clear();
+      _requestedPage = null;
+      return false;
+    }
+    final page = widget.currentPage ?? 1;
+    if (page <= 1 || _pages.isEmpty) {
+      _pages
+        ..clear()
+        ..[page] = widget.data;
+      _requestedPage = null;
+      return false;
+    }
+    // Daha ileri sayfalar artık geçersiz (ör. kayıt sonrası aynı sayfa
+    // yeniden çekildi) — o sayfadan sonrası atılır.
+    _pages.removeWhere((k, _) => k > page);
+    _pages[page] = widget.data;
+    if (_requestedPage != null && page >= _requestedPage!) _requestedPage = null;
+    return true;
+  }
+
+  bool get _pagedHasMore {
+    if (_pages.isEmpty) return false;
+    final loaded = _data.length;
+    final total = widget.serverTotalCount ?? 0;
+    if (total > 0) return loaded < total;
+    // Toplam bilinmiyor (-1): son sayfa dolu geldiyse devamı olabilir.
+    final last = _pages[_lastLoadedPage]!;
+    final pageSize = widget.pageSize ?? _pages.values.first.length;
+    return last.isNotEmpty && last.length >= pageSize;
+  }
+
+  /// Sonraki sayfa yükleniyor — liste yerinde kalır, altta ince gösterge.
+  bool get _pagedLoadingMore => _pagedMode && widget.isLoading && (widget.currentPage ?? 1) > 1;
+
+  void _requestNextPage() {
+    final next = _lastLoadedPage + 1;
+    if (_requestedPage != null && _requestedPage! >= next) return;
+    _requestedPage = next;
+    widget.onPageChanged?.call(next);
+  }
+
+  bool get _scrollLoadingEnabled => widget.enableInfiniteScroll || _pagedMode;
+  bool get _effectiveHasMore => widget.enableInfiniteScroll ? widget.hasMore : _pagedHasMore;
+  bool get _effectiveLoadingMore => widget.enableInfiniteScroll ? widget.isLoadingMore : _pagedLoadingMore;
+
+  /// Tüm tabloyu "yükleniyor" durumuna alır mı — sonraki sayfa yüklenirken hayır.
+  bool get _showFullLoading => widget.isLoading && !(_pagedLoadingMore && _data.isNotEmpty);
+
   List<T> get _filtered {
-    var data = List<T>.from(widget.data);
+    var data = List<T>.from(_data);
     final cols = _cols;
 
     // Client-side arama (onSearchChanged verilmemişse)
@@ -389,7 +477,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
   List<T> get _exportData => _selectedItems.isNotEmpty ? _selectedItems.toList() : _filtered;
 
   List<String> _uniqueValuesFor(_ColMeta<T> col) {
-    return widget.data.map((item) => col.valueOf(item)).where((v) => v.isNotEmpty && v != '-').toSet().toList()..sort();
+    return _data.map((item) => col.valueOf(item)).where((v) => v.isNotEmpty && v != '-').toSet().toList()..sort();
   }
 
   bool get _hasActiveFilters =>
@@ -607,26 +695,25 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                     ),
                   const Divider(height: 1, color: Color(0xFFEEF0F4)),
                   Expanded(
-                    child: widget.isLoading
+                    child: _showFullLoading
                         ? (widget.loadingWidget ?? const Center(child: CircularProgressIndicator.adaptive()))
-                        : widget.data.isEmpty
+                        : _data.isEmpty
                         ? (widget.emptyWidget ?? _defaultEmpty())
                         : _withInfiniteScroll(_buildTableArea(filteredData, cols)),
                   ),
-                  if (widget.enableInfiniteScroll && widget.isLoadingMore)
-                    const LinearProgressIndicator(minHeight: 2),
-                  if (widget.summary != null && !widget.isLoading) ...[
+                  if (_scrollLoadingEnabled && _effectiveLoadingMore) const LinearProgressIndicator(minHeight: 2),
+                  if (widget.summary != null && !_showFullLoading) ...[
                     const Divider(height: 1, color: Color(0xFFEEF0F4)),
                     widget.summary!,
                   ],
                   const Divider(height: 1, color: Color(0xFFEEF0F4)),
                   _TableFooter(
                     filteredCount: filteredData.length,
-                    // Sonsuz kaydırmada "yüklenen / sunucudaki toplam" gösterilir.
-                    totalCount: widget.enableInfiniteScroll && (widget.serverTotalCount ?? -1) > widget.data.length
+                    // Kaydırarak yüklemede "yüklenen / sunucudaki toplam" gösterilir.
+                    totalCount: _scrollLoadingEnabled && (widget.serverTotalCount ?? -1) > _data.length
                         ? widget.serverTotalCount!
-                        : widget.data.length,
-                    enablePagination: widget.enablePagination && !widget.enableInfiniteScroll,
+                        : _data.length,
+                    enablePagination: widget.enablePagination && !_scrollLoadingEnabled,
                     currentPage: widget.currentPage,
                     pageSize: widget.pageSize,
                     serverTotalCount: widget.serverTotalCount,
@@ -641,18 +728,24 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
     );
   }
 
-  /// Dikey liste sonuna ~[_loadMoreThreshold] px kala, ya da ilk sayfa ekranı
-  /// doldurmadığında (kaydırılacak bir şey yoksa) bir sonraki sayfayı ister.
+  /// Dikey liste sonuna ~[_loadMoreThreshold] px kala (≈ 13-14 satır), ya da
+  /// ilk sayfa ekranı doldurmadığında (kaydırılacak bir şey yoksa) bir sonraki
+  /// sayfayı ister — kullanıcı listenin sonuna gelmeden veri hazır olur.
   /// Yükleme sürerken veya kayıt kalmadıysa tetiklemez.
-  static const double _loadMoreThreshold = 320;
+  static const double _loadMoreThreshold = 600;
 
   Widget _withInfiniteScroll(Widget child) {
-    if (!widget.enableInfiniteScroll) return child;
+    if (!_scrollLoadingEnabled) return child;
 
     void check(ScrollMetrics metrics) {
       if (metrics.axis != Axis.vertical) return;
-      if (!widget.hasMore || widget.isLoadingMore || widget.isLoading) return;
-      if (metrics.extentAfter < _loadMoreThreshold) widget.onLoadMore?.call();
+      if (!_effectiveHasMore || _effectiveLoadingMore || widget.isLoading) return;
+      if (metrics.extentAfter >= _loadMoreThreshold) return;
+      if (widget.enableInfiniteScroll) {
+        widget.onLoadMore?.call();
+      } else {
+        _requestNextPage();
+      }
     }
 
     return NotificationListener<Notification>(

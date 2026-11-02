@@ -7,7 +7,9 @@ import 'dart:async';
 import 'api_request_mixin.dart';
 
 mixin PaginationMixin<T> on ApiRequestMixin {
-  int _pageSize = 15;
+  /// MedTable kaydırdıkça yüklediği için sayfa büyük tutulur — ilk açılışta
+  /// ekran dolsun, sonraki sayfa liste bitmeden gelsin.
+  int _pageSize = 50;
   int _currentPage = 1;
 
   List<T> _items = [];
