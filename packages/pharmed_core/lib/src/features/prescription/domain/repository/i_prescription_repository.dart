@@ -57,7 +57,7 @@ abstract interface class IPrescriptionRepository {
   Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({PagedQueryParams? params});
   Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
   // Geciken uygulamalar
-  Future<Result<ApiResponse<List<Prescription>>?>> getOverduePrescripitons({PagedQueryParams? params});
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getOverduePrescripitons({PagedQueryParams? params});
 
   /// İlaç hareketlerini(dolum,alım,iade,fire/imha) getiren servis.
   Future<Result<List<PrescriptionItem>>> getDrugActivity();

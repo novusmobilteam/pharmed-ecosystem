@@ -17,7 +17,7 @@ class DashboardNotifier extends ChangeNotifier {
     required GetDashboardUnappliedPrescriptionsUseCase getUnappliedPrescriptions,
     required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
     required GetDrugActivitiesUseCase getDrugActivities,
-    required GetExpiredStocksUseCase getExpiredStocks,
+    required GetExpiringMaterialsUseCase getExpiredStocks,
   }) : _getCabins = getCabins,
        _getMissingStocks = getMissingStocks,
        _approveMissingStock = approveMissingStock,
@@ -34,7 +34,7 @@ class DashboardNotifier extends ChangeNotifier {
   final GetDashboardUnappliedPrescriptionsUseCase _getUnappliedPrescriptions;
   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
   final GetDrugActivitiesUseCase _getDrugActivities;
-  final GetExpiredStocksUseCase _getExpiredStocks;
+  final GetExpiringMaterialsUseCase _getExpiredStocks;
 
   bool _disposed = false;
 
@@ -143,7 +143,7 @@ class DashboardNotifier extends ChangeNotifier {
 
   /// Seçili kabinin tüm bölüm verilerini çeker.
   /// Uygulanmamış reçete global; eksik stok yalnızca mobil; SKT geçmiş yalnızca master
-  /// (istasyon id'ye bağlı); yaklaşan tedavi mac'e bağlı.
+  /// (Dashboard/miadDate, kabinin istasyonuna göre); yaklaşan tedavi mac'e bağlı.
   Future<void> _loadSelectedCabinData({required bool silent}) async {
     final cabin = selectedCabin;
     if (cabin == null) return;
@@ -151,7 +151,7 @@ class DashboardNotifier extends ChangeNotifier {
     // Uygulanmamış reçete global — mac'ten bağımsız, her turda çek
     _loadUnapplied(silent: silent);
 
-    // SKT geçmiş malzemeler yalnızca master — istasyon id'ye bağlı, mac'ten bağımsız
+    // SKT geçmiş malzemeler yalnızca master panelinde gösterilir — kabinin istasyonuna göre
     if (cabin.type?.isMobile ?? false) {
       _expiredStocks = const DashboardSection();
     } else {
@@ -228,8 +228,9 @@ class DashboardNotifier extends ChangeNotifier {
     return int.tryParse(raw?.toString() ?? '');
   }
 
-  /// [SWREQ-MGR-DASH-004] SKT geçmiş malzemeler — rapor ekranıyla aynı istek,
-  /// ancak tarih filtresi ve sayfalama gönderilmez (tüm SKT geçmiş kayıtlar).
+  /// [SWREQ-MGR-DASH-004] SKT geçmiş malzemeler — dashboard'a özel `Dashboard/miadDate?stationId=X`
+  /// isteğinden beslenir (seçili kabinin istasyonu). Rapor ekranındaki
+  /// `Report/expiredMiadDate/{stationId}` isteği değişmeden kalır.
   Future<void> _loadExpiredStocks(int? stationId, {required bool silent}) async {
     if (stationId == null) {
       _expiredStocks = const DashboardSection(data: []);
@@ -238,7 +239,7 @@ class DashboardNotifier extends ChangeNotifier {
         unit: 'DashboardNotifier',
         swreq: 'SWREQ-MGR-DASH-004',
         message: 'Seçili kabinin istasyon id\'si yok, SKT geçmiş malzemeler çekilemedi',
-        context: {'cabinId': _selectedCabinId},
+        context: {'cabinId': selectedCabin?.id},
       );
       return;
     }
@@ -246,12 +247,12 @@ class DashboardNotifier extends ChangeNotifier {
     _expiredStocks = _expiredStocks.copyWith(isLoading: true, error: null);
     _safeNotify();
 
-    final result = await _getExpiredStocks.call(const PagedQueryParams(), stationId: stationId);
+    final result = await _getExpiredStocks.call(stationId: stationId, forceRefresh: !silent);
     if (_disposed) return;
 
     result.when(
-      ok: (response) {
-        _expiredStocks = DashboardSection(data: response?.data ?? const [], isLoading: false);
+      ok: (data) {
+        _expiredStocks = DashboardSection(data: data, isLoading: false);
       },
       error: (e) {
         if (silent) {

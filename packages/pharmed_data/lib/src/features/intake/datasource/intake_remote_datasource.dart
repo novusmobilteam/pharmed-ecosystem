@@ -187,7 +187,7 @@ class IntakeRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<void>> cancelRedirectedOrder(int redirectedOrderId) {
-    return deleteRequest(
+    return putRequest(
       path: '/Prescription/referral/sent/pending/$redirectedOrderId',
       parser: BaseRemoteDataSource.voidParser(),
     );

@@ -47,8 +47,8 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) async {
-    final result = await _dataSource.getExpiringMaterials();
+  Future<Result<List<CabinStock>>> getExpiringMaterials({required int stationId, bool forceRefresh = false}) async {
+    final result = await _dataSource.getExpiringMaterials(stationId: stationId);
     return result.when(ok: (dtos) => Result.ok(_cabinStockMapper.toEntityList(dtos ?? [])), error: Result.error);
   }
 

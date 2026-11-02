@@ -128,12 +128,12 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Prescription>>?>> getOverduePrescripitons({PagedQueryParams? params}) async {
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> getOverduePrescripitons({PagedQueryParams? params}) async {
     final result = await _dataSource.getOverduePrescripitons(params: params);
     return result.when(
       ok: (apiResponse) => Result.ok(
-        ApiResponse<List<Prescription>>(
-          data: apiResponse?.data != null ? _prescriptionMapper.toEntityList(apiResponse!.data!) : null,
+        ApiResponse<List<PrescriptionItem>>(
+          data: apiResponse?.data != null ? _prescriptionItemMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess ?? true,
           totalCount: apiResponse?.totalCount,
         ),

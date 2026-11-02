@@ -29,10 +29,11 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<List<CabinStockDTO>?>> getExpiringMaterials() async {
+  Future<Result<List<CabinStockDTO>?>> getExpiringMaterials({required int stationId}) async {
     return await fetchRequest<List<CabinStockDTO>>(
       path: '$_basePath/miadDate',
       parser: BaseRemoteDataSource.listParser(CabinStockDTO.fromJson),
+      query: {'stationId': stationId},
     );
   }
 

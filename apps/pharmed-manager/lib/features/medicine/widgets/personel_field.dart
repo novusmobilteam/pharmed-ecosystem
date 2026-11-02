@@ -7,12 +7,17 @@ class PersonelField extends StatelessWidget {
     required this.onChanged,
     this.initialValue,
     this.requireValidation = false,
+    this.loadAll = false,
   });
 
   final bool enabled;
   final ValueChanged<List<User>?> onChanged;
   final List<User>? initialValue;
   final bool requireValidation;
+
+  /// true → sayfalama yok, diyalog açılınca tüm personel tek istekle çekilir
+  /// (şahitli işlemler / imha alanları). false → mevcut sayfalı arama.
+  final bool loadAll;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +34,13 @@ class PersonelField extends StatelessWidget {
         }
       },
       initialValue: initialValue,
-      dataSource: (skip, take, search) =>
-          context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
+      dataSource: loadAll
+          ? _loadAllDataSource(
+              fetchAll: () => context.read<GetUsersUseCase>().call(const GetUsersParams()),
+              labelBuilder: (user) => user.fullName,
+            )
+          : (skip, take, search) =>
+                context.read<GetUsersUseCase>().call(GetUsersParams(skip: skip, take: take, search: search)),
       labelBuilder: (user) => user.fullName,
       onSelected: (user) => onChanged(user),
     );

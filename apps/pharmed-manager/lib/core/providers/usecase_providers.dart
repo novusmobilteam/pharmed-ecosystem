@@ -93,6 +93,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetMedicinesUseCase(context.read())),
       Provider(create: (context) => UpdateMedicineUseCase(context.read())),
       Provider(create: (context) => GetDrugUseCase(context.read())),
+      Provider(create: (context) => GetEquivalentMedicinesUseCase(context.read())),
       Provider(create: (context) => SaveIndependentServicesUseCase(context.read())),
 
       /// Menu
@@ -215,6 +216,7 @@ class UsecaseProviders {
       Provider(create: (context) => GetUpcomingTreatmentsUseCase(context.read())),
       Provider(create: (context) => GetDashboardCabinsUseCase(context.read())),
       Provider(create: (context) => GetDrugActivitiesUseCase(context.read())),
+      Provider(create: (context) => GetExpiringMaterialsUseCase(context.read())),
       Provider(create: (context) => GetMasterCabinFaultRecordsUseCase(context.read())),
       Provider(create: (context) => GetMobileCabinFaultRecordsUseCase(context.read())),
       Provider(create: (context) => GetCabinVisualizerDataUseCase(context.read(), context.read(), context.read())),

@@ -135,20 +135,23 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getOverduePrescripitons({PagedQueryParams? params}) async {
-    return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
-      path: 'Prescription/detail/overdueApplications',
+  /// Geciken uygulamalar — reçete değil reçete KALEMİ (prescription detail)
+  /// listesi döner; hasta/servis bilgisi `prescription.patientHospitalization`
+  /// altındadır.
+  Future<Result<ApiResponse<List<PrescriptionItemDto>>?>> getOverduePrescripitons({PagedQueryParams? params}) async {
+    return await fetchRequest<ApiResponse<List<PrescriptionItemDto>>>(
+      path: '/Prescription/detail/overdueApplications',
       skip: params?.skip,
       take: params?.take,
       searchQuery: params?.searchQuery,
       startDate: params?.startDate,
       endDate: params?.endDate,
-      searchFields: ['patientHospitalization.patient.name'],
-      dateField: 'hospitalizationDate',
+      searchFields: ['prescription.patientHospitalization.patient.name', 'material.name'],
+      dateField: 'time',
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
-      successLog: 'Unapplied prescriptions fetched',
-      emptyLog: 'No unapplied prescriptions',
+      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
+      successLog: 'Overdue applications fetched',
+      emptyLog: 'No overdue applications',
     );
   }
 

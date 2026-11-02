@@ -9,6 +9,7 @@ class WarehouseMapper {
     return Warehouse(
       id: dto.id,
       name: dto.name,
+      code: dto.code,
       isActive: dto.isActive,
       type: warehouseTypeFromId(dto.warehouseKindId),
       user: UserMapper().toEntityOrNull(dto.user),
@@ -23,6 +24,7 @@ class WarehouseMapper {
     return WarehouseDTO(
       id: entity.id,
       name: entity.name,
+      code: entity.code,
       isActive: entity.isActive,
       user: UserMapper().toDtoOrNull(entity.user),
       warehouseKindId: entity.type?.id,

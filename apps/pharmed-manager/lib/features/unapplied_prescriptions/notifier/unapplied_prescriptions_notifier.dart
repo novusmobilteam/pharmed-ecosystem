@@ -5,15 +5,12 @@ import 'package:pharmed_manager/core/core.dart';
 class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Prescription> {
   final GetUnappliedPrescriptionsUseCase _getUnappliedPrescriptionsUseCase;
   final GetUnappliedPrescriptionDetailUseCase _getUnappliedPrescriptionDetailUseCase;
-  final GetOverduePrescriptionsUseCase _getOverduePrescriptionsUseCase;
 
   UnappliedPrescriptionsNotifier({
     required GetUnappliedPrescriptionsUseCase getUnappliedPrescriptionsUseCase,
     required GetUnappliedPrescriptionDetailUseCase getUnappliedPrescriptionDetailUseCase,
-    required GetOverduePrescriptionsUseCase getOverduePrescriptionsUseCase,
   }) : _getUnappliedPrescriptionsUseCase = getUnappliedPrescriptionsUseCase,
-       _getUnappliedPrescriptionDetailUseCase = getUnappliedPrescriptionDetailUseCase,
-       _getOverduePrescriptionsUseCase = getOverduePrescriptionsUseCase;
+       _getUnappliedPrescriptionDetailUseCase = getUnappliedPrescriptionDetailUseCase;
 
   OperationKey fetchOp = OperationKey.fetch();
   OperationKey fetchDetailOp = OperationKey.custom('fetch-detail');
@@ -32,6 +29,8 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
   bool _isPanelOpen = false;
   bool get isPanelOpen => _isPanelOpen;
 
+  /// true → ekranda geciken uygulamalar tablosu gösterilir. O tablonun verisi
+  /// reçete kalemi olduğundan ayrı notifier'dadır (OverdueApplicationsNotifier).
   bool _showOverdue = false;
   bool get showOverdue => _showOverdue;
 
@@ -50,37 +49,24 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
 
   void toggleOverdue() {
     _showOverdue = !_showOverdue;
+    if (_showOverdue) {
+      _isPanelOpen = false;
+      _selectedPrescription = null;
+    }
     resetFilters(notify: false, resetDate: false);
     notifyListeners();
-    fetch();
+    if (!_showOverdue) fetch();
   }
 
   @override
   Future<void> fetch() async {
-    if (_showOverdue) {
-      await _fetchOverduePrescriptions();
-    } else {
-      await _fetchAllPrescriptions();
-    }
+    if (_showOverdue) return;
+    await _fetchAllPrescriptions();
   }
 
   Future<void> _fetchAllPrescriptions() async {
     await fetchPagedData(
       fetchMethod: (skip, take) => _getUnappliedPrescriptionsUseCase.call(
-        params: PagedQueryParams(
-          skip: skip,
-          take: take,
-          searchQuery: searchQuery,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _fetchOverduePrescriptions() async {
-    await fetchPagedData(
-      fetchMethod: (skip, take) => _getOverduePrescriptionsUseCase.call(
         params: PagedQueryParams(
           skip: skip,
           take: take,

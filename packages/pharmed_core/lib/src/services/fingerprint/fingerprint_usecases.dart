@@ -15,7 +15,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 ///
 /// Backend endpoint'leri tamamlanınca `true` yapılır — başka değişiklik gerekmez.
 abstract final class FingerprintApi {
-  static const bool isAvailable = false;
+  static const bool isAvailable = true;
 }
 
 /// Kayıt kuralları. Değerler servis sözleşmesiyle (API dokümanı) aynı olmalı.
@@ -67,7 +67,11 @@ class EnrollFingerprintsUseCase {
 
     final positions = request.fingers.map((f) => f.position).toList();
     if (positions.toSet().length != positions.length) {
-      return ValidationException(message: 'Aynı parmak birden fazla kez gönderildi', field: 'fingers', value: positions);
+      return ValidationException(
+        message: 'Aynı parmak birden fazla kez gönderildi',
+        field: 'fingers',
+        value: positions,
+      );
     }
 
     for (final finger in request.fingers) {
@@ -133,10 +137,7 @@ class LoginWithFingerprintUseCase {
     }
     if (s.quality < FingerprintEnrollmentRules.minLoginQuality) {
       return Result.error(
-        FingerprintException(
-          message: 'Parmak izi kalitesi yetersiz',
-          reason: FingerprintFailureReason.lowQuality,
-        ),
+        FingerprintException(message: 'Parmak izi kalitesi yetersiz', reason: FingerprintFailureReason.lowQuality),
       );
     }
 

@@ -9,6 +9,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   final GetActiveIngredientsUseCase _getActiveIngredientsUseCase;
   final SaveIndependentServicesUseCase _saveIndependentServicesUseCase;
   final GetServicesUseCase _getServicesUseCase;
+  final GetEquivalentMedicinesUseCase _getEquivalentMedicinesUseCase;
 
   static const _swreq = 'SWREQ-MGR-MEDICINE-001';
 
@@ -19,6 +20,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
     required GetActiveIngredientsUseCase getActiveIngredientsUseCase,
     required SaveIndependentServicesUseCase saveIndependentServicesUseCase,
     required GetServicesUseCase getServicesUseCase,
+    required GetEquivalentMedicinesUseCase getEquivalentMedicinesUseCase,
     required IUserManager userRepository,
     required IStationRepository stationRepository,
     Drug? drug,
@@ -28,6 +30,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
        _getActiveIngredientsUseCase = getActiveIngredientsUseCase,
        _saveIndependentServicesUseCase = saveIndependentServicesUseCase,
        _getServicesUseCase = getServicesUseCase,
+       _getEquivalentMedicinesUseCase = getEquivalentMedicinesUseCase,
        _drug = drug ?? Drug(returnType: ReturnType.toOrigin, isCameraRecording: true) {
     _initialize();
   }
@@ -44,11 +47,19 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   List<HospitalService> _independentServices = [];
   List<HospitalService> get independentServices => _independentServices;
 
+  /// Kayıtlı ilacın muadilleri (`Material/equivalentMaterials/{id}`).
+  /// Yalnızca düzenleme modunda yüklenir; ilacın kendisi listeden çıkarılır.
+  List<Medicine> _equivalents = [];
+  List<Medicine> get equivalents => _equivalents;
+
   OperationKey fetchOp = OperationKey.fetch();
+  OperationKey equivalentsOp = OperationKey.custom('equivalents');
   OperationKey submitOp = OperationKey.custom('submit');
 
   bool get isCreate => _drug.id == null;
   bool get isFetching => isLoading(fetchOp);
+  bool get isLoadingEquivalents => isLoading(equivalentsOp);
+  String? get equivalentsError => isFailed(equivalentsOp) ? message(equivalentsOp) : null;
   bool get isSubmitting => isLoading(submitOp);
 
   String? get statusMessage => message(submitOp);
@@ -69,11 +80,24 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
                 .toList();
 
             notifyListeners();
-            await Future.wait([_getActiveIngredients(), _resolveIndependentServiceNames()]);
+            await Future.wait([_getActiveIngredients(), _resolveIndependentServiceNames(), loadEquivalents()]);
           }
         },
       );
     }
+  }
+
+  /// Muadil ilaçları getirir. Panel "Tekrar Dene" ile de çağırır.
+  Future<void> loadEquivalents() async {
+    final id = _drug.id;
+    if (id == null) return;
+    await execute(
+      equivalentsOp,
+      operation: () => _getEquivalentMedicinesUseCase.execute(id, params: PagedQueryParams()),
+      onData: (response) {
+        _equivalents = (response.data ?? const <Medicine>[]).where((m) => m.id != id).toList();
+      },
+    );
   }
 
   Future<void> _getActiveIngredients() async {

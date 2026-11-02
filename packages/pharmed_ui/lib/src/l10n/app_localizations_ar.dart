@@ -2556,6 +2556,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get medicine_section_notesTitle => 'Notes';
 
   @override
+  String get medicine_section_equivalentsTitle => 'Equivalent Medicines';
+
+  @override
+  String get medicine_equivalents_emptyMessage =>
+      'This medicine has no defined equivalents';
+
+  @override
+  String get medicine_equivalents_loadErrorMessage =>
+      'Equivalent medicines could not be loaded';
+
+  @override
+  String get medicine_equivalents_inactiveBadge => 'Inactive';
+
+  @override
   String get medicine_fieldIndependentServices => 'Allowed Services';
 
   @override
@@ -5934,6 +5948,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unappliedPrescription_table_pendingCountColumn => 'Pending';
 
   @override
+  String get unappliedPrescription_overdueTable_medicineColumn => 'Medicine';
+
+  @override
+  String get unappliedPrescription_overdueTable_doseColumn => 'Dose';
+
+  @override
+  String get unappliedPrescription_overdueTable_scheduledTimeColumn =>
+      'Scheduled Time';
+
+  @override
+  String get unappliedPrescription_overdueTable_applicationTimeColumn =>
+      'Application Time';
+
+  @override
+  String get unappliedPrescription_overdueTable_appliedByColumn => 'Applied By';
+
+  @override
+  String get unappliedPrescription_overdueTable_delayColumn => 'Delay';
+
+  @override
+  String unappliedPrescription_overdueTable_delayMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String unappliedPrescription_overdueTable_delayHoursMinutes(
+    int hours,
+    int minutes,
+  ) {
+    return '$hours h $minutes min';
+  }
+
+  @override
   String get drugActivity_table_dateColumn => 'Date';
 
   @override
@@ -7022,6 +7069,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get assignment_edit_maxQuantityHint => 'The most the cell can hold';
 
   @override
+  String get assignment_edit_quantityMissingError =>
+      'Enter min, critical and max quantities';
+
+  @override
+  String get assignment_edit_minNotPositiveError =>
+      'Min must be greater than 0';
+
+  @override
+  String get assignment_edit_maxBelowMinError => 'Max cannot be less than min';
+
+  @override
+  String get assignment_edit_criticalOutOfRangeError =>
+      'Critical must be between min and max';
+
+  @override
   String get assignment_edit_removeLink => 'Remove Assignment';
 
   @override
@@ -7488,6 +7550,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get refund_directReturnPharmacyConfirmTitle => 'Return to Pharmacy';
+
+  @override
+  String refund_directReturnPharmacyConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$quantity $unit of $medicineName will be returned to the pharmacy. Do not put the medicine back into the cabinet; set it aside to be delivered to the pharmacy. The return will be completed once you confirm.';
+  }
+
+  @override
+  String get refund_directReturnReturnBoxConfirmTitle => 'Return to Return Box';
+
+  @override
+  String refund_directReturnReturnBoxConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$quantity $unit of $medicineName will be returned to the return box. Do not put the medicine into a drawer; place it in the return box. The return will be completed once you confirm.';
+  }
+
+  @override
+  String get refund_directReturnConfirmButton => 'Confirm Return';
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';

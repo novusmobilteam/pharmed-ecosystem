@@ -448,10 +448,23 @@ class _BlinkingWrapper extends StatefulWidget {
 }
 
 class _BlinkingWrapperState extends State<_BlinkingWrapper> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 700),
-  );
+  // `late final` + tembel başlatma KULLANILMAZ: kart yanıp sönmüyorsa
+  // controller'a ilk kez dispose()'da dokunuluyordu; o anda oluşturulan
+  // Ticker, deaktive olmuş context'ten TickerMode arıyor ve "Looking up a
+  // deactivated widget's ancestor is unsafe" hatası veriyordu.
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    _opacity = Tween<double>(
+      begin: 1.0,
+      end: 0.35,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    if (widget.enabled) _controller.repeat(reverse: true);
+  }
 
   @override
   void didUpdateWidget(covariant _BlinkingWrapper oldWidget) {
@@ -468,12 +481,6 @@ class _BlinkingWrapperState extends State<_BlinkingWrapper> with SingleTickerPro
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.enabled) _controller.repeat(reverse: true);
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -482,12 +489,6 @@ class _BlinkingWrapperState extends State<_BlinkingWrapper> with SingleTickerPro
   @override
   Widget build(BuildContext context) {
     if (!widget.enabled) return widget.child;
-    return FadeTransition(
-      opacity: Tween<double>(
-        begin: 1.0,
-        end: 0.35,
-      ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut)),
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _opacity, child: widget.child);
   }
 }

@@ -3059,6 +3059,10 @@
     "description": "Drug form section title grouping cabin-side behavior checkboxes (RFID, camera, single use, etc.)"
   },
   "medicine_section_notesTitle": "Notlar",
+  "medicine_section_equivalentsTitle": "Muadil İlaçlar",
+  "medicine_equivalents_emptyMessage": "Bu ilacın tanımlı muadili yok",
+  "medicine_equivalents_loadErrorMessage": "Muadil ilaçlar yüklenemedi",
+  "medicine_equivalents_inactiveBadge": "Pasif",
   "@medicine_section_notesTitle": {
     "description": "Drug form section title grouping collect, return and destruction notes"
   },
@@ -7262,6 +7266,14 @@
   "unappliedPrescription_table_hospitalizationCodeColumn": "Yatış Kodu",
   "unappliedPrescription_table_admissionDateColumn": "Yatış Tarihi",
   "unappliedPrescription_table_pendingCountColumn": "Bekleyen Adet",
+  "unappliedPrescription_overdueTable_medicineColumn": "İlaç",
+  "unappliedPrescription_overdueTable_doseColumn": "Doz",
+  "unappliedPrescription_overdueTable_scheduledTimeColumn": "Planlanan Zaman",
+  "unappliedPrescription_overdueTable_applicationTimeColumn": "Uygulama Zamanı",
+  "unappliedPrescription_overdueTable_appliedByColumn": "Uygulayan",
+  "unappliedPrescription_overdueTable_delayColumn": "Gecikme",
+  "unappliedPrescription_overdueTable_delayMinutes": "{minutes} dk",
+  "unappliedPrescription_overdueTable_delayHoursMinutes": "{hours} sa {minutes} dk",
   "drugActivity_table_dateColumn": "Tarih",
   "drugActivity_table_timeColumn": "Saat",
   "drugActivity_table_patientColumn": "Hasta",
@@ -8243,6 +8255,10 @@
   "assignment_edit_criticalQuantityHint": "Bu seviyede kritik uyarı verilir",
   "assignment_edit_maxQuantityLabel": "Maksimum Miktar",
   "assignment_edit_maxQuantityHint": "Gözün alabileceği en fazla adet",
+  "assignment_edit_quantityMissingError": "Min, kritik ve maks miktarlarını girin",
+  "assignment_edit_minNotPositiveError": "Min 0'dan büyük olmalı",
+  "assignment_edit_maxBelowMinError": "Maks, min'den küçük olamaz",
+  "assignment_edit_criticalOutOfRangeError": "Kritik, min ile maks arasında olmalı",
   "assignment_edit_removeLink": "Atamayı Kaldır",
   "assignment_edit_saveButton": "Değişiklikleri Kaydet",
   "assignment_edit_previousPage": "Önceki",
@@ -9710,6 +9726,11 @@
     "description": "Button to directly complete a refund for a non-hardware-required refundable item in the master refund list"
   },
   "refund_directReturnSendingLabel": "Gönderiliyor...",
+  "refund_directReturnPharmacyConfirmTitle": "Eczaneye İade",
+  "refund_directReturnPharmacyConfirmMessage": "{medicineName} ilacından {quantity} {unit} eczaneye iade edilecek. İlacı kabine geri koymayın; eczaneye teslim edilmek üzere ayırın. Onayladığınızda iade işlemi tamamlanacaktır.",
+  "refund_directReturnReturnBoxConfirmTitle": "İade Kutusuna İade",
+  "refund_directReturnReturnBoxConfirmMessage": "{medicineName} ilacından {quantity} {unit} iade kutusuna iade edilecek. İlacı çekmeceye koymayın; iade kutusuna bırakın. Onayladığınızda iade işlemi tamamlanacaktır.",
+  "refund_directReturnConfirmButton": "İadeyi Onayla",
   "@refund_directReturnSendingLabel": {
     "description": "Loading state label shown on the direct return button while the refund request is in flight"
   },

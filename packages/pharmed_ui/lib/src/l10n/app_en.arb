@@ -1631,6 +1631,22 @@
   "@medicine_section_cabinBehaviorTitle": {},
   "medicine_section_notesTitle": "Notes",
   "@medicine_section_notesTitle": {},
+  "medicine_section_equivalentsTitle": "Equivalent Medicines",
+  "@medicine_section_equivalentsTitle": {
+    "description": "Section title in the drug form panel listing the equivalent medicines of the edited drug"
+  },
+  "medicine_equivalents_emptyMessage": "This medicine has no defined equivalents",
+  "@medicine_equivalents_emptyMessage": {
+    "description": "Shown in the drug form equivalents section when the drug has no equivalent medicines"
+  },
+  "medicine_equivalents_loadErrorMessage": "Equivalent medicines could not be loaded",
+  "@medicine_equivalents_loadErrorMessage": {
+    "description": "Shown in the drug form equivalents section when the equivalent medicines request fails"
+  },
+  "medicine_equivalents_inactiveBadge": "Inactive",
+  "@medicine_equivalents_inactiveBadge": {
+    "description": "Badge on an equivalent medicine row in the drug form when that medicine is inactive"
+  },
   "medicine_fieldIndependentServices": "Allowed Services",
   "@medicine_fieldIndependentServices": {},
   "medicine_independentServicesDialogSelectTitle": "Select Services",
@@ -4228,6 +4244,51 @@
   "@unappliedPrescription_table_admissionDateColumn": {},
   "unappliedPrescription_table_pendingCountColumn": "Pending",
   "@unappliedPrescription_table_pendingCountColumn": {},
+  "unappliedPrescription_overdueTable_medicineColumn": "Medicine",
+  "@unappliedPrescription_overdueTable_medicineColumn": {
+    "description": "Overdue applications table column — medicine name"
+  },
+  "unappliedPrescription_overdueTable_doseColumn": "Dose",
+  "@unappliedPrescription_overdueTable_doseColumn": {
+    "description": "Overdue applications table column — dose piece of the prescription item"
+  },
+  "unappliedPrescription_overdueTable_scheduledTimeColumn": "Scheduled Time",
+  "@unappliedPrescription_overdueTable_scheduledTimeColumn": {
+    "description": "Overdue applications table column — scheduled administration time"
+  },
+  "unappliedPrescription_overdueTable_applicationTimeColumn": "Application Time",
+  "@unappliedPrescription_overdueTable_applicationTimeColumn": {
+    "description": "Overdue applications table column — actual application time"
+  },
+  "unappliedPrescription_overdueTable_appliedByColumn": "Applied By",
+  "@unappliedPrescription_overdueTable_appliedByColumn": {
+    "description": "Overdue applications table column — user who applied the medicine"
+  },
+  "unappliedPrescription_overdueTable_delayColumn": "Delay",
+  "@unappliedPrescription_overdueTable_delayColumn": {
+    "description": "Overdue applications table column — delay between scheduled and application time"
+  },
+  "unappliedPrescription_overdueTable_delayMinutes": "{minutes} min",
+  "@unappliedPrescription_overdueTable_delayMinutes": {
+    "description": "Delay value under one hour in the overdue applications table",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "unappliedPrescription_overdueTable_delayHoursMinutes": "{hours} h {minutes} min",
+  "@unappliedPrescription_overdueTable_delayHoursMinutes": {
+    "description": "Delay value of one hour or more in the overdue applications table",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "drugActivity_table_dateColumn": "Date",
   "@drugActivity_table_dateColumn": {},
   "drugActivity_table_timeColumn": "Time",
@@ -4962,6 +5023,22 @@
   "@assignment_edit_maxQuantityLabel": {},
   "assignment_edit_maxQuantityHint": "The most the cell can hold",
   "@assignment_edit_maxQuantityHint": {},
+  "assignment_edit_quantityMissingError": "Enter min, critical and max quantities",
+  "@assignment_edit_quantityMissingError": {
+    "description": "Drug assignment quantity form: shown when min, critical or max has not been entered yet"
+  },
+  "assignment_edit_minNotPositiveError": "Min must be greater than 0",
+  "@assignment_edit_minNotPositiveError": {
+    "description": "Drug assignment quantity form: shown when the min quantity is 0"
+  },
+  "assignment_edit_maxBelowMinError": "Max cannot be less than min",
+  "@assignment_edit_maxBelowMinError": {
+    "description": "Drug assignment quantity form: shown when the max quantity is lower than the min quantity"
+  },
+  "assignment_edit_criticalOutOfRangeError": "Critical must be between min and max",
+  "@assignment_edit_criticalOutOfRangeError": {
+    "description": "Drug assignment quantity form: shown when the critical quantity is not between min and max (rule: min ≤ critical ≤ max)"
+  },
   "assignment_edit_removeLink": "Remove Assignment",
   "@assignment_edit_removeLink": {},
   "assignment_edit_saveButton": "Save Changes",
@@ -5211,6 +5288,48 @@
   "refund_directReturnSendingLabel": "Gönderiliyor...",
   "@refund_directReturnSendingLabel": {
     "description": "Loading state label shown on the direct return button while the refund request is in flight"
+  },
+  "refund_directReturnPharmacyConfirmTitle": "Return to Pharmacy",
+  "@refund_directReturnPharmacyConfirmTitle": {
+    "description": "Title of the confirmation dialog shown before completing a return-to-pharmacy refund from the master refund list"
+  },
+  "refund_directReturnPharmacyConfirmMessage": "{quantity} {unit} of {medicineName} will be returned to the pharmacy. Do not put the medicine back into the cabinet; set it aside to be delivered to the pharmacy. The return will be completed once you confirm.",
+  "@refund_directReturnPharmacyConfirmMessage": {
+    "description": "Message of the return-to-pharmacy confirmation dialog in the master refund list; tells the user what to do with the medicine",
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "refund_directReturnReturnBoxConfirmTitle": "Return to Return Box",
+  "@refund_directReturnReturnBoxConfirmTitle": {
+    "description": "Title of the confirmation dialog shown before completing a return-box refund from the master refund list"
+  },
+  "refund_directReturnReturnBoxConfirmMessage": "{quantity} {unit} of {medicineName} will be returned to the return box. Do not put the medicine into a drawer; place it in the return box. The return will be completed once you confirm.",
+  "@refund_directReturnReturnBoxConfirmMessage": {
+    "description": "Message of the return-box confirmation dialog in the master refund list; tells the user what to do with the medicine",
+    "placeholders": {
+      "medicineName": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "refund_directReturnConfirmButton": "Confirm Return",
+  "@refund_directReturnConfirmButton": {
+    "description": "Confirm button of the direct (non-hardware) refund confirmation dialog in the master refund list"
   },
   "enumCore_returnTypeNotReturnable": "İade Yapılamaz",
   "@enumCore_returnTypeNotReturnable": {

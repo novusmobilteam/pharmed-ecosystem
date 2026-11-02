@@ -65,20 +65,42 @@ class RefundableItemCard extends StatelessWidget {
                 isLoading: isDirectLoading,
                 onPressed: isDirectLoading || isLocked
                     ? null
-                    : () => notifier.completeDirectRefund(
-                        item.id,
-                        onSuccess: () {
-                          if (!context.mounted) return;
-                          MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
-                        },
-                        onFailed: (msg) {
-                          if (!context.mounted) return;
-                          MessageUtils.showErrorSnackbar(context, msg ?? context.l10n.refund_error_genericCheckFailed);
-                        },
-                      ),
+                    : () => _confirmDirectRefund(context, returnType: returnType, unitLabel: unitLabel),
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Donanımsız iade (eczaneye / iade kutusuna) kullanıcıya ilacı ne yapacağını
+  /// anlatan bir onay dialogundan geçer; iade yalnızca onaydan sonra tamamlanır.
+  void _confirmDirectRefund(BuildContext context, {required ReturnType? returnType, required String unitLabel}) {
+    final l10n = context.l10n;
+    final medicineName = item.medicine?.name ?? '-';
+    final quantity = notifier.amountFor(item.id).formatFractional;
+    final isPharmacy = returnType == ReturnType.toPharmacy;
+
+    MessageUtils.showConfirmDialog(
+      context: context,
+      action: ConfirmAction.custom,
+      iconData: PhosphorIcons.arrowUUpLeft(),
+      color: MedColors.green,
+      customTitle: isPharmacy ? l10n.refund_directReturnPharmacyConfirmTitle : l10n.refund_directReturnReturnBoxConfirmTitle,
+      customMessage: isPharmacy
+          ? l10n.refund_directReturnPharmacyConfirmMessage(medicineName, quantity, unitLabel)
+          : l10n.refund_directReturnReturnBoxConfirmMessage(medicineName, quantity, unitLabel),
+      confirmButtonText: l10n.refund_directReturnConfirmButton,
+      onConfirm: () => notifier.completeDirectRefund(
+        item.id,
+        onSuccess: () {
+          if (!context.mounted) return;
+          MessageUtils.showSuccessSnackbar(context, context.l10n.common_operationSuccessMessage);
+        },
+        onFailed: (msg) {
+          if (!context.mounted) return;
+          MessageUtils.showErrorSnackbar(context, msg ?? context.l10n.refund_error_genericCheckFailed);
+        },
       ),
     );
   }

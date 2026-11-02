@@ -20,6 +20,9 @@ class StationTransactionDto {
   final int? stationId;
   final int? cabinId;
 
+  /// İşlemin operasyon kimliği — kabin işlemi kamera kaydı bu id ile izlenir.
+  final int? operationId;
+
   /// Malzeme detayı (servis `material` alanında Medicine nesnesi döner).
   final MedicineDto? medicine;
 
@@ -42,6 +45,7 @@ class StationTransactionDto {
     this.hasSteps,
     this.stationId,
     this.cabinId,
+    this.operationId,
     this.medicine,
   });
 
@@ -69,6 +73,7 @@ class StationTransactionDto {
       hasSteps: json['hasSteps'] as bool?,
       stationId: json['stationId'] as int?,
       cabinId: json['cabinId'] as int?,
+      operationId: json['operationId'] as int?,
     );
   }
 
@@ -91,6 +96,7 @@ class StationTransactionDto {
       if (hasSteps != null) 'hasSteps': hasSteps,
       if (stationId != null) 'stationId': stationId,
       if (cabinId != null) 'cabinId': cabinId,
+      if (operationId != null) 'operationId': operationId,
     };
   }
 }

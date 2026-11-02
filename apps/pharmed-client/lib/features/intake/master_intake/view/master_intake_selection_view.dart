@@ -68,6 +68,10 @@ class RightPanel extends StatelessWidget {
     final hosp = notifier.selectedHospitalization;
     final urgent = notifier.urgentPatient;
 
+    final awaitingWitness = intakeSelectionNotifier.selectedItems.isNotEmpty &&
+        intakeSelectionNotifier.hasMissingWitness &&
+        !intakeSelectionNotifier.isOverdueSelectionLocked;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -109,15 +113,17 @@ class RightPanel extends StatelessWidget {
           ),
         ),
 
-        if (intakeSelectionNotifier.canStart) ...[
+        // Şahit bekleyen seçimde buton gizlenmez: "Şahit girişi gerekli" yazar ve
+        // şahit girişi yapılana kadar pasif kalır.
+        if (intakeSelectionNotifier.canStart || awaitingWitness) ...[
           SizedBox(height: 6.0),
           Container(
             padding: MedSpacing.insetLg,
             alignment: Alignment.centerRight,
             decoration: MedDecoration.panelDecoration,
             child: MedButton(
-              label: context.l10n.intake_action_start,
-              suffixIcon: Icon(PhosphorIcons.arrowRight()),
+              label: awaitingWitness ? context.l10n.intake_hint_witnessRequired : context.l10n.intake_action_start,
+              suffixIcon: awaitingWitness ? null : Icon(PhosphorIcons.arrowRight()),
               onPressed: intakeSelectionNotifier.canStart
                   ? () => _onStartIntakePressed(context, intakeSelectionNotifier, executionNotifier)
                   : null,

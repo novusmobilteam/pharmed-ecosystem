@@ -19,6 +19,9 @@ class StationTransaction {
   final bool? hasSteps;
   final int? stationId;
   final int? cabinId;
+
+  /// İşlemin operasyon kimliği — kabin işlemi kamera kaydı bu id ile izlenir.
+  final int? operationId;
   final Medicine? medicine;
 
   StationTransaction({
@@ -40,6 +43,7 @@ class StationTransaction {
     this.hasSteps,
     this.stationId,
     this.cabinId,
+    this.operationId,
     this.medicine,
   });
 }

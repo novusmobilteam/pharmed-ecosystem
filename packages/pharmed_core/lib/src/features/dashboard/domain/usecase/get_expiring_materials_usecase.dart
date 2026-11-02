@@ -5,7 +5,7 @@ class GetExpiringMaterialsUseCase {
 
   GetExpiringMaterialsUseCase(this._repository);
 
-  Future<Result<List<CabinStock>>> call({bool forceRefresh = false}) {
-    return _repository.getExpiringMaterials(forceRefresh: forceRefresh);
+  Future<Result<List<CabinStock>>> call({required int stationId, bool forceRefresh = false}) {
+    return _repository.getExpiringMaterials(stationId: stationId, forceRefresh: forceRefresh);
   }
 }

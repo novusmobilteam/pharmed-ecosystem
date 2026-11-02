@@ -199,6 +199,7 @@ class _QuantityFormPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final medicine = state.selectedDrug ?? state.assignment.medicine;
     final suffix = medicine?.fillingUnitLocalized(context) ?? context.l10n.common_defaultUnitFallback;
+    final error = state.quantityError;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,6 +217,7 @@ class _QuantityFormPanel extends StatelessWidget {
           value: state.minQty?.toString() ?? '0',
           density: MedValueCardDensity.compact,
           suffix: suffix,
+          hasError: _minHasError(error),
           onTap: () async {
             final result = await showNumpadView(context, initialValue: state.minQty?.toCustomString() ?? '');
             if (result != null) {
@@ -225,23 +227,11 @@ class _QuantityFormPanel extends StatelessWidget {
         ),
         SizedBox(height: 12.0),
         MedValueCard(
-          label: context.l10n.common_maxLabel,
-          value: state.maxQty?.toString() ?? '0',
-          density: MedValueCardDensity.compact,
-          suffix: suffix,
-          onTap: () async {
-            final result = await showNumpadView(context, initialValue: state.maxQty?.toCustomString() ?? '');
-            if (result != null) {
-              notifier.onMaxQtyChanged(int.tryParse(result));
-            }
-          },
-        ),
-        SizedBox(height: 12.0),
-        MedValueCard(
           label: context.l10n.common_criticalLabel,
           value: state.criticalQty?.toString() ?? '0',
           density: MedValueCardDensity.compact,
           suffix: suffix,
+          hasError: _criticalHasError(error),
           onTap: () async {
             final result = await showNumpadView(context, initialValue: state.criticalQty?.toCustomString() ?? '');
             if (result != null) {
@@ -249,6 +239,24 @@ class _QuantityFormPanel extends StatelessWidget {
             }
           },
         ),
+        SizedBox(height: 12.0),
+        MedValueCard(
+          label: context.l10n.common_maxLabel,
+          value: state.maxQty?.toString() ?? '0',
+          density: MedValueCardDensity.compact,
+          suffix: suffix,
+          hasError: _maxHasError(error),
+          onTap: () async {
+            final result = await showNumpadView(context, initialValue: state.maxQty?.toCustomString() ?? '');
+            if (result != null) {
+              notifier.onMaxQtyChanged(int.tryParse(result));
+            }
+          },
+        ),
+        if (error != null) ...[
+          const SizedBox(height: 12.0),
+          Text(_errorMessage(context, error), style: MedTextStyles.bodySm(color: MedColors.amber)),
+        ],
 
         const Spacer(),
         if (state.canDelete) ...[
@@ -268,4 +276,28 @@ class _QuantityFormPanel extends StatelessWidget {
       ],
     );
   }
+  bool _minHasError(AssignmentQuantityError? e) => switch (e) {
+    AssignmentQuantityError.missing => state.minQty == null,
+    AssignmentQuantityError.minNotPositive => true,
+    _ => false,
+  };
+
+  bool _criticalHasError(AssignmentQuantityError? e) => switch (e) {
+    AssignmentQuantityError.missing => state.criticalQty == null,
+    AssignmentQuantityError.criticalOutOfRange => true,
+    _ => false,
+  };
+
+  bool _maxHasError(AssignmentQuantityError? e) => switch (e) {
+    AssignmentQuantityError.missing => state.maxQty == null,
+    AssignmentQuantityError.maxBelowMin => true,
+    _ => false,
+  };
+
+  String _errorMessage(BuildContext context, AssignmentQuantityError e) => switch (e) {
+    AssignmentQuantityError.missing => context.l10n.assignment_edit_quantityMissingError,
+    AssignmentQuantityError.minNotPositive => context.l10n.assignment_edit_minNotPositiveError,
+    AssignmentQuantityError.maxBelowMin => context.l10n.assignment_edit_maxBelowMinError,
+    AssignmentQuantityError.criticalOutOfRange => context.l10n.assignment_edit_criticalOutOfRangeError,
+  };
 }

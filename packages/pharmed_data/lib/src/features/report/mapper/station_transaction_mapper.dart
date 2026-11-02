@@ -26,6 +26,7 @@ class StationTransactionMapper {
       hasSteps: dto.hasSteps,
       stationId: dto.stationId,
       cabinId: dto.cabinId,
+      operationId: dto.operationId,
     );
   }
 
@@ -52,6 +53,7 @@ class StationTransactionMapper {
       hasSteps: entity.hasSteps,
       stationId: entity.stationId,
       cabinId: entity.cabinId,
+      operationId: entity.operationId,
       medicine: const MedicineMapper().toDtoOrNull(entity.medicine),
     );
   }

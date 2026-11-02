@@ -56,18 +56,28 @@ class IntakeOrderedItemCard extends StatelessWidget {
                         color: isSelected ? MedColors.blue : MedColors.surface2,
                         borderRadius: MedRadius.lgAll,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            item.prescriptionDose.formatFractional.toString(),
-                            style: MedTextStyles.titleMd(color: foreground),
-                          ),
-                          Text(
-                            item.medicine?.prescriptionUnitLocalized(context) ?? '',
-                            style: MedTextStyles.bodySm(color: foreground),
-                          ),
-                        ],
+                      // Ölçü birimli ilaçta "2 Adet × 100 ml" bu kutuya sığmaz:
+                      // kutuda toplam miktar (200 ml), kırılım metadata satırında.
+                      child: Builder(
+                        builder: (context) {
+                          final total = item.medicine?.prescriptionTotal(item.prescriptionDose);
+                          return FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  total?.value ?? item.prescriptionDose.formatFractional.toString(),
+                                  style: MedTextStyles.titleMd(color: foreground),
+                                ),
+                                Text(
+                                  total?.unit ?? context.l10n.common_defaultUnitFallback,
+                                  style: MedTextStyles.bodySm(color: foreground),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
 
@@ -82,6 +92,10 @@ class IntakeOrderedItemCard extends StatelessWidget {
                           children: [
                             Text(item.medicine?.barcode ?? '', style: MedTextStyles.monoSm()),
                             Text('-', style: MedTextStyles.monoSm()),
+                            if (item.medicine?.prescriptionBreakdownText(item.prescriptionDose) case final breakdown?) ...[
+                              Text(breakdown, style: MedTextStyles.monoSm().copyWith(fontWeight: FontWeight.w600)),
+                              Text('-', style: MedTextStyles.monoSm()),
+                            ],
                             Text('Reçete Tarihi: ${item.time.formattedDateTime}', style: MedTextStyles.monoSm()),
                             Text('-', style: MedTextStyles.monoSm()),
                             Text(
@@ -181,7 +195,10 @@ class IntakeOrderedItemCard extends StatelessWidget {
                     min: notifier.doseBoundsFor(item.id).min,
                     max: notifier.doseBoundsFor(item.id).max,
                     onChanged: (v) => notifier.updateDose(item.id, v),
-                    unit: context.l10n.common_defaultUnitFallback,
+                    // Ölçü birimli ilaçta adım 1 ölçü birimidir: "2 × 100 ml".
+                    unit: item.medicine?.hasPrescriptionMeasure ?? false
+                        ? '× ${(item.medicine as Drug).doseMeasureUnit!.formatFractional} ${(item.medicine as Drug).unitMeasure?.name ?? ''}'
+                        : context.l10n.common_defaultUnitFallback,
                   ),
                 ),
             ],

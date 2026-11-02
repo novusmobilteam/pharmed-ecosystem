@@ -40,6 +40,13 @@ class TableView extends StatelessWidget {
 
       actions: [
         TableActionItem<StationTransaction>(
+          icon: PhosphorIcons.videoCamera(),
+          tooltip: context.l10n.inconsistency_watchRecordingTooltip,
+          // operationId yoksa (backend değişikliği öncesi kayıtlar) izlenecek kayıt yok.
+          isVisible: (item) => item.operationId != null,
+          onPressed: (item) => showOperationRecordingDialog(context, operationId: item.operationId!),
+        ),
+        TableActionItem<StationTransaction>(
           icon: PhosphorIcons.dotsThreeVertical(),
           tooltip: context.l10n.report_stationTransaction_detailTooltip,
           onPressed: (item) => StationTransactionDetailDialog.show(context, transaction: item),

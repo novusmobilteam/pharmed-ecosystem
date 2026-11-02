@@ -2618,16 +2618,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicine_section_witnessTitle => 'Témoins et destruction';
 
   @override
-  String get medicine_section_cabinBehaviorTitle => 'Comportement de l\'armoire';
+  String get medicine_section_cabinBehaviorTitle =>
+      'Comportement de l\'armoire';
 
   @override
   String get medicine_section_notesTitle => 'Notes';
 
   @override
+  String get medicine_section_equivalentsTitle => 'Médicaments Équivalents';
+
+  @override
+  String get medicine_equivalents_emptyMessage =>
+      'Ce médicament n\'a aucun équivalent défini';
+
+  @override
+  String get medicine_equivalents_loadErrorMessage =>
+      'Les médicaments équivalents n\'ont pas pu être chargés';
+
+  @override
+  String get medicine_equivalents_inactiveBadge => 'Inactif';
+
+  @override
   String get medicine_fieldIndependentServices => 'Services autorisés';
 
   @override
-  String get medicine_independentServicesDialogSelectTitle => 'Sélectionner des services';
+  String get medicine_independentServicesDialogSelectTitle =>
+      'Sélectionner des services';
 
   @override
   String medicine_independentServicesSaveError(Object detail) {
@@ -6076,6 +6092,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unappliedPrescription_table_pendingCountColumn => 'En attente';
 
   @override
+  String get unappliedPrescription_overdueTable_medicineColumn => 'Médicament';
+
+  @override
+  String get unappliedPrescription_overdueTable_doseColumn => 'Dose';
+
+  @override
+  String get unappliedPrescription_overdueTable_scheduledTimeColumn =>
+      'Heure prévue';
+
+  @override
+  String get unappliedPrescription_overdueTable_applicationTimeColumn =>
+      'Heure d\'administration';
+
+  @override
+  String get unappliedPrescription_overdueTable_appliedByColumn =>
+      'Administré par';
+
+  @override
+  String get unappliedPrescription_overdueTable_delayColumn => 'Retard';
+
+  @override
+  String unappliedPrescription_overdueTable_delayMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String unappliedPrescription_overdueTable_delayHoursMinutes(
+    int hours,
+    int minutes,
+  ) {
+    return '$hours h $minutes min';
+  }
+
+  @override
   String get drugActivity_table_dateColumn => 'Date';
 
   @override
@@ -7188,6 +7238,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get assignment_edit_maxQuantityHint => 'Capacité maximale de la case';
 
   @override
+  String get assignment_edit_quantityMissingError =>
+      'Saisissez les quantités min, critique et max';
+
+  @override
+  String get assignment_edit_minNotPositiveError =>
+      'Le min doit être supérieur à 0';
+
+  @override
+  String get assignment_edit_maxBelowMinError =>
+      'Le max ne peut pas être inférieur au min';
+
+  @override
+  String get assignment_edit_criticalOutOfRangeError =>
+      'Le critique doit être compris entre le min et le max';
+
+  @override
   String get assignment_edit_removeLink => 'Supprimer l\'Attribution';
 
   @override
@@ -7665,6 +7731,34 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get refund_directReturnPharmacyConfirmTitle => 'Retour à la pharmacie';
+
+  @override
+  String refund_directReturnPharmacyConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$quantity $unit de $medicineName seront retournés à la pharmacie. Ne remettez pas le médicament dans l\'armoire ; mettez-le de côté pour le remettre à la pharmacie. Le retour sera finalisé après votre confirmation.';
+  }
+
+  @override
+  String get refund_directReturnReturnBoxConfirmTitle =>
+      'Retour dans la boîte de retour';
+
+  @override
+  String refund_directReturnReturnBoxConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$quantity $unit de $medicineName seront retournés dans la boîte de retour. Ne mettez pas le médicament dans un tiroir ; déposez-le dans la boîte de retour. Le retour sera finalisé après votre confirmation.';
+  }
+
+  @override
+  String get refund_directReturnConfirmButton => 'Confirmer le retour';
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';

@@ -12,8 +12,10 @@ import '../notifier/drug_form_notifier.dart';
 import '../notifier/medicine_notifier.dart';
 
 part '../widgets/checkbox_section.dart';
+part '../widgets/equivalent_medicines_section.dart';
 part '../widgets/form_section.dart';
 part '../widgets/independent_material_field.dart';
+part '../widgets/load_all_data_source.dart';
 part '../widgets/personel_field.dart';
 part '../widgets/station_field.dart';
 part '../widgets/unit_field.dart';
@@ -45,6 +47,7 @@ class _DrugFormPanelState extends State<DrugFormPanel> {
         getActiveIngredientsUseCase: context.read(),
         saveIndependentServicesUseCase: context.read(),
         getServicesUseCase: context.read(),
+        getEquivalentMedicinesUseCase: context.read(),
         userRepository: context.read(),
         stationRepository: context.read(),
         drug: selectedMedicine as Drug?,
@@ -94,6 +97,7 @@ class _DrugFormPanelState extends State<DrugFormPanel> {
   // SidePanel zaten kaydırma sağladığı için burada ayrıca scroll yoktur.
   Widget _formBody(BuildContext context) {
     final l10n = context.l10n;
+    final isCreate = context.read<DrugFormNotifier>().isCreate;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: MedSpacing.xl3,
@@ -161,6 +165,9 @@ class _DrugFormPanelState extends State<DrugFormPanel> {
             _FormRow(children: [_buildCollectNoteField(), _buildReturnNoteField(), _buildDestructionNoteField()]),
           ],
         ),
+        // Muadiller kayıtlı ilaca göre servisten gelir — yeni ilaçta gösterilmez.
+        if (!isCreate)
+          _FormSection(title: l10n.medicine_section_equivalentsTitle, rows: const [_EquivalentMedicinesSection()]),
       ],
     );
   }
@@ -666,6 +673,7 @@ Widget _witnessedPurchaseFields() {
         children: [
           PersonelField(
             key: ValueKey(vm.drug.witnessedPurchaseUsers),
+            loadAll: true,
             enabled: enabled,
             initialValue: vm.drug.witnessedPurchaseUsers,
             onChanged: vm.updateWitnessedPurchaseUsers,
@@ -706,6 +714,7 @@ Widget _wastageWitnessedFields() {
         children: [
           PersonelField(
             key: ValueKey(vm.drug.wastageWitnessedPurchaseUsers),
+            loadAll: true,
             enabled: enabled,
             initialValue: vm.drug.wastageWitnessedPurchaseUsers,
             onChanged: vm.updateWastageWitnessedPurchaseUsers,
@@ -743,6 +752,7 @@ Widget _destroyableUsersField() {
     builder: (context, vm, _) {
       return PersonelField(
         key: ValueKey(vm.drug.destroyableUsers),
+        loadAll: true,
         enabled: vm.drug.isDestroyable,
         initialValue: vm.drug.destroyableUsers,
         onChanged: vm.updateDestroyableUsers,

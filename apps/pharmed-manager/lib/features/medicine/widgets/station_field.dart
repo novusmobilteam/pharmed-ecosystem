@@ -22,8 +22,11 @@ class StationField extends StatelessWidget {
       label: label,
       enabled: enabled,
       initialValue: initialValue,
-      dataSource: (skip, take, search) =>
-          context.read<GetStationsUseCase>().call(PagedQueryParams(skip: skip, take: take, searchQuery: search)),
+      // Sayfalama yok: diyalog açılınca tüm istasyonlar tek istekle çekilir.
+      dataSource: _loadAllDataSource(
+        fetchAll: () => context.read<GetStationsUseCase>().call(PagedQueryParams()),
+        labelBuilder: (station) => station.name,
+      ),
       labelBuilder: (station) => station.name,
       onSelected: (station) => onChanged(station),
     );

@@ -42,7 +42,7 @@ class MasterIntakeExecutionView extends ConsumerWidget {
         if (target.plannedQuantity case final planned?)
           CabinExecutionInfoValue(
             label: context.l10n.enumCore_cabinInventoryTypeIntakeFieldText,
-            value: target.assignment.quantityLabel(planned),
+            value: intakeQuantityLabel(target.assignment, planned),
           ),
       ],
     );

@@ -26,13 +26,7 @@ final fingerprintTestNotifierProvider = ChangeNotifierProvider.autoDispose<Finge
 
 /// Bir okuma denemesinin sonucu (başarılı ya da başarısız).
 class FingerprintAttempt {
-  const FingerprintAttempt({
-    required this.at,
-    required this.elapsed,
-    this.capture,
-    this.failure,
-    this.sdkStatus,
-  });
+  const FingerprintAttempt({required this.at, required this.elapsed, this.capture, this.failure, this.sdkStatus});
 
   final DateTime at;
   final Duration elapsed;
@@ -121,8 +115,7 @@ class FingerprintTestNotifier extends ChangeNotifier {
 
   double? get averageQuality => _average(attempts.map((a) => a.capture?.quality));
   double? get averageLfdScore => _average(attempts.map((a) => a.capture?.lfdScore));
-  double? get averageCaptureMs =>
-      _average(attempts.where((a) => a.isSuccess).map((a) => a.elapsed.inMilliseconds));
+  double? get averageCaptureMs => _average(attempts.where((a) => a.isSuccess).map((a) => a.elapsed.inMilliseconds));
 
   // ─────────────────────────────────────────────────────────────────────
   // Okuyucu

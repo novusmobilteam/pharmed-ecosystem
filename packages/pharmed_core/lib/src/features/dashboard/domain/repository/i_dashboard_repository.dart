@@ -14,7 +14,7 @@ abstract interface class IDashboardRepository {
   Future<Result<List<PrescriptionItem>>> getUnreadQrCodes({bool forceRefresh = false});
 
   /// Son kullanma tarihi yaklaşan stok kalemlerini listeler.
-  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false});
+  Future<Result<List<CabinStock>>> getExpiringMaterials({required int stationId, bool forceRefresh = false});
 
   /// Kritik stok seviyesindeki kalemleri listeler.
   /// [isClient]: true → sadece aktif kabine ait stoklar, false → tüm kabinler.

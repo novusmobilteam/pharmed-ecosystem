@@ -14,7 +14,7 @@ class FingerprintMapper {
   );
 
   FingerprintSampleDTO toSampleDto(FingerprintSample s) =>
-      FingerprintSampleDTO(template: base64Encode(s.template), quality: s.quality, lfdScore: s.lfdScore);
+      FingerprintSampleDTO(template: base64Encode(s.template), quality: s.quality, lfdScore: s.lfdScore ?? 0);
 
   FingerprintEnrollRequestDTO toEnrollDto(FingerprintEnrollmentRequest r) => FingerprintEnrollRequestDTO(
     source: toSourceDto(r.source),

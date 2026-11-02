@@ -118,6 +118,15 @@ class _DrawerView extends StatelessWidget {
   static const double _spacing = 4;
   static const int _crossAxisCount = 4;
 
+  /// Çekmece başlığı. Birim doz çekmecede derinlik (arkaya doğru bölme)
+  /// sayısı eklenir: "Birim Doz Çekmece (12 göz)". Yan yana dizilen gözler
+  /// zaten grid'de görünür; derinlik ise `drawerConfig.numberOfSteps`'tir.
+  String _drawerTitle(BuildContext context) {
+    final steps = group.slot.drawerConfig?.numberOfSteps ?? 0;
+    if (group.isSerum || group.isKubik || steps <= 0) return group.name;
+    return '${group.name} (${context.l10n.cabin_cellCount(steps)})';
+  }
+
   Map<int, MedicineAssignment> get _assignmentByUnitId {
     final map = <int, MedicineAssignment>{};
     for (final a in assignments) {
@@ -260,7 +269,7 @@ class _DrawerView extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(group.name, style: MedTextStyles.titleSm()),
+                  Text(_drawerTitle(context), style: MedTextStyles.titleSm()),
                   if (onDrawerTap != null)
                     Icon(
                       isDrawerFullySelected ? PhosphorIconsFill.checkCircle : PhosphorIcons.circle(),

@@ -16,7 +16,9 @@ class FingerprintSourceDTO {
   Map<String, dynamic> toJson() => {
     'templateFormat': templateFormat,
     'scannerVendor': scannerVendor,
-    'scannerModel': scannerModel,
+    // TODO: Sunucuda Hamster U10 tanımlı. Eğer parmak izinde bir hata alınırsa burası kontrol edilsin.
+    'scannerModel': 'Hamster U10',
+    // 'scannerModel': scannerModel,
     'livenessActive': livenessActive,
   };
 }

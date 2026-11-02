@@ -2547,6 +2547,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get medicine_section_notesTitle => 'Notlar';
 
   @override
+  String get medicine_section_equivalentsTitle => 'Muadil İlaçlar';
+
+  @override
+  String get medicine_equivalents_emptyMessage =>
+      'Bu ilacın tanımlı muadili yok';
+
+  @override
+  String get medicine_equivalents_loadErrorMessage =>
+      'Muadil ilaçlar yüklenemedi';
+
+  @override
+  String get medicine_equivalents_inactiveBadge => 'Pasif';
+
+  @override
   String get medicine_fieldIndependentServices => 'Alınabileceği Servisler';
 
   @override
@@ -5879,6 +5893,39 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unappliedPrescription_table_pendingCountColumn => 'Bekleyen Adet';
 
   @override
+  String get unappliedPrescription_overdueTable_medicineColumn => 'İlaç';
+
+  @override
+  String get unappliedPrescription_overdueTable_doseColumn => 'Doz';
+
+  @override
+  String get unappliedPrescription_overdueTable_scheduledTimeColumn =>
+      'Planlanan Zaman';
+
+  @override
+  String get unappliedPrescription_overdueTable_applicationTimeColumn =>
+      'Uygulama Zamanı';
+
+  @override
+  String get unappliedPrescription_overdueTable_appliedByColumn => 'Uygulayan';
+
+  @override
+  String get unappliedPrescription_overdueTable_delayColumn => 'Gecikme';
+
+  @override
+  String unappliedPrescription_overdueTable_delayMinutes(int minutes) {
+    return '$minutes dk';
+  }
+
+  @override
+  String unappliedPrescription_overdueTable_delayHoursMinutes(
+    int hours,
+    int minutes,
+  ) {
+    return '$hours sa $minutes dk';
+  }
+
+  @override
   String get drugActivity_table_dateColumn => 'Tarih';
 
   @override
@@ -6967,6 +7014,20 @@ class AppLocalizationsTr extends AppLocalizations {
       'Gözün alabileceği en fazla adet';
 
   @override
+  String get assignment_edit_quantityMissingError =>
+      'Min, kritik ve maks miktarlarını girin';
+
+  @override
+  String get assignment_edit_minNotPositiveError => 'Min 0\'dan büyük olmalı';
+
+  @override
+  String get assignment_edit_maxBelowMinError => 'Maks, min\'den küçük olamaz';
+
+  @override
+  String get assignment_edit_criticalOutOfRangeError =>
+      'Kritik, min ile maks arasında olmalı';
+
+  @override
   String get assignment_edit_removeLink => 'Atamayı Kaldır';
 
   @override
@@ -7427,6 +7488,33 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refund_directReturnSendingLabel => 'Gönderiliyor...';
+
+  @override
+  String get refund_directReturnPharmacyConfirmTitle => 'Eczaneye İade';
+
+  @override
+  String refund_directReturnPharmacyConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$medicineName ilacından $quantity $unit eczaneye iade edilecek. İlacı kabine geri koymayın; eczaneye teslim edilmek üzere ayırın. Onayladığınızda iade işlemi tamamlanacaktır.';
+  }
+
+  @override
+  String get refund_directReturnReturnBoxConfirmTitle => 'İade Kutusuna İade';
+
+  @override
+  String refund_directReturnReturnBoxConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  ) {
+    return '$medicineName ilacından $quantity $unit iade kutusuna iade edilecek. İlacı çekmeceye koymayın; iade kutusuna bırakın. Onayladığınızda iade işlemi tamamlanacaktır.';
+  }
+
+  @override
+  String get refund_directReturnConfirmButton => 'İadeyi Onayla';
 
   @override
   String get enumCore_returnTypeNotReturnable => 'İade Yapılamaz';

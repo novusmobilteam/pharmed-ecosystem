@@ -4704,6 +4704,30 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get medicine_section_notesTitle;
 
+  /// Section title in the drug form panel listing the equivalent medicines of the edited drug
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent Medicines'**
+  String get medicine_section_equivalentsTitle;
+
+  /// Shown in the drug form equivalents section when the drug has no equivalent medicines
+  ///
+  /// In en, this message translates to:
+  /// **'This medicine has no defined equivalents'**
+  String get medicine_equivalents_emptyMessage;
+
+  /// Shown in the drug form equivalents section when the equivalent medicines request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Equivalent medicines could not be loaded'**
+  String get medicine_equivalents_loadErrorMessage;
+
+  /// Badge on an equivalent medicine row in the drug form when that medicine is inactive
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get medicine_equivalents_inactiveBadge;
+
   /// No description provided for @medicine_fieldIndependentServices.
   ///
   /// In en, this message translates to:
@@ -10533,6 +10557,57 @@ abstract class AppLocalizations {
   /// **'Pending'**
   String get unappliedPrescription_table_pendingCountColumn;
 
+  /// Overdue applications table column — medicine name
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get unappliedPrescription_overdueTable_medicineColumn;
+
+  /// Overdue applications table column — dose piece of the prescription item
+  ///
+  /// In en, this message translates to:
+  /// **'Dose'**
+  String get unappliedPrescription_overdueTable_doseColumn;
+
+  /// Overdue applications table column — scheduled administration time
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Time'**
+  String get unappliedPrescription_overdueTable_scheduledTimeColumn;
+
+  /// Overdue applications table column — actual application time
+  ///
+  /// In en, this message translates to:
+  /// **'Application Time'**
+  String get unappliedPrescription_overdueTable_applicationTimeColumn;
+
+  /// Overdue applications table column — user who applied the medicine
+  ///
+  /// In en, this message translates to:
+  /// **'Applied By'**
+  String get unappliedPrescription_overdueTable_appliedByColumn;
+
+  /// Overdue applications table column — delay between scheduled and application time
+  ///
+  /// In en, this message translates to:
+  /// **'Delay'**
+  String get unappliedPrescription_overdueTable_delayColumn;
+
+  /// Delay value under one hour in the overdue applications table
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String unappliedPrescription_overdueTable_delayMinutes(int minutes);
+
+  /// Delay value of one hour or more in the overdue applications table
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String unappliedPrescription_overdueTable_delayHoursMinutes(
+    int hours,
+    int minutes,
+  );
+
   /// No description provided for @drugActivity_table_dateColumn.
   ///
   /// In en, this message translates to:
@@ -12370,6 +12445,30 @@ abstract class AppLocalizations {
   /// **'The most the cell can hold'**
   String get assignment_edit_maxQuantityHint;
 
+  /// Drug assignment quantity form: shown when min, critical or max has not been entered yet
+  ///
+  /// In en, this message translates to:
+  /// **'Enter min, critical and max quantities'**
+  String get assignment_edit_quantityMissingError;
+
+  /// Drug assignment quantity form: shown when the min quantity is 0
+  ///
+  /// In en, this message translates to:
+  /// **'Min must be greater than 0'**
+  String get assignment_edit_minNotPositiveError;
+
+  /// Drug assignment quantity form: shown when the max quantity is lower than the min quantity
+  ///
+  /// In en, this message translates to:
+  /// **'Max cannot be less than min'**
+  String get assignment_edit_maxBelowMinError;
+
+  /// Drug assignment quantity form: shown when the critical quantity is not between min and max (rule: min ≤ critical ≤ max)
+  ///
+  /// In en, this message translates to:
+  /// **'Critical must be between min and max'**
+  String get assignment_edit_criticalOutOfRangeError;
+
   /// No description provided for @assignment_edit_removeLink.
   ///
   /// In en, this message translates to:
@@ -13119,6 +13218,44 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gönderiliyor...'**
   String get refund_directReturnSendingLabel;
+
+  /// Title of the confirmation dialog shown before completing a return-to-pharmacy refund from the master refund list
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Pharmacy'**
+  String get refund_directReturnPharmacyConfirmTitle;
+
+  /// Message of the return-to-pharmacy confirmation dialog in the master refund list; tells the user what to do with the medicine
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} {unit} of {medicineName} will be returned to the pharmacy. Do not put the medicine back into the cabinet; set it aside to be delivered to the pharmacy. The return will be completed once you confirm.'**
+  String refund_directReturnPharmacyConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  );
+
+  /// Title of the confirmation dialog shown before completing a return-box refund from the master refund list
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Return Box'**
+  String get refund_directReturnReturnBoxConfirmTitle;
+
+  /// Message of the return-box confirmation dialog in the master refund list; tells the user what to do with the medicine
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} {unit} of {medicineName} will be returned to the return box. Do not put the medicine into a drawer; place it in the return box. The return will be completed once you confirm.'**
+  String refund_directReturnReturnBoxConfirmMessage(
+    String medicineName,
+    String quantity,
+    String unit,
+  );
+
+  /// Confirm button of the direct (non-hardware) refund confirmation dialog in the master refund list
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Return'**
+  String get refund_directReturnConfirmButton;
 
   /// ReturnType enum value label — indicates the medicine's return type does not allow returning it at all
   ///

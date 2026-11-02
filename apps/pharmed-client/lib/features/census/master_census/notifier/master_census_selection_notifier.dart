@@ -100,8 +100,10 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   }
 
   /// - allCabin'e geçiş: tüm atamalar seçilir (kilitli seçim).
-  /// - allCabin'den çıkış: seçim sıfırlanır — kullanıcı temiz başlasın.
-  /// - byDrawer ↔ byMedicine: seçim korunur (aynı küme, farklı arayüz).
+  /// - byDrawer'a geçiş: önceki moddan bağımsız olarak seçim sıfırlanır —
+  ///   kullanıcı çekmeceleri kendisi seçer.
+  /// - allCabin'den byMedicine'e geçiş: seçim sıfırlanır — kullanıcı temiz başlasın.
+  /// - byDrawer → byMedicine: seçim korunur (aynı küme, farklı arayüz).
   void setCensusMode(CensusMode mode) {
     if (_censusMode == mode) return;
     final wasAllCabin = _censusMode == CensusMode.allCabin;
@@ -109,7 +111,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
     if (mode == CensusMode.allCabin) {
       _selectAll();
-    } else if (wasAllCabin) {
+    } else if (mode == CensusMode.byDrawer || wasAllCabin) {
       _selection.clear();
     }
     notifyListeners();

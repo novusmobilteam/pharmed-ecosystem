@@ -189,6 +189,39 @@ extension MedicineDoseConfig on Medicine {
   String prescriptionDoseText(BuildContext context, num? dosePiece) =>
       '${dosePiece?.formatFractional ?? '-'} ${prescriptionUnitLocalized(context)}';
 
+  /// Ölçü birimli ilaçta reçetedeki ölçü birimi (örn. 100 ml) tanımlıysa true.
+  bool get hasPrescriptionMeasure {
+    final self = this;
+    return self is Drug && self.isMeasureUnit && (self.doseMeasureUnit ?? 0) > 0;
+  }
+
+  /// Reçete dozunun toplam miktarı ve birimi — ölçü birimli ilaçta
+  /// `dosePiece × doseMeasureUnit` (örn. 2 → (value: "200", unit: "ml")).
+  /// Ölçü birimsiz ilaçta / sarfta null; dar alanlarda "2 Adet × 100 ml"
+  /// yerine toplam gösterilir, kırılım [prescriptionBreakdownText] ile verilir.
+  ({String value, String unit})? prescriptionTotal(num? dosePiece) {
+    final self = this;
+    if (self is! Drug || !hasPrescriptionMeasure || dosePiece == null) return null;
+    final total = dosePiece * self.doseMeasureUnit!;
+    return (value: total.formatFractional, unit: self.unitMeasure?.name ?? '');
+  }
+
+  /// Ölçü birimli ilaçta reçete dozunun kırılımı: "2 × 100 ml". Değilse null.
+  String? prescriptionBreakdownText(num? dosePiece) {
+    final self = this;
+    if (self is! Drug || !hasPrescriptionMeasure || dosePiece == null) return null;
+    return '${dosePiece.formatFractional} × ${self.doseMeasureUnit!.formatFractional} ${self.unitMeasure?.name ?? ''}'
+        .trim();
+  }
+
+  /// Stok adedinin toplam hacmi ile gösterimi (stok 1 adet = `dose`):
+  /// ölçü birimli ilaçta "100 ml (1 Adet × 100 ml)", değilse null.
+  String? stockTotalText(num? pieces) {
+    final self = this;
+    if (self is! Drug || !hasPieceMeasure || pieces == null) return null;
+    return '${(pieces * fillingMultiplier).formatFractional} ${self.doseUnit?.name ?? 'ml'}';
+  }
+
   String fillingUnitLocalized(BuildContext context) {
     final self = this;
     if (self is! Drug) return context.l10n.common_defaultUnitFallback;

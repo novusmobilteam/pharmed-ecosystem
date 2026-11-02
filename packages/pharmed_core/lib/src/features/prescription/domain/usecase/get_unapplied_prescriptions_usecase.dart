@@ -16,7 +16,7 @@ class GetOverduePrescriptionsUseCase {
 
   GetOverduePrescriptionsUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<Prescription>>?>> call({PagedQueryParams? params}) {
+  Future<Result<ApiResponse<List<PrescriptionItem>>?>> call({PagedQueryParams? params}) {
     return _repository.getOverduePrescripitons(params: params);
   }
 }

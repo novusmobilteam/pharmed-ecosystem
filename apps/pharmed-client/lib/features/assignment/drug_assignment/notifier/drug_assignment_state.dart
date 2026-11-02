@@ -2,6 +2,21 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 enum MedicineListMode { equivalent, all }
 
+/// Atama miktarlarının geçersizlik sebebi. Kural: 0 < min ≤ kritik ≤ maks.
+enum AssignmentQuantityError {
+  /// Min, kritik ya da maks girilmemiş.
+  missing,
+
+  /// Min 0 ya da negatif.
+  minNotPositive,
+
+  /// Maks, min'den küçük.
+  maxBelowMin,
+
+  /// Kritik, [min, maks] aralığının dışında.
+  criticalOutOfRange,
+}
+
 /// Atama yapılan hedef.
 ///   - Normal göz (kübik / birim doz): yalnızca [unitId] (DrawerUnit).
 ///   - Serum avadanlığı: [unitId] = raf (DrawerUnit), [cellId] = avadanlık (DrawerCell).
@@ -121,7 +136,17 @@ final class DrugAssignmentCellSelected extends DrugAssignmentUiState {
   bool get isAssigned => assignment.id != null;
 
   bool get canDelete => isAssigned;
-  bool get canSave => selectedDrug != null && minQty != null && minQty! > 0;
+  bool get canSave => selectedDrug != null && quantityError == null;
+
+  /// Miktar alanlarının doğrulaması — null ise geçerli.
+  AssignmentQuantityError? get quantityError {
+    final min = minQty, critical = criticalQty, max = maxQty;
+    if (min == null || critical == null || max == null) return AssignmentQuantityError.missing;
+    if (min <= 0) return AssignmentQuantityError.minNotPositive;
+    if (max < min) return AssignmentQuantityError.maxBelowMin;
+    if (critical < min || critical > max) return AssignmentQuantityError.criticalOutOfRange;
+    return null;
+  }
 
   /// Aktif sekmeye göre gösterilecek sayfa.
   MedicinePageState get selectedPage => listMode == MedicineListMode.equivalent ? equivalentMedicinePage : medicinePage;

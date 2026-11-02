@@ -119,7 +119,7 @@ class MockDashboardRepository implements IDashboardRepository {
   }
 
   @override
-  Future<Result<List<CabinStock>>> getExpiringMaterials({bool forceRefresh = false}) async {
+  Future<Result<List<CabinStock>>> getExpiringMaterials({required int stationId, bool forceRefresh = false}) async {
     await Future.delayed(_delay);
     return Result.ok(List.unmodifiable(_expiringMaterials));
   }

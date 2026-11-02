@@ -110,7 +110,7 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     return [
       OperationReceiptLine(
         medicineName: medicine?.name ?? '—',
-        quantityLabel: assignment.quantityLabel(quantity),
+        quantityLabel: intakeQuantityLabel(assignment, quantity),
         hospitalization: _hospitalization,
         location: receiptLocationOf(assignment),
         barcode: medicine?.barcode,
@@ -333,4 +333,12 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     stockIdAt: (job, i) => _planOf(job.targets[i])?.details.firstOrNull?.stockId,
     stockIdsAt: (job, i) => [...?_planOf(job.targets[i])?.details.map((d) => d.stockId)],
   );
+}
+
+/// Alım miktarı gösterimi. Ölçü birimli ilaçta toplam hacim öne alınır:
+/// "100 ml (1 Adet × 100 ml)"; diğerlerinde atamanın standart etiketi.
+String intakeQuantityLabel(MedicineAssignment assignment, num quantity) {
+  final base = assignment.quantityLabel(quantity);
+  final total = assignment.medicine?.stockTotalText(quantity);
+  return total == null ? base : '$total ($base)';
 }
