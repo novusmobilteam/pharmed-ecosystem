@@ -12601,6 +12601,72 @@ abstract class AppLocalizations {
   /// **'Reserved'**
   String get stationStock_table_reservedColumn;
 
+  /// Table column header — medicine code in the station stock list screen (manager); falls back to the drug code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get stationStock_table_codeColumn;
+
+  /// Table column header — medicine barcode in the station stock list screen (manager).
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get stationStock_table_barcodeColumn;
+
+  /// Table column header — remaining quantity in the station stock list screen, computed as current minus reserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get stationStock_table_remainingColumn;
+
+  /// Table column header — quantity to add to reach the maximum in the station stock list screen, computed as max minus current (never negative).
+  ///
+  /// In en, this message translates to:
+  /// **'To Fill'**
+  String get stationStock_table_fillingColumn;
+
+  /// Toolbar button on the station stock list screen that prints the rows selected in the table.
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get stationStock_printButton;
+
+  /// Tooltip on the disabled print button of the station stock list screen when no rows are selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select medicines from the list to print'**
+  String get stationStock_printHint;
+
+  /// Title printed at the top of the station stock list printout; stationName is the selected station.
+  ///
+  /// In en, this message translates to:
+  /// **'Station Stock List — {stationName}'**
+  String stationStock_printTitle(String stationName);
+
+  /// Station stock list printout column header — material id.
+  ///
+  /// In en, this message translates to:
+  /// **'Id'**
+  String get stationStock_print_idColumn;
+
+  /// Station stock list printout column header — material (medicine) name.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get stationStock_print_materialColumn;
+
+  /// Station stock list printout column header — maximum quantity (short form for the narrow printed column).
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get stationStock_print_maxColumn;
+
+  /// Station stock list printout column header — current quantity in the station.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get stationStock_print_quantityColumn;
+
   /// No description provided for @urgentPatient_intakeCompletedMessage.
   ///
   /// In en, this message translates to:

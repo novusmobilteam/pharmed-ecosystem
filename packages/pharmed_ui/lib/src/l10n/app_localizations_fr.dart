@@ -7331,6 +7331,41 @@ class AppLocalizationsFr extends AppLocalizations {
   String get stationStock_table_reservedColumn => 'Réservé';
 
   @override
+  String get stationStock_table_codeColumn => 'Code';
+
+  @override
+  String get stationStock_table_barcodeColumn => 'Code-barres';
+
+  @override
+  String get stationStock_table_remainingColumn => 'Restant';
+
+  @override
+  String get stationStock_table_fillingColumn => 'À remplir';
+
+  @override
+  String get stationStock_printButton => 'Imprimer';
+
+  @override
+  String get stationStock_printHint => 'Sélectionnez des médicaments dans la liste pour imprimer';
+
+  @override
+  String stationStock_printTitle(String stationName) {
+    return 'Liste des stocks de la station — $stationName';
+  }
+
+  @override
+  String get stationStock_print_idColumn => 'Id';
+
+  @override
+  String get stationStock_print_materialColumn => 'Matériel';
+
+  @override
+  String get stationStock_print_maxColumn => 'Max';
+
+  @override
+  String get stationStock_print_quantityColumn => 'Quantité';
+
+  @override
   String get urgentPatient_intakeCompletedMessage =>
       'Prise en charge du patient urgent terminée';
 

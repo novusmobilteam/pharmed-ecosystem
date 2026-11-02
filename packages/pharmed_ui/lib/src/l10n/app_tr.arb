@@ -9243,6 +9243,55 @@
   "@stationStock_table_reservedColumn": {
     "description": "Table column header — shows the reserved (allocated but not yet dispensed) quantity in the station stock list screen"
   },
+  "stationStock_table_codeColumn": "Kod",
+  "@stationStock_table_codeColumn": {
+    "description": "Table column header — medicine code in the station stock list screen (manager); falls back to the drug code"
+  },
+  "stationStock_table_barcodeColumn": "Barkod",
+  "@stationStock_table_barcodeColumn": {
+    "description": "Table column header — medicine barcode in the station stock list screen (manager)"
+  },
+  "stationStock_table_remainingColumn": "Kalan",
+  "@stationStock_table_remainingColumn": {
+    "description": "Table column header — remaining quantity in the station stock list screen, computed as current minus reserved"
+  },
+  "stationStock_table_fillingColumn": "Dolum",
+  "@stationStock_table_fillingColumn": {
+    "description": "Table column header — quantity to add to reach the maximum in the station stock list screen, computed as max minus current (never negative)"
+  },
+  "stationStock_printButton": "Yazdır",
+  "@stationStock_printButton": {
+    "description": "Toolbar button on the station stock list screen that prints the rows selected in the table"
+  },
+  "stationStock_printHint": "Yazdırmak için listeden ilaç seçin",
+  "@stationStock_printHint": {
+    "description": "Tooltip on the disabled print button of the station stock list screen when no rows are selected"
+  },
+  "stationStock_printTitle": "İstasyon Stok Listesi — {stationName}",
+  "@stationStock_printTitle": {
+    "description": "Title printed at the top of the station stock list printout; stationName is the selected station",
+    "placeholders": {
+      "stationName": {
+        "type": "String"
+      }
+    }
+  },
+  "stationStock_print_idColumn": "Id",
+  "@stationStock_print_idColumn": {
+    "description": "Station stock list printout column header — material id"
+  },
+  "stationStock_print_materialColumn": "Malzeme",
+  "@stationStock_print_materialColumn": {
+    "description": "Station stock list printout column header — material (medicine) name"
+  },
+  "stationStock_print_maxColumn": "Maks",
+  "@stationStock_print_maxColumn": {
+    "description": "Station stock list printout column header — maximum quantity (short form for the narrow printed column)"
+  },
+  "stationStock_print_quantityColumn": "Miktar",
+  "@stationStock_print_quantityColumn": {
+    "description": "Station stock list printout column header — current quantity in the station"
+  },
   "urgentPatient_intakeCompletedMessage": "Acil hasta ilaç alımı tamamlandı",
   "@urgentPatient_intakeCompletedMessage": {
     "description": "Success dialog message (MessageUtils.showSuccessDialog) shown on the dashboard after finishing medicine intake for an urgent patient. No name placeholder — the urgent patient's display name is always fixed (\"Acil Hasta\")."

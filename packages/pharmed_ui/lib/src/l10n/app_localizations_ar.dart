@@ -7161,6 +7161,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String get stationStock_table_reservedColumn => 'Reserved';
 
   @override
+  String get stationStock_table_codeColumn => 'Code';
+
+  @override
+  String get stationStock_table_barcodeColumn => 'Barcode';
+
+  @override
+  String get stationStock_table_remainingColumn => 'Remaining';
+
+  @override
+  String get stationStock_table_fillingColumn => 'To Fill';
+
+  @override
+  String get stationStock_printButton => 'Print';
+
+  @override
+  String get stationStock_printHint => 'Select medicines from the list to print';
+
+  @override
+  String stationStock_printTitle(String stationName) {
+    return 'Station Stock List — $stationName';
+  }
+
+  @override
+  String get stationStock_print_idColumn => 'Id';
+
+  @override
+  String get stationStock_print_materialColumn => 'Material';
+
+  @override
+  String get stationStock_print_maxColumn => 'Max';
+
+  @override
+  String get stationStock_print_quantityColumn => 'Quantity';
+
+  @override
   String get urgentPatient_intakeCompletedMessage =>
       'Emergency patient intake completed';
 

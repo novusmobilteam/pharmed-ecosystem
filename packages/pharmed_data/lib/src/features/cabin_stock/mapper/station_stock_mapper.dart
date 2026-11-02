@@ -16,8 +16,19 @@ class StationStockMapper {
       fillingQuantity: dto.fillingQuantity,
       // Alt modeller için ilgili mapper'lar
       cabin: const CabinMapper().toEntityOrNull(dto.cabin),
-      medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
+      medicine: _withBarcode(dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null, dto.barcode),
     );
+  }
+
+  /// Barkod yanıtın kökünde de gelebiliyor — malzeme nesnesinde yoksa oradan
+  /// tamamlanır (istasyon stok listesi barkodu medicine.barcode'dan okur).
+  Medicine? _withBarcode(Medicine? medicine, String? barcode) {
+    if (medicine == null || barcode == null || barcode.isEmpty) return medicine;
+    if (medicine.barcode?.isNotEmpty ?? false) return medicine;
+    return switch (medicine) {
+      Drug d => d.copyWith(barcode: barcode),
+      MedicalConsumable m => m.copyWith(barcode: barcode),
+    };
   }
 
   StationStockDTO toDto(StationStock entity) {

@@ -42,7 +42,9 @@ class StationStockDTO {
       currentQuantity: json['currentQuantity'],
       reservedQuantity: json['reservedQuantity'],
       remainingQuantity: json['remainingQuantity'],
-      fillingQuantity: json['fillingQuantity'],
+      // Servis alanı 'fiilingQuantity' (çift i) olarak gönderiyor — doğru
+      // yazım da desteklenir, servis düzeltilirse kırılmasın.
+      fillingQuantity: json['fiilingQuantity'] ?? json['fillingQuantity'],
     );
   }
 

@@ -1,3 +1,12 @@
+// [SWREQ-MGR-STATIONSTOCK-001] [IEC 62304 §5.5]
+// İstasyon stok listesi: seçili istasyonun stokları, tablodan seçilen
+// satırlar ve seçilenlerin yazdırılması için kullanılan hesaplanmış değerler.
+//
+// Kalan (remainingQuantity) ve Dolum (fillingQuantity) servisten gelir,
+// istemcide hesaplanmaz.
+//
+// Sınıf: Class B
+
 import 'package:flutter/foundation.dart';
 
 import '../../../core/core.dart';
@@ -24,6 +33,15 @@ class StationStockListNotifier extends ChangeNotifier with ApiRequestMixin {
   List<StationStock> _items = [];
   List<StationStock> get items => _items;
 
+  /// Tablodan seçilen satırlar — yazdırma bunları basar.
+  Set<StationStock> _selected = {};
+
+  /// Seçili satırlar, listedeki sırayla. İstasyon değişince/yenilenince
+  /// listede olmayanlar düşer (tablo kendi seçimini sessizce budar).
+  List<StationStock> get selectedItems => _items.where(_selected.contains).toList();
+
+  bool get canPrint => !isFetching && selectedItems.isNotEmpty;
+
   bool get isFetching => areLoading([fetchOp, fetchStationsOp]);
 
   List<TableSideCategory> get tableCategories => [
@@ -32,6 +50,14 @@ class StationStockListNotifier extends ChangeNotifier with ApiRequestMixin {
 
   String get selectedCategoryId => _selectedStation?.id.toString() ?? '-1';
   int get activeIndex => !stations.contains(_selectedStation) ? 0 : stations.indexOf(_selectedStation!);
+
+  /// Kod: kayıttaki kod, yoksa ilacın kodu.
+  static String? codeOf(StationStock s) {
+    final own = s.code;
+    if (own != null && own.isNotEmpty) return own;
+    final medicine = s.medicine;
+    return medicine is Drug ? medicine.code : null;
+  }
 
   Future<void> getStations() async {
     await execute(
@@ -51,7 +77,13 @@ class StationStockListNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void selectStation(Station? station) {
     _selectedStation = station;
+    _selected = {};
     _fetchStocks();
+    notifyListeners();
+  }
+
+  void onSelectionChanged(Set<StationStock> selected) {
+    _selected = selected;
     notifyListeners();
   }
 

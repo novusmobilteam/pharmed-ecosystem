@@ -7104,6 +7104,41 @@ class AppLocalizationsTr extends AppLocalizations {
   String get stationStock_table_reservedColumn => 'Rezerve';
 
   @override
+  String get stationStock_table_codeColumn => 'Kod';
+
+  @override
+  String get stationStock_table_barcodeColumn => 'Barkod';
+
+  @override
+  String get stationStock_table_remainingColumn => 'Kalan';
+
+  @override
+  String get stationStock_table_fillingColumn => 'Dolum';
+
+  @override
+  String get stationStock_printButton => 'Yazdır';
+
+  @override
+  String get stationStock_printHint => 'Yazdırmak için listeden ilaç seçin';
+
+  @override
+  String stationStock_printTitle(String stationName) {
+    return 'İstasyon Stok Listesi — $stationName';
+  }
+
+  @override
+  String get stationStock_print_idColumn => 'Id';
+
+  @override
+  String get stationStock_print_materialColumn => 'Malzeme';
+
+  @override
+  String get stationStock_print_maxColumn => 'Maks';
+
+  @override
+  String get stationStock_print_quantityColumn => 'Miktar';
+
+  @override
   String get urgentPatient_intakeCompletedMessage =>
       'Acil hasta ilaç alımı tamamlandı';
 
