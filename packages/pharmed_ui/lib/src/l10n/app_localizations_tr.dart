@@ -7410,6 +7410,33 @@ class AppLocalizationsTr extends AppLocalizations {
       'İstasyon için servis bilgisi alınamadı.';
 
   @override
+  String get stationAccess_deniedTitle => 'Bu İstasyonda Yetkiniz Bulunmuyor';
+
+  @override
+  String get stationAccess_deniedDescription =>
+      'Hesabınız bu istasyonda işlem yapmak için tanımlı değil. Yetki verilene kadar herhangi bir işlem yapamazsınız.';
+
+  @override
+  String get stationAccess_contactAdminHint =>
+      'Bu istasyona yetki tanımlanması için sistem yöneticinize başvurun.';
+
+  @override
+  String get stationAccess_userLabel => 'Kullanıcı';
+
+  @override
+  String get stationAccess_stationLabel => 'İstasyon';
+
+  @override
+  String get stationAccess_logoutButton => 'Çıkış Yap';
+
+  @override
+  String get stationAccess_verifyErrorTitle => 'İstasyon Yetkisi Doğrulanamadı';
+
+  @override
+  String get stationAccess_verifyErrorDescription =>
+      'İstasyon bilgisi alınamadı. Bağlantınızı kontrol edip tekrar deneyin.';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'İstasyon: $stationName';
   }

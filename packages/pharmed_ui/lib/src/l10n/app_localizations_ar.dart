@@ -7471,6 +7471,34 @@ class AppLocalizationsAr extends AppLocalizations {
       'Couldn\'t load service information for this station.';
 
   @override
+  String get stationAccess_deniedTitle => 'No Authorization for This Station';
+
+  @override
+  String get stationAccess_deniedDescription =>
+      'Your account is not authorized to operate at this station. You cannot perform any operations until access is granted.';
+
+  @override
+  String get stationAccess_contactAdminHint =>
+      'Contact your system administrator to be granted access to this station.';
+
+  @override
+  String get stationAccess_userLabel => 'User';
+
+  @override
+  String get stationAccess_stationLabel => 'Station';
+
+  @override
+  String get stationAccess_logoutButton => 'Log Out';
+
+  @override
+  String get stationAccess_verifyErrorTitle =>
+      'Station Access Could Not Be Verified';
+
+  @override
+  String get stationAccess_verifyErrorDescription =>
+      'Station information could not be retrieved. Check your connection and try again.';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'Station: $stationName';
   }

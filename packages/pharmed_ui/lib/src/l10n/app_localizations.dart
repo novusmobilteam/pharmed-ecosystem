@@ -13081,6 +13081,54 @@ abstract class AppLocalizations {
   /// **'Couldn\'t load service information for this station.'**
   String get serviceSelection_loadErrorMessage;
 
+  /// No description provided for @stationAccess_deniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Authorization for This Station'**
+  String get stationAccess_deniedTitle;
+
+  /// No description provided for @stationAccess_deniedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is not authorized to operate at this station. You cannot perform any operations until access is granted.'**
+  String get stationAccess_deniedDescription;
+
+  /// No description provided for @stationAccess_contactAdminHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact your system administrator to be granted access to this station.'**
+  String get stationAccess_contactAdminHint;
+
+  /// No description provided for @stationAccess_userLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get stationAccess_userLabel;
+
+  /// No description provided for @stationAccess_stationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get stationAccess_stationLabel;
+
+  /// No description provided for @stationAccess_logoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get stationAccess_logoutButton;
+
+  /// No description provided for @stationAccess_verifyErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Station Access Could Not Be Verified'**
+  String get stationAccess_verifyErrorTitle;
+
+  /// No description provided for @stationAccess_verifyErrorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Station information could not be retrieved. Check your connection and try again.'**
+  String get stationAccess_verifyErrorDescription;
+
   /// No description provided for @dashboard_activeStationLabel.
   ///
   /// In en, this message translates to:

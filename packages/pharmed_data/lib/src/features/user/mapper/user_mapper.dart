@@ -83,6 +83,7 @@ class UserMapper {
     roleId: user.role?.id ?? 0,
     canCreateEmergencyPatient: user.canCreateEmergencyPatient,
     canCollectOverdueMedication: user.canCollectOverdueMedication,
+    stationIds: user.stationIds ?? const [],
   );
 
   AppUser? fromUserOrNull(User? user) => user == null ? null : fromUser(user);

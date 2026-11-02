@@ -178,6 +178,9 @@ class AuthNotifier extends Notifier<AuthState> {
     _lastActivityAt = null;
     _tokenHolder.setToken(null);
     _logoutUseCase();
+    // Kilitli dashboard'dan farklı bir kullanıcı girebilir — istasyon yetkisi
+    // ve servis seçimi yeniden doğrulanmalı.
+    _activeServiceNotifier.reset();
     state = const AuthLoggedOut(showLockedDashboard: true);
   }
 

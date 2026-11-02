@@ -55,6 +55,8 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
       'isNotOrdered': user.isNotOrdered,
       'isAdmin': user.isAdmin,
       'canCreateEmergencyPatient': user.canCreateEmergencyPatient,
+      'canCollectOverdueMedication': user.canCollectOverdueMedication,
+      'stationIds': user.stationIds,
     });
   }
 
@@ -75,6 +77,10 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
       roleName: map['role'] as String? ?? '',
       isNotOrdered: map['isNotOrdered'] as bool? ?? false,
       isAdmin: map['isAdmin'] as bool? ?? false,
+      canCreateEmergencyPatient: map['canCreateEmergencyPatient'] as bool? ?? false,
+      canCollectOverdueMedication: map['canCollectOverdueMedication'] as bool? ?? false,
+      // Eski cache kayıtlarında alan yoksa boş liste → yetki yok (fail-safe).
+      stationIds: (map['stationIds'] as List?)?.whereType<int>().toList() ?? const [],
     );
   }
 

@@ -4626,6 +4626,14 @@
 },
 "serviceSelection_confirmButton": "Confirmer",
 "serviceSelection_loadErrorMessage": "Impossible de charger les informations de service pour cette station.",
+"stationAccess_deniedTitle": "Aucune autorisation pour cette station",
+"stationAccess_deniedDescription": "Votre compte n'est pas autorisé à opérer sur cette station. Aucune opération n'est possible tant que l'accès n'est pas accordé.",
+"stationAccess_contactAdminHint": "Contactez votre administrateur système pour obtenir l'accès à cette station.",
+"stationAccess_userLabel": "Utilisateur",
+"stationAccess_stationLabel": "Station",
+"stationAccess_logoutButton": "Se déconnecter",
+"stationAccess_verifyErrorTitle": "Impossible de vérifier l'accès à la station",
+"stationAccess_verifyErrorDescription": "Impossible de récupérer les informations de la station. Vérifiez votre connexion et réessayez.",
 "dashboard_activeStationLabel": "Station: {stationName}",
 "@dashboard_activeStationLabel": {
   "placeholders": { "stationName": { "type": "String" } }

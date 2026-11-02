@@ -5237,6 +5237,14 @@
 },
 "serviceSelection_confirmButton": "Confirm",
 "serviceSelection_loadErrorMessage": "Couldn't load service information for this station.",
+"stationAccess_deniedTitle": "No Authorization for This Station",
+"stationAccess_deniedDescription": "Your account is not authorized to operate at this station. You cannot perform any operations until access is granted.",
+"stationAccess_contactAdminHint": "Contact your system administrator to be granted access to this station.",
+"stationAccess_userLabel": "User",
+"stationAccess_stationLabel": "Station",
+"stationAccess_logoutButton": "Log Out",
+"stationAccess_verifyErrorTitle": "Station Access Could Not Be Verified",
+"stationAccess_verifyErrorDescription": "Station information could not be retrieved. Check your connection and try again.",
 "dashboard_activeStationLabel": "Station: {stationName}",
 "@dashboard_activeStationLabel": {
   "placeholders": { "stationName": { "type": "String" } }

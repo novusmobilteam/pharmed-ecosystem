@@ -80,6 +80,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         roleId: userDto.role?.id ?? 0,
         canCreateEmergencyPatient: userDto.canCreateEmergencyPatient,
         canCollectOverdueMedication: userDto.canCollectOverdueMedication,
+        stationIds: userDto.stationIds ?? const [],
       );
 
       // 5. User'ı cache'e yaz
@@ -130,6 +131,7 @@ class AuthRepositoryImpl implements IAuthRepository {
         isAdmin: userDto.isAdmin ?? false,
         isNotOrdered: userDto.isNotOrdered,
         roleId: userDto.role?.id ?? 0,
+        stationIds: userDto.stationIds ?? const [],
       );
 
       // 5. User'ı cache'e yaz
@@ -183,6 +185,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       roleId: userDto.role?.id ?? 0,
       canCreateEmergencyPatient: userDto.canCreateEmergencyPatient,
       canCollectOverdueMedication: userDto.canCollectOverdueMedication,
+      stationIds: userDto.stationIds ?? const [],
     );
     await _cache.saveUser(appUser);
     return Result.ok(AuthToken(accessToken: token, user: appUser));

@@ -20,6 +20,7 @@ class AppUser extends Equatable {
     this.isAdmin = false,
     this.canCreateEmergencyPatient = false,
     this.canCollectOverdueMedication = false,
+    this.stationIds = const [],
   });
 
   final int id;
@@ -34,6 +35,13 @@ class AppUser extends Equatable {
   final bool canCreateEmergencyPatient;
   final bool canCollectOverdueMedication;
 
+  /// [SWREQ-CORE-AUTH-002] Kullanıcının işlem yapmaya yetkili olduğu istasyonlar
+  /// (`/CurrentUser` → `stationIds`). Güncel istasyon bu listede yoksa
+  /// kullanıcı hiçbir işlem yapamaz. Boş liste = hiçbir istasyonda yetki yok.
+  final List<int> stationIds;
+
+  bool hasAccessToStation(int? stationId) => stationId != null && stationIds.contains(stationId);
+
   String get initials {
     // Boşlukları temizle ve her ihtimale karşı null/empty kontrolü yap
     final n = name.trim();
@@ -46,7 +54,7 @@ class AppUser extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, email, fullName, roleName, isNotOrdered, isAdmin];
+  List<Object?> get props => [id, email, fullName, roleName, isNotOrdered, isAdmin, stationIds];
 
   /// Sistem rolü. Custom rol için null — UI tarafı "yetkisiz" varsayar.
   RoleType? get roleType => RoleType.fromId(roleId);

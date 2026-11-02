@@ -7650,6 +7650,35 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de charger les informations de service pour cette station.';
 
   @override
+  String get stationAccess_deniedTitle =>
+      'Aucune autorisation pour cette station';
+
+  @override
+  String get stationAccess_deniedDescription =>
+      'Votre compte n\'est pas autorisé à opérer sur cette station. Aucune opération n\'est possible tant que l\'accès n\'est pas accordé.';
+
+  @override
+  String get stationAccess_contactAdminHint =>
+      'Contactez votre administrateur système pour obtenir l\'accès à cette station.';
+
+  @override
+  String get stationAccess_userLabel => 'Utilisateur';
+
+  @override
+  String get stationAccess_stationLabel => 'Station';
+
+  @override
+  String get stationAccess_logoutButton => 'Se déconnecter';
+
+  @override
+  String get stationAccess_verifyErrorTitle =>
+      'Impossible de vérifier l\'accès à la station';
+
+  @override
+  String get stationAccess_verifyErrorDescription =>
+      'Impossible de récupérer les informations de la station. Vérifiez votre connexion et réessayez.';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'Station: $stationName';
   }

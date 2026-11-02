@@ -9601,6 +9601,38 @@
 "@serviceSelection_loadErrorMessage": {
   "description": "Shown on the service selection screen when fetching the station's service list fails."
 },
+"stationAccess_deniedTitle": "Bu İstasyonda Yetkiniz Bulunmuyor",
+"@stationAccess_deniedTitle": {
+  "description": "Title of the full-screen lock shown after login when the current station id is not in the user's stationIds; no operation is allowed."
+},
+"stationAccess_deniedDescription": "Hesabınız bu istasyonda işlem yapmak için tanımlı değil. Yetki verilene kadar herhangi bir işlem yapamazsınız.",
+"@stationAccess_deniedDescription": {
+  "description": "Explanation text under the station access denied title."
+},
+"stationAccess_contactAdminHint": "Bu istasyona yetki tanımlanması için sistem yöneticinize başvurun.",
+"@stationAccess_contactAdminHint": {
+  "description": "Info hint on the station access denied screen telling the user who can grant access."
+},
+"stationAccess_userLabel": "Kullanıcı",
+"@stationAccess_userLabel": {
+  "description": "Label of the logged-in user row in the station access denied info panel."
+},
+"stationAccess_stationLabel": "İstasyon",
+"@stationAccess_stationLabel": {
+  "description": "Label of the current station row in the station access denied info panel."
+},
+"stationAccess_logoutButton": "Çıkış Yap",
+"@stationAccess_logoutButton": {
+  "description": "Logout button on the station access denied and access verify error screens."
+},
+"stationAccess_verifyErrorTitle": "İstasyon Yetkisi Doğrulanamadı",
+"@stationAccess_verifyErrorTitle": {
+  "description": "Title shown when the current station could not be fetched, so the user's station access could not be verified."
+},
+"stationAccess_verifyErrorDescription": "İstasyon bilgisi alınamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+"@stationAccess_verifyErrorDescription": {
+  "description": "Description shown under the station access verify error title."
+},
 "dashboard_activeStationLabel": "İstasyon: {stationName}",
 "@dashboard_activeStationLabel": {
   "description": "Label showing the currently active station on the dashboard's active station/service card (Madde 72).",

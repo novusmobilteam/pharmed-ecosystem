@@ -70,6 +70,8 @@ class AuthMockRepository implements IAuthRepository {
           isAdmin: userData.isAdmin,
           isNotOrdered: userData.isNotOrdered,
           roleId: userData.roleId,
+          // MockStationRepository.getCurrentStation → id: 1
+          stationIds: const [1],
         ),
       ),
     );
@@ -106,6 +108,7 @@ class AuthMockRepository implements IAuthRepository {
           fullName: 'fullName',
           roleName: 'roleName',
           roleId: 1,
+          stationIds: const [1],
         ),
       ),
     );
