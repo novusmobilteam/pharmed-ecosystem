@@ -14,6 +14,7 @@ import '../../../../core/mixins/witness_mixin.dart';
 import '../../../auth/auth.dart';
 import '../../../dashboard/dashboard.dart';
 import '../../../service_selection/notifier/active_service_notifier.dart';
+import 'intake_plan_merger.dart';
 
 final masterIntakeSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterIntakeSelectionNotifier>((ref) {
   ref.onDispose(() => debugPrint('MasterIntakeSelectionNotifier DISPOSED'));
@@ -432,13 +433,18 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     _otherStationOptions.clear();
     _redirectedTo.clear();
 
-    _selectedItemIds
-      ..clear()
-      ..addAll(
-        autoSelectAll && !isOverdueSelectionLocked
-            ? _intakeItems.where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity).map((it) => it.id)
-            : const <int>{},
-      );
+    _selectedItemIds.clear();
+    if (autoSelectAll && !isOverdueSelectionLocked) {
+      // Order saatine göre sırayla: stok önce erken orderı karşılar. Gözün
+      // kalan stoğuna tam sığmayan order seçilmez (yetersiz stok — muadil).
+      final candidates = _intakeItems
+          .where((it) => !it.hasNoStock && !it.isRedirected && !it.inCaseOfNecessity)
+          .toList()
+        ..sort(_byOrderTime);
+      for (final it in candidates) {
+        if (_fitsRemainingStock(it, _allocationDose(it))) _selectedItemIds.add(it.id);
+      }
+    }
 
     notifyListeners();
   }
@@ -459,7 +465,15 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     if (item == null || item.isRedirected) return;
     if (item.hasNoStock && !item.isEquivalentIntake) return;
 
-    if (item.dosePiece == null || item.dosePiece == 0) {
+    final needsDefaultDose = item.dosePiece == null || item.dosePiece == 0;
+    // Order bölünmez: gözün kalan stoğu orderı tam karşılamıyorsa normal alım
+    // seçilemez — kart "yetersiz stok" gösterir, muadil akışına yönlendirir.
+    if (!item.isEquivalentIntake && !_fitsRemainingStock(item, needsDefaultDose ? 1.0 : _allocationDose(item))) {
+      notifyListeners();
+      return;
+    }
+
+    if (needsDefaultDose) {
       _intakeItems = _intakeItems.map((it) => it.id == itemId ? it.copyWith(dosePiece: 1.0) : it).toList();
     }
 
@@ -506,7 +520,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     final medicine = item.medicine;
     final stock = item.assignment?.totalQuantity ?? 0.0;
 
-    if (medicine is MedicalConsumable) return (min: 1, max: stock);
+    if (medicine is MedicalConsumable) return (min: 1, max: math.min(stock, _remainingStockFor(item)));
 
     if (medicine is Drug) {
       final isOrdered = _intakeType == IntakeType.ordered;
@@ -514,7 +528,8 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
       final dailyMax = medicine.dailyMaxUsage ?? 0;
       final dailyMaxPieces = dailyMax > 0 ? medicine.dosePieces(dailyMax.toDouble()) : double.infinity;
-      final safetyLimit = math.min(stock, dailyMaxPieces);
+      // Aynı gözden alınan diğer seçili kalemlerin payı düşülür.
+      final safetyLimit = math.min(math.min(stock, _remainingStockFor(item)), dailyMaxPieces);
 
       // Doz düşürülemiyorsa reçetedeki miktar hem alt hem üst sınırdır.
       final minLimit = (isOrdered && !medicine.isCanLowerDose) ? orderedPieces : 1.0;
@@ -543,6 +558,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     if (item == null) return;
     if (isOverdueSelectionLocked) return;
     if (item.hasNoStock && !item.isEquivalentIntake) return;
+    if (isStockInsufficient(itemId) && !item.isEquivalentIntake) return;
     if (needsWitness(item) && witnessContextOf(item).witness == null) return;
 
     final bounds = _doseBounds(item);
@@ -554,6 +570,98 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
     _intakeItems = _intakeItems.map((it) => it.id == itemId ? it.copyWith(dosePiece: validated) : it).toList();
     notifyListeners();
+  }
+
+  // ── Göz stoğu paylaşımı [SWREQ-CLI-MINTAKE-005] ─────────────────────────
+  //
+  // Check servisi kalemleri tek tek doğruluyor; aynı gözden alınan birden
+  // fazla order'ın TOPLAMI stoğu aşabiliyor (gözde 3, order 2+2). Backend
+  // kümülatif kontrole geçene kadar client sınırlar:
+  //   - Order bölünmez: kalan stok orderı tam karşılamıyorsa o order normal
+  //     alım için seçilemez → "yetersiz stok", muadil akışı.
+  //   - Stok önce erken saatli order'a gider (otomatik seçim bu sırayla).
+  //   - Seçili kalemlerin dozları toplamı gözün stoğunu aşamaz (doz sınırı).
+  // Check sonrası ayrıca stok kaydı bazında doğrulanır (_rejectOverAllocated).
+
+  /// Aynı göz paylaşım grubu: ilaç + atama. Çözülemeyen, muadil ve
+  /// yönlendirilmiş alım gruba girmez (null).
+  (int, int)? _stockGroupOf(IntakeItem item) {
+    final medicineId = item.medicine?.id;
+    final assignmentId = item.assignment?.id;
+    if (medicineId == null || assignmentId == null) return null;
+    if (item.isEquivalentIntake || item.isRedirected || item.isRedirectedIntake) return null;
+    return (medicineId, assignmentId);
+  }
+
+  /// Kalemin stoktan ayıracağı miktar — seçilmişse girilen doz, değilse order dozu.
+  double _allocationDose(IntakeItem item) {
+    final dose = item.dosePiece ?? 0;
+    return dose > 0 ? dose : (item.prescriptionDose ?? 0);
+  }
+
+  /// Gözde, AYNI gruptaki diğer seçili (normal alım) kalemler düşüldükten
+  /// sonra kalan stok. Gruba girmeyen kalemde sınırsız.
+  double _remainingStockFor(IntakeItem item) {
+    final group = _stockGroupOf(item);
+    if (group == null) return double.infinity;
+    final stock = item.assignment?.totalQuantity ?? 0.0;
+    final used = _intakeItems
+        .where((o) => o.id != item.id && _selectedItemIds.contains(o.id) && _stockGroupOf(o) == group)
+        .fold<double>(0, (sum, o) => sum + _allocationDose(o));
+    return stock - used;
+  }
+
+  bool _fitsRemainingStock(IntakeItem item, double dose) => dose <= _remainingStockFor(item);
+
+  int _byOrderTime(IntakeItem a, IntakeItem b) {
+    final DateTime? ta = a.time;
+    final DateTime? tb = b.time;
+    if (ta == null || tb == null) return (ta == null ? 1 : 0) - (tb == null ? 1 : 0);
+    return ta.compareTo(tb);
+  }
+
+  /// Kalem kendi başına stoklu ama gözün kalan stoğu orderı TAM
+  /// karşılamıyor — kart "yetersiz stok" gösterir ve muadil sorgulatır.
+  /// Muadil seçilmiş kalem bu durumda kalır (muadil bölümü açık kalsın).
+  bool isStockInsufficient(int itemId) {
+    final item = _intakeItems.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null || item.hasNoStock) return false;
+    if (item.isEquivalentIntake) return true;
+    if (_selectedItemIds.contains(itemId)) return false;
+    if (_stockGroupOf(item) == null) return false;
+    return !_fitsRemainingStock(item, _allocationDose(item));
+  }
+
+  /// [SWREQ-CLI-MINTAKE-005] Check sonrası savunma: planlar stok kaydı bazında
+  /// toplanır; kaydın miktarını aşan kalem (order saati sırasıyla, sonraki
+  /// olan) kuyruğa alınmaz ve hata ile işaretlenir.
+  List<IntakePlan> _rejectOverAllocated(List<IntakePlan> plans) {
+    final sorted = [...plans]..sort((a, b) => _byOrderTime(a.item, b.item));
+    final usedByStock = <int, double>{};
+    final accepted = <IntakePlan>[];
+
+    for (final plan in sorted) {
+      final stocks = plan.item.assignment?.stocks ?? const [];
+      double? capacityOf(int stockId) => stocks.firstWhereOrNull((s) => s.id == stockId)?.quantity?.toDouble();
+
+      final exceeds = plan.details.any((d) {
+        final capacity = capacityOf(d.stockId);
+        if (capacity == null) return false; // stok bilgisi yok — backend kararı geçerli
+        return (usedByStock[d.stockId] ?? 0) + d.dosePiece > capacity;
+      });
+
+      if (exceeds) {
+        setFailed(checkItemOpFor(plan.item.id), message: contextlessL10n().intake_error_totalExceedsStock);
+        continue;
+      }
+      for (final d in plan.details) {
+        usedByStock.update(d.stockId, (v) => v + d.dosePiece, ifAbsent: () => d.dosePiece);
+      }
+      accepted.add(plan);
+    }
+
+    // Kuyruk/plan sırası orijinal sırayla korunur.
+    return [for (final p in plans) if (accepted.contains(p)) p];
   }
 
   /// Stoksuz bir kalem (ve aynı ilacın diğer tüm kalemleri) için muadil
@@ -572,12 +680,31 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
           equivalentOpFor(it.id),
           operation: () => _getEquivalentsUseCase.call(it.id),
           onData: (list) {
-            _equivalentOptions[it.id] = list;
-            if (list.isEmpty) unawaited(_checkOtherStations(it.id));
+            // Kabinde yeterli stoğu olmayan muadil önerilmez — seçilse bile
+            // alım başlatılamaz. Yeterli muadil yoksa diğer istasyonlara geçilir.
+            final sufficient = list.where((eq) => _hasEnoughEquivalentStock(it, eq)).toList();
+            if (sufficient.length != list.length) {
+              MedLogger.info(
+                unit: 'SW-UNIT-UI',
+                swreq: 'SWREQ-CLI-MINTAKE-004',
+                message: 'Insufficient-stock equivalents filtered',
+                context: {'itemId': it.id, 'total': list.length, 'sufficient': sufficient.length},
+              );
+            }
+            _equivalentOptions[it.id] = sufficient;
+            if (sufficient.isEmpty) unawaited(_checkOtherStations(it.id));
           },
         ),
       ),
     );
+  }
+
+  /// [SWREQ-CLI-MINTAKE-004] Muadilin kabindeki toplam stoğu alınacak
+  /// miktarı (muadilin satın alma miktarı; yoksa reçete dozu) karşılıyor mu.
+  bool _hasEnoughEquivalentStock(IntakeItem item, EquivalentMedicine eq) {
+    final needed = eq.purchaseQuantity ?? item.prescriptionDose ?? 0;
+    final available = eq.stocks.fold<double>(0, (sum, s) => sum + (s.quantity ?? 0).toDouble());
+    return available > 0 && available >= needed;
   }
 
   /// Muadili de bulunamayan bir kalem için başka istasyonlardaki stoğu sorgular.
@@ -687,22 +814,27 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
     final plans = <IntakePlan>[
       ...await _checkEquivalentItems(equivalentItems),
-      ...await _checkNormalItems(normalItems),
+      ..._rejectOverAllocated(await _checkNormalItems(normalItems)),
     ];
 
+    // Aynı ilacın aynı gözden alınacak kalemleri (farklı order saatleri) tek
+    // hedefte birleşir — kullanıcı toplam adedi tek seferde alır.
     // Plan → target. Göz çözülemeyen plan kuyruğa ALINMAZ — ya çekmece tam
     // açılırdı (FIFO güvenliği kalkar) ya da alınmayan stok kayda giderdi.
-    final built = <({IntakePlan plan, CabinOperationTarget target})>[];
-    for (final plan in plans) {
-      final target = IntakeTargetMapper.build(plan.item, plan.details);
+    final built = <({IntakePlanGroup group, CabinOperationTarget target})>[];
+    for (final group in IntakePlanMerger.group(plans)) {
+      final target = IntakeTargetMapper.build(group.merged.item, group.merged.details);
       if (target == null) {
-        setFailed(checkItemOpFor(plan.item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+        for (final m in group.members) {
+          setFailed(checkItemOpFor(m.item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+        }
         continue;
       }
-      built.add((plan: plan, target: target));
+      built.add((group: group, target: target));
     }
 
-    _pendingPlans = [for (final b in built) b.plan];
+    // Yürütmeye kalem planları gider; yürütme aynı gruplamayı yeniden kurar.
+    _pendingPlans = [for (final b in built) ...b.group.members];
     _pendingJobs = CabinOperationQueueBuilder.build(
       items: built,
       // Hedefin ataması — serumda avadanlık kimliği plandan tamamlanmış olabilir.
@@ -805,16 +937,43 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     if (equivalent == null || resolvedMedicine == null) return null;
 
     final neededDose = item.dosePiece ?? equivalent.purchaseQuantity ?? 0;
-    final stock =
-        equivalent.stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose) ?? equivalent.stocks.firstOrNull;
-    final stockId = stock?.id;
-    final cellId = stock?.cabinDrawerDetail?.id;
-    if (stockId == null || cellId == null) return null;
+    MedicineAssignment? assignmentOfCell(int? cellId) {
+      if (cellId == null) return null;
+      return allAssignments.firstWhereOrNull((a) => a.cabinDrawerDetail?.any((cell) => cell.id == cellId) ?? false);
+    }
 
-    final assignment = allAssignments.firstWhereOrNull(
-      (a) => a.cabinDrawerDetail?.any((cell) => cell.id == cellId) ?? false,
-    );
+    // Tek stok yetiyorsa o; yetmiyorsa aynı atamadaki (aynı fiziksel yer)
+    // stoklar FIFO sırasıyla toplanır — tek açılışta alınabilmeli.
+    final single = equivalent.stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose && s.id != null);
+    final stock = single ?? equivalent.stocks.firstWhereOrNull((s) => s.id != null);
+    final stockId = stock?.id;
+    if (stock == null || stockId == null) return null;
+
+    final assignment = assignmentOfCell(stock.cabinDrawerDetail?.id);
     if (assignment == null) return null;
+
+    final details = <IntakeDetail>[];
+    if (single != null) {
+      details.add(IntakeDetail(stockId: stockId, dosePiece: neededDose));
+    } else {
+      var remaining = neededDose;
+      for (final s in equivalent.stocks) {
+        if (remaining <= 0) break;
+        final id = s.id;
+        final qty = (s.quantity ?? 0).toDouble();
+        if (id == null || qty <= 0 || assignmentOfCell(s.cabinDrawerDetail?.id)?.id != assignment.id) continue;
+        final take = qty < remaining ? qty : remaining;
+        details.add(IntakeDetail(stockId: id, dosePiece: take));
+        remaining -= take;
+      }
+      // Muadil stoğu farklı yerlere dağılmış — önceki davranış: tüm doz ilk
+      // stoktan planlanır, hangi partiden düşüleceğine backend karar verir.
+      if (remaining > 0) {
+        details
+          ..clear()
+          ..add(IntakeDetail(stockId: stockId, dosePiece: neededDose));
+      }
+    }
 
     // İstasyon atamaları paylaşılan çekmecelerde karışık stok döndürür —
     // yalnızca muadil malzemenin stokları (sayım ve üst sınır buna göre).
@@ -825,7 +984,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       stock: stock,
       medicine: resolvedMedicine,
     );
-    return (item: resolvedItem, details: [IntakeDetail(stockId: stockId, dosePiece: neededDose)]);
+    return (item: resolvedItem, details: details);
   }
 
   /// Kuyruk bittiğinde (execution notifier'ın onQueueFinished'ından) çağrılır.

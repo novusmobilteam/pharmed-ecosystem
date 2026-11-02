@@ -6725,6 +6725,18 @@ abstract class AppLocalizations {
   /// **'There is no stock in the cabinet'**
   String get intake_hint_noStock;
 
+  /// No description provided for @intake_hint_insufficientStock.
+  ///
+  /// In en, this message translates to:
+  /// **'There is not enough stock in the cabinet'**
+  String get intake_hint_insufficientStock;
+
+  /// No description provided for @intake_error_totalExceedsStock.
+  ///
+  /// In en, this message translates to:
+  /// **'The total of the selected orders exceeds the stock in the cabinet.'**
+  String get intake_error_totalExceedsStock;
+
   /// No description provided for @intake_label_witnessName.
   ///
   /// In en, this message translates to:

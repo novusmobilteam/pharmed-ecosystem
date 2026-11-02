@@ -7,6 +7,7 @@ import '../../../../core/hardware/hardware.dart';
 import '../../../../core/mixins/mixins.dart';
 import '../../../../core/providers/providers.dart';
 import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.dart';
+import 'intake_plan_merger.dart';
 
 // [SWREQ-CLI-MINTAKE-002] [IEC 62304 §5.5]
 // Master kabin alımının donanım yürütme fazı. Kuyruk, durdurma, hata
@@ -20,6 +21,9 @@ import '../../../../widgets/cabin_operation_execution/cabin_operation_execution.
 //     kapanmadan açılmaz.
 //   - QR zorunlu ilaçta, hedef tamamlanır tamamlanmaz (sıradaki ilaca
 //     geçmeden) kuyruk askıya alınır ve QR dialog'u açılır.
+//   - [SWREQ-CLI-MINTAKE-003] Aynı ilacın aynı gözden alınan kalemleri
+//     (farklı order saatleri) tek hedeftir; kayıt yine kalem bazında atılır
+//     (bkz. IntakePlanMerger).
 //
 // Sınıf: Class B
 
@@ -122,13 +126,21 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   IntakeType _intakeType = IntakeType.ordered;
   int? _hospitalizationId;
 
-  /// Kuyruğa alınan planlar — kalem id'sine (target.sourceId) göre.
-  Map<int, IntakePlan> _plans = const {};
+  /// Kuyruğa alınan plan grupları — temsilci kalem id'sine (target.sourceId)
+  /// göre. Tek kalemli grupta merged == members.first.
+  Map<int, IntakePlanGroup> _groups = const {};
 
-  IntakePlan? _planOf(CabinOperationTarget target) {
+  /// Kaydı backend'e başarıyla gitmiş kalemler — birleşik hedefin kaydı
+  /// yarıda hata verip tekrar denenirse aynı kalem ikinci kez kaydedilmez.
+  final Set<int> _savedItemIds = {};
+
+  IntakePlanGroup? _groupOf(CabinOperationTarget target) {
     final id = target.sourceId;
-    return id == null ? null : _plans[id];
+    return id == null ? null : _groups[id];
   }
+
+  /// Hedefin (birleşik) planı — gösterim, fiş ve konum için.
+  IntakePlan? _planOf(CabinOperationTarget target) => _groupOf(target)?.merged;
 
   // ── QR kodu ───────────────────────────────────────────────────────────
 
@@ -160,7 +172,8 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     Hospitalization? hospitalization,
     Map<int, String> overdueDescriptions = const {},
   }) {
-    _plans = {for (final p in plans) p.item.id: p};
+    _groups = {for (final g in IntakePlanMerger.group(plans)) g.merged.item.id: g};
+    _savedItemIds.clear();
     _intakeType = intakeType;
     _hospitalizationId = hospitalizationId;
     _hospitalization = hospitalization;
@@ -196,16 +209,42 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   // ── Kayıt ─────────────────────────────────────────────────────────────
 
   Future<bool> _saveTarget(CabinOperationTarget target) async {
-    final plan = _planOf(target);
-    if (plan == null) {
+    final group = _groupOf(target);
+    if (group == null) {
       // Planı olmayan hedef kuyruğa girmemeliydi — sessizce geçmek alımı
       // kaydetmeden çekmeceyi kapatırdı.
       setQueueFailure(const CabinValidationFailure(reason: CabinValidationReason.noValidTargets), isQueueError: true);
       return false;
     }
 
+    // Sayım göz bazında bir kez girilir (alım öncesi gözdeki miktar). Birleşik
+    // hedefte aynı stoğun sayımı yalnızca o stoğu içeren İLK kayıtla gider;
+    // sonraki kayıtlar sayımsız gider ve backend kalan stoktan düşer.
+    final countByStock = {for (final d in _detailsWithCounts(target, group.merged)) d.stockId: d.censusQuantity};
+    final countedStocks = <int>{
+      for (final m in group.members)
+        if (_savedItemIds.contains(m.item.id)) ...m.details.map((d) => d.stockId),
+    };
+
+    for (final plan in group.members) {
+      if (_savedItemIds.contains(plan.item.id)) continue;
+      final details = [
+        for (final d in plan.details)
+          IntakeDetail(
+            stockId: d.stockId,
+            dosePiece: d.dosePiece,
+            censusQuantity: countedStocks.add(d.stockId) ? countByStock[d.stockId] : null,
+          ),
+      ];
+      if (!await _savePlan(plan, details)) return false;
+      _savedItemIds.add(plan.item.id);
+    }
+    return true;
+  }
+
+  /// Tek kalemin kaydı — kaynak kaleme göre üç yoldan biri.
+  Future<bool> _savePlan(IntakePlan plan, List<IntakeDetail> details) async {
     final item = plan.item;
-    final details = _detailsWithCounts(target, plan);
     final firstCount = details.firstOrNull?.censusQuantity;
 
     final result = item.isRedirectedIntake
@@ -272,22 +311,31 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
     return false;
   }
 
-  /// Hedefin QR zorunlu (Drug.isQrCode) kalemi için gereksinim. Miktar ADET
-  /// — her kutu için bir kod.
-  List<IntakeQrCodeRequirement> _qrCodeRequirementsOf(CabinOperationTarget target) {
-    final plan = _planOf(target);
-    if (plan == null) return const [];
-
+  /// Bir kalemin okutması gereken kutu sayısı. Miktar ADET — her kutu için
+  /// bir kod. QR zorunlu olmayan ilaçta 0.
+  int _qrBoxCountOf(IntakePlan plan) {
     final medicine = plan.item.medicine;
+    if (medicine is! Drug || !medicine.isQrCode) return 0;
+    final amount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece);
+    return medicine.boxCountOf(amount);
+  }
+
+  /// Hedefin QR zorunlu (Drug.isQrCode) ilacı için TEK gereksinim. Birleşik
+  /// hedefte kutu sayısı kalemlerin toplamıdır — kullanıcı ilacı bir kez
+  /// okutur, kodlar gönderimde kalemlere dağıtılır ([submitQrCodes]).
+  List<IntakeQrCodeRequirement> _qrCodeRequirementsOf(CabinOperationTarget target) {
+    final group = _groupOf(target);
+    if (group == null) return const [];
+
+    final medicine = group.merged.item.medicine;
     if (medicine is! Drug || !medicine.isQrCode) return const [];
 
-    final totalAmount = plan.details.fold<double>(0, (sum, d) => sum + d.dosePiece);
-    final requiredCount = medicine.boxCountOf(totalAmount);
+    final requiredCount = group.members.fold<int>(0, (sum, p) => sum + _qrBoxCountOf(p));
     if (requiredCount <= 0) return const [];
 
     return [
       IntakeQrCodeRequirement(
-        prescriptionDetailId: plan.item.id,
+        prescriptionDetailId: group.merged.item.id,
         medicineName: medicine.name ?? '—',
         requiredCount: requiredCount,
         expectedGtin: medicine.barcode,
@@ -299,20 +347,24 @@ class MasterIntakeExecutionNotifier extends ChangeNotifier
   /// Kuyruğu İLERLETMEZ: hata dönerse dialog açık kalır, kullanıcı tekrar
   /// gönderebilir ya da iptal edebilir. Devam [finishQrCodes] ile.
   Future<Result<void>> submitQrCodes(List<Gs1Code> codes) async {
-    // Hedef başına tek ilaç → en fazla bir gereksinim.
-    final requirement = qrCodeRequirements.firstOrNull;
-    if (requirement == null || codes.isEmpty) return const Result.ok(null);
+    final target = _qrCodeTarget;
+    final group = target == null ? null : _groupOf(target);
+    if (group == null || codes.isEmpty) return const Result.ok(null);
 
-    final result = await _submitIntakeQrCodes(
-      SubmitIntakeQrCodesParams(
-        details: [
-          IntakeQrCodeDetail(
-            prescriptionDetailId: requirement.prescriptionDetailId,
-            qrCode: [for (final c in codes) c.raw],
-          ),
-        ],
-      ),
-    );
+    // Kodlar okutma sırasıyla kalemlere, her kalemin kutu sayısı kadar dağıtılır.
+    // Eksik okutulan kutular backend'de "okutulmadı" kalır.
+    final details = <IntakeQrCodeDetail>[];
+    var offset = 0;
+    for (final plan in group.members) {
+      final count = _qrBoxCountOf(plan);
+      if (count <= 0 || offset >= codes.length) continue;
+      final slice = codes.skip(offset).take(count);
+      offset += count;
+      details.add(IntakeQrCodeDetail(prescriptionDetailId: plan.item.id, qrCode: [for (final c in slice) c.raw]));
+    }
+    if (details.isEmpty) return const Result.ok(null);
+
+    final result = await _submitIntakeQrCodes(SubmitIntakeQrCodesParams(details: details));
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
   }
 

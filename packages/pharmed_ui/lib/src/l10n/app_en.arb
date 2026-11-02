@@ -2548,6 +2548,10 @@
   "@intake_error_noDrawerFound": {},
   "intake_hint_noStock": "There is no stock in the cabinet",
   "@intake_hint_noStock": {},
+  "intake_hint_insufficientStock": "There is not enough stock in the cabinet",
+  "@intake_hint_insufficientStock": {},
+  "intake_error_totalExceedsStock": "The total of the selected orders exceeds the stock in the cabinet.",
+  "@intake_error_totalExceedsStock": {},
   "intake_label_witnessName": "Witness: {name}",
   "@intake_label_witnessName": {
     "placeholders": {

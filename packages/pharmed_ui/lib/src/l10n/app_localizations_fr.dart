@@ -3858,6 +3858,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get intake_hint_noStock => 'Il n\'y a pas de stock dans la cabine';
 
   @override
+  String get intake_hint_insufficientStock =>
+      'Il n\'y a pas assez de stock dans la cabine';
+
+  @override
+  String get intake_error_totalExceedsStock =>
+      'Le total des prescriptions sélectionnées dépasse le stock de la cabine.';
+
+  @override
   String intake_label_witnessName(String name) {
     return 'Témoin : $name';
   }

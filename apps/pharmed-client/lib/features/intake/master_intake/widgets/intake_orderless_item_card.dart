@@ -15,7 +15,7 @@ class IntakeOrderlessItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSelected = notifier.isSelected(item.id);
-    final bool hasNoStock = item.hasNoStock;
+    final bool hasNoStock = item.hasNoStock || notifier.isStockInsufficient(item.id);
     final bool isRedirected = item.isRedirected;
     final witnessContext = notifier.witnessContextOf(item);
     final needsWitness = notifier.needsWitness(item);
@@ -73,7 +73,7 @@ class IntakeOrderlessItemCard extends StatelessWidget {
                 const SizedBox.shrink()
               else if (hasNoStock)
                 MedChip(
-                  label: context.l10n.intake_hint_noStock,
+                  label: item.hasNoStock ? context.l10n.intake_hint_noStock : context.l10n.intake_hint_insufficientStock,
                   background: MedColors.red,
                   foreground: MedColors.redLight,
                   showBorder: false,

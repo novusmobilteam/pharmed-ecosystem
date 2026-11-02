@@ -16,7 +16,10 @@ class IntakeOrderedItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = notifier.isSelected(item.id);
-    final hasNoStock = item.hasNoStock;
+    // Kendi stoğu yok YA DA gözün kalan stoğu orderı tam karşılamıyor
+    // (aynı gözden alınan diğer order'larla birlikte) — ikisinde de muadil akışı.
+    final isStockInsufficient = notifier.isStockInsufficient(item.id);
+    final hasNoStock = item.hasNoStock || isStockInsufficient;
     final overdueLocked = notifier.isOverdueSelectionLocked;
     final witnessContext = notifier.witnessContextOf(item);
     final needsWitness = notifier.needsWitness(item);
@@ -167,7 +170,8 @@ class IntakeOrderedItemCard extends StatelessWidget {
                 )
               else if (hasNoStock && !item.isEquivalentIntake && !equivalentCheckStarted)
                 MedChip(
-                  label: '${context.l10n.intake_hint_noStock} (${context.l10n.intake_action_checkEquivalent})',
+                  label:
+                      '${item.hasNoStock ? context.l10n.intake_hint_noStock : context.l10n.intake_hint_insufficientStock} (${context.l10n.intake_action_checkEquivalent})',
                   background: MedColors.red,
                   foreground: MedColors.redLight,
                   showBorder: false,

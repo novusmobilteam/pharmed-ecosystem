@@ -2307,6 +2307,10 @@
   "@intake_error_noDrawerFound": {},
   "intake_hint_noStock": "Il n'y a pas de stock dans la cabine",
   "@intake_hint_noStock": {},
+  "intake_hint_insufficientStock": "Il n'y a pas assez de stock dans la cabine",
+  "@intake_hint_insufficientStock": {},
+  "intake_error_totalExceedsStock": "Le total des prescriptions sélectionnées dépasse le stock de la cabine.",
+  "@intake_error_totalExceedsStock": {},
   "intake_label_witnessName": "Témoin : {name}",
   "@intake_label_witnessName": {
     "placeholders": {

@@ -733,6 +733,8 @@
     "intake_error_noValidTargets",
     "intake_error_noDrawerFound",
     "intake_hint_noStock",
+    "intake_hint_insufficientStock",
+    "intake_error_totalExceedsStock",
     "intake_label_witnessName",
     "intake_hint_witnessRequired",
     "intake_status_checking",

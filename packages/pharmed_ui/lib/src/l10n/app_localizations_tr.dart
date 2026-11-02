@@ -3727,6 +3727,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get intake_hint_noStock => 'Kabinde stok bulunmamaktadır';
 
   @override
+  String get intake_hint_insufficientStock =>
+      'Kabinde yeterli stok bulunmamaktadır';
+
+  @override
+  String get intake_error_totalExceedsStock =>
+      'Seçilen orderların toplamı kabindeki stoğu aşıyor.';
+
+  @override
   String intake_label_witnessName(String name) {
     return 'Şahit: $name';
   }

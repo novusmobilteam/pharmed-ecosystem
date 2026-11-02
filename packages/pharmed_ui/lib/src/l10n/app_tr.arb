@@ -4628,6 +4628,14 @@
   "@intake_hint_noStock": {
     "description": "Hint shown on the intake operation card when the cabinet has no stock for the item"
   },
+  "intake_hint_insufficientStock": "Kabinde yeterli stok bulunmamaktadır",
+  "@intake_hint_insufficientStock": {
+    "description": "Hint on the intake card when the cell's remaining stock (after other selected orders of the same medicine from the same cell) cannot fully cover this order; orders are never split, so the user is directed to equivalents"
+  },
+  "intake_error_totalExceedsStock": "Seçilen orderların toplamı kabindeki stoğu aşıyor.",
+  "@intake_error_totalExceedsStock": {
+    "description": "Per-item check error when several selected orders taken from the same stock record exceed its quantity in total (client-side guard until the backend check becomes cumulative)"
+  },
   "intake_label_witnessName": "Şahit: {name}",
   "@intake_label_witnessName": {
     "description": "Label showing the confirmed witness's name on the intake operation card",

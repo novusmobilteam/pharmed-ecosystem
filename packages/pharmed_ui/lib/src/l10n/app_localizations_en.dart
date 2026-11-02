@@ -3757,6 +3757,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get intake_hint_noStock => 'There is no stock in the cabinet';
 
   @override
+  String get intake_hint_insufficientStock =>
+      'There is not enough stock in the cabinet';
+
+  @override
+  String get intake_error_totalExceedsStock =>
+      'The total of the selected orders exceeds the stock in the cabinet.';
+
+  @override
   String intake_label_witnessName(String name) {
     return 'Witness: $name';
   }
