@@ -1,95 +1,165 @@
+// Dolum listesi formunun satır bileşenleri:
+//   • RefillCandidateRow — sol "İlaç Ekle" bölümünde aday ilaç (işaretlenir).
+//   • RefillSelectionRow — sağ "Listedeki İlaçlar" bölümünde ilaç (miktar, sil).
+
 import 'package:flutter/material.dart';
 
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/core.dart';
 
-class RefillObjectCard extends StatelessWidget {
-  final RefillObject object;
-  final double selectedQuantity;
-  final Function(double) onQuantityChanged;
-  final VoidCallback onTap;
+String _qty(num value) => value.formatFractional;
 
-  const RefillObjectCard({
+/// Mevcut stok + atama eşikleri tek satır: "Mevcut: 3 · Min 2 · Kritik 1 · Maks 12".
+String _stockLine(BuildContext context, num? current, MedicineAssignment? limits) {
+  final l10n = context.l10n;
+  final parts = <String>[
+    if (current != null) l10n.refillList_form_currentStockLabel(_qty(current)),
+    if (limits != null) ...[
+      '${l10n.common_minLabel} ${_qty(limits.minQuantity)}',
+      '${l10n.common_criticalLabel} ${_qty(limits.criticalQuantity)}',
+      '${l10n.common_maxLabel} ${_qty(limits.maxQuantity)}',
+    ],
+  ];
+  return parts.join(' · ');
+}
+
+class RefillCandidateRow extends StatelessWidget {
+  const RefillCandidateRow({
     super.key,
     required this.object,
-    required this.selectedQuantity,
-    required this.onQuantityChanged,
-    required this.onTap,
+    required this.suggestedQuantity,
+    required this.isChecked,
+    required this.isInList,
+    required this.onToggle,
   });
+
+  final RefillObject object;
+  final num suggestedQuantity;
+  final bool isChecked;
+
+  /// Zaten listede — işaretlenemez, "Listede" rozeti gösterilir.
+  final bool isInList;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
-    final bool isSelected = selectedQuantity > 0;
-    final current = object.quantity;
-    final isCritical = current <= (object.assignment?.criticalQuantity ?? 0);
+    final limits = object.assignment;
+    final isCritical = limits != null && object.quantity <= limits.criticalQuantity;
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 6.0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? context.colorScheme.primary : context.colorScheme.outlineVariant.withValues(alpha: 0.5),
+    return InkWell(
+      onTap: isInList ? null : onToggle,
+      borderRadius: MedRadius.mdAll,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isChecked ? MedColors.blueLight : MedColors.surface,
+          borderRadius: MedRadius.mdAll,
+          border: Border.all(color: isChecked ? MedColors.blue : MedColors.border),
         ),
-      ),
-      child: InkWell(
-        onTap: onTap,
         child: Row(
+          spacing: 12,
           children: [
-            if (isSelected)
-              Icon(PhosphorIcons.checkCircle(PhosphorIconsStyle.fill), color: context.colorScheme.primary)
-            else
-              Icon(PhosphorIcons.circle(), color: context.colorScheme.outline),
-
-            const SizedBox(width: 12),
-
-            // Orta: İsim ve Bilgiler
+            MedCheckbox(value: isChecked || isInList, enabled: !isInList, onChanged: isInList ? null : (_) => onToggle()),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
                 children: [
                   Text(
                     object.medicine?.name ?? '-',
-                    style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 4),
-                  _infoText(
-                    context,
-                    context.l10n.refill_label_current(object.assignment?.quantityLabel(current) ?? '-'),
-                    isCritical ? MedColors.amber : null,
+                  Text(
+                    _stockLine(context, object.quantity, limits),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: MedTextStyles.bodySm(color: isCritical ? MedColors.amber : MedColors.text3),
                   ),
-                  _infoText(context, _quantity(context), null),
                 ],
               ),
             ),
-
-            // Sağ: Modern Stepper
-            MedDoseStepper.compact(
-              value: selectedQuantity,
-              unit: object.medicine?.fillingUnit ?? context.l10n.refillList_defaultUnitFallback,
-              onChanged: (newVal) => onQuantityChanged(newVal),
-              min: 0,
-              step: 1.0,
-            ),
+            if (isInList)
+              MedChip(label: context.l10n.refillList_form_inListBadge, style: MedChipStyle.success, size: MedChipSize.sm)
+            else
+              Text(
+                context.l10n.refillList_form_suggestedLabel(_qty(suggestedQuantity)),
+                style: MedTextStyles.monoSm(color: MedColors.blue, weight: FontWeight.w600),
+              ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _infoText(BuildContext context, String text, Color? color) {
-    return Text(text, style: context.textTheme.bodySmall?.copyWith());
-  }
+class RefillSelectionRow extends StatelessWidget {
+  const RefillSelectionRow({
+    super.key,
+    required this.object,
+    required this.currentStock,
+    required this.onQuantityChanged,
+    required this.onRemove,
+  });
 
-  String _quantity(BuildContext context) {
-    final assignment = object.assignment;
-    if (assignment == null) return '-';
+  /// quantity = dolum miktarı.
+  final RefillObject object;
 
-    final l10n = context.l10n;
-    return '${l10n.common_minLabel}: ${assignment.minQuantityLabel} - '
-        '${l10n.common_criticalLabel}: ${assignment.critQuantityLabel} - '
-        '${l10n.common_maxLabel}: ${assignment.maxQuantityLabel}';
+  /// Güncel mevcut stok (aday verisinden); bilinmiyorsa null.
+  final num? currentStock;
+  final ValueChanged<double> onQuantityChanged;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        borderRadius: MedRadius.mdAll,
+        border: Border.all(color: MedColors.border),
+      ),
+      child: Row(
+        spacing: 8,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 2,
+              children: [
+                Text(
+                  object.medicine?.name ?? '-',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600),
+                ),
+                Text(
+                  _stockLine(context, currentStock, object.assignment),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: MedTextStyles.bodySm(color: MedColors.text3),
+                ),
+              ],
+            ),
+          ),
+          MedDoseStepper.compact(
+            value: object.quantity.toDouble(),
+            unit: object.medicine?.fillingUnit ?? context.l10n.refillList_defaultUnitFallback,
+            onChanged: onQuantityChanged,
+            // 0'a inmek ilacı listeden çıkarır — silme ayrıca çöp kutusuyla.
+            min: 0,
+            step: 1.0,
+            platform: DoseStepperPlatform.desktop,
+          ),
+          IconButton(
+            tooltip: context.l10n.refillList_form_removeTooltip,
+            icon: Icon(PhosphorIcons.trash(), size: 18, color: MedColors.red),
+            onPressed: onRemove,
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -22,12 +22,6 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin {
   OperationKey updateOp = OperationKey.update();
   OperationKey cancelOp = OperationKey.custom('cancel');
 
-  bool _isPanelOpen = false;
-  bool get isPanelOpen => _isPanelOpen;
-
-  RefillList? _selectedItem;
-  RefillList? get selectedItem => _selectedItem;
-
   List<Station> _stations = [];
   List<Station> get stations => _stations;
 
@@ -102,17 +96,6 @@ class RefillListNotifier extends ChangeNotifier with ApiRequestMixin {
   void selectStation(Station? station) {
     _selectedStation = station;
     getRefillLists();
-    notifyListeners();
-  }
-
-  void openPanel({RefillList? item}) {
-    _isPanelOpen = true;
-    _selectedItem = item;
-    notifyListeners();
-  }
-
-  void closePanel() {
-    _isPanelOpen = false;
     notifyListeners();
   }
 }

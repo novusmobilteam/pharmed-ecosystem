@@ -9449,4 +9449,68 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get report_materialUsage_totalLabel => 'Total';
+
+  @override
+  String get refillList_form_addSectionTitle => 'Ajouter des médicaments';
+
+  @override
+  String refillList_form_listSectionTitle(int count) {
+    return 'Médicaments de la liste ($count)';
+  }
+
+  @override
+  String get refillList_form_searchHint => 'Rechercher par nom ou code-barres';
+
+  @override
+  String get refillList_form_selectAll => 'Tout sélectionner';
+
+  @override
+  String refillList_form_addSelectedButton(int count) {
+    return 'Ajouter la sélection ($count)';
+  }
+
+  @override
+  String get refillList_form_emptyListHint => 'Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».';
+
+  @override
+  String get refillList_form_noCandidates => 'Aucun médicament trouvé pour ce type';
+
+  @override
+  String get refillList_form_clearListButton => 'Vider la liste';
+
+  @override
+  String refillList_form_totalLabel(int count, String quantity) {
+    return '$count médicaments · Remplissage total : $quantity';
+  }
+
+  @override
+  String refillList_form_currentStockLabel(String quantity) {
+    return 'Actuel : $quantity';
+  }
+
+  @override
+  String get refillList_form_inListBadge => 'Dans la liste';
+
+  @override
+  String refillList_form_suggestedLabel(String quantity) {
+    return 'Suggéré : $quantity';
+  }
+
+  @override
+  String get refillList_form_removeTooltip => 'Retirer de la liste';
+
+  @override
+  String get refillList_printTooltip => 'Imprimer';
+
+  @override
+  String get refillList_print_noDetails => 'Cette liste ne contient aucun médicament à imprimer';
+
+  @override
+  String get refillList_print_stationLabel => 'Station';
+
+  @override
+  String get refillList_print_fillingColumn => 'Remplissage';
+
+  @override
+  String get refillList_print_currentColumn => 'Actuel';
 }

@@ -9242,4 +9242,68 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get report_materialUsage_totalLabel => 'Total';
+
+  @override
+  String get refillList_form_addSectionTitle => 'Add Medicines';
+
+  @override
+  String refillList_form_listSectionTitle(int count) {
+    return 'Medicines in List ($count)';
+  }
+
+  @override
+  String get refillList_form_searchHint => 'Search by medicine name or barcode';
+
+  @override
+  String get refillList_form_selectAll => 'Select all';
+
+  @override
+  String refillList_form_addSelectedButton(int count) {
+    return 'Add Selected ($count)';
+  }
+
+  @override
+  String get refillList_form_emptyListHint => 'No medicines in the list. Check medicines on the left and press "Add Selected".';
+
+  @override
+  String get refillList_form_noCandidates => 'No medicines found for this type';
+
+  @override
+  String get refillList_form_clearListButton => 'Clear List';
+
+  @override
+  String refillList_form_totalLabel(int count, String quantity) {
+    return '$count medicines · Total refill: $quantity';
+  }
+
+  @override
+  String refillList_form_currentStockLabel(String quantity) {
+    return 'Current: $quantity';
+  }
+
+  @override
+  String get refillList_form_inListBadge => 'In list';
+
+  @override
+  String refillList_form_suggestedLabel(String quantity) {
+    return 'Suggested: $quantity';
+  }
+
+  @override
+  String get refillList_form_removeTooltip => 'Remove from list';
+
+  @override
+  String get refillList_printTooltip => 'Print';
+
+  @override
+  String get refillList_print_noDetails => 'This list has no medicines to print';
+
+  @override
+  String get refillList_print_stationLabel => 'Station';
+
+  @override
+  String get refillList_print_fillingColumn => 'Refill';
+
+  @override
+  String get refillList_print_currentColumn => 'Current';
 }

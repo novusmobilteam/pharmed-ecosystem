@@ -12,7 +12,11 @@ class GetRefillListDetailUseCase {
       ok: (data) {
         final Map<int, List<RefillListDetail>> grouped = {};
         for (final d in data) {
-          final key = d.medicineId ?? 0;
+          // materialId bazı yanıtlarda boş gelebiliyor — o zaman tüm satırlar
+          // tek bir gruba (0) düşüp düzenlemede yalnızca ilk ilaç görünüyordu.
+          // İlacın kendi kimliğine düşülür; ikisi de yoksa satır atlanmaz,
+          // kendi detay kimliğiyle ayrı tutulur.
+          final key = d.medicineId ?? d.medicine?.id ?? -(d.id ?? 0);
           grouped.putIfAbsent(key, () => []).add(d);
         }
 

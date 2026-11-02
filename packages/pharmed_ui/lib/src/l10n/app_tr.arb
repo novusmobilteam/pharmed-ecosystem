@@ -11472,5 +11472,93 @@
   "report_materialUsage_totalLabel": "Toplam",
   "@report_materialUsage_totalLabel": {
     "description": "First cell of the total row appended to the material usage report Excel/PDF export"
+  },
+  "refillList_form_addSectionTitle": "İlaç Ekle",
+  "@refillList_form_addSectionTitle": {
+    "description": "Title of the left pane in the refill list form where medicines are picked"
+  },
+  "refillList_form_listSectionTitle": "Listedeki İlaçlar ({count})",
+  "@refillList_form_listSectionTitle": {
+    "description": "Title of the right pane listing medicines in the refill list with count",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "refillList_form_searchHint": "İlaç adı veya barkod ara",
+  "@refillList_form_searchHint": {
+    "description": "Search hint for candidate medicines in the refill list form"
+  },
+  "refillList_form_selectAll": "Tümünü seç",
+  "@refillList_form_selectAll": {
+    "description": "Checkbox label to select all visible candidate medicines"
+  },
+  "refillList_form_addSelectedButton": "Seçilenleri Ekle ({count})",
+  "@refillList_form_addSelectedButton": {
+    "description": "Button adding checked candidate medicines to the refill list",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "refillList_form_emptyListHint": "Listede ilaç yok. Soldan ilaçları işaretleyip \"Seçilenleri Ekle\" ile listeye aktarın.",
+  "@refillList_form_emptyListHint": {
+    "description": "Hint shown when the refill list has no medicines yet"
+  },
+  "refillList_form_noCandidates": "Bu tipe uygun ilaç bulunamadı",
+  "@refillList_form_noCandidates": {
+    "description": "Empty state when no candidate medicines match the selected type or search"
+  },
+  "refillList_form_clearListButton": "Listeyi Temizle",
+  "@refillList_form_clearListButton": {
+    "description": "Button clearing all medicines from the refill list"
+  },
+  "refillList_form_totalLabel": "{count} ilaç · Toplam dolum: {quantity}",
+  "@refillList_form_totalLabel": {
+    "description": "Summary line with medicine count and total filling quantity",
+    "placeholders": {
+      "count": { "type": "int" },
+      "quantity": { "type": "String" }
+    }
+  },
+  "refillList_form_currentStockLabel": "Mevcut: {quantity}",
+  "@refillList_form_currentStockLabel": {
+    "description": "Current stock of a medicine in the refill list form",
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
+  "refillList_form_inListBadge": "Listede",
+  "@refillList_form_inListBadge": {
+    "description": "Badge on a candidate medicine that is already in the refill list"
+  },
+  "refillList_form_suggestedLabel": "Öneri: {quantity}",
+  "@refillList_form_suggestedLabel": {
+    "description": "Suggested filling quantity for a candidate medicine",
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
+  "refillList_form_removeTooltip": "Listeden çıkar",
+  "@refillList_form_removeTooltip": {
+    "description": "Tooltip of the button removing a medicine from the refill list"
+  },
+  "refillList_printTooltip": "Yazdır",
+  "@refillList_printTooltip": {
+    "description": "Tooltip of the row action printing a refill list"
+  },
+  "refillList_print_noDetails": "Bu listede yazdırılacak ilaç yok",
+  "@refillList_print_noDetails": {
+    "description": "Error when the refill list to print has no medicines"
+  },
+  "refillList_print_stationLabel": "İstasyon",
+  "@refillList_print_stationLabel": {
+    "description": "Station label in the refill list printout header"
+  },
+  "refillList_print_fillingColumn": "Dolum",
+  "@refillList_print_fillingColumn": {
+    "description": "Filling quantity column of the refill list printout"
+  },
+  "refillList_print_currentColumn": "Mevcut",
+  "@refillList_print_currentColumn": {
+    "description": "Current stock column of the refill list printout"
   }
 }

@@ -5621,5 +5621,23 @@
       }
     }
   },
-  "report_materialUsage_totalLabel": "Total"
+  "report_materialUsage_totalLabel": "Total",
+  "refillList_form_addSectionTitle": "Ajouter des médicaments",
+  "refillList_form_listSectionTitle": "Médicaments de la liste ({count})",
+  "refillList_form_searchHint": "Rechercher par nom ou code-barres",
+  "refillList_form_selectAll": "Tout sélectionner",
+  "refillList_form_addSelectedButton": "Ajouter la sélection ({count})",
+  "refillList_form_emptyListHint": "Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».",
+  "refillList_form_noCandidates": "Aucun médicament trouvé pour ce type",
+  "refillList_form_clearListButton": "Vider la liste",
+  "refillList_form_totalLabel": "{count} médicaments · Remplissage total : {quantity}",
+  "refillList_form_currentStockLabel": "Actuel : {quantity}",
+  "refillList_form_inListBadge": "Dans la liste",
+  "refillList_form_suggestedLabel": "Suggéré : {quantity}",
+  "refillList_form_removeTooltip": "Retirer de la liste",
+  "refillList_printTooltip": "Imprimer",
+  "refillList_print_noDetails": "Cette liste ne contient aucun médicament à imprimer",
+  "refillList_print_stationLabel": "Station",
+  "refillList_print_fillingColumn": "Remplissage",
+  "refillList_print_currentColumn": "Actuel"
 }

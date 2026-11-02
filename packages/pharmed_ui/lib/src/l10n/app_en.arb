@@ -6667,5 +6667,23 @@
       }
     }
   },
-  "report_materialUsage_totalLabel": "Total"
+  "report_materialUsage_totalLabel": "Total",
+  "refillList_form_addSectionTitle": "Add Medicines",
+  "refillList_form_listSectionTitle": "Medicines in List ({count})",
+  "refillList_form_searchHint": "Search by medicine name or barcode",
+  "refillList_form_selectAll": "Select all",
+  "refillList_form_addSelectedButton": "Add Selected ({count})",
+  "refillList_form_emptyListHint": "No medicines in the list. Check medicines on the left and press \"Add Selected\".",
+  "refillList_form_noCandidates": "No medicines found for this type",
+  "refillList_form_clearListButton": "Clear List",
+  "refillList_form_totalLabel": "{count} medicines · Total refill: {quantity}",
+  "refillList_form_currentStockLabel": "Current: {quantity}",
+  "refillList_form_inListBadge": "In list",
+  "refillList_form_suggestedLabel": "Suggested: {quantity}",
+  "refillList_form_removeTooltip": "Remove from list",
+  "refillList_printTooltip": "Print",
+  "refillList_print_noDetails": "This list has no medicines to print",
+  "refillList_print_stationLabel": "Station",
+  "refillList_print_fillingColumn": "Refill",
+  "refillList_print_currentColumn": "Current"
 }

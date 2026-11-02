@@ -9157,4 +9157,68 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get report_materialUsage_totalLabel => 'Toplam';
+
+  @override
+  String get refillList_form_addSectionTitle => 'İlaç Ekle';
+
+  @override
+  String refillList_form_listSectionTitle(int count) {
+    return 'Listedeki İlaçlar ($count)';
+  }
+
+  @override
+  String get refillList_form_searchHint => 'İlaç adı veya barkod ara';
+
+  @override
+  String get refillList_form_selectAll => 'Tümünü seç';
+
+  @override
+  String refillList_form_addSelectedButton(int count) {
+    return 'Seçilenleri Ekle ($count)';
+  }
+
+  @override
+  String get refillList_form_emptyListHint => 'Listede ilaç yok. Soldan ilaçları işaretleyip "Seçilenleri Ekle" ile listeye aktarın.';
+
+  @override
+  String get refillList_form_noCandidates => 'Bu tipe uygun ilaç bulunamadı';
+
+  @override
+  String get refillList_form_clearListButton => 'Listeyi Temizle';
+
+  @override
+  String refillList_form_totalLabel(int count, String quantity) {
+    return '$count ilaç · Toplam dolum: $quantity';
+  }
+
+  @override
+  String refillList_form_currentStockLabel(String quantity) {
+    return 'Mevcut: $quantity';
+  }
+
+  @override
+  String get refillList_form_inListBadge => 'Listede';
+
+  @override
+  String refillList_form_suggestedLabel(String quantity) {
+    return 'Öneri: $quantity';
+  }
+
+  @override
+  String get refillList_form_removeTooltip => 'Listeden çıkar';
+
+  @override
+  String get refillList_printTooltip => 'Yazdır';
+
+  @override
+  String get refillList_print_noDetails => 'Bu listede yazdırılacak ilaç yok';
+
+  @override
+  String get refillList_print_stationLabel => 'İstasyon';
+
+  @override
+  String get refillList_print_fillingColumn => 'Dolum';
+
+  @override
+  String get refillList_print_currentColumn => 'Mevcut';
 }

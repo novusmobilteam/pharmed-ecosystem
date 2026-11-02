@@ -16049,6 +16049,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total'**
   String get report_materialUsage_totalLabel;
+
+  /// Title of the left pane in the refill list form where medicines are picked
+  ///
+  /// In en, this message translates to:
+  /// **'Add Medicines'**
+  String get refillList_form_addSectionTitle;
+
+  /// Title of the right pane listing medicines in the refill list with count
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines in List ({count})'**
+  String refillList_form_listSectionTitle(int count);
+
+  /// Search hint for candidate medicines in the refill list form
+  ///
+  /// In en, this message translates to:
+  /// **'Search by medicine name or barcode'**
+  String get refillList_form_searchHint;
+
+  /// Checkbox label to select all visible candidate medicines
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get refillList_form_selectAll;
+
+  /// Button adding checked candidate medicines to the refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Add Selected ({count})'**
+  String refillList_form_addSelectedButton(int count);
+
+  /// Hint shown when the refill list has no medicines yet
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines in the list. Check medicines on the left and press "Add Selected".'**
+  String get refillList_form_emptyListHint;
+
+  /// Empty state when no candidate medicines match the selected type or search
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines found for this type'**
+  String get refillList_form_noCandidates;
+
+  /// Button clearing all medicines from the refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Clear List'**
+  String get refillList_form_clearListButton;
+
+  /// Summary line with medicine count and total filling quantity
+  ///
+  /// In en, this message translates to:
+  /// **'{count} medicines · Total refill: {quantity}'**
+  String refillList_form_totalLabel(int count, String quantity);
+
+  /// Current stock of a medicine in the refill list form
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {quantity}'**
+  String refillList_form_currentStockLabel(String quantity);
+
+  /// Badge on a candidate medicine that is already in the refill list
+  ///
+  /// In en, this message translates to:
+  /// **'In list'**
+  String get refillList_form_inListBadge;
+
+  /// Suggested filling quantity for a candidate medicine
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested: {quantity}'**
+  String refillList_form_suggestedLabel(String quantity);
+
+  /// Tooltip of the button removing a medicine from the refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from list'**
+  String get refillList_form_removeTooltip;
+
+  /// Tooltip of the row action printing a refill list
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get refillList_printTooltip;
+
+  /// Error when the refill list to print has no medicines
+  ///
+  /// In en, this message translates to:
+  /// **'This list has no medicines to print'**
+  String get refillList_print_noDetails;
+
+  /// Station label in the refill list printout header
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get refillList_print_stationLabel;
+
+  /// Filling quantity column of the refill list printout
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get refillList_print_fillingColumn;
+
+  /// Current stock column of the refill list printout
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get refillList_print_currentColumn;
 }
 
 class _AppLocalizationsDelegate
