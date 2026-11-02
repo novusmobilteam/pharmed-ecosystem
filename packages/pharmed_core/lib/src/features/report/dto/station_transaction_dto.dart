@@ -61,11 +61,11 @@ class StationTransactionDto {
   factory StationTransactionDto.fromJson(Map<String, dynamic> json) {
     return StationTransactionDto(
       id: json['id'] as int?,
-      cabinName: json['cabinName'] as String?,
+      cabinName: _str(json['cabinName']),
       transactionId: json['transactionId'] as int?,
-      transaction: json['transaction'] as String?,
-      code: json['code'] as String?,
-      barcode: json['barcode'] as String?,
+      transaction: _str(json['transaction']),
+      code: _str(json['code']),
+      barcode: _str(json['barcode']),
       // Eski yanıtlarda `material` düz isimdi; yenilerde Medicine nesnesi.
       material: json['material'] is String ? json['material'] as String : null,
       medicine: json['material'] is Map<String, dynamic>
@@ -73,10 +73,11 @@ class StationTransactionDto {
           : null,
       transactionDate: json['transactionDate'] != null ? DateTime.tryParse(json['transactionDate'].toString()) : null,
       quantity: (json['quantity'] as num?)?.toDouble(),
-      performedBy: json['userName'] as String?,
-      // Servis alanı 'hospitalProtocolCode'; eski ad da desteklenir.
-      protocolCode: (json['hospitalProtocolCode'] ?? json['protocolCode']) as String?,
-      patient: json['patient'] as String?,
+      performedBy: _str(json['userName']),
+      // Servis alanı 'hospitalProtocolCode' ve SAYI olarak geliyor (ör. 4949600);
+      // eski ad da desteklenir. Tipten bağımsız metne çevrilir.
+      protocolCode: _str(json['hospitalProtocolCode'] ?? json['protocolCode']),
+      patient: _str(json['patient']),
       order: json['order'] as int?,
       compartment: json['compartment'] as int?,
       witness: _witnessOf(json),
@@ -87,6 +88,14 @@ class StationTransactionDto {
       cabinId: json['cabinId'] as int?,
       operationId: json['operationId'] as int?,
     );
+  }
+
+  /// Servis bazı kod/numara alanlarını sayı, bazılarını metin gönderebiliyor —
+  /// metin alanları tipten bağımsız okunur (sayı → toString, boş → null).
+  static String? _str(Object? value) {
+    if (value == null) return null;
+    final text = value.toString();
+    return text.isEmpty ? null : text;
   }
 
   /// Şahit: servis 'witnessUser' gönderiyor — ad (String) ya da kullanıcı
