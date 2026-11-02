@@ -11,16 +11,20 @@ class TableView extends StatelessWidget {
       data: notifier.items,
       isLoading: notifier.isFetching,
       enableExcel: true,
+      // Kolon sayısı arttı — dar ekranda sıkışmasın diye yatay kaydırma.
+      horizontalScroll: true,
+      minTableWidth: 1600,
       enableSearch: true,
       enablePDF: true,
       enableDateFilter: true,
+      enableTimeFilter: true,
 
-      // Pagination
-      enablePagination: true,
-      pageSize: notifier.pageSize,
-      currentPage: notifier.currentPage,
+      // Sonsuz kaydırma
+      enableInfiniteScroll: true,
+      hasMore: notifier.hasMore,
+      isLoadingMore: notifier.isLoadingMore,
+      onLoadMore: notifier.loadMore,
       serverTotalCount: notifier.totalCount,
-      onPageChanged: notifier.setPage,
 
       // Filter & Search
       initialDateRange: notifier.dateRange,
@@ -60,6 +64,13 @@ List<TableColumnDef<StationTransaction>> _buildColumnDefs(BuildContext context) 
   TableColumnDef(
     title: context.l10n.tableCore_stationTransactionDateColumn,
     displayValue: (item) => item.transactionDate?.formattedDate,
+    sortValue: (item) => item.transactionDate,
+  ),
+  TableColumnDef(
+    title: context.l10n.tableCore_stationTransactionTimeColumn,
+    flex: 0.6,
+    displayValue: (item) => item.transactionDate?.formattedTime,
+    sortValue: (item) => item.transactionDate,
   ),
   TableColumnDef(title: context.l10n.tableCore_stationTransactionCabinColumn, displayValue: (item) => item.cabinName),
   TableColumnDef(
@@ -78,9 +89,20 @@ List<TableColumnDef<StationTransaction>> _buildColumnDefs(BuildContext context) 
   TableColumnDef(title: context.l10n.tableCore_stationTransactionBarcodeColumn, displayValue: (item) => item.barcode),
   TableColumnDef(title: context.l10n.tableCore_stationTransactionMaterialColumn, displayValue: (item) => item.material),
   TableColumnDef(
+    title: context.l10n.tableCore_stationTransactionBeforeQuantityColumn,
+    displayValue: (item) => item.beforeQuantity == null
+        ? '-'
+        : '${item.beforeQuantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
+    sortValue: (item) => item.beforeQuantity,
+  ),
+  TableColumnDef(
     title: context.l10n.tableCore_stationTransactionQuantityColumn,
     displayValue: (item) => '${item.quantity.formatFractional} ${item.medicine?.pieceUnitLabel ?? ''}',
     sortValue: (item) => item.quantity,
+  ),
+  TableColumnDef(
+    title: context.l10n.tableCore_stationTransactionRfidTagColumn,
+    displayValue: (item) => item.rfidTagNo ?? '-',
   ),
   // TableColumnDef(
   //   title: context.l10n.tableCore_stationTransactionOrderColumn,
@@ -99,5 +121,5 @@ List<TableColumnDef<StationTransaction>> _buildColumnDefs(BuildContext context) 
     title: context.l10n.tableCore_stationTransactionPerformedByColumn,
     displayValue: (item) => item.performedBy,
   ),
-  //TableColumnDef(title: context.l10n.tableCore_stationTransactionWitnessColumn, displayValue: (item) => item.witness),
+  TableColumnDef(title: context.l10n.tableCore_stationTransactionWitnessColumn, displayValue: (item) => item.witness),
 ];

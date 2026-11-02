@@ -11,6 +11,9 @@ class TableView extends StatelessWidget {
       data: notifier.items,
       isLoading: notifier.isFetching,
       enableExcel: true,
+      // Kolon sayısı arttı — dar ekranda sıkışmasın diye yatay kaydırma.
+      horizontalScroll: true,
+      minTableWidth: 1600,
       enableSearch: true,
       enablePDF: true,
       enableDateFilter: true,
@@ -33,7 +36,7 @@ class TableView extends StatelessWidget {
       onCategoryChanged: (id) =>
           notifier.selectHospitalization(notifier.hospitalizations.firstWhere((s) => s.id.toString() == id)),
       categoryTitle: context.l10n.common_patientListTitle,
-      columnDefs: _buildColumnDefs(context),
+      columnDefs: _buildColumnDefs(context, notifier.selectedHospitalization?.patient),
       pdfHeaderBuilder: PdfReportHeader.build(
         title: context.l10n.patientInventory_pdf_title(notifier.selectedHospitalization?.patient?.fullName ?? '-'),
         infoLines: [
@@ -51,7 +54,28 @@ class TableView extends StatelessWidget {
   }
 }
 
-List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) => [
+/// Hasta bilgisi satırın reçetesindeki yatıştan, yoksa seçili yatıştan alınır.
+Patient? _patientOf(PrescriptionItem i, Patient? selected) => i.prescription?.hospitalization?.patient ?? selected;
+
+/// İlaç No = ilacın kodu (yalnızca ilaçlarda; tıbbi sarfta yok).
+String _medicineCode(Medicine? medicine) => medicine is Drug ? (medicine.code ?? '-') : '-';
+
+List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context, Patient? selectedPatient) => [
+  TableColumnDef<PrescriptionItem>(
+    title: context.l10n.patientInventory_table_tcNoColumn,
+    displayValue: (i) => _patientOf(i, selectedPatient)?.tcNo ?? '-',
+  ),
+  TableColumnDef<PrescriptionItem>(
+    title: context.l10n.patientInventory_table_genderColumn,
+    flex: 0.7,
+    displayValue: (i) => _patientOf(i, selectedPatient)?.gender?.label ?? '-',
+  ),
+  TableColumnDef<PrescriptionItem>(
+    title: context.l10n.patientInventory_table_birthDateColumn,
+    flex: 0.8,
+    displayValue: (i) => _patientOf(i, selectedPatient)?.birthDate?.formattedDate ?? '-',
+    sortValue: (i) => _patientOf(i, selectedPatient)?.birthDate,
+  ),
   TableColumnDef<PrescriptionItem>(
     title: context.l10n.patientInventory_table_doctorColumn,
     flex: 0.8,
@@ -61,6 +85,10 @@ List<TableColumnDef<PrescriptionItem>> _buildColumnDefs(BuildContext context) =>
     title: context.l10n.patientInventory_table_departmentColumn,
     flex: 1.2,
     displayValue: (i) => i.prescription?.hospitalization?.physicalService?.name ?? '-',
+  ),
+  TableColumnDef<PrescriptionItem>(
+    title: context.l10n.patientInventory_table_medicineCodeColumn,
+    displayValue: (i) => _medicineCode(i.medicine),
   ),
   TableColumnDef<PrescriptionItem>(
     title: context.l10n.patientInventory_table_barcodeColumn,

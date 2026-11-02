@@ -16,6 +16,12 @@ class StationTransaction {
   final int? order;
   final int? compartment;
   final String? witness;
+
+  /// Hareket öncesi stok miktarı.
+  final double? beforeQuantity;
+
+  /// Hareket gören kalemin RFID etiket numarası.
+  final String? rfidTagNo;
   final bool? hasSteps;
   final int? stationId;
   final int? cabinId;
@@ -40,6 +46,8 @@ class StationTransaction {
     this.order,
     this.compartment,
     this.witness,
+    this.beforeQuantity,
+    this.rfidTagNo,
     this.hasSteps,
     this.stationId,
     this.cabinId,

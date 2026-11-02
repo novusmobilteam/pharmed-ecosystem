@@ -5,6 +5,7 @@ export 'package:pharmed_ui/pharmed_ui.dart';
 
 export 'mixins/api_request_mixin.dart';
 export 'mixins/pagination_mixin.dart';
+export 'mixins/infinite_scroll_mixin.dart';
 export 'mixins/search_mixin.dart';
 export 'mixins/side_panel_mixin.dart';
 

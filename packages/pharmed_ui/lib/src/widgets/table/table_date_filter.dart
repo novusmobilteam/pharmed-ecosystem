@@ -3,10 +3,17 @@ part of 'med_table_view.dart';
 // ─── HIZLI TARİH FİLTRE POPUP ────────────────────────────────────────────────
 
 class _QuickDateFilterPopup extends StatelessWidget {
-  const _QuickDateFilterPopup({this.selectedDateRange, required this.onDateSelected});
+  const _QuickDateFilterPopup({this.selectedDateRange, required this.onDateSelected, this.showTime = false});
 
   final DateTimeRange? selectedDateRange;
   final Function(DateTimeRange?) onDateSelected;
+
+  /// true → hazır aralıklar günün tamamını kapsar (00:00 – 23:59:59) ve özel
+  /// aralıkta saat de seçilir.
+  final bool showTime;
+
+  /// Saatli modda aralık sonu, bitiş gününün son saniyesi olur.
+  DateTime _endOf(DateTime day) => showTime ? DateTime(day.year, day.month, day.day, 23, 59, 59) : day;
 
   bool _isSameRange(DateTime start, DateTime end) {
     if (selectedDateRange == null) return false;
@@ -18,14 +25,15 @@ class _QuickDateFilterPopup extends StatelessWidget {
     final now = DateTime.now().copyWith(hour: 0, minute: 0);
 
     final todayStart = now;
-    final todayEnd = now.add(const Duration(hours: 23));
+    final todayEnd = showTime ? _endOf(now) : now.add(const Duration(hours: 23));
     final yesterday = now.subtract(const Duration(days: 1));
+    final yesterdayEnd = _endOf(yesterday);
     final thisWeekStart = now.subtract(const Duration(days: 6));
-    final thisWeekEnd = now;
+    final thisWeekEnd = _endOf(now);
     final thisMonthStart = DateTime(now.year, now.month, 1);
-    final thisMonthEnd = DateTime(now.year, now.month + 1, 0);
+    final thisMonthEnd = _endOf(DateTime(now.year, now.month + 1, 0));
     final last30Start = now.subtract(const Duration(days: 30));
-    final last30End = now;
+    final last30End = _endOf(now);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -52,8 +60,8 @@ class _QuickDateFilterPopup extends StatelessWidget {
                 context,
                 icon: Icons.history,
                 label: context.l10n.dateFilter_yesterday,
-                isSelected: _isSameRange(yesterday, yesterday),
-                onTap: () => _select(context, yesterday, yesterday),
+                isSelected: _isSameRange(yesterday, yesterdayEnd),
+                onTap: () => _select(context, yesterday, yesterdayEnd),
               ),
               _buildOption(
                 context,
@@ -89,7 +97,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
                 isSelected:
                     selectedDateRange != null &&
                     !_isSameRange(todayStart, todayEnd) &&
-                    !_isSameRange(yesterday, yesterday) &&
+                    !_isSameRange(yesterday, yesterdayEnd) &&
                     !_isSameRange(thisWeekStart, thisWeekEnd) &&
                     !_isSameRange(thisMonthStart, thisMonthEnd) &&
                     !_isSameRange(last30Start, last30End),
@@ -100,6 +108,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
                     builder: (_) => _DateRangePicker(
                       initialStartDate: selectedDateRange?.start,
                       initialEndDate: selectedDateRange?.end,
+                      showTime: showTime,
                       onApply: onDateSelected,
                     ),
                   );
@@ -126,7 +135,7 @@ class _QuickDateFilterPopup extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final fmt = DateFormat('dd.MM.yyyy');
+    final fmt = DateFormat(showTime ? 'dd.MM.yyyy HH:mm' : 'dd.MM.yyyy');
     final hasFilter = selectedDateRange != null;
     final label = hasFilter
         ? () {
@@ -224,11 +233,14 @@ class _QuickDateFilterPopup extends StatelessWidget {
 }
 
 class _DateRangePicker extends StatefulWidget {
-  const _DateRangePicker({this.initialStartDate, this.initialEndDate, required this.onApply});
+  const _DateRangePicker({this.initialStartDate, this.initialEndDate, required this.onApply, this.showTime = false});
 
   final DateTime? initialStartDate;
   final DateTime? initialEndDate;
   final Function(DateTimeRange) onApply;
+
+  /// true → takvimin altında başlangıç/bitiş saati seçilir.
+  final bool showTime;
 
   @override
   State<_DateRangePicker> createState() => _DateRangePickerState();
@@ -239,12 +251,55 @@ class _DateRangePickerState extends State<_DateRangePicker> {
   DateTime? _startDate;
   DateTime? _endDate;
 
+  /// Saatli mod: varsayılan aralık günün tamamı (00:00 – 23:59).
+  TimeOfDay _startTime = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _endTime = const TimeOfDay(hour: 23, minute: 59);
+
   @override
   void initState() {
     super.initState();
     _startDate = widget.initialStartDate;
     _endDate = widget.initialEndDate;
     _focusedMonth = widget.initialStartDate ?? DateTime.now();
+
+    final start = widget.initialStartDate;
+    final end = widget.initialEndDate;
+    if (widget.showTime && start != null) _startTime = TimeOfDay.fromDateTime(start);
+    // Eski (saatsiz) aralıklarda bitiş 00:00 gelir — günün sonu varsayılır.
+    if (widget.showTime && end != null && (end.hour != 0 || end.minute != 0)) {
+      _endTime = TimeOfDay.fromDateTime(end);
+    }
+  }
+
+  DateTime _at(DateTime day, TimeOfDay time, {int second = 0}) =>
+      DateTime(day.year, day.month, day.day, time.hour, time.minute, second);
+
+  /// Uygulanacak aralık — saatli modda seçilen saatlerle birleşir.
+  DateTimeRange? get _range {
+    final start = _startDate;
+    final end = _endDate;
+    if (start == null || end == null) return null;
+    if (!widget.showTime) return DateTimeRange(start: start, end: end);
+    final s = _at(start, _startTime);
+    final e = _at(end, _endTime, second: 59);
+    return e.isBefore(s) ? null : DateTimeRange(start: s, end: e);
+  }
+
+  Future<void> _pickTime({required bool isStart}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isStart ? _startTime : _endTime,
+      builder: (context, child) =>
+          MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child!),
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      if (isStart) {
+        _startTime = picked;
+      } else {
+        _endTime = picked;
+      }
+    });
   }
 
   void _onDaySelected(DateTime day) {
@@ -261,8 +316,6 @@ class _DateRangePickerState extends State<_DateRangePicker> {
         }
       }
     });
-    print(_startDate);
-    print(_endDate);
   }
 
   void _changeMonth(int offset) {
@@ -277,7 +330,7 @@ class _DateRangePickerState extends State<_DateRangePicker> {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 380, maxHeight: 530),
+        constraints: BoxConstraints(maxWidth: 380, maxHeight: widget.showTime ? 600 : 530),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -290,6 +343,7 @@ class _DateRangePickerState extends State<_DateRangePicker> {
               _buildWeekDays(),
               const SizedBox(height: 8),
               Expanded(child: _buildDaysGrid()),
+              if (widget.showTime) ...[const SizedBox(height: 12), _buildTimeRow()],
               const SizedBox(height: 16),
               _buildFooter(),
             ],
@@ -358,6 +412,28 @@ class _DateRangePickerState extends State<_DateRangePicker> {
                 ),
               ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _TimeChip(
+            label: context.l10n.dateFilter_startTime,
+            time: _startTime,
+            onTap: () => _pickTime(isStart: true),
+          ),
+        ),
+        const SizedBox(width: 36),
+        Expanded(
+          child: _TimeChip(
+            label: context.l10n.dateFilter_endTime,
+            time: _endTime,
+            onTap: () => _pickTime(isStart: false),
           ),
         ),
       ],
@@ -470,13 +546,59 @@ class _DateRangePickerState extends State<_DateRangePicker> {
         const SizedBox(width: 8),
         MedButton(
           label: context.l10n.table_applyButton,
-          isActive: _startDate != null && _endDate != null,
+          // Saatli modda aynı gün içinde bitiş saati başlangıçtan önceyse pasif.
+          isActive: _range != null,
           onPressed: () {
-            if (_startDate != null && _endDate != null) {
-              widget.onApply(DateTimeRange(start: _startDate!, end: _endDate!));
+            final range = _range;
+            if (range != null) {
+              widget.onApply(range);
               Navigator.pop(context);
             }
           },
+        ),
+      ],
+    );
+  }
+}
+
+class _TimeChip extends StatelessWidget {
+  const _TimeChip({required this.label, required this.time, required this.onTap});
+
+  final String label;
+  final TimeOfDay time;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    String two(int v) => v.toString().padLeft(2, '0');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF), fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 4),
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.schedule_outlined, size: 13, color: Color(0xFF9CA3AF)),
+                const SizedBox(width: 6),
+                Text(
+                  '${two(time.hour)}:${two(time.minute)}',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF111827)),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

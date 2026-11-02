@@ -7346,7 +7346,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get stationStock_printButton => 'Imprimer';
 
   @override
-  String get stationStock_printHint => 'Sélectionnez des médicaments dans la liste pour imprimer';
+  String get stationStock_printHint =>
+      'Sélectionnez des médicaments dans la liste pour imprimer';
 
   @override
   String stationStock_printTitle(String stationName) {
@@ -9384,7 +9385,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinSelection_stripTitle => 'Cabines';
 
   @override
-  String get cabinSelection_stripHint => 'Touchez une cabine pour voir son agencement';
+  String get cabinSelection_stripHint =>
+      'Touchez une cabine pour voir son agencement';
 
   @override
   String cabinSelection_selectedCountBadge(int count) {
@@ -9395,5 +9397,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinAssignmentList_cabinColumn => 'Cabine';
 
   @override
-  String get unload_hint_noReturnDrawerInCabin => 'Aucun tiroir de retour n\'est défini dans cette cabine';
+  String get unload_hint_noReturnDrawerInCabin =>
+      'Aucun tiroir de retour n\'est défini dans cette cabine';
+
+  @override
+  String get dateFilter_startTime => 'Heure de début';
+
+  @override
+  String get dateFilter_endTime => 'Heure de fin';
+
+  @override
+  String get tableCore_stationTransactionTimeColumn => 'Heure';
+
+  @override
+  String get tableCore_stationTransactionBeforeQuantityColumn =>
+      'Quantité avant';
+
+  @override
+  String get tableCore_stationTransactionRfidTagColumn =>
+      'N° d\'étiquette RFID';
+
+  @override
+  String get authorization_table_isActiveColumn => 'Actif';
+
+  @override
+  String get patientInventory_table_tcNoColumn => 'N° d\'identité';
+
+  @override
+  String get patientInventory_table_genderColumn => 'Sexe';
+
+  @override
+  String get patientInventory_table_birthDateColumn => 'Date de naissance';
+
+  @override
+  String get patientInventory_table_medicineCodeColumn => 'N° du médicament';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMedicineCodeColumn =>
+      'N° du médicament';
+
+  @override
+  String get hospitalStock_table_barcodeColumn => 'Code-barres';
+
+  @override
+  String get tableCore_stockTransactionMedicineCodeColumn => 'N° du médicament';
+
+  @override
+  String report_materialUsage_totalQuantityLabel(String total) {
+    return 'Quantité totale : $total';
+  }
+
+  @override
+  String get report_materialUsage_totalLabel => 'Total';
 }

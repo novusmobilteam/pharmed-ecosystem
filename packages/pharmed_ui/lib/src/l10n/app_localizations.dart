@@ -12601,67 +12601,67 @@ abstract class AppLocalizations {
   /// **'Reserved'**
   String get stationStock_table_reservedColumn;
 
-  /// Table column header — medicine code in the station stock list screen (manager); falls back to the drug code.
+  /// No description provided for @stationStock_table_codeColumn.
   ///
   /// In en, this message translates to:
   /// **'Code'**
   String get stationStock_table_codeColumn;
 
-  /// Table column header — medicine barcode in the station stock list screen (manager).
+  /// No description provided for @stationStock_table_barcodeColumn.
   ///
   /// In en, this message translates to:
   /// **'Barcode'**
   String get stationStock_table_barcodeColumn;
 
-  /// Table column header — remaining quantity in the station stock list screen, computed as current minus reserved.
+  /// No description provided for @stationStock_table_remainingColumn.
   ///
   /// In en, this message translates to:
   /// **'Remaining'**
   String get stationStock_table_remainingColumn;
 
-  /// Table column header — quantity to add to reach the maximum in the station stock list screen, computed as max minus current (never negative).
+  /// No description provided for @stationStock_table_fillingColumn.
   ///
   /// In en, this message translates to:
   /// **'To Fill'**
   String get stationStock_table_fillingColumn;
 
-  /// Toolbar button on the station stock list screen that prints the rows selected in the table.
+  /// No description provided for @stationStock_printButton.
   ///
   /// In en, this message translates to:
   /// **'Print'**
   String get stationStock_printButton;
 
-  /// Tooltip on the disabled print button of the station stock list screen when no rows are selected.
+  /// No description provided for @stationStock_printHint.
   ///
   /// In en, this message translates to:
   /// **'Select medicines from the list to print'**
   String get stationStock_printHint;
 
-  /// Title printed at the top of the station stock list printout; stationName is the selected station.
+  /// No description provided for @stationStock_printTitle.
   ///
   /// In en, this message translates to:
   /// **'Station Stock List — {stationName}'**
   String stationStock_printTitle(String stationName);
 
-  /// Station stock list printout column header — material id.
+  /// No description provided for @stationStock_print_idColumn.
   ///
   /// In en, this message translates to:
   /// **'Id'**
   String get stationStock_print_idColumn;
 
-  /// Station stock list printout column header — material (medicine) name.
+  /// No description provided for @stationStock_print_materialColumn.
   ///
   /// In en, this message translates to:
   /// **'Material'**
   String get stationStock_print_materialColumn;
 
-  /// Station stock list printout column header — maximum quantity (short form for the narrow printed column).
+  /// No description provided for @stationStock_print_maxColumn.
   ///
   /// In en, this message translates to:
   /// **'Max'**
   String get stationStock_print_maxColumn;
 
-  /// Station stock list printout column header — current quantity in the station.
+  /// No description provided for @stationStock_print_quantityColumn.
   ///
   /// In en, this message translates to:
   /// **'Quantity'**
@@ -15930,35 +15930,125 @@ abstract class AppLocalizations {
   /// **'Listen'**
   String get fingerprint_login_resumeButton;
 
-  /// Title of the cabinet strip at the top of station-wide operation selection screens.
+  /// No description provided for @cabinSelection_stripTitle.
   ///
   /// In en, this message translates to:
   /// **'Cabinets'**
   String get cabinSelection_stripTitle;
 
-  /// Hint next to the cabinet strip: tapping a cabinet shows its interior layout below.
+  /// No description provided for @cabinSelection_stripHint.
   ///
   /// In en, this message translates to:
   /// **'Tap a cabinet to see its layout'**
   String get cabinSelection_stripHint;
 
-  /// Badge on a cabinet card in the strip showing how many items are selected in that cabinet.
+  /// No description provided for @cabinSelection_selectedCountBadge.
   ///
   /// In en, this message translates to:
   /// **'{count} selected'**
   String cabinSelection_selectedCountBadge(int count);
 
-  /// Column header in the station-wide medicine list showing which cabinet the row belongs to.
+  /// No description provided for @cabinAssignmentList_cabinColumn.
   ///
   /// In en, this message translates to:
   /// **'Cabinet'**
   String get cabinAssignmentList_cabinColumn;
 
-  /// Shown on the return box unload screen when the viewed cabinet has no return drawer.
+  /// No description provided for @unload_hint_noReturnDrawerInCabin.
   ///
   /// In en, this message translates to:
   /// **'No return drawer is defined in this cabinet'**
   String get unload_hint_noReturnDrawerInCabin;
+
+  /// No description provided for @dateFilter_startTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get dateFilter_startTime;
+
+  /// No description provided for @dateFilter_endTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get dateFilter_endTime;
+
+  /// No description provided for @tableCore_stationTransactionTimeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get tableCore_stationTransactionTimeColumn;
+
+  /// No description provided for @tableCore_stationTransactionBeforeQuantityColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity Before'**
+  String get tableCore_stationTransactionBeforeQuantityColumn;
+
+  /// No description provided for @tableCore_stationTransactionRfidTagColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'RFID Tag No'**
+  String get tableCore_stationTransactionRfidTagColumn;
+
+  /// No description provided for @authorization_table_isActiveColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get authorization_table_isActiveColumn;
+
+  /// No description provided for @patientInventory_table_tcNoColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get patientInventory_table_tcNoColumn;
+
+  /// No description provided for @patientInventory_table_genderColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get patientInventory_table_genderColumn;
+
+  /// No description provided for @patientInventory_table_birthDateColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get patientInventory_table_birthDateColumn;
+
+  /// No description provided for @patientInventory_table_medicineCodeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug No'**
+  String get patientInventory_table_medicineCodeColumn;
+
+  /// No description provided for @tableCore_unorderedLoadedMaterialMedicineCodeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug No'**
+  String get tableCore_unorderedLoadedMaterialMedicineCodeColumn;
+
+  /// No description provided for @hospitalStock_table_barcodeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get hospitalStock_table_barcodeColumn;
+
+  /// No description provided for @tableCore_stockTransactionMedicineCodeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Drug No'**
+  String get tableCore_stockTransactionMedicineCodeColumn;
+
+  /// No description provided for @report_materialUsage_totalQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Quantity: {total}'**
+  String report_materialUsage_totalQuantityLabel(String total);
+
+  /// No description provided for @report_materialUsage_totalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get report_materialUsage_totalLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -46,6 +46,10 @@ List<TableColumnDef<UserAuthorizationSummary>> _buildColumnDefs(BuildContext con
     displayValue: (item) => item.roleName,
   ),
   TableColumnDef<UserAuthorizationSummary>(
+    title: context.l10n.authorization_table_isActiveColumn,
+    displayValue: (item) => (item.isActive ?? false) ? context.l10n.common_boolYes : context.l10n.common_boolNo,
+  ),
+  TableColumnDef<UserAuthorizationSummary>(
     title: context.l10n.authorization_table_encryptedLoginColumn,
     displayValue: (item) => (item.encryptedLogin ?? false) ? context.l10n.common_boolYes : context.l10n.common_boolNo,
   ),

@@ -7801,7 +7801,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tableCore_stationTransactionPerformedByColumn => 'İşlemi Yapan';
 
   @override
-  String get tableCore_stationTransactionWitnessColumn => 'Tanık';
+  String get tableCore_stationTransactionWitnessColumn => 'Şahit Kullanıcı';
 
   @override
   String get tableCore_unorderedLoadedMaterialStationColumn => 'İstasyon';
@@ -9095,7 +9095,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinSelection_stripTitle => 'Kabinler';
 
   @override
-  String get cabinSelection_stripHint => 'İç yerleşimi görmek için kabine dokunun';
+  String get cabinSelection_stripHint =>
+      'İç yerleşimi görmek için kabine dokunun';
 
   @override
   String cabinSelection_selectedCountBadge(int count) {
@@ -9106,5 +9107,54 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinAssignmentList_cabinColumn => 'Kabin';
 
   @override
-  String get unload_hint_noReturnDrawerInCabin => 'Bu kabinde iade çekmecesi tanımlı değil';
+  String get unload_hint_noReturnDrawerInCabin =>
+      'Bu kabinde iade çekmecesi tanımlı değil';
+
+  @override
+  String get dateFilter_startTime => 'Başlangıç Saati';
+
+  @override
+  String get dateFilter_endTime => 'Bitiş Saati';
+
+  @override
+  String get tableCore_stationTransactionTimeColumn => 'İşlem Saati';
+
+  @override
+  String get tableCore_stationTransactionBeforeQuantityColumn =>
+      'Hareket Öncesi Miktar';
+
+  @override
+  String get tableCore_stationTransactionRfidTagColumn => 'RFID Etiket No';
+
+  @override
+  String get authorization_table_isActiveColumn => 'Aktif';
+
+  @override
+  String get patientInventory_table_tcNoColumn => 'TC No';
+
+  @override
+  String get patientInventory_table_genderColumn => 'Cinsiyet';
+
+  @override
+  String get patientInventory_table_birthDateColumn => 'Doğum Tarihi';
+
+  @override
+  String get patientInventory_table_medicineCodeColumn => 'İlaç No';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMedicineCodeColumn => 'İlaç No';
+
+  @override
+  String get hospitalStock_table_barcodeColumn => 'Barkod';
+
+  @override
+  String get tableCore_stockTransactionMedicineCodeColumn => 'İlaç No';
+
+  @override
+  String report_materialUsage_totalQuantityLabel(String total) {
+    return 'Toplam Miktar: $total';
+  }
+
+  @override
+  String get report_materialUsage_totalLabel => 'Toplam';
 }

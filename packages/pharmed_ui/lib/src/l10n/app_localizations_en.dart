@@ -7175,7 +7175,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stationStock_printButton => 'Print';
 
   @override
-  String get stationStock_printHint => 'Select medicines from the list to print';
+  String get stationStock_printHint =>
+      'Select medicines from the list to print';
 
   @override
   String stationStock_printTitle(String stationName) {
@@ -9190,5 +9191,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinAssignmentList_cabinColumn => 'Cabinet';
 
   @override
-  String get unload_hint_noReturnDrawerInCabin => 'No return drawer is defined in this cabinet';
+  String get unload_hint_noReturnDrawerInCabin =>
+      'No return drawer is defined in this cabinet';
+
+  @override
+  String get dateFilter_startTime => 'Start Time';
+
+  @override
+  String get dateFilter_endTime => 'End Time';
+
+  @override
+  String get tableCore_stationTransactionTimeColumn => 'Time';
+
+  @override
+  String get tableCore_stationTransactionBeforeQuantityColumn =>
+      'Quantity Before';
+
+  @override
+  String get tableCore_stationTransactionRfidTagColumn => 'RFID Tag No';
+
+  @override
+  String get authorization_table_isActiveColumn => 'Active';
+
+  @override
+  String get patientInventory_table_tcNoColumn => 'National ID';
+
+  @override
+  String get patientInventory_table_genderColumn => 'Gender';
+
+  @override
+  String get patientInventory_table_birthDateColumn => 'Date of Birth';
+
+  @override
+  String get patientInventory_table_medicineCodeColumn => 'Drug No';
+
+  @override
+  String get tableCore_unorderedLoadedMaterialMedicineCodeColumn => 'Drug No';
+
+  @override
+  String get hospitalStock_table_barcodeColumn => 'Barcode';
+
+  @override
+  String get tableCore_stockTransactionMedicineCodeColumn => 'Drug No';
+
+  @override
+  String report_materialUsage_totalQuantityLabel(String total) {
+    return 'Total Quantity: $total';
+  }
+
+  @override
+  String get report_materialUsage_totalLabel => 'Total';
 }

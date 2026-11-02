@@ -6645,5 +6645,27 @@
   "cabinAssignmentList_cabinColumn": "Cabinet",
   "@cabinAssignmentList_cabinColumn": {},
   "unload_hint_noReturnDrawerInCabin": "No return drawer is defined in this cabinet",
-  "@unload_hint_noReturnDrawerInCabin": {}
+  "@unload_hint_noReturnDrawerInCabin": {},
+  "dateFilter_startTime": "Start Time",
+  "dateFilter_endTime": "End Time",
+  "tableCore_stationTransactionTimeColumn": "Time",
+  "tableCore_stationTransactionBeforeQuantityColumn": "Quantity Before",
+  "tableCore_stationTransactionRfidTagColumn": "RFID Tag No",
+  "authorization_table_isActiveColumn": "Active",
+  "patientInventory_table_tcNoColumn": "National ID",
+  "patientInventory_table_genderColumn": "Gender",
+  "patientInventory_table_birthDateColumn": "Date of Birth",
+  "patientInventory_table_medicineCodeColumn": "Drug No",
+  "tableCore_unorderedLoadedMaterialMedicineCodeColumn": "Drug No",
+  "hospitalStock_table_barcodeColumn": "Barcode",
+  "tableCore_stockTransactionMedicineCodeColumn": "Drug No",
+  "report_materialUsage_totalQuantityLabel": "Total Quantity: {total}",
+  "@report_materialUsage_totalQuantityLabel": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "report_materialUsage_totalLabel": "Total"
 }

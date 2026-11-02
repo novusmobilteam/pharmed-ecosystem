@@ -10055,7 +10055,7 @@
 "tableCore_stationTransactionPatientColumn": "Hasta",
 "tableCore_stationTransactionProtocolCodeColumn": "Protokol No",
 "tableCore_stationTransactionPerformedByColumn": "İşlemi Yapan",
-"tableCore_stationTransactionWitnessColumn": "Tanık",
+"tableCore_stationTransactionWitnessColumn": "Şahit Kullanıcı",
 "tableCore_unorderedLoadedMaterialStationColumn": "İstasyon",
 "tableCore_unorderedLoadedMaterialBarcodeColumn": "Barkod",
 "tableCore_unorderedLoadedMaterialMaterialColumn": "Malzeme",
@@ -11407,5 +11407,70 @@
   "unload_hint_noReturnDrawerInCabin": "Bu kabinde iade çekmecesi tanımlı değil",
   "@unload_hint_noReturnDrawerInCabin": {
     "description": "Shown on the return box unload screen when the viewed cabinet has no return drawer"
+  },
+  "dateFilter_startTime": "Başlangıç Saati",
+  "@dateFilter_startTime": {
+    "description": "Time picker label for the start of a custom date range in the table date filter (shown only when the table enables time filtering)"
+  },
+  "dateFilter_endTime": "Bitiş Saati",
+  "@dateFilter_endTime": {
+    "description": "Time picker label for the end of a custom date range in the table date filter (shown only when the table enables time filtering)"
+  },
+  "tableCore_stationTransactionTimeColumn": "İşlem Saati",
+  "@tableCore_stationTransactionTimeColumn": {
+    "description": "Station transaction report column header — time of the transaction (HH:mm)"
+  },
+  "tableCore_stationTransactionBeforeQuantityColumn": "Hareket Öncesi Miktar",
+  "@tableCore_stationTransactionBeforeQuantityColumn": {
+    "description": "Station transaction report column header — stock quantity before the transaction"
+  },
+  "tableCore_stationTransactionRfidTagColumn": "RFID Etiket No",
+  "@tableCore_stationTransactionRfidTagColumn": {
+    "description": "Station transaction report column header — RFID tag number of the item moved in the transaction"
+  },
+  "authorization_table_isActiveColumn": "Aktif",
+  "@authorization_table_isActiveColumn": {
+    "description": "Authorization list report column header — whether the user is active (Yes/No)"
+  },
+  "patientInventory_table_tcNoColumn": "TC No",
+  "@patientInventory_table_tcNoColumn": {
+    "description": "Patient inventory report column header — patient's national ID number"
+  },
+  "patientInventory_table_genderColumn": "Cinsiyet",
+  "@patientInventory_table_genderColumn": {
+    "description": "Patient inventory report column header — patient's gender"
+  },
+  "patientInventory_table_birthDateColumn": "Doğum Tarihi",
+  "@patientInventory_table_birthDateColumn": {
+    "description": "Patient inventory report column header — patient's date of birth"
+  },
+  "patientInventory_table_medicineCodeColumn": "İlaç No",
+  "@patientInventory_table_medicineCodeColumn": {
+    "description": "Patient inventory report column header — drug code (İlaç No)"
+  },
+  "tableCore_unorderedLoadedMaterialMedicineCodeColumn": "İlaç No",
+  "@tableCore_unorderedLoadedMaterialMedicineCodeColumn": {
+    "description": "Unordered / loaded materials report column header — drug code (İlaç No)"
+  },
+  "hospitalStock_table_barcodeColumn": "Barkod",
+  "@hospitalStock_table_barcodeColumn": {
+    "description": "Hospital material list report column header — material barcode"
+  },
+  "tableCore_stockTransactionMedicineCodeColumn": "İlaç No",
+  "@tableCore_stockTransactionMedicineCodeColumn": {
+    "description": "Material usage report column header — drug code (İlaç No)"
+  },
+  "report_materialUsage_totalQuantityLabel": "Toplam Miktar: {total}",
+  "@report_materialUsage_totalQuantityLabel": {
+    "description": "Summary shown below the material usage report table — sum of the quantities of the listed rows",
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "report_materialUsage_totalLabel": "Toplam",
+  "@report_materialUsage_totalLabel": {
+    "description": "First cell of the total row appended to the material usage report Excel/PDF export"
   }
 }

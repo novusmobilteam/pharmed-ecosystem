@@ -41,6 +41,13 @@ List<TableColumnDef<UnorderedLoadedMaterial>> _buildColumnDefs(BuildContext cont
     displayValue: (item) => item.stationName,
   ),
   TableColumnDef(
+    title: context.l10n.tableCore_unorderedLoadedMaterialMedicineCodeColumn,
+    displayValue: (item) => switch (item.medicine) {
+      Drug d => d.code,
+      _ => null,
+    },
+  ),
+  TableColumnDef(
     title: context.l10n.tableCore_unorderedLoadedMaterialBarcodeColumn,
     displayValue: (item) => item.barcode,
   ),

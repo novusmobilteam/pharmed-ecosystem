@@ -13,6 +13,7 @@ class TableView extends StatelessWidget {
       enableExcel: true,
       enableSearch: true,
       enablePDF: true,
+      enableDateFilter: true,
 
       // Pagination
       enablePagination: true,
@@ -21,7 +22,9 @@ class TableView extends StatelessWidget {
       serverTotalCount: notifier.totalCount,
       onPageChanged: notifier.setPage,
 
-      // Search
+      // Tarih & Search
+      initialDateRange: notifier.dateRange,
+      onDateRangeChanged: notifier.setDateRange,
       onSearchChanged: notifier.search,
 
       // İstasyonlar (çoklu seçim)

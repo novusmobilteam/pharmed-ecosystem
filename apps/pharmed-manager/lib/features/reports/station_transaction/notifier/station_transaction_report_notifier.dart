@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:pharmed_manager/core/core.dart';
 
+/// İstasyon Hareket Listesi. Sayfalama yerine sonsuz kaydırma kullanır
+/// (InfiniteScrollMixin); tarih filtresi saatlidir.
 class StationTransactionReportNotifier extends ChangeNotifier
-    with ApiRequestMixin, PaginationMixin<StationTransaction> {
+    with ApiRequestMixin, InfiniteScrollMixin<StationTransaction> {
   final GetStationsUseCase _getStationsUseCase;
   final GetStationTransactionsUseCase _getStationTransactionsUseCase;
   final GetTransactionStepsUseCase _getTransactionStepsUseCase;
@@ -13,10 +16,18 @@ class StationTransactionReportNotifier extends ChangeNotifier
     required GetTransactionStepsUseCase getTransactionStepsUseCase,
   }) : _getStationsUseCase = getStationsUseCase,
        _getStationTransactionsUseCase = getStationTransactionsUseCase,
-       _getTransactionStepsUseCase = getTransactionStepsUseCase;
+       _getTransactionStepsUseCase = getTransactionStepsUseCase {
+    // Varsayılan: bugün 00:00 – 23:59:59.
+    final now = DateTime.now();
+    initDateRange(
+      DateTimeRange(
+        start: DateTime(now.year, now.month, now.day),
+        end: DateTime(now.year, now.month, now.day, 23, 59, 59),
+      ),
+    );
+  }
 
-  OperationKey fetchStationsOp = OperationKey.fetch();
-  OperationKey fetchReportsOp = OperationKey.fetch();
+  OperationKey fetchStationsOp = OperationKey.custom('fetch-stations');
   final OperationKey fetchStepsOp = OperationKey.custom('fetch-transaction-steps');
 
   List<Station> _stations = [];
@@ -34,8 +45,7 @@ class StationTransactionReportNotifier extends ChangeNotifier
 
   Set<String> get selectedCategoryIds => _selectedStationIds.map((id) => id.toString()).toSet();
 
-  bool get isFetching => isLoading(fetchReportsOp);
-  String? get statusMessage => message(fetchReportsOp);
+  bool get isFetching => isFirstPageLoading;
 
   Map<String, Set<Object>> _serverFilters = {};
   Map<String, Set<Object>> get serverFilters => _serverFilters;
@@ -54,9 +64,8 @@ class StationTransactionReportNotifier extends ChangeNotifier
       operation: () => _getStationsUseCase.call(PagedQueryParams()),
       onData: (response) {
         _stations = response.data ?? [];
-        //_selectedStationIds = {if (_stations.isNotEmpty && _stations.first.id != null) _stations.first.id!};
-        _reloadFromFirstPage();
         notifyListeners();
+        reload();
       },
     );
   }
@@ -66,22 +75,7 @@ class StationTransactionReportNotifier extends ChangeNotifier
     if (setEquals(next, _selectedStationIds)) return;
     _selectedStationIds = next;
     notifyListeners();
-    _refetchFromFirstPage();
-  }
-
-  /// Filtre değişimi sayfa navigasyonu değildir: sayfayı koşulsuz 1'e çek
-  /// ve her durumda yeniden sorgula.
-  void _refetchFromFirstPage() {
-    resetPage(); // mixin'de sayfa numarasını fetch tetiklemeden 1'e çeken metot
-    fetch();
-  }
-
-  /// Filtre değişince sayfa 1'e dönmeli; yoksa 3. sayfadayken
-  /// daha az kayıtlı bir filtreye geçildiğinde boş sayfa gelir.
-  void _reloadFromFirstPage() {
-    // PaginationMixin'deki sayfa sıfırlama metodu neyse onu kullan
-    // (örn. goToPage(1) zaten fetch tetikliyorsa sadece o yeterli).
-    setPage(1);
+    reload();
   }
 
   List<Object>? get _filters {
@@ -96,22 +90,19 @@ class StationTransactionReportNotifier extends ChangeNotifier
   void onServerFiltersChanged(Map<String, Set<Object>> filters) {
     _serverFilters = filters;
     notifyListeners();
-    _refetchFromFirstPage();
+    reload();
   }
 
   @override
-  Future<void> fetch() async {
-    await fetchPagedData(
-      op: fetchReportsOp,
-      fetchMethod: (skip, take) => _getStationTransactionsUseCase.call(
-        PagedQueryParams(
-          skip: skip,
-          take: take,
-          searchQuery: searchQuery,
-          startDate: startDate,
-          endDate: endDate,
-          filters: _filters,
-        ),
+  Future<Result<ApiResponse<List<StationTransaction>>?>> fetchPage(int skip, int take) {
+    return _getStationTransactionsUseCase.call(
+      PagedQueryParams(
+        skip: skip,
+        take: take,
+        searchQuery: searchQuery,
+        startDate: startDate,
+        endDate: endDate,
+        filters: _filters,
       ),
     );
   }

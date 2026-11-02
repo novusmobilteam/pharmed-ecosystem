@@ -87,6 +87,7 @@ class MedTable<T extends Object> extends StatefulWidget {
     this.pdfHeaderBuilder,
     // Tarih filtresi
     this.enableDateFilter = false,
+    this.enableTimeFilter = false,
     this.onDateRangeChanged,
     // Seçim
     this.selectionMode = TableSelectionMode.none,
@@ -99,6 +100,12 @@ class MedTable<T extends Object> extends StatefulWidget {
     this.cellBuilder,
     // Pagination
     this.enablePagination = false,
+    this.enableInfiniteScroll = false,
+    this.hasMore = false,
+    this.isLoadingMore = false,
+    this.onLoadMore,
+    this.summary,
+    this.exportSummaryRow,
     this.currentPage,
     this.pageSize,
     this.serverTotalCount,
@@ -164,6 +171,11 @@ class MedTable<T extends Object> extends StatefulWidget {
 
   // ── Tarih filtresi ────────────────────────────────────────────────────────────
   final bool enableDateFilter;
+
+  /// true → tarih filtresinde başlangıç/bitiş saati de seçilir; hazır
+  /// aralıklar günün başından (00:00) bitiş gününün sonuna (23:59:59) kadar
+  /// uzanır. false → eski davranış (yalnızca gün).
+  final bool enableTimeFilter;
   final ValueChanged<DateTimeRange?>? onDateRangeChanged;
 
   // ── Seçim ────────────────────────────────────────────────────────────────────
@@ -186,6 +198,26 @@ class MedTable<T extends Object> extends StatefulWidget {
 
   // ── Pagination ───────────────────────────────────────────────────────────────
   final bool enablePagination;
+
+  // ── Sonsuz kaydırma (enablePagination yerine) ───────────────────────────────
+  /// true → sayfa footer'ı yerine liste sonuna yaklaşınca [onLoadMore] çağrılır.
+  final bool enableInfiniteScroll;
+
+  /// Sunucuda yüklenmemiş kayıt kaldı mı.
+  final bool hasMore;
+
+  /// Sonraki sayfa yükleniyor — liste yerinde kalır, altta ince bir gösterge
+  /// çıkar ([isLoading] ise tüm tabloyu yükleniyor durumuna alır).
+  final bool isLoadingMore;
+  final VoidCallback? onLoadMore;
+
+  /// Footer'ın hemen üstünde gösterilen özet satırı (ör. miktar toplamı).
+  final Widget? summary;
+
+  /// Verilirse Excel/PDF çıktısının sonuna eklenen özet satırı (kolon
+  /// sayısıyla aynı uzunlukta; boş hücreler için '').
+  final List<String>? exportSummaryRow;
+
   final int? currentPage;
   final int? pageSize;
   final int? serverTotalCount;
@@ -407,6 +439,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
       barrierColor: Colors.black26,
       builder: (_) => _QuickDateFilterPopup(
         selectedDateRange: _currentDateRange,
+        showTime: widget.enableTimeFilter,
         onDateSelected: (range) {
           setState(() => _currentDateRange = range);
           widget.onDateRangeChanged?.call(range);
@@ -466,7 +499,10 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
 
   List<List<String>> _buildExportRows() {
     final cols = _cols;
-    return _exportData.map((item) => cols.map((c) => c.valueOf(item)).toList()).toList();
+    final rows = _exportData.map((item) => cols.map((c) => c.valueOf(item)).toList()).toList();
+    final summaryRow = widget.exportSummaryRow;
+    if (summaryRow != null && summaryRow.length == cols.length) rows.add(summaryRow);
+    return rows;
   }
 
   Future<void> _handleExcel() async {
@@ -557,6 +593,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                       cols: cols,
                       searchQuery: _searchController.text,
                       currentDateRange: _currentDateRange,
+                      showTime: widget.enableTimeFilter,
                       onClearAll: _clearAllFilters,
                       onRemoveColFilter: _removeColFilter,
                       onClearSearch: () {
@@ -574,13 +611,22 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                         ? (widget.loadingWidget ?? const Center(child: CircularProgressIndicator.adaptive()))
                         : widget.data.isEmpty
                         ? (widget.emptyWidget ?? _defaultEmpty())
-                        : _buildTableArea(filteredData, cols),
+                        : _withInfiniteScroll(_buildTableArea(filteredData, cols)),
                   ),
+                  if (widget.enableInfiniteScroll && widget.isLoadingMore)
+                    const LinearProgressIndicator(minHeight: 2),
+                  if (widget.summary != null && !widget.isLoading) ...[
+                    const Divider(height: 1, color: Color(0xFFEEF0F4)),
+                    widget.summary!,
+                  ],
                   const Divider(height: 1, color: Color(0xFFEEF0F4)),
                   _TableFooter(
                     filteredCount: filteredData.length,
-                    totalCount: widget.data.length,
-                    enablePagination: widget.enablePagination,
+                    // Sonsuz kaydırmada "yüklenen / sunucudaki toplam" gösterilir.
+                    totalCount: widget.enableInfiniteScroll && (widget.serverTotalCount ?? -1) > widget.data.length
+                        ? widget.serverTotalCount!
+                        : widget.data.length,
+                    enablePagination: widget.enablePagination && !widget.enableInfiniteScroll,
                     currentPage: widget.currentPage,
                     pageSize: widget.pageSize,
                     serverTotalCount: widget.serverTotalCount,
@@ -592,6 +638,30 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Dikey liste sonuna ~[_loadMoreThreshold] px kala, ya da ilk sayfa ekranı
+  /// doldurmadığında (kaydırılacak bir şey yoksa) bir sonraki sayfayı ister.
+  /// Yükleme sürerken veya kayıt kalmadıysa tetiklemez.
+  static const double _loadMoreThreshold = 320;
+
+  Widget _withInfiniteScroll(Widget child) {
+    if (!widget.enableInfiniteScroll) return child;
+
+    void check(ScrollMetrics metrics) {
+      if (metrics.axis != Axis.vertical) return;
+      if (!widget.hasMore || widget.isLoadingMore || widget.isLoading) return;
+      if (metrics.extentAfter < _loadMoreThreshold) widget.onLoadMore?.call();
+    }
+
+    return NotificationListener<Notification>(
+      onNotification: (n) {
+        if (n is ScrollUpdateNotification) check(n.metrics);
+        if (n is ScrollMetricsNotification) check(n.metrics);
+        return false;
+      },
+      child: child,
     );
   }
 

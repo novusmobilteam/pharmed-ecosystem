@@ -25,14 +25,20 @@ class StationTransactionDetailDialog extends StatelessWidget {
     String v(Object? value) => (value == null || value.toString().isEmpty) ? '-' : value.toString();
     return [
       (l10n.tableCore_stationTransactionDateColumn, v(t.transactionDate?.formattedDate)),
+      (l10n.tableCore_stationTransactionTimeColumn, v(t.transactionDate?.formattedTime)),
       (l10n.tableCore_stationTransactionTypeColumn, v(t.transaction)),
       (l10n.tableCore_stationTransactionCabinColumn, v(t.cabinName)),
+      (
+        l10n.tableCore_stationTransactionBeforeQuantityColumn,
+        v(t.beforeQuantity == null ? null : '${t.beforeQuantity.formatFractional} ${t.medicine?.pieceUnitLabel ?? ''}'),
+      ),
       (
         l10n.tableCore_stationTransactionQuantityColumn,
         v(t.quantity == null ? null : '${t.quantity.formatFractional} ${t.medicine?.pieceUnitLabel ?? ''}'),
       ),
       (l10n.tableCore_stationTransactionCodeColumn, v(t.code)),
       (l10n.tableCore_stationTransactionBarcodeColumn, v(t.barcode)),
+      (l10n.tableCore_stationTransactionRfidTagColumn, v(t.rfidTagNo)),
       (l10n.tableCore_stationTransactionOrderColumn, v(t.order)),
       (l10n.tableCore_stationTransactionCompartmentColumn, v(t.compartment)),
       (l10n.tableCore_stationTransactionPatientColumn, v(t.patient)),

@@ -5,6 +5,7 @@ import 'package:pharmed_manager/core/core.dart';
 ///
 /// İstasyon seçimi çoklu yapılır (İstasyon Hareketleri raporuyla aynı kalıp);
 /// hiçbir istasyon seçili değilse tüm istasyonlar listelenir.
+/// Tarih aralığı servise `startDate` / `endDate` query parametreleriyle gönderilir.
 class InertMaterialsReportNotifier extends ChangeNotifier
     with ApiRequestMixin, PaginationMixin<InertMaterial> {
   final GetStationsUseCase _getStationsUseCase;
@@ -40,7 +41,13 @@ class InertMaterialsReportNotifier extends ChangeNotifier
       onData: (response) {
         _stations = response.data ?? [];
         notifyListeners();
-        _refetchFromFirstPage();
+        // Tablo varsayılan aralığı (dateRange) gösterir; ilk sorgunun da aynı
+        // aralıkla gitmesi için aralık açıkça set edilir (setDateRange fetch tetikler).
+        if (startDate == null && endDate == null) {
+          setDateRange(dateRange);
+        } else {
+          _refetchFromFirstPage();
+        }
       },
     );
   }
@@ -70,7 +77,14 @@ class InertMaterialsReportNotifier extends ChangeNotifier
     await fetchPagedData(
       op: fetchReportOp,
       fetchMethod: (skip, take) => _getInertMaterialsUseCase.call(
-        PagedQueryParams(skip: skip, take: take, searchQuery: searchQuery, filters: _filters),
+        PagedQueryParams(
+          skip: skip,
+          take: take,
+          searchQuery: searchQuery,
+          startDate: startDate,
+          endDate: endDate,
+          filters: _filters,
+        ),
       ),
     );
   }

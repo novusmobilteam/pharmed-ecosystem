@@ -16,6 +16,13 @@ class StationTransactionDto {
   final int? order;
   final int? compartment;
   final String? witness;
+
+  /// Hareket öncesi stok miktarı (servis: beforeQuantity).
+  final double? beforeQuantity;
+
+  /// Hareket gören kalemin RFID etiket numarası. Servis henüz göndermiyor —
+  /// alan adı backend'le netleşince [_rfidTagOf] güncellenmeli.
+  final String? rfidTagNo;
   final bool? hasSteps;
   final int? stationId;
   final int? cabinId;
@@ -42,6 +49,8 @@ class StationTransactionDto {
     this.order,
     this.compartment,
     this.witness,
+    this.beforeQuantity,
+    this.rfidTagNo,
     this.hasSteps,
     this.stationId,
     this.cabinId,
@@ -65,16 +74,37 @@ class StationTransactionDto {
       transactionDate: json['transactionDate'] != null ? DateTime.tryParse(json['transactionDate'].toString()) : null,
       quantity: (json['quantity'] as num?)?.toDouble(),
       performedBy: json['userName'] as String?,
-      protocolCode: json['protocolCode'] as String?,
+      // Servis alanı 'hospitalProtocolCode'; eski ad da desteklenir.
+      protocolCode: (json['hospitalProtocolCode'] ?? json['protocolCode']) as String?,
       patient: json['patient'] as String?,
       order: json['order'] as int?,
       compartment: json['compartment'] as int?,
-      witness: json['witness'] as String?,
+      witness: _witnessOf(json),
+      beforeQuantity: (json['beforeQuantity'] as num?)?.toDouble(),
+      rfidTagNo: _rfidTagOf(json),
       hasSteps: json['hasSteps'] as bool?,
       stationId: json['stationId'] as int?,
       cabinId: json['cabinId'] as int?,
       operationId: json['operationId'] as int?,
     );
+  }
+
+  /// Şahit: servis 'witnessUser' gönderiyor — ad (String) ya da kullanıcı
+  /// nesnesi ({name, surname}) olabilir. Eski 'witness' alanı da desteklenir.
+  static String? _witnessOf(Map<String, dynamic> json) {
+    final value = json['witnessUser'] ?? json['witness'];
+    if (value is String) return value.trim().isEmpty ? null : value;
+    if (value is Map<String, dynamic>) {
+      final fullName = [value['name'], value['surname']].whereType<String>().join(' ').trim();
+      return fullName.isEmpty ? null : fullName;
+    }
+    return null;
+  }
+
+  /// RFID etiket no — olası alan adları sırayla denenir.
+  static String? _rfidTagOf(Map<String, dynamic> json) {
+    final value = json['rfidTagNo'] ?? json['rfidTag'] ?? json['epc'];
+    return value?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +123,8 @@ class StationTransactionDto {
       if (order != null) 'order': order,
       if (compartment != null) 'compartment': compartment,
       if (witness != null) 'witness': witness,
+      if (beforeQuantity != null) 'beforeQuantity': beforeQuantity,
+      if (rfidTagNo != null) 'rfidTagNo': rfidTagNo,
       if (hasSteps != null) 'hasSteps': hasSteps,
       if (stationId != null) 'stationId': stationId,
       if (cabinId != null) 'cabinId': cabinId,

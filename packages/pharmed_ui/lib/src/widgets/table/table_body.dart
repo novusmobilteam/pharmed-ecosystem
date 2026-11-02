@@ -493,6 +493,7 @@ class _ActiveFilterBar<T extends Object> extends StatelessWidget {
     required this.onRemoveColFilter,
     required this.onClearSearch,
     this.currentDateRange,
+    this.showTime = false,
     this.onClearDateRange,
   });
 
@@ -502,11 +503,14 @@ class _ActiveFilterBar<T extends Object> extends StatelessWidget {
   final VoidCallback onClearAll, onClearSearch;
   final ValueChanged<int> onRemoveColFilter;
   final DateTimeRange? currentDateRange;
+  final bool showTime;
   final VoidCallback? onClearDateRange;
 
   String _fmt(DateTimeRange r) {
-    String p(DateTime d) =>
-        '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year.toString().substring(2)}';
+    String two(int v) => v.toString().padLeft(2, '0');
+    String p(DateTime d) => '${two(d.day)}.${two(d.month)}.${d.year.toString().substring(2)}';
+    String t(DateTime d) => '${two(d.hour)}:${two(d.minute)}';
+    if (showTime) return '${p(r.start)} ${t(r.start)} – ${p(r.end)} ${t(r.end)}';
     final s = p(r.start);
     final e = p(r.end);
     return s == e ? s : '$s – $e';

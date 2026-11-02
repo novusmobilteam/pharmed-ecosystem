@@ -5599,5 +5599,27 @@
   "cabinAssignmentList_cabinColumn": "Cabine",
   "@cabinAssignmentList_cabinColumn": {},
   "unload_hint_noReturnDrawerInCabin": "Aucun tiroir de retour n'est défini dans cette cabine",
-  "@unload_hint_noReturnDrawerInCabin": {}
+  "@unload_hint_noReturnDrawerInCabin": {},
+  "dateFilter_startTime": "Heure de début",
+  "dateFilter_endTime": "Heure de fin",
+  "tableCore_stationTransactionTimeColumn": "Heure",
+  "tableCore_stationTransactionBeforeQuantityColumn": "Quantité avant",
+  "tableCore_stationTransactionRfidTagColumn": "N° d'étiquette RFID",
+  "authorization_table_isActiveColumn": "Actif",
+  "patientInventory_table_tcNoColumn": "N° d'identité",
+  "patientInventory_table_genderColumn": "Sexe",
+  "patientInventory_table_birthDateColumn": "Date de naissance",
+  "patientInventory_table_medicineCodeColumn": "N° du médicament",
+  "tableCore_unorderedLoadedMaterialMedicineCodeColumn": "N° du médicament",
+  "hospitalStock_table_barcodeColumn": "Code-barres",
+  "tableCore_stockTransactionMedicineCodeColumn": "N° du médicament",
+  "report_materialUsage_totalQuantityLabel": "Quantité totale : {total}",
+  "@report_materialUsage_totalQuantityLabel": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "report_materialUsage_totalLabel": "Total"
 }
