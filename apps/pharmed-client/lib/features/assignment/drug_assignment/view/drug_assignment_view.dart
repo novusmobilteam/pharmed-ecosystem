@@ -6,16 +6,15 @@ import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../dashboard/dashboard.dart';
-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../assignment.dart';
 
 part 'assignment_idle_panel.dart';
 part 'assignment_edit_panel.dart';
 
 class DrugAssignmentView extends ConsumerStatefulWidget {
-  const DrugAssignmentView({super.key, required this.cabinContext});
+  const DrugAssignmentView({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinContext;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<DrugAssignmentView> createState() => _DrugAssignmentViewState();
@@ -29,7 +28,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
     final notifier = ref.read(drugAssignmentNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      notifier.init(widget.cabinContext);
+      notifier.init(widget.stationContext);
     });
   }
 
@@ -45,7 +44,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
       }
     });
 
-    if (widget.cabinContext.cabinData == null || state is DrugAssignmentUninitialized) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty || state is DrugAssignmentUninitialized) {
       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
     }
 
@@ -54,6 +53,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
       return const Center(child: MedLoadingIndicator());
     }
 
+    final scope = notifier.scope;
     final groups = _extractGroups(state);
     final selectedUnitId = state is DrugAssignmentCellSelected ? state.selectedUnitId : null;
     final selectedCellId = state is DrugAssignmentCellSelected ? state.selectedCellId : null;
@@ -67,26 +67,37 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
 
     return CabinOperationSelectionLayout(
       isLoading: state is DrugAssignmentLoading,
-      left: CabinOverviewSelectionPanel(
-        cabin: widget.cabinContext.cabin,
-        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-        groups: groups,
-        assignments: assignments,
-        // Serumda raf değil avadanlık seçilidir — raf (unit) vurgulanmaz.
-        selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
-        selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
-        onCellTap: (unit) => notifier.onCellTap(unit, null),
-        onSerumTrayTap: notifier.onSerumTrayTap,
+      left: StationCabinSelectionPanel(
+        cabins: scope.cabins,
+        viewedCabinId: scope.viewedCabinId,
+        onCabinTap: notifier.viewCabin,
+        interior: CabinOverviewSelectionPanel(
+          key: ValueKey(scope.viewedCabinId),
+          cabin: scope.viewedCabin,
+          // State istasyonun tüm gruplarını taşır — yalnızca görüntülenen
+          // kabinin çekmeceleri çizilir.
+          groups: scope.viewedGroups,
+          assignments: assignments,
+          // Serumda raf değil avadanlık seçilidir — raf (unit) vurgulanmaz.
+          selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
+          selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
+          onCellTap: (unit) => notifier.onCellTap(unit, null),
+          onSerumTrayTap: notifier.onSerumTrayTap,
+        ),
       ),
       right: switch (state) {
         DrugAssignmentCellSelected s => _AssignmentEditPanel(state: s, notifier: notifier),
         DrugAssignmentSaving() => const Center(child: MedLoadingIndicator()),
         _ => _AssignmentIdlePanel(
-          assignments: idle?.visibleAssignments ?? [],
+          assignments: scope.filtered(idle?.visibleAssignments ?? const []),
           groups: groups,
           onEdit: notifier.editAssignment,
-          menu: widget.cabinContext.menu,
+          menu: widget.stationContext.menu,
           onAssignmentSearchChanged: (value) => notifier.onAssignmentSearchChanged(value),
+          cabins: scope.cabins,
+          cabinFilter: scope.cabinFilter,
+          onCabinFilterChanged: notifier.setCabinFilter,
+          cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
         ),
       },
     );

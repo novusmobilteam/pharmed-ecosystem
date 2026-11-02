@@ -7,16 +7,17 @@ import '../dashboard/dashboard.dart';
 import 'cabin_stock.dart';
 
 class CabinStockView extends ConsumerWidget {
-  const CabinStockView({super.key, required this.cabinRouteContext});
+  const CabinStockView({super.key, required this.cabinRouteContext, required this.stationContext});
 
   final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final deviceMode = cabinRouteContext.deviceMode;
 
     return switch (deviceMode) {
-      CabinType.master => MasterCabinStockScreen(cabinRouteContext: cabinRouteContext),
+      CabinType.master => MasterCabinStockScreen(stationContext: stationContext),
       CabinType.mobile => MobileCabinStockScreen(cabinRouteContext: cabinRouteContext),
       _ => const Center(child: MedLoadingIndicator()),
     };

@@ -9140,4 +9140,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fingerprint_login_resumeButton => 'Listen';
+
+  @override
+  String get cabinSelection_stripTitle => 'Cabinets';
+
+  @override
+  String get cabinSelection_stripHint => 'Tap a cabinet to see its layout';
+
+  @override
+  String cabinSelection_selectedCountBadge(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get cabinAssignmentList_cabinColumn => 'Cabinet';
+
+  @override
+  String get unload_hint_noReturnDrawerInCabin => 'No return drawer is defined in this cabinet';
 }

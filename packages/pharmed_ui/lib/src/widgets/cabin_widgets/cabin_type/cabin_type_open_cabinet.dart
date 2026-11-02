@@ -1,60 +1,71 @@
 part of 'cabin_type_reference_view.dart';
 
+/// Açık dolap: kapısız, dört raf; raflarda farklı boyda kutular.
 class CabinTypeOpenCabinet extends StatelessWidget {
   const CabinTypeOpenCabinet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: MedSpacing.insetMd,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: MedColors.surface,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(color: MedColors.text3),
+    return _CabinBody(
+      child: Container(
+        decoration: _faceDecoration(color: MedColors.surface2),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [for (var i = 0; i < 4; i++) Expanded(child: _shelf(i))],
+        ),
       ),
-      child: Column(spacing: 4.0, children: List.generate(4, (index) => Expanded(child: _shelf(index)))),
     );
   }
 
   Widget _shelf(int index) {
     return Container(
-      padding: EdgeInsets.only(left: 5.0, bottom: 2.0),
-      margin: EdgeInsets.only(bottom: 4.0),
-      decoration: BoxDecoration(
-        color: MedColors.border.withAlpha(65),
-        border: Border(bottom: BorderSide(color: MedColors.text2)),
+      padding: const EdgeInsets.only(top: 2),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: MedColors.cabinBorder, width: 1.5)),
       ),
-      child: _CabinSkylineBars(seed: index),
+      child: _ShelfBoxes(seed: index),
     );
   }
 }
 
-class _CabinSkylineBars extends StatelessWidget {
-  const _CabinSkylineBars({required this.seed});
+/// Rafa dizilmiş kutular — [seed] ile her rafta farklı ama sabit bir dizilim.
+class _ShelfBoxes extends StatelessWidget {
+  const _ShelfBoxes({required this.seed});
 
   final int seed;
 
+  static const _colors = [MedColors.blueLight, MedColors.greenLight, MedColors.amberLight];
+  static const _borders = [MedColors.blueMid, MedColors.green, MedColors.amberBorder];
+
   @override
   Widget build(BuildContext context) {
-    final random = Random(seed);
-    final barCount = 2 + random.nextInt(4);
+    final random = Random(seed * 7 + 3);
+    final count = 2 + random.nextInt(3);
 
     return Row(
-      spacing: 4.0,
+      spacing: 2,
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: List.generate(barCount, (index) {
-        final height = 15.0 + random.nextInt(16);
-        return Container(
-          width: 13,
-          height: height,
-          decoration: BoxDecoration(
-            color: Colors.grey.withAlpha(25),
-            borderRadius: BorderRadius.circular(2.0),
-            border: Border.all(color: MedColors.border),
+      children: [
+        for (var i = 0; i < count; i++)
+          Expanded(
+            flex: 2 + random.nextInt(3),
+            child: FractionallySizedBox(
+              heightFactor: 0.45 + random.nextDouble() * 0.5,
+              child: () {
+                final c = random.nextInt(_colors.length);
+                return DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: _colors[c],
+                    borderRadius: BorderRadius.circular(1.5),
+                    border: Border.all(color: _borders[c].withAlpha(160), width: 0.6),
+                  ),
+                );
+              }(),
+            ),
           ),
-        );
-      }),
+        const Spacer(),
+      ],
     );
   }
 }

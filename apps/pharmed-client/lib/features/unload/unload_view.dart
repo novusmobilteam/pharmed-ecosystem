@@ -18,7 +18,7 @@ class UnloadView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterUnloadView(cabinContext: cabinRouteContext, stationContext: stationContext),
+      CabinType.master => MasterUnloadView(stationContext: stationContext),
       CabinType.mobile => MobileUnloadView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

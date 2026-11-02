@@ -54,13 +54,14 @@ final class UnloadDrawerSelection extends UnloadDrawerState {
   }
 
   UnloadDrawerSelection copyWith({
+    int? cabinId,
     List<ReturnDrawerMedicine>? items,
     Set<int>? selectedIds,
     bool? isSubmitting,
     String? search,
   }) {
     return UnloadDrawerSelection(
-      cabinId: cabinId,
+      cabinId: cabinId ?? this.cabinId,
       mode: mode,
       items: items ?? this.items,
       selectedIds: selectedIds ?? this.selectedIds,

@@ -11333,5 +11333,30 @@
   "fingerprint_login_resumeButton": "Dinle",
   "@fingerprint_login_resumeButton": {
     "description": "Login: restart listening on the scanner"
+  },
+  "cabinSelection_stripTitle": "Kabinler",
+  "@cabinSelection_stripTitle": {
+    "description": "Title of the cabinet strip at the top of station-wide operation selection screens"
+  },
+  "cabinSelection_stripHint": "İç yerleşimi görmek için kabine dokunun",
+  "@cabinSelection_stripHint": {
+    "description": "Hint next to the cabinet strip: tapping a cabinet shows its interior layout below"
+  },
+  "cabinSelection_selectedCountBadge": "{count} seçili",
+  "@cabinSelection_selectedCountBadge": {
+    "description": "Badge on a cabinet card in the strip showing how many items are selected in that cabinet",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinAssignmentList_cabinColumn": "Kabin",
+  "@cabinAssignmentList_cabinColumn": {
+    "description": "Column header in the station-wide medicine list showing which cabinet the row belongs to"
+  },
+  "unload_hint_noReturnDrawerInCabin": "Bu kabinde iade çekmecesi tanımlı değil",
+  "@unload_hint_noReturnDrawerInCabin": {
+    "description": "Shown on the return box unload screen when the viewed cabinet has no return drawer"
   }
 }

@@ -42,7 +42,9 @@ class DashboardRouteContent extends ConsumerWidget {
           child: switch (currentRoute) {
             'dashboard' => SizedBox.shrink(),
             'drug-assignment' =>
-              cabinRouteContext != null ? AssignmentView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? AssignmentView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+                  : SizedBox.shrink(),
             'drug-refill' =>
               cabinRouteContext != null
                   ? RefillView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
@@ -59,13 +61,17 @@ class DashboardRouteContent extends ConsumerWidget {
                   ? CensusView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
                   : SizedBox.shrink(),
             'drawer-malfunction' =>
-              cabinRouteContext != null ? FaultView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? FaultView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext)
+                  : SizedBox.shrink(),
             'drug-return' =>
               stationCabinsContext != null ? RefundView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'drug-waste' =>
               stationCabinsContext != null ? WasteView(stationContext: stationCabinsContext) : SizedBox.shrink(),
             'cabin-stock' =>
-              cabinRouteContext != null ? CabinStockView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
+              cabinRouteContext != null
+                  ? CabinStockView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+                  : SizedBox.shrink(),
             'patient-request-review' =>
               cabinRouteContext != null
                   ? PrescriptionScreen(cabinRouteContext: cabinRouteContext)
@@ -88,8 +94,8 @@ class DashboardRouteContent extends ConsumerWidget {
             'unscanned-barcodes' => UnscannedBarcodesScreen(menu: activeMenu!),
             'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
             'return-box-unload' =>
-              cabinRouteContext != null
-                  ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
+              stationCabinsContext != null
+                  ? UnloadDrawerScreen(stationContext: stationCabinsContext)
                   : const SizedBox.shrink(),
             'station-inventory' => InventoryScreen(menu: activeMenu!),
             'directed-orders' => RedirectedOrdersScreen(),

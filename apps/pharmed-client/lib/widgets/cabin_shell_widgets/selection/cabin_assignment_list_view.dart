@@ -14,6 +14,7 @@ class CabinAssignmentListView extends StatelessWidget {
     this.onToggleCell,
     this.onDelete,
     this.onReplace,
+    this.cabinLabelOf,
   });
 
   final List<MedicineAssignment> items;
@@ -26,6 +27,10 @@ class CabinAssignmentListView extends StatelessWidget {
   final ValueChanged<int>? onToggleCell;
   final ValueChanged<MedicineAssignment>? onDelete;
   final ValueChanged<MedicineAssignment>? onReplace;
+
+  /// Verilirse "Kabin" sütunu gösterilir — istasyon geneli listelerde satırın
+  /// hangi kabine ait olduğunu belirtir.
+  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
 
   double _ratio(double v, double max) => max > 0 ? (v / max).clamp(0.0, 1.0) : 0.0;
 
@@ -40,6 +45,8 @@ class CabinAssignmentListView extends StatelessWidget {
             if (onToggle != null)
               SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_selectColumn, style: textStyle)),
             Expanded(child: Text(context.l10n.cabinAssignmentList_medicineColumn, style: textStyle)),
+            if (cabinLabelOf != null)
+              Expanded(child: Text(context.l10n.cabinAssignmentList_cabinColumn, style: textStyle)),
             Expanded(child: Text(context.l10n.cabinAssignmentList_locationColumn, style: textStyle)),
             Expanded(child: Text(context.l10n.cabinAssignmentList_stockColumn, style: textStyle)),
             SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_fillLevelColumn, style: textStyle)),
@@ -121,6 +128,14 @@ class CabinAssignmentListView extends StatelessWidget {
                           ),
                         ),
                       Expanded(child: Text(name)),
+                      if (cabinLabelOf != null)
+                        Expanded(
+                          child: Text(
+                            cabinLabelOf!(assignment) ?? '—',
+                            style: MedTextStyles.bodySm(color: MedColors.text3),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       Expanded(child: Text(konum)),
                       Expanded(child: Text(stock)),
                       SizedBox(

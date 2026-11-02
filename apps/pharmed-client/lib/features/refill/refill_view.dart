@@ -19,7 +19,7 @@ class RefillView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterRefillView(cabinContext: cabinRouteContext, stationContext: stationContext),
+      CabinType.master => MasterRefillView(stationContext: stationContext),
       CabinType.mobile => MobileRefillView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

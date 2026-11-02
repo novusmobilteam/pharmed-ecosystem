@@ -17,7 +17,7 @@ class DestructionView extends ConsumerWidget {
     final deviceMode = cabinRouteContext.deviceMode;
 
     return switch (deviceMode) {
-      CabinType.master => MasterDestructionView(cabinContext: cabinRouteContext, stationContext: stationContext),
+      CabinType.master => MasterDestructionView(stationContext: stationContext),
       _ => const Center(child: MedLoadingIndicator()),
     };
   }

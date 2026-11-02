@@ -3,3 +3,4 @@ export 'overview_panel/overview_panel.dart';
 export 'helpers/helpers.dart';
 export 'operation_panel_base.dart';
 export 'cabin_type/station_cabins_overview.dart';
+export 'cabin_type/cabin_type_reference_view.dart';

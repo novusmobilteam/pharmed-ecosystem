@@ -9344,4 +9344,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fingerprint_login_resumeButton => 'Écouter';
+
+  @override
+  String get cabinSelection_stripTitle => 'Cabines';
+
+  @override
+  String get cabinSelection_stripHint => 'Touchez une cabine pour voir son agencement';
+
+  @override
+  String cabinSelection_selectedCountBadge(int count) {
+    return '$count sélectionné(s)';
+  }
+
+  @override
+  String get cabinAssignmentList_cabinColumn => 'Cabine';
+
+  @override
+  String get unload_hint_noReturnDrawerInCabin => 'Aucun tiroir de retour n\'est défini dans cette cabine';
 }

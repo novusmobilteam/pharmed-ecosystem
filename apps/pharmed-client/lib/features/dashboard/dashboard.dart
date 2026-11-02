@@ -1,4 +1,5 @@
 export 'presentation/notifier/cabin_route_context.dart';
 export 'presentation/notifier/station_cabins_context.dart';
+export 'presentation/notifier/station_cabin_scope.dart';
 
 export 'presentation/view/dashboard_screen.dart';

@@ -10,9 +10,8 @@ import 'master_destruction_execution_view.dart';
 import 'master_destruction_selection_view.dart';
 
 class MasterDestructionView extends ConsumerStatefulWidget {
-  const MasterDestructionView({super.key, required this.cabinContext, required this.stationContext});
+  const MasterDestructionView({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinContext;
   final StationCabinsContext stationContext;
 
   @override
@@ -27,7 +26,7 @@ class _MasterDestructionViewState extends ConsumerState<MasterDestructionView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(masterDestructionSelectionNotifierProvider).init(widget.cabinContext);
+      ref.read(masterDestructionSelectionNotifierProvider).init(widget.stationContext);
     });
 
     _executionNotifier = ref.read(masterDestructionExecutionNotifierProvider);
@@ -48,7 +47,7 @@ class _MasterDestructionViewState extends ConsumerState<MasterDestructionView> {
     final selection = ref.watch(masterDestructionSelectionNotifierProvider);
     final isExecuting = ref.watch(masterDestructionExecutionNotifierProvider.select((n) => n.isExecuting));
 
-    if (widget.cabinContext.cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
     if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
@@ -58,6 +57,6 @@ class _MasterDestructionViewState extends ConsumerState<MasterDestructionView> {
 
     return isExecuting
         ? MasterDestructionExecutionView(stationContext: widget.stationContext)
-        : MasterDestructionSelectionView(cabinContext: widget.cabinContext);
+        : MasterDestructionSelectionView(menu: widget.stationContext.menu);
   }
 }

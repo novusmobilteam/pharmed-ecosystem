@@ -5569,5 +5569,21 @@
   "fingerprint_login_idle": "Lecteur d'empreintes en pause",
   "@fingerprint_login_idle": {},
   "fingerprint_login_resumeButton": "Écouter",
-  "@fingerprint_login_resumeButton": {}
+  "@fingerprint_login_resumeButton": {},
+  "cabinSelection_stripTitle": "Cabines",
+  "@cabinSelection_stripTitle": {},
+  "cabinSelection_stripHint": "Touchez une cabine pour voir son agencement",
+  "@cabinSelection_stripHint": {},
+  "cabinSelection_selectedCountBadge": "{count} sélectionné(s)",
+  "@cabinSelection_selectedCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinAssignmentList_cabinColumn": "Cabine",
+  "@cabinAssignmentList_cabinColumn": {},
+  "unload_hint_noReturnDrawerInCabin": "Aucun tiroir de retour n'est défini dans cette cabine",
+  "@unload_hint_noReturnDrawerInCabin": {}
 }

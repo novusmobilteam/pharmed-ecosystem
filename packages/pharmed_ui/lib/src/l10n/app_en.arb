@@ -6615,5 +6615,21 @@
   "fingerprint_login_idle": "Fingerprint scanner paused",
   "@fingerprint_login_idle": {},
   "fingerprint_login_resumeButton": "Listen",
-  "@fingerprint_login_resumeButton": {}
+  "@fingerprint_login_resumeButton": {},
+  "cabinSelection_stripTitle": "Cabinets",
+  "@cabinSelection_stripTitle": {},
+  "cabinSelection_stripHint": "Tap a cabinet to see its layout",
+  "@cabinSelection_stripHint": {},
+  "cabinSelection_selectedCountBadge": "{count} selected",
+  "@cabinSelection_selectedCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cabinAssignmentList_cabinColumn": "Cabinet",
+  "@cabinAssignmentList_cabinColumn": {},
+  "unload_hint_noReturnDrawerInCabin": "No return drawer is defined in this cabinet",
+  "@unload_hint_noReturnDrawerInCabin": {}
 }

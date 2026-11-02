@@ -8,9 +8,8 @@ import '../notifier/master_census_execution_notifier.dart';
 import '../notifier/master_census_selection_notifier.dart';
 
 class MasterCensusView extends ConsumerStatefulWidget {
-  const MasterCensusView({super.key, required this.cabinContext, required this.stationContext});
+  const MasterCensusView({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinContext;
   final StationCabinsContext stationContext;
 
   @override
@@ -25,7 +24,7 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(masterCensusSelectionNotifierProvider).init(widget.cabinContext);
+      ref.read(masterCensusSelectionNotifierProvider).init(widget.stationContext);
     });
 
     _executionNotifier = ref.read(masterCensusExecutionNotifierProvider);
@@ -46,7 +45,7 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
     final selection = ref.watch(masterCensusSelectionNotifierProvider);
     final isExecuting = ref.watch(masterCensusExecutionNotifierProvider.select((n) => n.isExecuting));
 
-    if (widget.cabinContext.cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
     if (selection.isLoadingAssignments) {
@@ -58,6 +57,6 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
 
     return isExecuting
         ? MasterCensusExecutionView(stationContext: widget.stationContext)
-        : MasterCensusSelectionView(cabinContext: widget.cabinContext);
+        : MasterCensusSelectionView(menu: widget.stationContext.menu);
   }
 }

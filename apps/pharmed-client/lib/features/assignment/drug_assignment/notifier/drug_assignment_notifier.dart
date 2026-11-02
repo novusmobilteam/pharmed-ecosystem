@@ -31,30 +31,73 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   MedicinePageState? _cachedMedicinePage;
   Timer? _searchDebounceTimer;
 
+  /// İstasyon geneli kabin kapsamı — kabin seçim adımı yok; sol panelde
+  /// hangi kabinin iç yerleşiminin gösterileceği burada tutulur. State'teki
+  /// [groups]/[assignments] istasyondaki TÜM işlem yapılabilir kabinleri
+  /// kapsar (göz kimlikleri istasyon genelinde tekil).
+  final StationCabinScope scope = StationCabinScope();
+
   @override
   DrugAssignmentUiState build() {
     ref.onDispose(() => _searchDebounceTimer?.cancel());
     return const DrugAssignmentUninitialized();
   }
 
-  Future<void> init(CabinRouteContext ctx) async {
-    final cabinId = ctx.cabin?.id;
-    final groups = ctx.cabinData?.groups;
-    if (cabinId == null || groups == null) {
-      return;
-    }
+  Future<void> init(StationCabinsContext ctx) async {
+    scope.attach(ctx);
+    if (!scope.hasCabins) return;
 
     state = DrugAssignmentLoading();
+    state = await _loadIdle();
+  }
 
-    final result = await _getAssignments.call(cabinId);
+  /// Her kabinin atamaları kabin bazlı uç noktadan (paralel) çekilip
+  /// birleştirilir — düzenleme akışının beklediği atama şekli korunur.
+  Future<DrugAssignmentUiState> _loadIdle() async {
+    final groups = scope.allGroups;
+    final cabinId = scope.viewedCabinId ?? 0;
+    final results = await Future.wait([for (final id in scope.cabinOrder) _getAssignments.call(id)]);
 
-    state = result.when(
-      ok: (assignments) => DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId),
-      error: (e) => DrugAssignmentError(
-        message: e.message,
-        previous: DrugAssignmentIdle(groups: groups, assignments: const [], cabinId: cabinId),
-      ),
-    );
+    final assignments = <MedicineAssignment>[];
+    String? errorMessage;
+    for (final result in results) {
+      final message = result.when<String?>(
+        ok: (list) {
+          assignments.addAll(list);
+          return null;
+        },
+        error: (e) => e.message,
+      );
+      errorMessage ??= message;
+    }
+
+    final idle = DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId);
+    final failure = errorMessage;
+    return failure == null ? idle : DrugAssignmentError(message: failure, previous: idle);
+  }
+
+  /// Kabin şeridinden kabin değiştirildiğinde: düzenleme sürüyorsa iptal
+  /// edilir (göz başka kabinde kalırdı), tabloya dönülür.
+  void viewCabin(int cabinId) {
+    final current = state;
+    if (current is DrugAssignmentSaving) return;
+    if (!scope.view(cabinId)) return;
+    _searchDebounceTimer?.cancel();
+    switch (current) {
+      case DrugAssignmentIdle s:
+        state = s.copyWith();
+      case DrugAssignmentCellSelected s:
+        state = DrugAssignmentIdle(groups: s.groups, assignments: s.assignments, cabinId: cabinId);
+      default:
+        break;
+    }
+  }
+
+  /// Sağ tablonun kabin filtresi.
+  void setCabinFilter(int? cabinId) {
+    final current = state;
+    if (!scope.setFilter(cabinId)) return;
+    if (current is DrugAssignmentIdle) state = current.copyWith();
   }
 
   /// Sol panelden bir göze dokunulduğunda çağrılır (boş ya da dolu fark
@@ -143,6 +186,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final unitId = serumShelfId ?? assignment.cabinDrawerId;
     final selectedGroup = _findGroupForUnit(unitId, current.groups);
     if (unitId == null || selectedGroup == null) return;
+
+    // Tablodan başka bir kabinin ataması düzenlenince iç yerleşim o kabine geçer.
+    scope.view(scope.cabinIdOfSlot(selectedGroup.slot.id) ?? scope.cabinIdOf(assignment));
 
     _enterEditing(
       groups: current.groups,
@@ -447,15 +493,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   /// artık aynı gözde kalınmıyor, "Atamalar Tamamla" butonu olmadığı
   /// için işlem bitince ekranın kendisi terk edilmiş sayılır.
   Future<void> _refreshAndReturnToIdle({required int cabinId, required List<DrawerGroup> groups}) async {
-    final result = await _getAssignments.call(cabinId);
-
-    state = result.when(
-      ok: (assignments) => DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId),
-      error: (e) => DrugAssignmentError(
-        message: e.message,
-        previous: DrugAssignmentIdle(groups: groups, assignments: const [], cabinId: cabinId),
-      ),
-    );
+    state = await _loadIdle();
   }
 
   void dismissError() {

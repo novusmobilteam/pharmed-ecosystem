@@ -1,7 +1,8 @@
 // [SWREQ-CLI-MUNLOAD-001] [IEC 62304 §5.5]
-// Master kabin boşaltmasının seçim fazı: seçilen kabinin atamalarını çeker,
-// stoklu gözlerin seçimini yönetir, atama silme/değiştirme işlemlerini
-// yürütür ve kuyruğu hazırlayıp execution notifier'a devreder.
+// Master kabin boşaltmasının seçim fazı: istasyondaki tüm kabinlerin
+// atamalarını çeker (kabin seçim adımı yok), stoklu gözlerin seçimini
+// kabinler arası yönetir, atama silme/değiştirme işlemlerini yürütür ve
+// kuyruğu kabin sırasıyla hazırlayıp execution notifier'a devreder.
 //
 // Sınıf: Class B
 
@@ -17,7 +18,7 @@ import '../../../dashboard/dashboard.dart';
 
 final masterUnloadSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterUnloadSelectionNotifier>((ref) {
   return MasterUnloadSelectionNotifier(
-    getAssignments: ref.read(getCabinAssignmentsWitCabinUseCaseProvider),
+    getAssignments: ref.read(getStationAssignmentsUseCaseProvider),
     deleteAssignment: ref.read(deleteAssignmentUseCaseProvider),
     updateAssignment: ref.read(updateMedicineAssignmentUseCaseProvider),
   );
@@ -25,23 +26,20 @@ final masterUnloadSelectionNotifierProvider = ChangeNotifierProvider.autoDispose
 
 class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
   MasterUnloadSelectionNotifier({
-    required GetCabinAssignmentsWithCabinUseCase getAssignments,
+    required GetStationAssignmentsUseCase getAssignments,
     required DeleteMedicineAssignmentUseCase deleteAssignment,
     required UpdateMedicineAssignmentUseCase updateAssignment,
   }) : _getAssignments = getAssignments,
        _deleteAssignment = deleteAssignment,
        _updateAssignment = updateAssignment;
 
-  final GetCabinAssignmentsWithCabinUseCase _getAssignments;
+  final GetStationAssignmentsUseCase _getAssignments;
   final DeleteMedicineAssignmentUseCase _deleteAssignment;
   final UpdateMedicineAssignmentUseCase _updateAssignment;
 
   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
 
-  int? _cabinId;
-
-  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
-  List<DrawerGroup> _groups = const [];
+  final StationCabinScope scope = StationCabinScope();
 
   List<MedicineAssignment> _assignments = [];
   final AssignmentSelection _selection = AssignmentSelection();
@@ -70,8 +68,9 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
   List<MedicineAssignment> get visibleAssignments {
     final q = _search.trim().toLowerCase();
-    if (q.isEmpty) return _assignments;
-    return _assignments.where((a) {
+    final byCabin = scope.filtered(_assignments);
+    if (q.isEmpty) return byCabin;
+    return byCabin.where((a) {
       final name = a.medicine?.name?.toLowerCase() ?? '';
       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
       return name.contains(q) || barcode.contains(q);
@@ -80,32 +79,40 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
 
+  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
+
   bool get canStart => _selection.isNotEmpty;
 
   /// Boşaltılacak bir şey olmalı — stoğu olmayan göz seçilemez.
   bool canSelect(MedicineAssignment a) => a.cabinDrawerId != null && a.totalQuantity > 0;
 
-  Future<void> init(CabinRouteContext ctx) {
-    _cabinId = ctx.cabin?.id;
-    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
+  Future<void> init(StationCabinsContext ctx) {
+    scope.attach(ctx);
     return _fetchAssignments();
   }
 
   Future<void> refreshAfterQueue() => _fetchAssignments();
 
   Future<void> _fetchAssignments() async {
-    final cabinId = _cabinId;
-    if (cabinId == null) return;
+    if (!scope.hasCabins) return;
 
     await execute(
       fetchAssignmentsOp,
-      operation: () => _getAssignments.call(cabinId),
+      operation: () => _getAssignments.call(),
       onData: (list) {
-        _assignments = list;
+        _assignments = scope.stationAssignments(list);
         _selection.clear();
         notifyListeners();
       },
     );
+  }
+
+  void viewCabin(int cabinId) {
+    if (scope.view(cabinId)) notifyListeners();
+  }
+
+  void setCabinFilter(int? cabinId) {
+    if (scope.setFilter(cabinId)) notifyListeners();
   }
 
   void onSearchChanged(String value) {
@@ -129,6 +136,8 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     }
     if (!canSelect(assignment)) return;
     _selection.add(assignment);
+    // Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer.
+    scope.view(scope.cabinIdOf(assignment));
     notifyListeners();
   }
 
@@ -147,7 +156,8 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.unload),
-      groups: _groups,
+      cabinOrder: scope.cabinOrder,
+      groups: scope.allGroups,
     );
 
     if (result.jobs.isEmpty) {
@@ -167,7 +177,7 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       );
     }
 
-    onQueueReady(result.jobs, result.skipped.length);
+    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
   }
 
   // ── Atama işlemleri ───────────────────────────────────────────────────

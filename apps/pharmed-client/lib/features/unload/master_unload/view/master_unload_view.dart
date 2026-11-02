@@ -9,9 +9,8 @@ import 'master_unload_execution_view.dart';
 import 'master_unload_selection_view.dart';
 
 class MasterUnloadView extends ConsumerStatefulWidget {
-  const MasterUnloadView({super.key, required this.cabinContext, required this.stationContext});
+  const MasterUnloadView({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinContext;
   final StationCabinsContext stationContext;
 
   @override
@@ -26,7 +25,7 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(masterUnloadSelectionNotifierProvider).init(widget.cabinContext);
+      ref.read(masterUnloadSelectionNotifierProvider).init(widget.stationContext);
     });
 
     _executionNotifier = ref.read(masterUnloadExecutionNotifierProvider);
@@ -47,7 +46,7 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
     final selection = ref.watch(masterUnloadSelectionNotifierProvider);
     final isExecuting = ref.watch(masterUnloadExecutionNotifierProvider.select((n) => n.isExecuting));
 
-    if (widget.cabinContext.cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
     if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
@@ -57,6 +56,6 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
 
     return isExecuting
         ? MasterUnloadExecutionView(stationContext: widget.stationContext)
-        : MasterUnloadSelectionView(cabinContext: widget.cabinContext);
+        : MasterUnloadSelectionView(menu: widget.stationContext.menu);
   }
 }

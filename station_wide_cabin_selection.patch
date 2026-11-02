@@ -1,0 +1,2432 @@
+From ff7534578a05bf478fdcbc7024041f686a59a6c5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 2 Nov 2026 11:56:03 +0300
+Subject: [PATCH] feat(client): station-wide cabin selection for assignment,
+ refill, unload, census and return box unload
+
+---
+ .../features/assignment/assignment_view.dart  |   5 +-
+ .../notifier/drug_assignment_notifier.dart    |  84 ++++++--
+ .../view/assignment_idle_panel.dart           |  67 +++++-
+ .../view/drug_assignment_view.dart            |  46 ++--
+ .../lib/features/census/census_view.dart      |   2 +-
+ .../master_census_selection_notifier.dart     |  80 ++++---
+ .../view/master_census_selection_view.dart    |  84 +++++---
+ .../view/master_census_view.dart              |   9 +-
+ .../lib/features/dashboard/dashboard.dart     |   1 +
+ .../notifier/dashboard_notifier.dart          |  18 +-
+ .../notifier/station_cabin_scope.dart         | 164 +++++++++++++++
+ .../view/dashboard_route_content.dart         |   8 +-
+ .../master_refill_selection_notifier.dart     |  69 +++---
+ .../view/master_refill_selection_view.dart    |  61 ++++--
+ .../view/master_refill_view.dart              |   9 +-
+ .../lib/features/refill/refill_view.dart      |   2 +-
+ .../master_unload_selection_notifier.dart     |  52 +++--
+ .../view/master_unload_selection_view.dart    |  57 +++--
+ .../view/master_unload_view.dart              |   9 +-
+ .../lib/features/unload/unload_view.dart      |   2 +-
+ .../notifier/unload_drawer_notifier.dart      |  38 +++-
+ .../notifier/unload_drawer_state.dart         |   3 +-
+ .../view/unload_drawer_screen.dart            |  15 +-
+ .../view/unload_drawer_selection_view.dart    |  45 +++-
+ .../cabin_overview_selection_panel.dart       |  15 +-
+ .../cabin_shell_widgets.dart                  |   1 +
+ .../selection/cabin_assignment_list_view.dart |  15 ++
+ .../station_cabin_selection_panel.dart        | 198 ++++++++++++++++++
+ packages/pharmed_ui/lib/src/l10n/app_en.arb   |  18 +-
+ packages/pharmed_ui/lib/src/l10n/app_fr.arb   |  18 +-
+ .../lib/src/l10n/app_localizations.dart       |  30 +++
+ .../lib/src/l10n/app_localizations_ar.dart    |  17 ++
+ .../lib/src/l10n/app_localizations_en.dart    |  17 ++
+ .../lib/src/l10n/app_localizations_fr.dart    |  17 ++
+ .../lib/src/l10n/app_localizations_tr.dart    |  17 ++
+ packages/pharmed_ui/lib/src/l10n/app_tr.arb   |  25 +++
+ .../cabin_type/cabin_type_reference_view.dart |   8 +-
+ .../widgets/cabin_widgets/cabin_widgets.dart  |   1 +
+ 38 files changed, 1064 insertions(+), 263 deletions(-)
+ create mode 100644 apps/pharmed-client/lib/features/dashboard/presentation/notifier/station_cabin_scope.dart
+ create mode 100644 apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/station_cabin_selection_panel.dart
+
+diff --git a/apps/pharmed-client/lib/features/assignment/assignment_view.dart b/apps/pharmed-client/lib/features/assignment/assignment_view.dart
+index b2ee0f1..a466eb6 100644
+--- a/apps/pharmed-client/lib/features/assignment/assignment_view.dart
++++ b/apps/pharmed-client/lib/features/assignment/assignment_view.dart
+@@ -8,9 +8,10 @@ import 'drug_assignment/view/drug_assignment_view.dart';
+ import 'bed_assignment/view/bed_assignment_view.dart';
+ 
+ class AssignmentView extends ConsumerWidget {
+-  const AssignmentView({super.key, required this.cabinRouteContext});
++  const AssignmentView({super.key, required this.cabinRouteContext, required this.stationContext});
+ 
+   final CabinRouteContext cabinRouteContext;
++  final StationCabinsContext stationContext;
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+@@ -18,7 +19,7 @@ class AssignmentView extends ConsumerWidget {
+     final cabinData = cabinRouteContext.cabinData;
+ 
+     return switch (deviceMode) {
+-      CabinType.master => DrugAssignmentView(cabinContext: cabinRouteContext),
++      CabinType.master => DrugAssignmentView(stationContext: stationContext),
+       CabinType.mobile => BedAssignmentView(data: cabinData),
+       _ => const Center(child: MedLoadingIndicator()),
+     };
+diff --git a/apps/pharmed-client/lib/features/assignment/drug_assignment/notifier/drug_assignment_notifier.dart b/apps/pharmed-client/lib/features/assignment/drug_assignment/notifier/drug_assignment_notifier.dart
+index 83fdc3a..74d146b 100644
+--- a/apps/pharmed-client/lib/features/assignment/drug_assignment/notifier/drug_assignment_notifier.dart
++++ b/apps/pharmed-client/lib/features/assignment/drug_assignment/notifier/drug_assignment_notifier.dart
+@@ -31,30 +31,73 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
+   MedicinePageState? _cachedMedicinePage;
+   Timer? _searchDebounceTimer;
+ 
++  /// İstasyon geneli kabin kapsamı — kabin seçim adımı yok; sol panelde
++  /// hangi kabinin iç yerleşiminin gösterileceği burada tutulur. State'teki
++  /// [groups]/[assignments] istasyondaki TÜM işlem yapılabilir kabinleri
++  /// kapsar (göz kimlikleri istasyon genelinde tekil).
++  final StationCabinScope scope = StationCabinScope();
++
+   @override
+   DrugAssignmentUiState build() {
+     ref.onDispose(() => _searchDebounceTimer?.cancel());
+     return const DrugAssignmentUninitialized();
+   }
+ 
+-  Future<void> init(CabinRouteContext ctx) async {
+-    final cabinId = ctx.cabin?.id;
+-    final groups = ctx.cabinData?.groups;
+-    if (cabinId == null || groups == null) {
+-      return;
+-    }
++  Future<void> init(StationCabinsContext ctx) async {
++    scope.attach(ctx);
++    if (!scope.hasCabins) return;
+ 
+     state = DrugAssignmentLoading();
++    state = await _loadIdle();
++  }
+ 
+-    final result = await _getAssignments.call(cabinId);
++  /// Her kabinin atamaları kabin bazlı uç noktadan (paralel) çekilip
++  /// birleştirilir — düzenleme akışının beklediği atama şekli korunur.
++  Future<DrugAssignmentUiState> _loadIdle() async {
++    final groups = scope.allGroups;
++    final cabinId = scope.viewedCabinId ?? 0;
++    final results = await Future.wait([for (final id in scope.cabinOrder) _getAssignments.call(id)]);
++
++    final assignments = <MedicineAssignment>[];
++    String? errorMessage;
++    for (final result in results) {
++      final message = result.when<String?>(
++        ok: (list) {
++          assignments.addAll(list);
++          return null;
++        },
++        error: (e) => e.message,
++      );
++      errorMessage ??= message;
++    }
+ 
+-    state = result.when(
+-      ok: (assignments) => DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId),
+-      error: (e) => DrugAssignmentError(
+-        message: e.message,
+-        previous: DrugAssignmentIdle(groups: groups, assignments: const [], cabinId: cabinId),
+-      ),
+-    );
++    final idle = DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId);
++    final failure = errorMessage;
++    return failure == null ? idle : DrugAssignmentError(message: failure, previous: idle);
++  }
++
++  /// Kabin şeridinden kabin değiştirildiğinde: düzenleme sürüyorsa iptal
++  /// edilir (göz başka kabinde kalırdı), tabloya dönülür.
++  void viewCabin(int cabinId) {
++    final current = state;
++    if (current is DrugAssignmentSaving) return;
++    if (!scope.view(cabinId)) return;
++    _searchDebounceTimer?.cancel();
++    switch (current) {
++      case DrugAssignmentIdle s:
++        state = s.copyWith();
++      case DrugAssignmentCellSelected s:
++        state = DrugAssignmentIdle(groups: s.groups, assignments: s.assignments, cabinId: cabinId);
++      default:
++        break;
++    }
++  }
++
++  /// Sağ tablonun kabin filtresi.
++  void setCabinFilter(int? cabinId) {
++    final current = state;
++    if (!scope.setFilter(cabinId)) return;
++    if (current is DrugAssignmentIdle) state = current.copyWith();
+   }
+ 
+   /// Sol panelden bir göze dokunulduğunda çağrılır (boş ya da dolu fark
+@@ -144,6 +187,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
+     final selectedGroup = _findGroupForUnit(unitId, current.groups);
+     if (unitId == null || selectedGroup == null) return;
+ 
++    // Tablodan başka bir kabinin ataması düzenlenince iç yerleşim o kabine geçer.
++    scope.view(scope.cabinIdOfSlot(selectedGroup.slot.id) ?? scope.cabinIdOf(assignment));
++
+     _enterEditing(
+       groups: current.groups,
+       assignments: current.assignments,
+@@ -447,15 +493,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
+   /// artık aynı gözde kalınmıyor, "Atamalar Tamamla" butonu olmadığı
+   /// için işlem bitince ekranın kendisi terk edilmiş sayılır.
+   Future<void> _refreshAndReturnToIdle({required int cabinId, required List<DrawerGroup> groups}) async {
+-    final result = await _getAssignments.call(cabinId);
+-
+-    state = result.when(
+-      ok: (assignments) => DrugAssignmentIdle(groups: groups, assignments: assignments, cabinId: cabinId),
+-      error: (e) => DrugAssignmentError(
+-        message: e.message,
+-        previous: DrugAssignmentIdle(groups: groups, assignments: const [], cabinId: cabinId),
+-      ),
+-    );
++    state = await _loadIdle();
+   }
+ 
+   void dismissError() {
+diff --git a/apps/pharmed-client/lib/features/assignment/drug_assignment/view/assignment_idle_panel.dart b/apps/pharmed-client/lib/features/assignment/drug_assignment/view/assignment_idle_panel.dart
+index 6699c74..4b1f30d 100644
+--- a/apps/pharmed-client/lib/features/assignment/drug_assignment/view/assignment_idle_panel.dart
++++ b/apps/pharmed-client/lib/features/assignment/drug_assignment/view/assignment_idle_panel.dart
+@@ -7,6 +7,10 @@ class _AssignmentIdlePanel extends StatelessWidget {
+     required this.onEdit,
+     required this.menu,
+     required this.onAssignmentSearchChanged,
++    this.cabins = const [],
++    this.cabinFilter,
++    this.onCabinFilterChanged,
++    this.cabinLabelOf,
+   });
+ 
+   final MenuItem menu;
+@@ -15,10 +19,26 @@ class _AssignmentIdlePanel extends StatelessWidget {
+   final ValueChanged<MedicineAssignment> onEdit;
+   final Function(String? query) onAssignmentSearchChanged;
+ 
++  /// İstasyon geneli: kabin filtresi ve "Kabin" sütunu.
++  final List<Cabin> cabins;
++  final int? cabinFilter;
++  final ValueChanged<int?>? onCabinFilterChanged;
++  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
++
+   @override
+   Widget build(BuildContext context) {
+     return CabinSelectionContentShell(
+       menu: menu,
++      extra: onCabinFilterChanged == null || cabins.length < 2
++          ? null
++          : Padding(
++              padding: const EdgeInsets.only(bottom: 12.0),
++              child: StationCabinFilterBar(
++                cabins: cabins,
++                selectedCabinId: cabinFilter,
++                onChanged: onCabinFilterChanged!,
++              ),
++            ),
+       searchQuery: '',
+       showSearch: true,
+       onSearchQueryChanged: (value) => onAssignmentSearchChanged(value),
+@@ -30,7 +50,12 @@ class _AssignmentIdlePanel extends StatelessWidget {
+           else
+             Expanded(
+               child: SingleChildScrollView(
+-                child: _AssignmentTable(assignments: assignments, groups: groups, onEdit: onEdit),
++                child: _AssignmentTable(
++                  assignments: assignments,
++                  groups: groups,
++                  onEdit: onEdit,
++                  cabinLabelOf: cabinLabelOf,
++                ),
+               ),
+             ),
+         ],
+@@ -40,26 +65,39 @@ class _AssignmentIdlePanel extends StatelessWidget {
+ }
+ 
+ class _AssignmentTable extends StatelessWidget {
+-  const _AssignmentTable({required this.assignments, required this.groups, required this.onEdit});
++  const _AssignmentTable({required this.assignments, required this.groups, required this.onEdit, this.cabinLabelOf});
+ 
+   final List<MedicineAssignment> assignments;
+   final List<DrawerGroup> groups;
+   final ValueChanged<MedicineAssignment> onEdit;
++  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
+ 
+   @override
+   Widget build(BuildContext context) {
+-    final rows = assignments.where((a) => a.medicine != null).toList()
+-      ..sort((a, b) => (a.cabinDrawerId ?? 0).compareTo(b.cabinDrawerId ?? 0));
++    // Gelen sıra kabin sırasıdır — kabin içinde göz sırasına göre dizilir
++    // (List.sort kararlı olmadığı için kabin sırası açıkça korunur).
++    final filled = assignments.where((a) => a.medicine != null).toList();
++    final cabinRank = <String?, int>{};
++    for (final a in filled) {
++      cabinRank.putIfAbsent(cabinLabelOf?.call(a), () => cabinRank.length);
++    }
++    final rows = filled
++      ..sort((a, b) {
++        final byCabin = cabinRank[cabinLabelOf?.call(a)]!.compareTo(cabinRank[cabinLabelOf?.call(b)]!);
++        if (byCabin != 0) return byCabin;
++        return (a.cabinDrawerId ?? 0).compareTo(b.cabinDrawerId ?? 0);
++      });
+ 
+     return Column(
+       crossAxisAlignment: CrossAxisAlignment.stretch,
+       children: [
+-        const _TableHeaderRow(),
++        _TableHeaderRow(showCabin: cabinLabelOf != null),
+         const Divider(height: 1, color: MedColors.border2),
+         for (final assignment in rows)
+           _TableDataRow(
+             assignment: assignment,
+             locationLabel: _locationLabel(assignment, groups, context),
++            cabinLabel: cabinLabelOf == null ? null : (cabinLabelOf!(assignment) ?? '—'),
+             onEdit: () => onEdit(assignment),
+           ),
+       ],
+@@ -91,7 +129,9 @@ class _AssignmentTable extends StatelessWidget {
+ }
+ 
+ class _TableHeaderRow extends StatelessWidget {
+-  const _TableHeaderRow();
++  const _TableHeaderRow({this.showCabin = false});
++
++  final bool showCabin;
+ 
+   @override
+   Widget build(BuildContext context) {
+@@ -100,6 +140,7 @@ class _TableHeaderRow extends StatelessWidget {
+       padding: const EdgeInsets.symmetric(vertical: 8),
+       child: Row(
+         children: [
++          if (showCabin) Expanded(flex: 3, child: Text(context.l10n.cabinAssignmentList_cabinColumn, style: style)),
+           Expanded(flex: 3, child: Text(context.l10n.assignment_idle_columnLocation, style: style)),
+           Expanded(flex: 4, child: Text(context.l10n.assignment_idle_columnDrug, style: style)),
+           Expanded(flex: 2, child: Text(context.l10n.assignment_idle_columnMin, style: style)),
+@@ -113,12 +154,15 @@ class _TableHeaderRow extends StatelessWidget {
+ }
+ 
+ class _TableDataRow extends StatelessWidget {
+-  const _TableDataRow({required this.assignment, required this.locationLabel, required this.onEdit});
++  const _TableDataRow({required this.assignment, required this.locationLabel, required this.onEdit, this.cabinLabel});
+ 
+   final MedicineAssignment assignment;
+   final String locationLabel;
+   final VoidCallback onEdit;
+ 
++  /// null → kabin sütunu gösterilmez.
++  final String? cabinLabel;
++
+   @override
+   Widget build(BuildContext context) {
+     return Container(
+@@ -128,6 +172,15 @@ class _TableDataRow extends StatelessWidget {
+       padding: const EdgeInsets.symmetric(vertical: 4),
+       child: Row(
+         children: [
++          if (cabinLabel != null)
++            Expanded(
++              flex: 3,
++              child: Text(
++                cabinLabel!,
++                style: MedTextStyles.bodySm(color: MedColors.text3),
++                overflow: TextOverflow.ellipsis,
++              ),
++            ),
+           Expanded(
+             flex: 3,
+             child: Text(locationLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
+diff --git a/apps/pharmed-client/lib/features/assignment/drug_assignment/view/drug_assignment_view.dart b/apps/pharmed-client/lib/features/assignment/drug_assignment/view/drug_assignment_view.dart
+index 0999f5b..aaee7c9 100644
+--- a/apps/pharmed-client/lib/features/assignment/drug_assignment/view/drug_assignment_view.dart
++++ b/apps/pharmed-client/lib/features/assignment/drug_assignment/view/drug_assignment_view.dart
+@@ -6,16 +6,15 @@ import 'package:pharmed_utils/pharmed_utils.dart';
+ import 'package:phosphor_flutter/phosphor_flutter.dart';
+ import '../../../../widgets/widgets.dart';
+ import '../../../dashboard/dashboard.dart';
+-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+ import '../../assignment.dart';
+ 
+ part 'assignment_idle_panel.dart';
+ part 'assignment_edit_panel.dart';
+ 
+ class DrugAssignmentView extends ConsumerStatefulWidget {
+-  const DrugAssignmentView({super.key, required this.cabinContext});
++  const DrugAssignmentView({super.key, required this.stationContext});
+ 
+-  final CabinRouteContext cabinContext;
++  final StationCabinsContext stationContext;
+ 
+   @override
+   ConsumerState<DrugAssignmentView> createState() => _DrugAssignmentViewState();
+@@ -29,7 +28,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
+     final notifier = ref.read(drugAssignmentNotifierProvider.notifier);
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (!mounted) return;
+-      notifier.init(widget.cabinContext);
++      notifier.init(widget.stationContext);
+     });
+   }
+ 
+@@ -45,7 +44,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
+       }
+     });
+ 
+-    if (widget.cabinContext.cabinData == null || state is DrugAssignmentUninitialized) {
++    if (widget.stationContext.cabinDataByCabinId.isEmpty || state is DrugAssignmentUninitialized) {
+       return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
+     }
+ 
+@@ -54,6 +53,7 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
+       return const Center(child: MedLoadingIndicator());
+     }
+ 
++    final scope = notifier.scope;
+     final groups = _extractGroups(state);
+     final selectedUnitId = state is DrugAssignmentCellSelected ? state.selectedUnitId : null;
+     final selectedCellId = state is DrugAssignmentCellSelected ? state.selectedCellId : null;
+@@ -67,26 +67,38 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
+ 
+     return CabinOperationSelectionLayout(
+       isLoading: state is DrugAssignmentLoading,
+-      left: CabinOverviewSelectionPanel(
+-        cabin: widget.cabinContext.cabin,
+-        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+-        groups: groups,
+-        assignments: assignments,
+-        // Serumda raf değil avadanlık seçilidir — raf (unit) vurgulanmaz.
+-        selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
+-        selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
+-        onCellTap: (unit) => notifier.onCellTap(unit, null),
+-        onSerumTrayTap: notifier.onSerumTrayTap,
++      flex: 5,
++      left: StationCabinSelectionPanel(
++        cabins: scope.cabins,
++        viewedCabinId: scope.viewedCabinId,
++        onCabinTap: notifier.viewCabin,
++        interior: CabinOverviewSelectionPanel(
++          key: ValueKey(scope.viewedCabinId),
++          cabin: scope.viewedCabin,
++          // State istasyonun tüm gruplarını taşır — yalnızca görüntülenen
++          // kabinin çekmeceleri çizilir.
++          groups: scope.viewedGroups,
++          assignments: assignments,
++          // Serumda raf değil avadanlık seçilidir — raf (unit) vurgulanmaz.
++          selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
++          selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
++          onCellTap: (unit) => notifier.onCellTap(unit, null),
++          onSerumTrayTap: notifier.onSerumTrayTap,
++        ),
+       ),
+       right: switch (state) {
+         DrugAssignmentCellSelected s => _AssignmentEditPanel(state: s, notifier: notifier),
+         DrugAssignmentSaving() => const Center(child: MedLoadingIndicator()),
+         _ => _AssignmentIdlePanel(
+-          assignments: idle?.visibleAssignments ?? [],
++          assignments: scope.filtered(idle?.visibleAssignments ?? const []),
+           groups: groups,
+           onEdit: notifier.editAssignment,
+-          menu: widget.cabinContext.menu,
++          menu: widget.stationContext.menu,
+           onAssignmentSearchChanged: (value) => notifier.onAssignmentSearchChanged(value),
++          cabins: scope.cabins,
++          cabinFilter: scope.cabinFilter,
++          onCabinFilterChanged: notifier.setCabinFilter,
++          cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+         ),
+       },
+     );
+diff --git a/apps/pharmed-client/lib/features/census/census_view.dart b/apps/pharmed-client/lib/features/census/census_view.dart
+index ab0a28a..c3d3296 100644
+--- a/apps/pharmed-client/lib/features/census/census_view.dart
++++ b/apps/pharmed-client/lib/features/census/census_view.dart
+@@ -18,7 +18,7 @@ class CensusView extends ConsumerWidget {
+     final cabinData = cabinRouteContext.cabinData;
+ 
+     return switch (deviceMode) {
+-      CabinType.master => MasterCensusView(cabinContext: cabinRouteContext, stationContext: stationContext),
++      CabinType.master => MasterCensusView(stationContext: stationContext),
+       CabinType.mobile => MobileCensusView(data: cabinData),
+       _ => const Center(child: MedLoadingIndicator()),
+     };
+diff --git a/apps/pharmed-client/lib/features/census/master_census/notifier/master_census_selection_notifier.dart b/apps/pharmed-client/lib/features/census/master_census/notifier/master_census_selection_notifier.dart
+index 1566f94..04451a1 100644
+--- a/apps/pharmed-client/lib/features/census/master_census/notifier/master_census_selection_notifier.dart
++++ b/apps/pharmed-client/lib/features/census/master_census/notifier/master_census_selection_notifier.dart
+@@ -1,7 +1,9 @@
+ // [SWREQ-CLI-MCENSUS-001] [IEC 62304 §5.5]
+-// Master kabin sayımının seçim fazı: seçilen kabinin atamalarını çeker,
+-// sayım modunu (tüm kabin / çekmece / ilaç) ve seçimi yönetir, kuyruğu
+-// hazırlayıp execution notifier'a devreder.
++// Master kabin sayımının seçim fazı: istasyondaki tüm kabinlerin atamalarını
++// çeker (kabin seçim adımı yok), sayım modunu (tüm kabin / çekmece / ilaç) ve
++// kabinler arası seçimi yönetir, kuyruğu kabin sırasıyla hazırlayıp
++// execution notifier'a devreder. "Tüm kabin" modu GÖRÜNTÜLENEN kabinin tüm
++// atamalarını seçer; diğer kabinlerdeki seçim korunur.
+ //
+ // Sınıf: Class B
+ 
+@@ -29,11 +31,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
+ 
+-  /// Seçilen kabinin fiziksel çekmece kimlikleri — istasyon atamaları bununla süzülür.
+-  Set<int> _cabinSlotIds = const {};
+-
+-  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
+-  List<DrawerGroup> _groups = const [];
++  final StationCabinScope scope = StationCabinScope();
+ 
+   List<MedicineAssignment> _assignments = [];
+   final AssignmentSelection _selection = AssignmentSelection();
+@@ -54,8 +52,9 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   List<MedicineAssignment> get visibleAssignments {
+     final q = _search.trim().toLowerCase();
+-    if (q.isEmpty) return _assignments;
+-    return _assignments.where((a) {
++    final byCabin = scope.filtered(_assignments);
++    if (q.isEmpty) return byCabin;
++    return byCabin.where((a) {
+       final name = a.medicine?.name?.toLowerCase() ?? '';
+       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
+       return name.contains(q) || barcode.contains(q);
+@@ -64,42 +63,55 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
+ 
++  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
++
+   bool get canStart => _selection.isNotEmpty;
+ 
+-  void _selectAll() => _selection
+-    ..clear()
+-    ..addAll(_assignments);
++  /// Görüntülenen kabinin tüm atamalarını seçime ekler.
++  void _selectViewedCabin() => _selection.addAll(scope.ofCabin(_assignments, scope.viewedCabinId));
+ 
+   // ── Akış ──────────────────────────────────────────────────────────────
+ 
+-  Future<void> init(CabinRouteContext ctx) {
+-    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
+-    _cabinSlotIds = {for (final g in _groups) ?g.slot.id};
++  Future<void> init(StationCabinsContext ctx) {
++    scope.attach(ctx);
+     return _fetchAssignments();
+   }
+ 
+   /// Kuyruk bittiğinde/durdurulduğunda — stoklar değişti, baştan çekilir ve
+-  /// "tüm kabin" moduna dönülür.
++  /// "ilaç" moduna dönülür.
+   Future<void> refreshAfterQueue() => _fetchAssignments();
+ 
+   Future<void> _fetchAssignments() async {
++    if (!scope.hasCabins) return;
++
+     await execute(
+       fetchAssignmentsOp,
+       operation: () => _getAssignments.call(),
+       onData: (all) {
+-        // İstasyon atamaları döner — yalnızca seçilen kabinin çekmeceleri.
+-        _assignments = all.where((a) {
+-          final slotId = a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
+-          return slotId != null && _cabinSlotIds.contains(slotId);
+-        }).toList();
++        // Yalnızca işlem yapılabilir kabinlere bağlanan atamalar.
++        _assignments = scope.stationAssignments(all);
+         _censusMode = CensusMode.byMedicine;
+-        _selectAll();
++        // Önceki davranışla aynı: açılışta (görüntülenen) kabinin tamamı seçili.
++        _selection.clear();
++        _selectViewedCabin();
+         notifyListeners();
+       },
+     );
+   }
+ 
+-  /// - allCabin'e geçiş: tüm atamalar seçilir (kilitli seçim).
++  /// "Tüm kabin" modunda yeni görüntülenen kabinin tamamı da seçime eklenir.
++  void viewCabin(int cabinId) {
++    if (!scope.view(cabinId)) return;
++    if (_censusMode == CensusMode.allCabin) _selectViewedCabin();
++    notifyListeners();
++  }
++
++  void setCabinFilter(int? cabinId) {
++    if (scope.setFilter(cabinId)) notifyListeners();
++  }
++
++  /// - allCabin'e geçiş: görüntülenen kabinin tüm atamaları seçilir (kilitli
++  ///   seçim, diğer kabinlerdeki seçim korunur).
+   /// - byDrawer'a geçiş: önceki moddan bağımsız olarak seçim sıfırlanır —
+   ///   kullanıcı çekmeceleri kendisi seçer.
+   /// - allCabin'den byMedicine'e geçiş: seçim sıfırlanır — kullanıcı temiz başlasın.
+@@ -110,7 +122,7 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+     _censusMode = mode;
+ 
+     if (mode == CensusMode.allCabin) {
+-      _selectAll();
++      _selectViewedCabin();
+     } else if (mode == CensusMode.byDrawer || wasAllCabin) {
+       _selection.clear();
+     }
+@@ -124,18 +136,21 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   void toggleUnit(int cabinDrawerId) {
+     if (_censusMode == CensusMode.allCabin) return; // kilitli seçim
+-    final assignment = AssignmentSelection.unitAssignment(cabinDrawerId, _assignments);
+-    if (assignment == null) return;
+-    _selection.toggle(assignment);
+-    notifyListeners();
++    _toggle(AssignmentSelection.unitAssignment(cabinDrawerId, _assignments));
+   }
+ 
+   /// Serum avadanlığı — normal gözle aynı kurallar.
+   void toggleSerumTray(int cellId) {
+     if (_censusMode == CensusMode.allCabin) return; // kilitli seçim
+-    final assignment = AssignmentSelection.serumAssignment(cellId, _assignments);
++    _toggle(AssignmentSelection.serumAssignment(cellId, _assignments));
++  }
++
++  /// Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer.
++  void _toggle(MedicineAssignment? assignment) {
+     if (assignment == null) return;
++    final wasSelected = _selection.contains(assignment);
+     _selection.toggle(assignment);
++    if (!wasSelected) scope.view(scope.cabinIdOf(assignment));
+     notifyListeners();
+   }
+ 
+@@ -154,7 +169,8 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       items: selectedAssignments,
+       assignmentOf: (a) => a,
+       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.census),
+-      groups: _groups,
++      cabinOrder: scope.cabinOrder,
++      groups: scope.allGroups,
+     );
+ 
+     if (result.jobs.isEmpty) {
+@@ -174,6 +190,6 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       );
+     }
+ 
+-    onQueueReady(result.jobs, result.skipped.length);
++    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/census/master_census/view/master_census_selection_view.dart b/apps/pharmed-client/lib/features/census/master_census/view/master_census_selection_view.dart
+index 1af7fc7..bfda897 100644
+--- a/apps/pharmed-client/lib/features/census/master_census/view/master_census_selection_view.dart
++++ b/apps/pharmed-client/lib/features/census/master_census/view/master_census_selection_view.dart
+@@ -1,19 +1,18 @@
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:pharmed_core/pharmed_core.dart';
+ import 'package:pharmed_ui/pharmed_ui.dart';
+ import 'package:phosphor_flutter/phosphor_flutter.dart';
+ 
+ import '../../../../core/hardware/hardware.dart';
+ import '../../../../widgets/widgets.dart';
+-import '../../../dashboard/dashboard.dart';
+-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+ import '../notifier/master_census_execution_notifier.dart';
+ import '../notifier/master_census_selection_notifier.dart';
+ 
+ class MasterCensusSelectionView extends ConsumerWidget {
+-  const MasterCensusSelectionView({super.key, required this.cabinContext});
++  const MasterCensusSelectionView({super.key, required this.menu});
+ 
+-  final CabinRouteContext cabinContext;
++  final MenuItem menu;
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+@@ -21,41 +20,61 @@ class MasterCensusSelectionView extends ConsumerWidget {
+     final isDrawerMode = selection.censusMode == CensusMode.byDrawer;
+     final isMedicineMode = selection.censusMode == CensusMode.byMedicine;
+     final visible = selection.visibleAssignments;
++    final scope = selection.scope;
+ 
+     return CabinOperationSelectionLayout(
+       isLoading: selection.isLoadingAssignments,
+-      left: CabinOverviewSelectionPanel(
+-        cabin: cabinContext.cabin,
+-        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+-        groups: cabinContext.cabinData?.groups ?? const [],
+-        assignments: selection.assignments,
+-        selectedUnitIds: selection.selectedUnitIds,
+-        onDrawerTap: isDrawerMode ? selection.toggleDrawer : null,
+-        onCellTap: (unit) {
+-          final id = unit.id;
+-          if (id != null) selection.toggleUnit(id);
+-        },
+-        selectedCellIds: selection.selectedSerumCellIds,
+-        onSerumTrayTap: (_, tray) {
+-          final id = tray.id;
+-          if (id != null) selection.toggleSerumTray(id);
+-        },
++      flex: 5,
++      left: StationCabinSelectionPanel(
++        cabins: scope.cabins,
++        viewedCabinId: scope.viewedCabinId,
++        selectedCountByCabin: selection.selectedCountByCabin,
++        onCabinTap: selection.viewCabin,
++        interior: CabinOverviewSelectionPanel(
++          key: ValueKey(scope.viewedCabinId),
++          cabin: scope.viewedCabin,
++          groups: scope.viewedGroups,
++          assignments: selection.assignments,
++          selectedUnitIds: selection.selectedUnitIds,
++          onDrawerTap: isDrawerMode ? selection.toggleDrawer : null,
++          onCellTap: (unit) {
++            final id = unit.id;
++            if (id != null) selection.toggleUnit(id);
++          },
++          selectedCellIds: selection.selectedSerumCellIds,
++          onSerumTrayTap: (_, tray) {
++            final id = tray.id;
++            if (id != null) selection.toggleSerumTray(id);
++          },
++        ),
+       ),
+       right: CabinSelectionContentShell(
+-        menu: cabinContext.menu,
++        menu: menu,
+         extra: Padding(
+           padding: const EdgeInsets.only(bottom: 12.0),
+-          child: SizedBox(
+-            width: 600,
+-            child: MedSegmentedButton(
+-              labels: [
+-                context.l10n.census_mode_byMedicine,
+-                context.l10n.census_mode_byDrawer,
+-                context.l10n.census_mode_allCabin,
+-              ],
+-              selectedIndex: CensusMode.values.indexOf(selection.censusMode),
+-              onChanged: (index) => selection.setCensusMode(CensusMode.values[index]),
+-            ),
++          child: Row(
++            spacing: 12.0,
++            children: [
++              Expanded(
++                child: MedSegmentedButton(
++                  labels: [
++                    context.l10n.census_mode_byMedicine,
++                    context.l10n.census_mode_byDrawer,
++                    context.l10n.census_mode_allCabin,
++                  ],
++                  selectedIndex: CensusMode.values.indexOf(selection.censusMode),
++                  onChanged: (index) => selection.setCensusMode(CensusMode.values[index]),
++                ),
++              ),
++              if (scope.cabins.length > 1)
++                Expanded(
++                  child: StationCabinFilterBar(
++                    cabins: scope.cabins,
++                    selectedCabinId: scope.cabinFilter,
++                    onChanged: selection.setCabinFilter,
++                  ),
++                ),
++            ],
+           ),
+         ),
+         onSearchQueryChanged: selection.onSearchChanged,
+@@ -71,6 +90,7 @@ class MasterCensusSelectionView extends ConsumerWidget {
+                 onToggle: isMedicineMode ? selection.toggleUnit : null,
+                 selectedCellIds: selection.selectedSerumCellIds,
+                 onToggleCell: isMedicineMode ? selection.toggleSerumTray : null,
++                cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+               ),
+         footer: selection.canStart
+             ? MedButton(
+diff --git a/apps/pharmed-client/lib/features/census/master_census/view/master_census_view.dart b/apps/pharmed-client/lib/features/census/master_census/view/master_census_view.dart
+index 566e4e6..0e91df4 100644
+--- a/apps/pharmed-client/lib/features/census/master_census/view/master_census_view.dart
++++ b/apps/pharmed-client/lib/features/census/master_census/view/master_census_view.dart
+@@ -8,9 +8,8 @@ import '../notifier/master_census_execution_notifier.dart';
+ import '../notifier/master_census_selection_notifier.dart';
+ 
+ class MasterCensusView extends ConsumerStatefulWidget {
+-  const MasterCensusView({super.key, required this.cabinContext, required this.stationContext});
++  const MasterCensusView({super.key, required this.stationContext});
+ 
+-  final CabinRouteContext cabinContext;
+   final StationCabinsContext stationContext;
+ 
+   @override
+@@ -25,7 +24,7 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
+     super.initState();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (!mounted) return;
+-      ref.read(masterCensusSelectionNotifierProvider).init(widget.cabinContext);
++      ref.read(masterCensusSelectionNotifierProvider).init(widget.stationContext);
+     });
+ 
+     _executionNotifier = ref.read(masterCensusExecutionNotifierProvider);
+@@ -46,7 +45,7 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
+     final selection = ref.watch(masterCensusSelectionNotifierProvider);
+     final isExecuting = ref.watch(masterCensusExecutionNotifierProvider.select((n) => n.isExecuting));
+ 
+-    if (widget.cabinContext.cabinData == null) {
++    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
+       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+     }
+     if (selection.isLoadingAssignments) {
+@@ -58,6 +57,6 @@ class _MasterCensusViewState extends ConsumerState<MasterCensusView> {
+ 
+     return isExecuting
+         ? MasterCensusExecutionView(stationContext: widget.stationContext)
+-        : MasterCensusSelectionView(cabinContext: widget.cabinContext);
++        : MasterCensusSelectionView(menu: widget.stationContext.menu);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/dashboard/dashboard.dart b/apps/pharmed-client/lib/features/dashboard/dashboard.dart
+index c699d9f..77aefb7 100644
+--- a/apps/pharmed-client/lib/features/dashboard/dashboard.dart
++++ b/apps/pharmed-client/lib/features/dashboard/dashboard.dart
+@@ -1,4 +1,5 @@
+ export 'presentation/notifier/cabin_route_context.dart';
+ export 'presentation/notifier/station_cabins_context.dart';
++export 'presentation/notifier/station_cabin_scope.dart';
+ 
+ export 'presentation/view/dashboard_screen.dart';
+diff --git a/apps/pharmed-client/lib/features/dashboard/presentation/notifier/dashboard_notifier.dart b/apps/pharmed-client/lib/features/dashboard/presentation/notifier/dashboard_notifier.dart
+index 47ad26e..d952484 100644
+--- a/apps/pharmed-client/lib/features/dashboard/presentation/notifier/dashboard_notifier.dart
++++ b/apps/pharmed-client/lib/features/dashboard/presentation/notifier/dashboard_notifier.dart
+@@ -174,14 +174,20 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
+ 
+   /// Kabin seçimi gerektiren route'lar — bu listedeki bir hedefe navigateTo
+   /// çağrıldığında doğrudan gidilmez, önce CabinSelectionView gösterilir.
+-  static const _cabinScopedRoutes = {
++  ///
++  /// İlaç atama, dolum, boşaltma, sayım ve iade kutusu boşaltma artık bu
++  /// listede DEĞİL: istasyon geneli açılır, kabin ekran içindeki kabin
++  /// şeridinden görüntülenir (bkz. StationCabinScope).
++  static const _cabinScopedRoutes = {'drawer-malfunction', 'cabin-stock', 'drug-destruction'};
++
++  /// Master'da istasyon geneli açılan, mobilde ise istasyonun tek kabinine
++  /// bağlanan route'lar — mobil view'lar hâlâ CabinRouteContext.cabinData
++  /// üzerinden çalışıyor.
++  static const _stationWideCabinRoutes = {
+     'drug-assignment',
+     'drug-refill',
+     'drug-unload',
+     'drug-census',
+-    'drawer-malfunction',
+-    'cabin-stock',
+-    'drug-destruction',
+     'return-box-unload',
+   };
+ 
+@@ -519,7 +525,9 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
+     // yani menüden normal bir sayfaya geçiş hiçbir şey yapmıyordu.
+     _activeRoute = route;
+     _pendingCabinRoute = null;
+-    _activeCabinId = null;
++    _activeCabinId = _deviceMode == CabinType.mobile && _stationWideCabinRoutes.contains(route)
++        ? _station?.cabins.firstOrNull?.id
++        : null;
+     notifyListeners();
+   }
+ 
+diff --git a/apps/pharmed-client/lib/features/dashboard/presentation/notifier/station_cabin_scope.dart b/apps/pharmed-client/lib/features/dashboard/presentation/notifier/station_cabin_scope.dart
+new file mode 100644
+index 0000000..cab20a1
+--- /dev/null
++++ b/apps/pharmed-client/lib/features/dashboard/presentation/notifier/station_cabin_scope.dart
+@@ -0,0 +1,164 @@
++// [SWREQ-CLI-STATIONSCOPE-001] [IEC 62304 §5.5]
++//
++// Kabin seçim adımı olmadan açılan istasyon geneli seçim ekranlarının
++// (ilaç atama, dolum, sayım, boşaltma, iade kutusu boşaltma) ortak kabin
++// kapsamı. Ekran istasyondaki TÜM işlem yapılabilir kabinlerin verisini
++// görür; kullanıcı üstteki kabin şeridinden yalnızca hangi kabinin iç
++// yerleşimini GÖRÜNTÜLEYECEĞİNİ seçer — seçim (göz/avadanlık) kabinler arası
++// korunur ve kuyruk kabin sırasıyla kurulur.
++//
++// Atamanın hangi kabine ait olduğu, istasyon görsel verisindeki fiziksel
++// çekmece (DrawerSlot.id) → kabin eşlemesinden çözülür; eşleşmezse atamanın
++// kendi drawerSlot.cabinId'sine düşülür. Hiçbir kabine bağlanamayan atama
++// istasyon listesinden düşürülür (görsel verisi olmayan / pasif kabin).
++//
++// Saf Dart — Flutter bağımsız.
++//
++// Sınıf: Class B
++
++import 'package:collection/collection.dart';
++import 'package:pharmed_core/pharmed_core.dart';
++
++import 'station_cabins_context.dart';
++
++class StationCabinScope {
++  StationCabinsContext? _context;
++  Map<int, int> _slotToCabinId = const {};
++  List<Cabin> _cabins = const [];
++
++  int? _viewedCabinId;
++  int? _cabinFilter;
++
++  /// İşlem yapılabilir kabinler (pasif değil, kimliği ve görsel verisi var),
++  /// istasyondaki sırasıyla.
++  List<Cabin> get cabins => _cabins;
++
++  /// Kuyruk sıralaması için kabin kimlikleri — şerit sırasıyla aynı.
++  List<int> get cabinOrder => [for (final c in _cabins) ?c.id];
++
++  /// İç yerleşimi gösterilen kabin.
++  int? get viewedCabinId => _viewedCabinId;
++
++  Cabin? get viewedCabin => _cabins.firstWhereOrNull((c) => c.id == _viewedCabinId);
++
++  /// Sağ listenin kabin filtresi — null: tüm kabinler.
++  int? get cabinFilter => _cabinFilter;
++
++  bool get hasCabins => _cabins.isNotEmpty;
++
++  /// İstasyondaki tüm işlem yapılabilir kabinlerin çekmece grupları — serum
++  /// avadanlığı kilit adresleri gibi kabin bağımsız çözümlemeler için.
++  List<DrawerGroup> get allGroups => [for (final id in cabinOrder) ...groupsOf(id)];
++
++  List<DrawerGroup> groupsOf(int? cabinId) => _context?.dataFor(cabinId)?.groups ?? const <DrawerGroup>[];
++
++  List<DrawerGroup> get viewedGroups => groupsOf(_viewedCabinId);
++
++  /// [ctx] her route build'inde yeniden üretilebildiği için tekrar
++  /// çağrılabilir — görüntülenen kabin hâlâ geçerliyse korunur.
++  void attach(StationCabinsContext ctx) {
++    _context = ctx;
++    _cabins = [
++      for (final c in ctx.cabins)
++        if (c.id != null && c.status != Status.passive && ctx.dataFor(c.id) != null) c,
++    ];
++    _slotToCabinId = {
++      for (final c in _cabins)
++        for (final g in ctx.dataFor(c.id)?.groups ?? const <DrawerGroup>[])
++          if (g.slot.id != null) g.slot.id!: c.id!,
++    };
++
++    final ids = cabinOrder;
++    if (_viewedCabinId == null || !ids.contains(_viewedCabinId)) {
++      final master = _cabins.firstWhereOrNull((c) => c.type == CabinType.master);
++      _viewedCabinId = master?.id ?? ids.firstOrNull;
++    }
++    if (_cabinFilter != null && !ids.contains(_cabinFilter)) _cabinFilter = null;
++  }
++
++  /// true → görüntülenen kabin değişti.
++  bool view(int? cabinId) {
++    if (cabinId == null || cabinId == _viewedCabinId || !cabinOrder.contains(cabinId)) return false;
++    _viewedCabinId = cabinId;
++    return true;
++  }
++
++  /// true → filtre değişti.
++  bool setFilter(int? cabinId) {
++    final next = cabinId != null && cabinOrder.contains(cabinId) ? cabinId : null;
++    if (next == _cabinFilter) return false;
++    _cabinFilter = next;
++    return true;
++  }
++
++  /// İlk görüntülenecek kabini belirler (ör. iade çekmecesi olan ilk kabin).
++  void preferViewed(bool Function(int cabinId) test) {
++    final current = _viewedCabinId;
++    if (current != null && test(current)) return;
++    final match = cabinOrder.firstWhereOrNull(test);
++    if (match != null) _viewedCabinId = match;
++  }
++
++  int? cabinIdOfSlot(int? slotId) => slotId == null ? null : _slotToCabinId[slotId];
++
++  int? cabinIdOf(MedicineAssignment a) {
++    final slotId = a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
++    final fromSlot = cabinIdOfSlot(slotId);
++    if (fromSlot != null) return fromSlot;
++    final own = a.drawerUnit?.drawerSlot?.cabinId;
++    return own != null && cabinOrder.contains(own) ? own : null;
++  }
++
++  String? cabinNameOf(MedicineAssignment a) {
++    final id = cabinIdOf(a);
++    return _cabins.firstWhereOrNull((c) => c.id == id)?.name;
++  }
++
++  /// Yalnızca işlem yapılabilir bir kabine bağlanabilen atamalar, kabin
++  /// sırasıyla (aynı kabin içinde gelen sıra korunur).
++  List<MedicineAssignment> stationAssignments(Iterable<MedicineAssignment> all) {
++    final order = cabinOrder;
++    final indexed = [
++      for (final a in all)
++        if (cabinIdOf(a) case final cabinId?) (order.indexOf(cabinId), a),
++    ];
++    return (indexed..sort((x, y) => x.$1.compareTo(y.$1))).map((e) => e.$2).toList();
++  }
++
++  /// [cabinFilter]'a göre süzülmüş liste.
++  List<MedicineAssignment> filtered(Iterable<MedicineAssignment> items) {
++    final filter = _cabinFilter;
++    if (filter == null) return items.toList();
++    return items.where((a) => cabinIdOf(a) == filter).toList();
++  }
++
++  List<MedicineAssignment> ofCabin(Iterable<MedicineAssignment> items, int? cabinId) =>
++      items.where((a) => cabinId != null && cabinIdOf(a) == cabinId).toList();
++
++  /// Kabin başına seçili atama sayısı — şerit rozetleri için.
++  Map<int, int> countByCabin(Iterable<MedicineAssignment> items) {
++    final counts = <int, int>{};
++    for (final a in items) {
++      final id = cabinIdOf(a);
++      if (id != null) counts[id] = (counts[id] ?? 0) + 1;
++    }
++    return counts;
++  }
++
++  /// Job'ın kabini, temsilci atamanın ilişkisel verisinden gelmediyse
++  /// fiziksel çekmeceden çözülür — execution ekranı aktif kabini job.cabinId
++  /// ile bulur, null kalırsa hiçbir şey gösteremez.
++  List<CabinOperationDrawerJob> withCabinIds(List<CabinOperationDrawerJob> jobs) => [
++    for (final job in jobs)
++      job.cabinId != null
++          ? job
++          : CabinOperationDrawerJob(
++              cabinDrawerId: job.cabinDrawerId,
++              representativeAssignment: job.representativeAssignment,
++              targets: job.targets,
++              status: job.status,
++              isReturnDrawer: job.isReturnDrawer,
++              cabinId: cabinIdOfSlot(job.cabinDrawerId),
++            ),
++  ];
++}
+diff --git a/apps/pharmed-client/lib/features/dashboard/presentation/view/dashboard_route_content.dart b/apps/pharmed-client/lib/features/dashboard/presentation/view/dashboard_route_content.dart
+index f9585ac..d8816ad 100644
+--- a/apps/pharmed-client/lib/features/dashboard/presentation/view/dashboard_route_content.dart
++++ b/apps/pharmed-client/lib/features/dashboard/presentation/view/dashboard_route_content.dart
+@@ -42,7 +42,9 @@ class DashboardRouteContent extends ConsumerWidget {
+           child: switch (currentRoute) {
+             'dashboard' => SizedBox.shrink(),
+             'drug-assignment' =>
+-              cabinRouteContext != null ? AssignmentView(cabinRouteContext: cabinRouteContext) : SizedBox.shrink(),
++              cabinRouteContext != null
++                  ? AssignmentView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
++                  : SizedBox.shrink(),
+             'drug-refill' =>
+               cabinRouteContext != null
+                   ? RefillView(cabinRouteContext: cabinRouteContext, stationContext: stationCabinsContext!)
+@@ -88,8 +90,8 @@ class DashboardRouteContent extends ConsumerWidget {
+             'unscanned-barcodes' => UnscannedBarcodesScreen(menu: activeMenu!),
+             'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
+             'return-box-unload' =>
+-              cabinRouteContext != null
+-                  ? UnloadDrawerScreen(cabinRouteContext: cabinRouteContext)
++              stationCabinsContext != null
++                  ? UnloadDrawerScreen(stationContext: stationCabinsContext)
+                   : const SizedBox.shrink(),
+             'station-inventory' => InventoryScreen(menu: activeMenu!),
+             'directed-orders' => RedirectedOrdersScreen(),
+diff --git a/apps/pharmed-client/lib/features/refill/master_refill/notifier/master_refill_selection_notifier.dart b/apps/pharmed-client/lib/features/refill/master_refill/notifier/master_refill_selection_notifier.dart
+index 817d632..bf25bd3 100644
+--- a/apps/pharmed-client/lib/features/refill/master_refill/notifier/master_refill_selection_notifier.dart
++++ b/apps/pharmed-client/lib/features/refill/master_refill/notifier/master_refill_selection_notifier.dart
+@@ -1,7 +1,9 @@
+ // [SWREQ-CLI-MREFILL-001] [IEC 62304 §5.5]
+-// Master kabin dolumunun seçim fazı: seçilen kabinin atamalarını çeker,
+-// göz/çekmece seçimini yönetir, kuyruğu hazırlayıp execution notifier'a devreder.
++// Master kabin dolumunun seçim fazı: istasyondaki tüm kabinlerin atamalarını
++// çeker (kabin seçim adımı yok), göz/çekmece seçimini kabinler arası yönetir,
++// kuyruğu kabin sırasıyla hazırlayıp execution notifier'a devreder.
+ // Serum avadanlıkları (cabinDrawerDetailId'li atamalar) göz bazında seçilir.
++// Hangi kabinin iç yerleşiminin gösterileceği StationCabinScope'tadır.
+ //
+ // Sınıf: Class B
+ 
+@@ -16,22 +18,24 @@ import '../../../../core/providers/providers.dart';
+ import '../../../dashboard/dashboard.dart';
+ 
+ final masterRefillSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefillSelectionNotifier>((ref) {
+-  return MasterRefillSelectionNotifier(getAssignments: ref.read(getCabinAssignmentsWitCabinUseCaseProvider));
++  return MasterRefillSelectionNotifier(getAssignments: ref.read(getStationAssignmentsUseCaseProvider));
+ });
+ 
+ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
+-  MasterRefillSelectionNotifier({required GetCabinAssignmentsWithCabinUseCase getAssignments})
++  MasterRefillSelectionNotifier({required GetStationAssignmentsUseCase getAssignments})
+     : _getAssignments = getAssignments;
+ 
+-  final GetCabinAssignmentsWithCabinUseCase _getAssignments;
++  final GetStationAssignmentsUseCase _getAssignments;
+ 
+   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
+ 
+-  int? _cabinId;
++  final StationCabinScope scope = StationCabinScope();
++
+   List<MedicineAssignment> _assignments = [];
+   final AssignmentSelection _selection = AssignmentSelection();
+   String _search = '';
+ 
++  /// İstasyondaki tüm (işlem yapılabilir kabinlerdeki) atamalar.
+   List<MedicineAssignment> get assignments => _assignments;
+   Set<int> get selectedUnitIds => _selection.unitIds;
+   Set<int> get selectedSerumCellIds => _selection.serumCellIds;
+@@ -40,10 +44,12 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
+   bool get isError => isFailed(fetchAssignmentsOp);
+ 
++  /// Sağ liste: arama + kabin filtresi uygulanmış atamalar.
+   List<MedicineAssignment> get visibleAssignments {
+     final q = _search.trim().toLowerCase();
+-    if (q.isEmpty) return _assignments;
+-    return _assignments.where((a) {
++    final byCabin = scope.filtered(_assignments);
++    if (q.isEmpty) return byCabin;
++    return byCabin.where((a) {
+       final name = a.medicine?.name?.toLowerCase() ?? '';
+       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
+       return name.contains(q) || barcode.contains(q);
+@@ -52,10 +58,12 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
+ 
++  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
++
+   bool get canStart => _selection.isNotEmpty;
+ 
+-  Future<void> init(CabinRouteContext ctx) {
+-    _cabinId = ctx.cabin?.id;
++  Future<void> init(StationCabinsContext ctx) {
++    scope.attach(ctx);
+     return _fetchAssignments();
+   }
+ 
+@@ -63,37 +71,45 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+   Future<void> refreshAfterQueue() => _fetchAssignments();
+ 
+   Future<void> _fetchAssignments() async {
+-    final cabinId = _cabinId;
+-    if (cabinId == null) return;
++    if (!scope.hasCabins) return;
+ 
+     await execute(
+       fetchAssignmentsOp,
+-      operation: () => _getAssignments.call(cabinId),
++      operation: () => _getAssignments.call(),
+       onData: (list) {
+-        _assignments = list;
++        _assignments = scope.stationAssignments(list);
+         _selection.clear(); // doldurulan gözler işaretli kalmasın
+         notifyListeners();
+       },
+     );
+   }
+ 
++  void viewCabin(int cabinId) {
++    if (scope.view(cabinId)) notifyListeners();
++  }
++
++  void setCabinFilter(int? cabinId) {
++    if (scope.setFilter(cabinId)) notifyListeners();
++  }
++
+   void onSearchChanged(String value) {
+     _search = value;
+     notifyListeners();
+   }
+ 
+-  void toggleUnit(int cabinDrawerId) {
+-    final assignment = AssignmentSelection.unitAssignment(cabinDrawerId, _assignments);
+-    if (assignment == null) return;
+-    _selection.toggle(assignment);
+-    notifyListeners();
+-  }
++  void toggleUnit(int cabinDrawerId) =>
++      _toggle(AssignmentSelection.unitAssignment(cabinDrawerId, _assignments));
+ 
+   /// Serum avadanlığı — yalnızca ataması olan avadanlık seçilebilir.
+-  void toggleSerumTray(int cellId) {
+-    final assignment = AssignmentSelection.serumAssignment(cellId, _assignments);
++  void toggleSerumTray(int cellId) => _toggle(AssignmentSelection.serumAssignment(cellId, _assignments));
++
++  /// Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer —
++  /// kullanıcı açılacak gözü hemen görür.
++  void _toggle(MedicineAssignment? assignment) {
+     if (assignment == null) return;
++    final wasSelected = _selection.contains(assignment);
+     _selection.toggle(assignment);
++    if (!wasSelected) scope.view(scope.cabinIdOf(assignment));
+     notifyListeners();
+   }
+ 
+@@ -101,10 +117,7 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+     if (_selection.toggleAll(AssignmentSelection.inGroup(group, _assignments))) notifyListeners();
+   }
+ 
+-  /// [groups]: kabin görsel verisi — kilitli serum raflarının avadanlık
+-  /// kilit adresleri buradan çözülür.
+   void startRefill({
+-    required List<DrawerGroup> groups,
+     required void Function(List<CabinOperationDrawerJob> jobs, int skippedCount) onQueueReady,
+     required void Function(CabinOperationFailure failure) onFailed,
+   }) {
+@@ -114,7 +127,9 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       items: selectedAssignments,
+       assignmentOf: (a) => a,
+       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.refill),
+-      groups: groups,
++      cabinOrder: scope.cabinOrder,
++      // Kilitli serum raflarının avadanlık kilit adresleri buradan çözülür.
++      groups: scope.allGroups,
+     );
+ 
+     if (result.jobs.isEmpty) {
+@@ -134,6 +149,6 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       );
+     }
+ 
+-    onQueueReady(result.jobs, result.skipped.length);
++    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_selection_view.dart b/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_selection_view.dart
+index 0b838a0..004a093 100644
+--- a/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_selection_view.dart
++++ b/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_selection_view.dart
+@@ -6,43 +6,58 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
+ 
+ import '../../../../core/hardware/hardware.dart';
+ import '../../../../widgets/widgets.dart';
+-import '../../../dashboard/dashboard.dart';
+-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+ import '../notifier/master_refill_execution_notifier.dart';
+ import '../notifier/master_refill_selection_notifier.dart';
+ 
++/// İstasyon geneli dolum seçimi: solda kabin şeridi + görüntülenen kabinin
++/// iç yerleşimi, sağda tüm kabinlerin ilaç listesi.
+ class MasterRefillSelectionView extends ConsumerWidget {
+-  const MasterRefillSelectionView({super.key, required this.cabinContext});
++  const MasterRefillSelectionView({super.key, required this.menu});
+ 
+-  final CabinRouteContext cabinContext;
++  final MenuItem menu;
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+     final selection = ref.watch(masterRefillSelectionNotifierProvider);
++    final scope = selection.scope;
+     final visible = selection.visibleAssignments;
+-    final groups = cabinContext.cabinData?.groups ?? const <DrawerGroup>[];
+ 
+     return CabinOperationSelectionLayout(
+       isLoading: selection.isLoadingAssignments,
+-      left: CabinOverviewSelectionPanel(
+-        cabin: cabinContext.cabin,
+-        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+-        groups: groups,
+-        assignments: selection.assignments,
+-        selectedUnitIds: selection.selectedUnitIds,
+-        selectedCellIds: selection.selectedSerumCellIds,
+-        onSerumTrayTap: (_, tray) {
+-          final id = tray.id;
+-          if (id != null) selection.toggleSerumTray(id);
+-        },
+-        onDrawerTap: selection.toggleDrawer,
+-        onCellTap: (unit) {
+-          final id = unit.id;
+-          if (id != null) selection.toggleUnit(id);
+-        },
++      flex: 5,
++      left: StationCabinSelectionPanel(
++        cabins: scope.cabins,
++        viewedCabinId: scope.viewedCabinId,
++        selectedCountByCabin: selection.selectedCountByCabin,
++        onCabinTap: selection.viewCabin,
++        interior: CabinOverviewSelectionPanel(
++          key: ValueKey(scope.viewedCabinId),
++          cabin: scope.viewedCabin,
++          groups: scope.viewedGroups,
++          assignments: selection.assignments,
++          selectedUnitIds: selection.selectedUnitIds,
++          selectedCellIds: selection.selectedSerumCellIds,
++          onSerumTrayTap: (_, tray) {
++            final id = tray.id;
++            if (id != null) selection.toggleSerumTray(id);
++          },
++          onDrawerTap: selection.toggleDrawer,
++          onCellTap: (unit) {
++            final id = unit.id;
++            if (id != null) selection.toggleUnit(id);
++          },
++        ),
+       ),
+       right: CabinSelectionContentShell(
+-        menu: cabinContext.menu,
++        menu: menu,
++        extra: Padding(
++          padding: const EdgeInsets.only(bottom: 12.0),
++          child: StationCabinFilterBar(
++            cabins: scope.cabins,
++            selectedCabinId: scope.cabinFilter,
++            onChanged: selection.setCabinFilter,
++          ),
++        ),
+         searchQuery: selection.search,
+         onSearchQueryChanged: selection.onSearchChanged,
+         searchHint: context.l10n.intake_hint_searchMedicine,
+@@ -56,6 +71,7 @@ class MasterRefillSelectionView extends ConsumerWidget {
+                 onToggle: selection.toggleUnit,
+                 selectedCellIds: selection.selectedSerumCellIds,
+                 onToggleCell: selection.toggleSerumTray,
++                cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+               ),
+         footer: selection.canStart
+             ? MedButton(
+@@ -64,7 +80,6 @@ class MasterRefillSelectionView extends ConsumerWidget {
+                 size: MedButtonSize.lg,
+                 variant: MedButtonVariant.primary,
+                 onPressed: () => selection.startRefill(
+-                  groups: groups,
+                   onQueueReady: (jobs, skipped) {
+                     ref.read(masterRefillExecutionNotifierProvider).start(jobs);
+                   },
+diff --git a/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_view.dart b/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_view.dart
+index cb5d1a5..ac13f8c 100644
+--- a/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_view.dart
++++ b/apps/pharmed-client/lib/features/refill/master_refill/view/master_refill_view.dart
+@@ -9,9 +9,8 @@ import 'master_refill_execution_view.dart';
+ import 'master_refill_selection_view.dart';
+ 
+ class MasterRefillView extends ConsumerStatefulWidget {
+-  const MasterRefillView({super.key, required this.cabinContext, required this.stationContext});
++  const MasterRefillView({super.key, required this.stationContext});
+ 
+-  final CabinRouteContext cabinContext;
+   final StationCabinsContext stationContext;
+ 
+   @override
+@@ -26,7 +25,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
+     super.initState();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (!mounted) return;
+-      ref.read(masterRefillSelectionNotifierProvider).init(widget.cabinContext);
++      ref.read(masterRefillSelectionNotifierProvider).init(widget.stationContext);
+     });
+ 
+     _executionNotifier = ref.read(masterRefillExecutionNotifierProvider);
+@@ -47,7 +46,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
+     final selection = ref.watch(masterRefillSelectionNotifierProvider);
+     final isExecuting = ref.watch(masterRefillExecutionNotifierProvider.select((n) => n.isExecuting));
+ 
+-    if (widget.cabinContext.cabinData == null) {
++    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
+       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+     }
+     if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
+@@ -57,6 +56,6 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
+ 
+     return isExecuting
+         ? MasterRefillExecutionView(stationContext: widget.stationContext)
+-        : MasterRefillSelectionView(cabinContext: widget.cabinContext);
++        : MasterRefillSelectionView(menu: widget.stationContext.menu);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/refill/refill_view.dart b/apps/pharmed-client/lib/features/refill/refill_view.dart
+index 72e4286..9d7faa9 100644
+--- a/apps/pharmed-client/lib/features/refill/refill_view.dart
++++ b/apps/pharmed-client/lib/features/refill/refill_view.dart
+@@ -19,7 +19,7 @@ class RefillView extends ConsumerWidget {
+     final cabinData = cabinRouteContext.cabinData;
+ 
+     return switch (deviceMode) {
+-      CabinType.master => MasterRefillView(cabinContext: cabinRouteContext, stationContext: stationContext),
++      CabinType.master => MasterRefillView(stationContext: stationContext),
+       CabinType.mobile => MobileRefillView(data: cabinData),
+       _ => const Center(child: MedLoadingIndicator()),
+     };
+diff --git a/apps/pharmed-client/lib/features/unload/master_unload/notifier/master_unload_selection_notifier.dart b/apps/pharmed-client/lib/features/unload/master_unload/notifier/master_unload_selection_notifier.dart
+index 92bd6be..a23d041 100644
+--- a/apps/pharmed-client/lib/features/unload/master_unload/notifier/master_unload_selection_notifier.dart
++++ b/apps/pharmed-client/lib/features/unload/master_unload/notifier/master_unload_selection_notifier.dart
+@@ -1,7 +1,8 @@
+ // [SWREQ-CLI-MUNLOAD-001] [IEC 62304 §5.5]
+-// Master kabin boşaltmasının seçim fazı: seçilen kabinin atamalarını çeker,
+-// stoklu gözlerin seçimini yönetir, atama silme/değiştirme işlemlerini
+-// yürütür ve kuyruğu hazırlayıp execution notifier'a devreder.
++// Master kabin boşaltmasının seçim fazı: istasyondaki tüm kabinlerin
++// atamalarını çeker (kabin seçim adımı yok), stoklu gözlerin seçimini
++// kabinler arası yönetir, atama silme/değiştirme işlemlerini yürütür ve
++// kuyruğu kabin sırasıyla hazırlayıp execution notifier'a devreder.
+ //
+ // Sınıf: Class B
+ 
+@@ -17,7 +18,7 @@ import '../../../dashboard/dashboard.dart';
+ 
+ final masterUnloadSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterUnloadSelectionNotifier>((ref) {
+   return MasterUnloadSelectionNotifier(
+-    getAssignments: ref.read(getCabinAssignmentsWitCabinUseCaseProvider),
++    getAssignments: ref.read(getStationAssignmentsUseCaseProvider),
+     deleteAssignment: ref.read(deleteAssignmentUseCaseProvider),
+     updateAssignment: ref.read(updateMedicineAssignmentUseCaseProvider),
+   );
+@@ -25,23 +26,20 @@ final masterUnloadSelectionNotifierProvider = ChangeNotifierProvider.autoDispose
+ 
+ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
+   MasterUnloadSelectionNotifier({
+-    required GetCabinAssignmentsWithCabinUseCase getAssignments,
++    required GetStationAssignmentsUseCase getAssignments,
+     required DeleteMedicineAssignmentUseCase deleteAssignment,
+     required UpdateMedicineAssignmentUseCase updateAssignment,
+   }) : _getAssignments = getAssignments,
+        _deleteAssignment = deleteAssignment,
+        _updateAssignment = updateAssignment;
+ 
+-  final GetCabinAssignmentsWithCabinUseCase _getAssignments;
++  final GetStationAssignmentsUseCase _getAssignments;
+   final DeleteMedicineAssignmentUseCase _deleteAssignment;
+   final UpdateMedicineAssignmentUseCase _updateAssignment;
+ 
+   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
+ 
+-  int? _cabinId;
+-
+-  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
+-  List<DrawerGroup> _groups = const [];
++  final StationCabinScope scope = StationCabinScope();
+ 
+   List<MedicineAssignment> _assignments = [];
+   final AssignmentSelection _selection = AssignmentSelection();
+@@ -70,8 +68,9 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   List<MedicineAssignment> get visibleAssignments {
+     final q = _search.trim().toLowerCase();
+-    if (q.isEmpty) return _assignments;
+-    return _assignments.where((a) {
++    final byCabin = scope.filtered(_assignments);
++    if (q.isEmpty) return byCabin;
++    return byCabin.where((a) {
+       final name = a.medicine?.name?.toLowerCase() ?? '';
+       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
+       return name.contains(q) || barcode.contains(q);
+@@ -80,34 +79,42 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+ 
+   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
+ 
++  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
++
+   bool get canStart => _selection.isNotEmpty;
+ 
+   /// Boşaltılacak bir şey olmalı — stoğu olmayan göz seçilemez.
+   bool canSelect(MedicineAssignment a) => a.cabinDrawerId != null && a.totalQuantity > 0;
+ 
+-  Future<void> init(CabinRouteContext ctx) {
+-    _cabinId = ctx.cabin?.id;
+-    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
++  Future<void> init(StationCabinsContext ctx) {
++    scope.attach(ctx);
+     return _fetchAssignments();
+   }
+ 
+   Future<void> refreshAfterQueue() => _fetchAssignments();
+ 
+   Future<void> _fetchAssignments() async {
+-    final cabinId = _cabinId;
+-    if (cabinId == null) return;
++    if (!scope.hasCabins) return;
+ 
+     await execute(
+       fetchAssignmentsOp,
+-      operation: () => _getAssignments.call(cabinId),
++      operation: () => _getAssignments.call(),
+       onData: (list) {
+-        _assignments = list;
++        _assignments = scope.stationAssignments(list);
+         _selection.clear();
+         notifyListeners();
+       },
+     );
+   }
+ 
++  void viewCabin(int cabinId) {
++    if (scope.view(cabinId)) notifyListeners();
++  }
++
++  void setCabinFilter(int? cabinId) {
++    if (scope.setFilter(cabinId)) notifyListeners();
++  }
++
+   void onSearchChanged(String value) {
+     _search = value;
+     notifyListeners();
+@@ -129,6 +136,8 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+     }
+     if (!canSelect(assignment)) return;
+     _selection.add(assignment);
++    // Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer.
++    scope.view(scope.cabinIdOf(assignment));
+     notifyListeners();
+   }
+ 
+@@ -147,7 +156,8 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       items: selectedAssignments,
+       assignmentOf: (a) => a,
+       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.unload),
+-      groups: _groups,
++      cabinOrder: scope.cabinOrder,
++      groups: scope.allGroups,
+     );
+ 
+     if (result.jobs.isEmpty) {
+@@ -167,7 +177,7 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin
+       );
+     }
+ 
+-    onQueueReady(result.jobs, result.skipped.length);
++    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
+   }
+ 
+   // ── Atama işlemleri ───────────────────────────────────────────────────
+diff --git a/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_selection_view.dart b/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_selection_view.dart
+index 1b89ba0..344e591 100644
+--- a/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_selection_view.dart
++++ b/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_selection_view.dart
+@@ -7,20 +7,19 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
+ import '../../../../core/hardware/hardware.dart';
+ import '../../../../core/providers/providers.dart';
+ import '../../../../widgets/widgets.dart';
+-import '../../../dashboard/dashboard.dart';
+-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
+ import '../notifier/master_unload_execution_notifier.dart';
+ import '../notifier/master_unload_selection_notifier.dart';
+ 
+ class MasterUnloadSelectionView extends ConsumerWidget {
+-  const MasterUnloadSelectionView({super.key, required this.cabinContext});
++  const MasterUnloadSelectionView({super.key, required this.menu});
+ 
+-  final CabinRouteContext cabinContext;
++  final MenuItem menu;
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+     final selection = ref.watch(masterUnloadSelectionNotifierProvider);
+     final items = selection.visibleAssignments;
++    final scope = selection.scope;
+ 
+     SearchDataSource<Medicine> equivalentsSource(int medicineId) => (skip, take, search) async {
+       final result = await ref
+@@ -49,25 +48,40 @@ class MasterUnloadSelectionView extends ConsumerWidget {
+ 
+     return CabinOperationSelectionLayout(
+       isLoading: selection.isLoadingAssignments,
+-      left: CabinOverviewSelectionPanel(
+-        cabin: cabinContext.cabin,
+-        onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
+-        groups: cabinContext.cabinData?.groups ?? const [],
+-        assignments: selection.assignments,
+-        selectedUnitIds: selection.selectedUnitIds,
+-        onDrawerTap: selection.toggleDrawer,
+-        onCellTap: (unit) {
+-          final id = unit.id;
+-          if (id != null) selection.toggleUnit(id);
+-        },
+-        selectedCellIds: selection.selectedSerumCellIds,
+-        onSerumTrayTap: (_, tray) {
+-          final id = tray.id;
+-          if (id != null) selection.toggleSerumTray(id);
+-        },
++      flex: 5,
++      left: StationCabinSelectionPanel(
++        cabins: scope.cabins,
++        viewedCabinId: scope.viewedCabinId,
++        selectedCountByCabin: selection.selectedCountByCabin,
++        onCabinTap: selection.viewCabin,
++        interior: CabinOverviewSelectionPanel(
++          key: ValueKey(scope.viewedCabinId),
++          cabin: scope.viewedCabin,
++          groups: scope.viewedGroups,
++          assignments: selection.assignments,
++          selectedUnitIds: selection.selectedUnitIds,
++          onDrawerTap: selection.toggleDrawer,
++          onCellTap: (unit) {
++            final id = unit.id;
++            if (id != null) selection.toggleUnit(id);
++          },
++          selectedCellIds: selection.selectedSerumCellIds,
++          onSerumTrayTap: (_, tray) {
++            final id = tray.id;
++            if (id != null) selection.toggleSerumTray(id);
++          },
++        ),
+       ),
+       right: CabinSelectionContentShell(
+-        menu: cabinContext.menu,
++        menu: menu,
++        extra: Padding(
++          padding: const EdgeInsets.only(bottom: 12.0),
++          child: StationCabinFilterBar(
++            cabins: scope.cabins,
++            selectedCabinId: scope.cabinFilter,
++            onChanged: selection.setCabinFilter,
++          ),
++        ),
+         searchQuery: selection.search,
+         onSearchQueryChanged: selection.onSearchChanged,
+         searchHint: context.l10n.unload_hint_searchMedicine,
+@@ -81,6 +95,7 @@ class MasterUnloadSelectionView extends ConsumerWidget {
+                 onToggle: selection.toggleUnit,
+                 selectedCellIds: selection.selectedSerumCellIds,
+                 onToggleCell: selection.toggleSerumTray,
++                cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+                 onDelete: (assignment) => MessageUtils.showConfirmDeleteDialog(
+                   context: context,
+                   itemName: assignment.medicine?.name,
+diff --git a/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_view.dart b/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_view.dart
+index 1fa68b4..26880f3 100644
+--- a/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_view.dart
++++ b/apps/pharmed-client/lib/features/unload/master_unload/view/master_unload_view.dart
+@@ -9,9 +9,8 @@ import 'master_unload_execution_view.dart';
+ import 'master_unload_selection_view.dart';
+ 
+ class MasterUnloadView extends ConsumerStatefulWidget {
+-  const MasterUnloadView({super.key, required this.cabinContext, required this.stationContext});
++  const MasterUnloadView({super.key, required this.stationContext});
+ 
+-  final CabinRouteContext cabinContext;
+   final StationCabinsContext stationContext;
+ 
+   @override
+@@ -26,7 +25,7 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
+     super.initState();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (!mounted) return;
+-      ref.read(masterUnloadSelectionNotifierProvider).init(widget.cabinContext);
++      ref.read(masterUnloadSelectionNotifierProvider).init(widget.stationContext);
+     });
+ 
+     _executionNotifier = ref.read(masterUnloadExecutionNotifierProvider);
+@@ -47,7 +46,7 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
+     final selection = ref.watch(masterUnloadSelectionNotifierProvider);
+     final isExecuting = ref.watch(masterUnloadExecutionNotifierProvider.select((n) => n.isExecuting));
+ 
+-    if (widget.cabinContext.cabinData == null) {
++    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
+       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+     }
+     if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
+@@ -57,6 +56,6 @@ class _MasterUnloadViewState extends ConsumerState<MasterUnloadView> {
+ 
+     return isExecuting
+         ? MasterUnloadExecutionView(stationContext: widget.stationContext)
+-        : MasterUnloadSelectionView(cabinContext: widget.cabinContext);
++        : MasterUnloadSelectionView(menu: widget.stationContext.menu);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/unload/unload_view.dart b/apps/pharmed-client/lib/features/unload/unload_view.dart
+index de604ba..5e02ee2 100644
+--- a/apps/pharmed-client/lib/features/unload/unload_view.dart
++++ b/apps/pharmed-client/lib/features/unload/unload_view.dart
+@@ -18,7 +18,7 @@ class UnloadView extends ConsumerWidget {
+     final cabinData = cabinRouteContext.cabinData;
+ 
+     return switch (deviceMode) {
+-      CabinType.master => MasterUnloadView(cabinContext: cabinRouteContext, stationContext: stationContext),
++      CabinType.master => MasterUnloadView(stationContext: stationContext),
+       CabinType.mobile => MobileUnloadView(data: cabinData),
+       _ => const Center(child: MedLoadingIndicator()),
+     };
+diff --git a/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_notifier.dart b/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_notifier.dart
+index f1c0ff4..8a85df2 100644
+--- a/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_notifier.dart
++++ b/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_notifier.dart
+@@ -14,9 +14,19 @@ final unloadDrawerNotifierProvider = NotifierProvider<UnloadDrawerNotifier, Unlo
+ 
+ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
+   late final MasterDrawerOrchestrator _orchestrator;
+-  int _cabinId = 0;
+   UnloadDrawerMode _mode = UnloadDrawerMode.drawer;
+-  CabinVisualizerData? _visualizerData;
++
++  /// İstasyon geneli kabin kapsamı — kabin seçim adımı yok. İade çekmecesi
++  /// GÖRÜNTÜLENEN kabinden açılır; açılışta iade çekmecesi olan ilk kabin
++  /// görüntülenir.
++  final StationCabinScope scope = StationCabinScope();
++
++  int get _cabinId => scope.viewedCabinId ?? 0;
++
++  /// Görüntülenen kabinde iade çekmecesi tanımlı mı.
++  bool get viewedCabinHasReturnDrawer => _hasReturnDrawer(scope.viewedCabinId);
++
++  bool _hasReturnDrawer(int? cabinId) => scope.groupsOf(cabinId).any((g) => g.isReturnDrawer);
+ 
+   GetReturnDrawerMedicinesUseCase get _getDrawerMedicines => ref.read(getReturnDrawerMedicinesUseCaseProvider);
+   UnloadReturnDrawerUseCase get _unloadDrawer => ref.read(unloadReturnDrawerUseCaseProvider);
+@@ -31,9 +41,9 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
+     return const UnloadDrawerUninitialized();
+   }
+ 
+-  Future<void> init(CabinRouteContext ctx) async {
+-    _cabinId = ctx.cabin?.id ?? 0;
+-    _visualizerData = ctx.cabinData;
++  Future<void> init(StationCabinsContext ctx) async {
++    scope.attach(ctx);
++    scope.preferViewed(_hasReturnDrawer);
+     _mode = UnloadDrawerMode.drawer;
+     state = UnloadDrawerLoading(mode: _mode);
+     await _loadItems();
+@@ -60,6 +70,22 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
+     );
+   }
+ 
++  /// Kabin şeridinden kabin değiştirildiğinde — donanım açıkken engellenir.
++  void viewCabin(int cabinId) {
++    final s = state;
++    if (s is UnloadDrawerExecuting) return;
++    if (s is UnloadDrawerError && s.previousState is UnloadDrawerExecuting) return;
++    if (!scope.view(cabinId)) return;
++    switch (s) {
++      case UnloadDrawerSelection sel:
++        state = sel.copyWith(cabinId: cabinId);
++      case UnloadDrawerError(previousState: UnloadDrawerSelection sel):
++        state = sel.copyWith(cabinId: cabinId);
++      default:
++        break;
++    }
++  }
++
+   void toggleItem(int itemId) {
+     final s = state;
+     if (s is! UnloadDrawerSelection || s.isSubmitting) return;
+@@ -100,7 +126,7 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
+   /// listesi zaten notifier state'inden geliyor, assignment.medicine'e
+   /// bağımlı değil).
+   MedicineAssignment? _resolveReturnDrawerAssignment() {
+-    final group = _visualizerData?.groups.firstWhereOrNull((g) => g.isReturnDrawer);
++    final group = scope.viewedGroups.firstWhereOrNull((g) => g.isReturnDrawer);
+     final unit = group?.units.firstOrNull;
+     if (group == null || unit == null) return null;
+ 
+diff --git a/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_state.dart b/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_state.dart
+index 6ae3bbc..6b1e4e8 100644
+--- a/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_state.dart
++++ b/apps/pharmed-client/lib/features/unload_drawer/notifier/unload_drawer_state.dart
+@@ -54,13 +54,14 @@ final class UnloadDrawerSelection extends UnloadDrawerState {
+   }
+ 
+   UnloadDrawerSelection copyWith({
++    int? cabinId,
+     List<ReturnDrawerMedicine>? items,
+     Set<int>? selectedIds,
+     bool? isSubmitting,
+     String? search,
+   }) {
+     return UnloadDrawerSelection(
+-      cabinId: cabinId,
++      cabinId: cabinId ?? this.cabinId,
+       mode: mode,
+       items: items ?? this.items,
+       selectedIds: selectedIds ?? this.selectedIds,
+diff --git a/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_screen.dart b/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_screen.dart
+index 9ecb489..b4616f8 100644
+--- a/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_screen.dart
++++ b/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_screen.dart
+@@ -11,9 +11,9 @@ import 'unload_drawer_execution_view.dart';
+ import 'unload_drawer_selection_view.dart';
+ 
+ class UnloadDrawerScreen extends ConsumerStatefulWidget {
+-  const UnloadDrawerScreen({super.key, required this.cabinRouteContext});
++  const UnloadDrawerScreen({super.key, required this.stationContext});
+ 
+-  final CabinRouteContext cabinRouteContext;
++  final StationCabinsContext stationContext;
+ 
+   @override
+   ConsumerState<UnloadDrawerScreen> createState() => UnloadDrawerScreenState();
+@@ -27,7 +27,7 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
+     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       if (!mounted) return;
+-      notifier.init(widget.cabinRouteContext);
++      notifier.init(widget.stationContext);
+     });
+   }
+ 
+@@ -37,7 +37,6 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
+     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
+     final isExecuting =
+         state is UnloadDrawerExecuting || (state is UnloadDrawerError && state.previousState is UnloadDrawerExecuting);
+-    final cabinData = widget.cabinRouteContext.cabinData;
+ 
+     ref.listen(unloadDrawerNotifierProvider, (_, next) {
+       if (next is UnloadDrawerError && next.isQueueError) {
+@@ -54,14 +53,16 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
+       }
+     });
+ 
+-    if (cabinData == null) {
++    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
+       return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
+     }
+ 
+     if (isExecuting) {
+-      return UnloadDrawerExecutionView(allGroups: cabinData.groups);
++      // Kabin yürütme sırasında değiştirilemez — iade çekmecesi görüntülenen
++      // kabinden açıldı.
++      return UnloadDrawerExecutionView(allGroups: notifier.scope.viewedGroups);
+     }
+ 
+-    return UnloadDrawerSelectionView(cabinContext: widget.cabinRouteContext);
++    return UnloadDrawerSelectionView(menu: widget.stationContext.menu);
+   }
+ }
+diff --git a/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_selection_view.dart b/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_selection_view.dart
+index dcc34ac..e0cb70c 100644
+--- a/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_selection_view.dart
++++ b/apps/pharmed-client/lib/features/unload_drawer/view/unload_drawer_selection_view.dart
+@@ -8,20 +8,19 @@ import 'package:pharmed_ui/pharmed_ui.dart';
+ import 'package:pharmed_utils/pharmed_utils.dart';
+ 
+ import '../../../../widgets/widgets.dart';
+-import '../../dashboard/dashboard.dart';
+ import '../notifier/unload_drawer_notifier.dart';
+ import '../notifier/unload_drawer_state.dart';
+ 
+ class UnloadDrawerSelectionView extends ConsumerWidget {
+-  const UnloadDrawerSelectionView({super.key, required this.cabinContext});
++  const UnloadDrawerSelectionView({super.key, required this.menu});
+ 
+-  final CabinRouteContext cabinContext;
++  final MenuItem menu;
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+     final state = ref.watch(unloadDrawerNotifierProvider);
+     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
+-    final menu = cabinContext.menu;
++    final scope = notifier.scope;
+ 
+     final mode = state.mode ?? UnloadDrawerMode.drawer;
+     final selectedIndex = mode == UnloadDrawerMode.drawer ? 0 : 1;
+@@ -36,10 +35,23 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
+     final items = selection?.visibleMedicines ?? [];
+     final selectedIds = selection?.selectedIds ?? const {};
+     final isBoxMode = mode == UnloadDrawerMode.box;
++    final hasReturnDrawer = notifier.viewedCabinHasReturnDrawer;
+ 
+-    return Align(
+-      alignment: Alignment.centerLeft,
+-      child: Column(
++    return CabinOperationSelectionLayout(
++      flex: 5,
++      left: StationCabinSelectionPanel(
++        cabins: scope.cabins,
++        viewedCabinId: scope.viewedCabinId,
++        onCabinTap: notifier.viewCabin,
++        // Yalnızca bilgi: iade çekmecesinin kabin içindeki yeri görünür.
++        interior: CabinOverviewSelectionPanel(
++          key: ValueKey(scope.viewedCabinId),
++          cabin: scope.viewedCabin,
++          groups: scope.viewedGroups,
++          selectedUnitIds: const {},
++        ),
++      ),
++      right: Column(
+         spacing: 12.0,
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+@@ -98,9 +110,22 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
+                       isLoading: selection.isSubmitting,
+                       onPressed: selection.canConfirm ? notifier.confirmBoxUnload : null,
+                     )
+-                  : MedButton(
+-                      label: context.l10n.unload_action_startDrawerUnload,
+-                      onPressed: selection.items.isNotEmpty ? notifier.startDrawerUnload : null,
++                  : Row(
++                      mainAxisSize: MainAxisSize.min,
++                      spacing: 16.0,
++                      children: [
++                        if (!hasReturnDrawer)
++                          Text(
++                            context.l10n.unload_hint_noReturnDrawerInCabin,
++                            style: MedTextStyles.bodySm(color: MedColors.amber),
++                          ),
++                        MedButton(
++                          label: context.l10n.unload_action_startDrawerUnload,
++                          onPressed: hasReturnDrawer && selection.items.isNotEmpty
++                              ? notifier.startDrawerUnload
++                              : null,
++                        ),
++                      ],
+                     ),
+             ),
+           ),
+diff --git a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_overview_selection_panel.dart b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_overview_selection_panel.dart
+index 10e308e..b7b5079 100644
+--- a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_overview_selection_panel.dart
++++ b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_overview_selection_panel.dart
+@@ -59,11 +59,16 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Text(cabin!.name.toString(), style: MedTextStyles.titleMd()),
+-                  TextButton.icon(
+-                    onPressed: onChangeCabin,
+-                    label: Text(context.l10n.cabinOperation_changeCabinButton),
+-                    icon: Icon(PhosphorIcons.arrowLeft()),
+-                  ),
++                  // İstasyon geneli seçim ekranlarında kabin üstteki şeritten
++                  // değiştirilir — buton yalnızca callback verilince çıkar.
++                  if (onChangeCabin != null)
++                    TextButton.icon(
++                      onPressed: onChangeCabin,
++                      label: Text(context.l10n.cabinOperation_changeCabinButton),
++                      icon: Icon(PhosphorIcons.arrowLeft()),
++                    )
++                  else
++                    const SizedBox(height: 40),
+                 ],
+               ),
+             ),
+diff --git a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_shell_widgets.dart b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_shell_widgets.dart
+index 4d4e07c..0614560 100644
+--- a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_shell_widgets.dart
++++ b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/cabin_shell_widgets.dart
+@@ -4,6 +4,7 @@ export 'cabin_operation_execution_layout.dart';
+ export 'cabin_overview_execution_panel.dart';
+ export 'cabin_overview_selection_panel.dart';
+ export 'selection/cabin_assignment_list_view.dart';
++export 'selection/station_cabin_selection_panel.dart';
+ 
+ /// Patient
+ export 'selection/patient_selection/notifier/patient_selection_notifier.dart';
+diff --git a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/cabin_assignment_list_view.dart b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/cabin_assignment_list_view.dart
+index 39366dc..af0ebb5 100644
+--- a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/cabin_assignment_list_view.dart
++++ b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/cabin_assignment_list_view.dart
+@@ -14,6 +14,7 @@ class CabinAssignmentListView extends StatelessWidget {
+     this.onToggleCell,
+     this.onDelete,
+     this.onReplace,
++    this.cabinLabelOf,
+   });
+ 
+   final List<MedicineAssignment> items;
+@@ -27,6 +28,10 @@ class CabinAssignmentListView extends StatelessWidget {
+   final ValueChanged<MedicineAssignment>? onDelete;
+   final ValueChanged<MedicineAssignment>? onReplace;
+ 
++  /// Verilirse "Kabin" sütunu gösterilir — istasyon geneli listelerde satırın
++  /// hangi kabine ait olduğunu belirtir.
++  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
++
+   double _ratio(double v, double max) => max > 0 ? (v / max).clamp(0.0, 1.0) : 0.0;
+ 
+   @override
+@@ -40,6 +45,8 @@ class CabinAssignmentListView extends StatelessWidget {
+             if (onToggle != null)
+               SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_selectColumn, style: textStyle)),
+             Expanded(child: Text(context.l10n.cabinAssignmentList_medicineColumn, style: textStyle)),
++            if (cabinLabelOf != null)
++              Expanded(child: Text(context.l10n.cabinAssignmentList_cabinColumn, style: textStyle)),
+             Expanded(child: Text(context.l10n.cabinAssignmentList_locationColumn, style: textStyle)),
+             Expanded(child: Text(context.l10n.cabinAssignmentList_stockColumn, style: textStyle)),
+             SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_fillLevelColumn, style: textStyle)),
+@@ -121,6 +128,14 @@ class CabinAssignmentListView extends StatelessWidget {
+                           ),
+                         ),
+                       Expanded(child: Text(name)),
++                      if (cabinLabelOf != null)
++                        Expanded(
++                          child: Text(
++                            cabinLabelOf!(assignment) ?? '—',
++                            style: MedTextStyles.bodySm(color: MedColors.text3),
++                            overflow: TextOverflow.ellipsis,
++                          ),
++                        ),
+                       Expanded(child: Text(konum)),
+                       Expanded(child: Text(stock)),
+                       SizedBox(
+diff --git a/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/station_cabin_selection_panel.dart b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/station_cabin_selection_panel.dart
+new file mode 100644
+index 0000000..57b93d7
+--- /dev/null
++++ b/apps/pharmed-client/lib/widgets/cabin_shell_widgets/selection/station_cabin_selection_panel.dart
+@@ -0,0 +1,198 @@
++// [SWREQ-UI-STATIONSCOPE-001] [IEC 62304 §5.5]
++//
++// İstasyon geneli seçim ekranlarının sol paneli: üstte istasyondaki tüm
++// kabinlerin mini görselleri (kabin şeridi), altta görüntülenen kabinin iç
++// yerleşimi. Kabine dokunmak yalnızca hangi kabinin iç yerleşiminin
++// gösterileceğini değiştirir — seçim kabinler arası korunur. Rozet, o
++// kabinde seçili kalem sayısını gösterir.
++//
++// Sınıf: Class B
++
++import 'package:flutter/material.dart';
++import 'package:pharmed_core/pharmed_core.dart';
++import 'package:pharmed_ui/pharmed_ui.dart';
++
++class StationCabinSelectionPanel extends StatelessWidget {
++  const StationCabinSelectionPanel({
++    super.key,
++    required this.cabins,
++    required this.viewedCabinId,
++    required this.onCabinTap,
++    required this.interior,
++    this.selectedCountByCabin = const {},
++  });
++
++  final List<Cabin> cabins;
++  final int? viewedCabinId;
++  final ValueChanged<int> onCabinTap;
++  final Map<int, int> selectedCountByCabin;
++
++  /// Görüntülenen kabinin iç yerleşimi — genelde [CabinOverviewSelectionPanel].
++  final Widget interior;
++
++  @override
++  Widget build(BuildContext context) {
++    return Column(
++      spacing: MedSpacing.lg,
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: [
++        StationCabinStrip(
++          cabins: cabins,
++          viewedCabinId: viewedCabinId,
++          selectedCountByCabin: selectedCountByCabin,
++          onCabinTap: onCabinTap,
++        ),
++        Expanded(child: interior),
++      ],
++    );
++  }
++}
++
++class StationCabinStrip extends StatelessWidget {
++  const StationCabinStrip({
++    super.key,
++    required this.cabins,
++    required this.viewedCabinId,
++    required this.onCabinTap,
++    this.selectedCountByCabin = const {},
++  });
++
++  final List<Cabin> cabins;
++  final int? viewedCabinId;
++  final ValueChanged<int> onCabinTap;
++  final Map<int, int> selectedCountByCabin;
++
++  static const double _cardWidth = 132;
++  static const double _cardHeight = 176;
++
++  @override
++  Widget build(BuildContext context) {
++    return Container(
++      padding: MedSpacing.insetLg,
++      decoration: BoxDecoration(
++        border: Border.all(width: 2, color: MedColors.border),
++        color: MedColors.surface,
++        borderRadius: MedRadius.mdAll,
++      ),
++      child: Column(
++        spacing: MedSpacing.md,
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          Row(
++            crossAxisAlignment: CrossAxisAlignment.end,
++            children: [
++              Text(context.l10n.cabinSelection_stripTitle, style: MedTextStyles.titleMd()),
++              const SizedBox(width: MedSpacing.lg),
++              Expanded(
++                child: Text(
++                  context.l10n.cabinSelection_stripHint,
++                  style: MedTextStyles.bodySm(color: MedColors.text3),
++                  textAlign: TextAlign.end,
++                  overflow: TextOverflow.ellipsis,
++                ),
++              ),
++            ],
++          ),
++          SizedBox(
++            height: _cardHeight,
++            child: ListView.separated(
++              scrollDirection: Axis.horizontal,
++              itemCount: cabins.length,
++              separatorBuilder: (_, _) => const SizedBox(width: MedSpacing.lg),
++              itemBuilder: (context, index) {
++                final cabin = cabins[index];
++                final id = cabin.id;
++                final count = id == null ? 0 : (selectedCountByCabin[id] ?? 0);
++                return _StripCard(
++                  cabin: cabin,
++                  isViewed: id != null && id == viewedCabinId,
++                  selectedCount: count,
++                  width: _cardWidth,
++                  height: _cardHeight,
++                  onTap: id == null ? null : () => onCabinTap(id),
++                );
++              },
++            ),
++          ),
++        ],
++      ),
++    );
++  }
++}
++
++class _StripCard extends StatelessWidget {
++  const _StripCard({
++    required this.cabin,
++    required this.isViewed,
++    required this.selectedCount,
++    required this.width,
++    required this.height,
++    this.onTap,
++  });
++
++  final Cabin cabin;
++  final bool isViewed;
++  final int selectedCount;
++  final double width;
++  final double height;
++  final VoidCallback? onTap;
++
++  @override
++  Widget build(BuildContext context) {
++    return Semantics(
++      button: true,
++      selected: isViewed,
++      label: cabin.name,
++      child: GestureDetector(
++        behavior: HitTestBehavior.opaque,
++        onTap: onTap,
++        child: Stack(
++          children: [
++            CabinTypeReferenceView(
++              cabin: cabin,
++              isActive: isViewed,
++              dimWhenInactive: false,
++              width: width,
++              height: height,
++            ),
++            if (selectedCount > 0)
++              Positioned(
++                top: MedSpacing.sm,
++                right: MedSpacing.sm,
++                child: Container(
++                  padding: const EdgeInsets.symmetric(horizontal: MedSpacing.md, vertical: 2),
++                  decoration: BoxDecoration(color: MedColors.blue, borderRadius: MedRadius.xlAll),
++                  child: Text(
++                    context.l10n.cabinSelection_selectedCountBadge(selectedCount),
++                    style: MedTextStyles.monoXs(color: Colors.white),
++                  ),
++                ),
++              ),
++          ],
++        ),
++      ),
++    );
++  }
++}
++
++/// Sağ listenin kabin filtresi: "Tümü" + her kabin.
++class StationCabinFilterBar extends StatelessWidget {
++  const StationCabinFilterBar({super.key, required this.cabins, required this.selectedCabinId, required this.onChanged});
++
++  final List<Cabin> cabins;
++
++  /// null → Tümü.
++  final int? selectedCabinId;
++  final ValueChanged<int?> onChanged;
++
++  @override
++  Widget build(BuildContext context) {
++    if (cabins.length < 2) return const SizedBox.shrink();
++    final index = selectedCabinId == null ? 0 : cabins.indexWhere((c) => c.id == selectedCabinId) + 1;
++    return MedSegmentedButton(
++      labels: [context.l10n.filter_all, for (final c in cabins) c.name ?? '—'],
++      selectedIndex: index < 0 ? 0 : index,
++      onChanged: (i) => onChanged(i == 0 ? null : cabins[i - 1].id),
++    );
++  }
++}
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index dc3f075..5377150 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -6615,5 +6615,21 @@
+   "fingerprint_login_idle": "Fingerprint scanner paused",
+   "@fingerprint_login_idle": {},
+   "fingerprint_login_resumeButton": "Listen",
+-  "@fingerprint_login_resumeButton": {}
++  "@fingerprint_login_resumeButton": {},
++  "cabinSelection_stripTitle": "Cabinets",
++  "@cabinSelection_stripTitle": {},
++  "cabinSelection_stripHint": "Tap a cabinet to see its layout",
++  "@cabinSelection_stripHint": {},
++  "cabinSelection_selectedCountBadge": "{count} selected",
++  "@cabinSelection_selectedCountBadge": {
++    "placeholders": {
++      "count": {
++        "type": "int"
++      }
++    }
++  },
++  "cabinAssignmentList_cabinColumn": "Cabinet",
++  "@cabinAssignmentList_cabinColumn": {},
++  "unload_hint_noReturnDrawerInCabin": "No return drawer is defined in this cabinet",
++  "@unload_hint_noReturnDrawerInCabin": {}
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index 436d369..4b7a6d6 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -5569,5 +5569,21 @@
+   "fingerprint_login_idle": "Lecteur d'empreintes en pause",
+   "@fingerprint_login_idle": {},
+   "fingerprint_login_resumeButton": "Écouter",
+-  "@fingerprint_login_resumeButton": {}
++  "@fingerprint_login_resumeButton": {},
++  "cabinSelection_stripTitle": "Cabines",
++  "@cabinSelection_stripTitle": {},
++  "cabinSelection_stripHint": "Touchez une cabine pour voir son agencement",
++  "@cabinSelection_stripHint": {},
++  "cabinSelection_selectedCountBadge": "{count} sélectionné(s)",
++  "@cabinSelection_selectedCountBadge": {
++    "placeholders": {
++      "count": {
++        "type": "int"
++      }
++    }
++  },
++  "cabinAssignmentList_cabinColumn": "Cabine",
++  "@cabinAssignmentList_cabinColumn": {},
++  "unload_hint_noReturnDrawerInCabin": "Aucun tiroir de retour n'est défini dans cette cabine",
++  "@unload_hint_noReturnDrawerInCabin": {}
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+index d834d71..b9439bd 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations.dart
+@@ -15863,6 +15863,36 @@ abstract class AppLocalizations {
+   /// In en, this message translates to:
+   /// **'Listen'**
+   String get fingerprint_login_resumeButton;
++
++  /// Title of the cabinet strip at the top of station-wide operation selection screens.
++  ///
++  /// In en, this message translates to:
++  /// **'Cabinets'**
++  String get cabinSelection_stripTitle;
++
++  /// Hint next to the cabinet strip: tapping a cabinet shows its interior layout below.
++  ///
++  /// In en, this message translates to:
++  /// **'Tap a cabinet to see its layout'**
++  String get cabinSelection_stripHint;
++
++  /// Badge on a cabinet card in the strip showing how many items are selected in that cabinet.
++  ///
++  /// In en, this message translates to:
++  /// **'{count} selected'**
++  String cabinSelection_selectedCountBadge(int count);
++
++  /// Column header in the station-wide medicine list showing which cabinet the row belongs to.
++  ///
++  /// In en, this message translates to:
++  /// **'Cabinet'**
++  String get cabinAssignmentList_cabinColumn;
++
++  /// Shown on the return box unload screen when the viewed cabinet has no return drawer.
++  ///
++  /// In en, this message translates to:
++  /// **'No return drawer is defined in this cabinet'**
++  String get unload_hint_noReturnDrawerInCabin;
+ }
+ 
+ class _AppLocalizationsDelegate
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+index d6013e2..d8aa66a 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_ar.dart
+@@ -9140,4 +9140,21 @@ class AppLocalizationsAr extends AppLocalizations {
+ 
+   @override
+   String get fingerprint_login_resumeButton => 'Listen';
++
++  @override
++  String get cabinSelection_stripTitle => 'Cabinets';
++
++  @override
++  String get cabinSelection_stripHint => 'Tap a cabinet to see its layout';
++
++  @override
++  String cabinSelection_selectedCountBadge(int count) {
++    return '$count selected';
++  }
++
++  @override
++  String get cabinAssignmentList_cabinColumn => 'Cabinet';
++
++  @override
++  String get unload_hint_noReturnDrawerInCabin => 'No return drawer is defined in this cabinet';
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+index cf21c2e..52325d6 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_en.dart
+@@ -9139,4 +9139,21 @@ class AppLocalizationsEn extends AppLocalizations {
+ 
+   @override
+   String get fingerprint_login_resumeButton => 'Listen';
++
++  @override
++  String get cabinSelection_stripTitle => 'Cabinets';
++
++  @override
++  String get cabinSelection_stripHint => 'Tap a cabinet to see its layout';
++
++  @override
++  String cabinSelection_selectedCountBadge(int count) {
++    return '$count selected';
++  }
++
++  @override
++  String get cabinAssignmentList_cabinColumn => 'Cabinet';
++
++  @override
++  String get unload_hint_noReturnDrawerInCabin => 'No return drawer is defined in this cabinet';
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+index 8db89e6..b280ba5 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_fr.dart
+@@ -9344,4 +9344,21 @@ class AppLocalizationsFr extends AppLocalizations {
+ 
+   @override
+   String get fingerprint_login_resumeButton => 'Écouter';
++
++  @override
++  String get cabinSelection_stripTitle => 'Cabines';
++
++  @override
++  String get cabinSelection_stripHint => 'Touchez une cabine pour voir son agencement';
++
++  @override
++  String cabinSelection_selectedCountBadge(int count) {
++    return '$count sélectionné(s)';
++  }
++
++  @override
++  String get cabinAssignmentList_cabinColumn => 'Cabine';
++
++  @override
++  String get unload_hint_noReturnDrawerInCabin => 'Aucun tiroir de retour n\'est défini dans cette cabine';
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+index 86c5a53..835f024 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
++++ b/packages/pharmed_ui/lib/src/l10n/app_localizations_tr.dart
+@@ -9055,4 +9055,21 @@ class AppLocalizationsTr extends AppLocalizations {
+ 
+   @override
+   String get fingerprint_login_resumeButton => 'Dinle';
++
++  @override
++  String get cabinSelection_stripTitle => 'Kabinler';
++
++  @override
++  String get cabinSelection_stripHint => 'İç yerleşimi görmek için kabine dokunun';
++
++  @override
++  String cabinSelection_selectedCountBadge(int count) {
++    return '$count seçili';
++  }
++
++  @override
++  String get cabinAssignmentList_cabinColumn => 'Kabin';
++
++  @override
++  String get unload_hint_noReturnDrawerInCabin => 'Bu kabinde iade çekmecesi tanımlı değil';
+ }
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_tr.arb b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+index fa0678d..79898dd 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_tr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_tr.arb
+@@ -11333,5 +11333,30 @@
+   "fingerprint_login_resumeButton": "Dinle",
+   "@fingerprint_login_resumeButton": {
+     "description": "Login: restart listening on the scanner"
++  },
++  "cabinSelection_stripTitle": "Kabinler",
++  "@cabinSelection_stripTitle": {
++    "description": "Title of the cabinet strip at the top of station-wide operation selection screens"
++  },
++  "cabinSelection_stripHint": "İç yerleşimi görmek için kabine dokunun",
++  "@cabinSelection_stripHint": {
++    "description": "Hint next to the cabinet strip: tapping a cabinet shows its interior layout below"
++  },
++  "cabinSelection_selectedCountBadge": "{count} seçili",
++  "@cabinSelection_selectedCountBadge": {
++    "description": "Badge on a cabinet card in the strip showing how many items are selected in that cabinet",
++    "placeholders": {
++      "count": {
++        "type": "int"
++      }
++    }
++  },
++  "cabinAssignmentList_cabinColumn": "Kabin",
++  "@cabinAssignmentList_cabinColumn": {
++    "description": "Column header in the station-wide medicine list showing which cabinet the row belongs to"
++  },
++  "unload_hint_noReturnDrawerInCabin": "Bu kabinde iade çekmecesi tanımlı değil",
++  "@unload_hint_noReturnDrawerInCabin": {
++    "description": "Shown on the return box unload screen when the viewed cabinet has no return drawer"
+   }
+ }
+diff --git a/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_type/cabin_type_reference_view.dart b/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_type/cabin_type_reference_view.dart
+index 6b00343..393b170 100644
+--- a/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_type/cabin_type_reference_view.dart
++++ b/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_type/cabin_type_reference_view.dart
+@@ -30,6 +30,7 @@ class CabinTypeReferenceView extends StatelessWidget {
+     this.isActive = false,
+     this.width = 170,
+     this.height = 250,
++    this.dimWhenInactive = true,
+   });
+ 
+   /// Adı, tipi (CabinType) ve altta gösterilecek etiket bilgisini taşıyan
+@@ -47,10 +48,15 @@ class CabinTypeReferenceView extends StatelessWidget {
+   final double width;
+   final double height;
+ 
++  /// false iken pasif kart soluklaştırılmaz — seçim ekranının kabin
++  /// şeridinde tüm kabinler seçilebilir olduğu için yalnızca border vurgusu
++  /// kullanılır.
++  final bool dimWhenInactive;
++
+   @override
+   Widget build(BuildContext context) {
+     return Opacity(
+-      opacity: isActive ? 1.0 : 0.5,
++      opacity: isActive || !dimWhenInactive ? 1.0 : 0.5,
+       child: Container(
+         height: height,
+         width: width,
+diff --git a/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_widgets.dart b/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_widgets.dart
+index deef893..ca64248 100644
+--- a/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_widgets.dart
++++ b/packages/pharmed_ui/lib/src/widgets/cabin_widgets/cabin_widgets.dart
+@@ -3,3 +3,4 @@ export 'overview_panel/overview_panel.dart';
+ export 'helpers/helpers.dart';
+ export 'operation_panel_base.dart';
+ export 'cabin_type/station_cabins_overview.dart';
++export 'cabin_type/cabin_type_reference_view.dart';
+-- 
+2.43.0

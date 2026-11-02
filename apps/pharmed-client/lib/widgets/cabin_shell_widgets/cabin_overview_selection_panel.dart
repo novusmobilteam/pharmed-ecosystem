@@ -59,11 +59,16 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(cabin!.name.toString(), style: MedTextStyles.titleMd()),
-                  TextButton.icon(
-                    onPressed: onChangeCabin,
-                    label: Text(context.l10n.cabinOperation_changeCabinButton),
-                    icon: Icon(PhosphorIcons.arrowLeft()),
-                  ),
+                  // İstasyon geneli seçim ekranlarında kabin üstteki şeritten
+                  // değiştirilir — buton yalnızca callback verilince çıkar.
+                  if (onChangeCabin != null)
+                    TextButton.icon(
+                      onPressed: onChangeCabin,
+                      label: Text(context.l10n.cabinOperation_changeCabinButton),
+                      icon: Icon(PhosphorIcons.arrowLeft()),
+                    )
+                  else
+                    const SizedBox(height: 40),
                 ],
               ),
             ),

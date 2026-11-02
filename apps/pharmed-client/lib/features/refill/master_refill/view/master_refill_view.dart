@@ -9,9 +9,8 @@ import 'master_refill_execution_view.dart';
 import 'master_refill_selection_view.dart';
 
 class MasterRefillView extends ConsumerStatefulWidget {
-  const MasterRefillView({super.key, required this.cabinContext, required this.stationContext});
+  const MasterRefillView({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinContext;
   final StationCabinsContext stationContext;
 
   @override
@@ -26,7 +25,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(masterRefillSelectionNotifierProvider).init(widget.cabinContext);
+      ref.read(masterRefillSelectionNotifierProvider).init(widget.stationContext);
     });
 
     _executionNotifier = ref.read(masterRefillExecutionNotifierProvider);
@@ -47,7 +46,7 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
     final selection = ref.watch(masterRefillSelectionNotifierProvider);
     final isExecuting = ref.watch(masterRefillExecutionNotifierProvider.select((n) => n.isExecuting));
 
-    if (widget.cabinContext.cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return const Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
     if (selection.isLoadingAssignments) return const Center(child: MedLoadingIndicator());
@@ -57,6 +56,6 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
 
     return isExecuting
         ? MasterRefillExecutionView(stationContext: widget.stationContext)
-        : MasterRefillSelectionView(cabinContext: widget.cabinContext);
+        : MasterRefillSelectionView(menu: widget.stationContext.menu);
   }
 }

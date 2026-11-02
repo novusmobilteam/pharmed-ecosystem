@@ -174,15 +174,24 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
 
   /// Kabin seçimi gerektiren route'lar — bu listedeki bir hedefe navigateTo
   /// çağrıldığında doğrudan gidilmez, önce CabinSelectionView gösterilir.
-  static const _cabinScopedRoutes = {
+  ///
+  /// Şu an BOŞ: kabin işlem ekranlarının tamamı istasyon geneli açılır, kabin
+  /// ekran içindeki kabin şeridinden görüntülenir (bkz. StationCabinScope).
+  /// Ön seçim gerektiren yeni bir route çıkarsa buraya eklenir.
+  static const Set<String> _cabinScopedRoutes = {};
+
+  /// Master'da istasyon geneli açılan, mobilde ise istasyonun tek kabinine
+  /// bağlanan route'lar — mobil view'lar hâlâ CabinRouteContext.cabinData
+  /// üzerinden çalışıyor.
+  static const _stationWideCabinRoutes = {
     'drug-assignment',
     'drug-refill',
     'drug-unload',
     'drug-census',
+    'return-box-unload',
     'drawer-malfunction',
     'cabin-stock',
     'drug-destruction',
-    'return-box-unload',
   };
 
   /// Dashboard'un İLK RENDER'I için gereken veri: kurulum durumu, cihaz
@@ -519,7 +528,9 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
     // yani menüden normal bir sayfaya geçiş hiçbir şey yapmıyordu.
     _activeRoute = route;
     _pendingCabinRoute = null;
-    _activeCabinId = null;
+    _activeCabinId = _deviceMode == CabinType.mobile && _stationWideCabinRoutes.contains(route)
+        ? _station?.cabins.firstOrNull?.id
+        : null;
     notifyListeners();
   }
 

@@ -18,7 +18,7 @@ class CensusView extends ConsumerWidget {
     final cabinData = cabinRouteContext.cabinData;
 
     return switch (deviceMode) {
-      CabinType.master => MasterCensusView(cabinContext: cabinRouteContext, stationContext: stationContext),
+      CabinType.master => MasterCensusView(stationContext: stationContext),
       CabinType.mobile => MobileCensusView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

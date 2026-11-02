@@ -1,3 +1,10 @@
+// [SWREQ-CLI-CABINSTOCK-001] [IEC 62304 §5.5]
+// Master kabin stok listesi: istasyondaki tüm kabinlerin atamaları (kabin
+// seçim adımı yok) + kabin filtresi + arama. Hangi kabinin iç yerleşiminin
+// gösterileceği StationCabinScope'tadır.
+//
+// Sınıf: Class B
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -7,55 +14,63 @@ import '../../../../core/providers/providers.dart';
 import '../../../dashboard/dashboard.dart';
 
 final masterCabinStockNotifierProvider = ChangeNotifierProvider.autoDispose<MasterCabinStockNotifier>((ref) {
-  return MasterCabinStockNotifier(getAssignments: ref.read(getCabinAssignmentsWitCabinUseCaseProvider));
+  return MasterCabinStockNotifier(getAssignments: ref.read(getStationAssignmentsUseCaseProvider));
 });
 
-/// Master kabin stok listesi: seçili kabinin atamaları + arama.
 class MasterCabinStockNotifier extends ChangeNotifier with ApiRequestMixin {
-  MasterCabinStockNotifier({required GetCabinAssignmentsWithCabinUseCase getAssignments})
-    : _getAssignments = getAssignments;
+  MasterCabinStockNotifier({required GetStationAssignmentsUseCase getAssignments}) : _getAssignments = getAssignments;
 
-  final GetCabinAssignmentsWithCabinUseCase _getAssignments;
+  final GetStationAssignmentsUseCase _getAssignments;
 
   final OperationKey _fetchStocksOp = const OperationKey.custom('fetch-cabin-stocks');
   bool get isFetchingStocks => isLoading(_fetchStocksOp);
   bool get hasFetchError => isFailed(_fetchStocksOp);
 
-  int? _cabinId;
-  int? get cabinId => _cabinId;
+  final StationCabinScope scope = StationCabinScope();
 
   List<MedicineAssignment> _stocks = const [];
 
-  /// Kabindeki tüm atamalar — arama uygulanmamış.
+  /// İstasyondaki tüm atamalar — filtre/arama uygulanmamış.
   List<MedicineAssignment> get stocks => _stocks;
+
+  /// Kabin filtresi uygulanmış, arama uygulanmamış liste — çıktı bunu basar.
+  List<MedicineAssignment> get filteredStocks => scope.filtered(_stocks);
 
   String _search = '';
   String get search => _search;
 
-  /// Arama uygulanmış liste — ekranda gösterilen.
+  /// Kabin filtresi + arama uygulanmış liste — ekranda gösterilen.
   List<MedicineAssignment> get visibleStocks {
+    final byCabin = filteredStocks;
     final q = _search.toLowerCase().trim();
-    if (q.isEmpty) return _stocks;
-    return _stocks.where((a) {
+    if (q.isEmpty) return byCabin;
+    return byCabin.where((a) {
       final name = a.medicine?.name?.toLowerCase() ?? '';
       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
       return name.contains(q) || barcode.contains(q);
     }).toList();
   }
 
-  Future<void> init(CabinRouteContext ctx) async {
-    final cabinId = ctx.cabin?.id;
-    if (cabinId == null) return;
-    _cabinId = cabinId;
+  Future<void> init(StationCabinsContext ctx) async {
+    scope.attach(ctx);
+    if (!scope.hasCabins) return;
 
     await execute(
       _fetchStocksOp,
-      operation: () => _getAssignments.call(cabinId),
+      operation: () => _getAssignments.call(),
       onData: (data) {
-        _stocks = data;
+        _stocks = scope.stationAssignments(data);
         notifyListeners();
       },
     );
+  }
+
+  void viewCabin(int cabinId) {
+    if (scope.view(cabinId)) notifyListeners();
+  }
+
+  void setCabinFilter(int? cabinId) {
+    if (scope.setFilter(cabinId)) notifyListeners();
   }
 
   void onSearchChanged(String value) {

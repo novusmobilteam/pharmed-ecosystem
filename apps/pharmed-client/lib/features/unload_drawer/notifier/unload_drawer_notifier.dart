@@ -14,9 +14,19 @@ final unloadDrawerNotifierProvider = NotifierProvider<UnloadDrawerNotifier, Unlo
 
 class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
   late final MasterDrawerOrchestrator _orchestrator;
-  int _cabinId = 0;
   UnloadDrawerMode _mode = UnloadDrawerMode.drawer;
-  CabinVisualizerData? _visualizerData;
+
+  /// İstasyon geneli kabin kapsamı — kabin seçim adımı yok. İade çekmecesi
+  /// GÖRÜNTÜLENEN kabinden açılır; açılışta iade çekmecesi olan ilk kabin
+  /// görüntülenir.
+  final StationCabinScope scope = StationCabinScope();
+
+  int get _cabinId => scope.viewedCabinId ?? 0;
+
+  /// Görüntülenen kabinde iade çekmecesi tanımlı mı.
+  bool get viewedCabinHasReturnDrawer => _hasReturnDrawer(scope.viewedCabinId);
+
+  bool _hasReturnDrawer(int? cabinId) => scope.groupsOf(cabinId).any((g) => g.isReturnDrawer);
 
   GetReturnDrawerMedicinesUseCase get _getDrawerMedicines => ref.read(getReturnDrawerMedicinesUseCaseProvider);
   UnloadReturnDrawerUseCase get _unloadDrawer => ref.read(unloadReturnDrawerUseCaseProvider);
@@ -31,9 +41,9 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
     return const UnloadDrawerUninitialized();
   }
 
-  Future<void> init(CabinRouteContext ctx) async {
-    _cabinId = ctx.cabin?.id ?? 0;
-    _visualizerData = ctx.cabinData;
+  Future<void> init(StationCabinsContext ctx) async {
+    scope.attach(ctx);
+    scope.preferViewed(_hasReturnDrawer);
     _mode = UnloadDrawerMode.drawer;
     state = UnloadDrawerLoading(mode: _mode);
     await _loadItems();
@@ -58,6 +68,22 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
         previousState: UnloadDrawerSelection(cabinId: _cabinId, mode: _mode, items: const []),
       ),
     );
+  }
+
+  /// Kabin şeridinden kabin değiştirildiğinde — donanım açıkken engellenir.
+  void viewCabin(int cabinId) {
+    final s = state;
+    if (s is UnloadDrawerExecuting) return;
+    if (s is UnloadDrawerError && s.previousState is UnloadDrawerExecuting) return;
+    if (!scope.view(cabinId)) return;
+    switch (s) {
+      case UnloadDrawerSelection sel:
+        state = sel.copyWith(cabinId: cabinId);
+      case UnloadDrawerError(previousState: UnloadDrawerSelection sel):
+        state = sel.copyWith(cabinId: cabinId);
+      default:
+        break;
+    }
   }
 
   void toggleItem(int itemId) {
@@ -100,7 +126,7 @@ class UnloadDrawerNotifier extends Notifier<UnloadDrawerState> {
   /// listesi zaten notifier state'inden geliyor, assignment.medicine'e
   /// bağımlı değil).
   MedicineAssignment? _resolveReturnDrawerAssignment() {
-    final group = _visualizerData?.groups.firstWhereOrNull((g) => g.isReturnDrawer);
+    final group = scope.viewedGroups.firstWhereOrNull((g) => g.isReturnDrawer);
     final unit = group?.units.firstOrNull;
     if (group == null || unit == null) return null;
 

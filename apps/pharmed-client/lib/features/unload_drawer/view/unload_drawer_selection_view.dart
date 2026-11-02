@@ -8,20 +8,19 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../../widgets/widgets.dart';
-import '../../dashboard/dashboard.dart';
 import '../notifier/unload_drawer_notifier.dart';
 import '../notifier/unload_drawer_state.dart';
 
 class UnloadDrawerSelectionView extends ConsumerWidget {
-  const UnloadDrawerSelectionView({super.key, required this.cabinContext});
+  const UnloadDrawerSelectionView({super.key, required this.menu});
 
-  final CabinRouteContext cabinContext;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(unloadDrawerNotifierProvider);
     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
-    final menu = cabinContext.menu;
+    final scope = notifier.scope;
 
     final mode = state.mode ?? UnloadDrawerMode.drawer;
     final selectedIndex = mode == UnloadDrawerMode.drawer ? 0 : 1;
@@ -36,10 +35,22 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
     final items = selection?.visibleMedicines ?? [];
     final selectedIds = selection?.selectedIds ?? const {};
     final isBoxMode = mode == UnloadDrawerMode.box;
+    final hasReturnDrawer = notifier.viewedCabinHasReturnDrawer;
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Column(
+    return CabinOperationSelectionLayout(
+      left: StationCabinSelectionPanel(
+        cabins: scope.cabins,
+        viewedCabinId: scope.viewedCabinId,
+        onCabinTap: notifier.viewCabin,
+        // Yalnızca bilgi: iade çekmecesinin kabin içindeki yeri görünür.
+        interior: CabinOverviewSelectionPanel(
+          key: ValueKey(scope.viewedCabinId),
+          cabin: scope.viewedCabin,
+          groups: scope.viewedGroups,
+          selectedUnitIds: const {},
+        ),
+      ),
+      right: Column(
         spacing: 12.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -98,9 +109,22 @@ class UnloadDrawerSelectionView extends ConsumerWidget {
                       isLoading: selection.isSubmitting,
                       onPressed: selection.canConfirm ? notifier.confirmBoxUnload : null,
                     )
-                  : MedButton(
-                      label: context.l10n.unload_action_startDrawerUnload,
-                      onPressed: selection.items.isNotEmpty ? notifier.startDrawerUnload : null,
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 16.0,
+                      children: [
+                        if (!hasReturnDrawer)
+                          Text(
+                            context.l10n.unload_hint_noReturnDrawerInCabin,
+                            style: MedTextStyles.bodySm(color: MedColors.amber),
+                          ),
+                        MedButton(
+                          label: context.l10n.unload_action_startDrawerUnload,
+                          onPressed: hasReturnDrawer && selection.items.isNotEmpty
+                              ? notifier.startDrawerUnload
+                              : null,
+                        ),
+                      ],
                     ),
             ),
           ),

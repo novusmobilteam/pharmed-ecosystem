@@ -6,41 +6,56 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../widgets/widgets.dart';
 import '../../../core/hardware/hardware.dart';
-import '../../dashboard/dashboard.dart';
 
 import '../notifier/master_destruction_execution_notifier.dart';
 import '../notifier/master_destruction_selection_notifier.dart';
 
 class MasterDestructionSelectionView extends ConsumerWidget {
-  const MasterDestructionSelectionView({super.key, required this.cabinContext});
+  const MasterDestructionSelectionView({super.key, required this.menu});
 
-  final CabinRouteContext cabinContext;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selection = ref.watch(masterDestructionSelectionNotifierProvider);
     final visible = selection.visibleAssignments;
+    final scope = selection.scope;
 
     return CabinOperationSelectionLayout(
       isLoading: selection.isLoadingAssignments,
-      left: CabinOverviewSelectionPanel(
-        cabin: cabinContext.cabin,
-        groups: cabinContext.cabinData?.groups ?? const [],
-        assignments: selection.assignments,
-        selectedUnitIds: selection.selectedUnitIds,
-        onDrawerTap: selection.toggleDrawer,
-        onCellTap: (unit) {
-          final id = unit.id;
-          if (id != null) selection.toggleUnit(id);
-        },
-        selectedCellIds: selection.selectedSerumCellIds,
-        onSerumTrayTap: (_, tray) {
-          final id = tray.id;
-          if (id != null) selection.toggleSerumTray(id);
-        },
+      left: StationCabinSelectionPanel(
+        cabins: scope.cabins,
+        viewedCabinId: scope.viewedCabinId,
+        selectedCountByCabin: selection.selectedCountByCabin,
+        onCabinTap: selection.viewCabin,
+        interior: CabinOverviewSelectionPanel(
+          key: ValueKey(scope.viewedCabinId),
+          cabin: scope.viewedCabin,
+          groups: scope.viewedGroups,
+          assignments: selection.assignments,
+          selectedUnitIds: selection.selectedUnitIds,
+          onDrawerTap: selection.toggleDrawer,
+          onCellTap: (unit) {
+            final id = unit.id;
+            if (id != null) selection.toggleUnit(id);
+          },
+          selectedCellIds: selection.selectedSerumCellIds,
+          onSerumTrayTap: (_, tray) {
+            final id = tray.id;
+            if (id != null) selection.toggleSerumTray(id);
+          },
+        ),
       ),
       right: CabinSelectionContentShell(
-        menu: cabinContext.menu,
+        menu: menu,
+        extra: Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: StationCabinFilterBar(
+            cabins: scope.cabins,
+            selectedCabinId: scope.cabinFilter,
+            onChanged: selection.setCabinFilter,
+          ),
+        ),
         onSearchQueryChanged: selection.onSearchChanged,
         searchQuery: selection.search,
         isEmpty: visible.isEmpty,
@@ -90,21 +105,23 @@ class _AssignmentGrid extends StatelessWidget {
         final a = ordered[i];
         final isAuthorized = selection.isAuthorized(a);
 
+        final cabinName = selection.scope.cabins.length > 1 ? selection.scope.cabinNameOf(a) : null;
+
         return MedicineAssignmentCard(
           assignment: a,
           selected: selection.isSelected(a),
           onTap: selection.canSelect(a) ? () => selection.toggleAssignment(a) : null,
           isActive: isAuthorized,
-          extra: isAuthorized
-              ? const []
-              : [
-                  MedChip(
-                    label: context.l10n.waste_hint_notAuthorized,
-                    background: MedColors.red,
-                    foreground: MedColors.redLight,
-                    showBorder: false,
-                  ),
-                ],
+          extra: [
+            if (cabinName != null) MedChip(label: cabinName),
+            if (!isAuthorized)
+              MedChip(
+                label: context.l10n.waste_hint_notAuthorized,
+                background: MedColors.red,
+                foreground: MedColors.redLight,
+                showBorder: false,
+              ),
+          ],
         );
       },
     );

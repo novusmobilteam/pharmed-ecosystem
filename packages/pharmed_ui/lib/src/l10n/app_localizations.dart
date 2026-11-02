@@ -15863,6 +15863,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listen'**
   String get fingerprint_login_resumeButton;
+
+  /// Title of the cabinet strip at the top of station-wide operation selection screens.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinets'**
+  String get cabinSelection_stripTitle;
+
+  /// Hint next to the cabinet strip: tapping a cabinet shows its interior layout below.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a cabinet to see its layout'**
+  String get cabinSelection_stripHint;
+
+  /// Badge on a cabinet card in the strip showing how many items are selected in that cabinet.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String cabinSelection_selectedCountBadge(int count);
+
+  /// Column header in the station-wide medicine list showing which cabinet the row belongs to.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet'**
+  String get cabinAssignmentList_cabinColumn;
+
+  /// Shown on the return box unload screen when the viewed cabinet has no return drawer.
+  ///
+  /// In en, this message translates to:
+  /// **'No return drawer is defined in this cabinet'**
+  String get unload_hint_noReturnDrawerInCabin;
 }
 
 class _AppLocalizationsDelegate

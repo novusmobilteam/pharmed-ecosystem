@@ -11,9 +11,9 @@ import 'unload_drawer_execution_view.dart';
 import 'unload_drawer_selection_view.dart';
 
 class UnloadDrawerScreen extends ConsumerStatefulWidget {
-  const UnloadDrawerScreen({super.key, required this.cabinRouteContext});
+  const UnloadDrawerScreen({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<UnloadDrawerScreen> createState() => UnloadDrawerScreenState();
@@ -27,7 +27,7 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      notifier.init(widget.cabinRouteContext);
+      notifier.init(widget.stationContext);
     });
   }
 
@@ -37,7 +37,6 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
     final notifier = ref.read(unloadDrawerNotifierProvider.notifier);
     final isExecuting =
         state is UnloadDrawerExecuting || (state is UnloadDrawerError && state.previousState is UnloadDrawerExecuting);
-    final cabinData = widget.cabinRouteContext.cabinData;
 
     ref.listen(unloadDrawerNotifierProvider, (_, next) {
       if (next is UnloadDrawerError && next.isQueueError) {
@@ -54,14 +53,16 @@ class UnloadDrawerScreenState extends ConsumerState<UnloadDrawerScreen> {
       }
     });
 
-    if (cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
 
     if (isExecuting) {
-      return UnloadDrawerExecutionView(allGroups: cabinData.groups);
+      // Kabin yürütme sırasında değiştirilemez — iade çekmecesi görüntülenen
+      // kabinden açıldı.
+      return UnloadDrawerExecutionView(allGroups: notifier.scope.viewedGroups);
     }
 
-    return UnloadDrawerSelectionView(cabinContext: widget.cabinRouteContext);
+    return UnloadDrawerSelectionView(menu: widget.stationContext.menu);
   }
 }

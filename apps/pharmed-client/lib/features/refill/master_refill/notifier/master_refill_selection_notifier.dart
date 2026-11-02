@@ -1,7 +1,9 @@
 // [SWREQ-CLI-MREFILL-001] [IEC 62304 §5.5]
-// Master kabin dolumunun seçim fazı: seçilen kabinin atamalarını çeker,
-// göz/çekmece seçimini yönetir, kuyruğu hazırlayıp execution notifier'a devreder.
+// Master kabin dolumunun seçim fazı: istasyondaki tüm kabinlerin atamalarını
+// çeker (kabin seçim adımı yok), göz/çekmece seçimini kabinler arası yönetir,
+// kuyruğu kabin sırasıyla hazırlayıp execution notifier'a devreder.
 // Serum avadanlıkları (cabinDrawerDetailId'li atamalar) göz bazında seçilir.
+// Hangi kabinin iç yerleşiminin gösterileceği StationCabinScope'tadır.
 //
 // Sınıf: Class B
 
@@ -16,22 +18,24 @@ import '../../../../core/providers/providers.dart';
 import '../../../dashboard/dashboard.dart';
 
 final masterRefillSelectionNotifierProvider = ChangeNotifierProvider.autoDispose<MasterRefillSelectionNotifier>((ref) {
-  return MasterRefillSelectionNotifier(getAssignments: ref.read(getCabinAssignmentsWitCabinUseCaseProvider));
+  return MasterRefillSelectionNotifier(getAssignments: ref.read(getStationAssignmentsUseCaseProvider));
 });
 
 class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
-  MasterRefillSelectionNotifier({required GetCabinAssignmentsWithCabinUseCase getAssignments})
+  MasterRefillSelectionNotifier({required GetStationAssignmentsUseCase getAssignments})
     : _getAssignments = getAssignments;
 
-  final GetCabinAssignmentsWithCabinUseCase _getAssignments;
+  final GetStationAssignmentsUseCase _getAssignments;
 
   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
 
-  int? _cabinId;
+  final StationCabinScope scope = StationCabinScope();
+
   List<MedicineAssignment> _assignments = [];
   final AssignmentSelection _selection = AssignmentSelection();
   String _search = '';
 
+  /// İstasyondaki tüm (işlem yapılabilir kabinlerdeki) atamalar.
   List<MedicineAssignment> get assignments => _assignments;
   Set<int> get selectedUnitIds => _selection.unitIds;
   Set<int> get selectedSerumCellIds => _selection.serumCellIds;
@@ -40,10 +44,12 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   bool get isLoadingAssignments => isLoading(fetchAssignmentsOp);
   bool get isError => isFailed(fetchAssignmentsOp);
 
+  /// Sağ liste: arama + kabin filtresi uygulanmış atamalar.
   List<MedicineAssignment> get visibleAssignments {
     final q = _search.trim().toLowerCase();
-    if (q.isEmpty) return _assignments;
-    return _assignments.where((a) {
+    final byCabin = scope.filtered(_assignments);
+    if (q.isEmpty) return byCabin;
+    return byCabin.where((a) {
       final name = a.medicine?.name?.toLowerCase() ?? '';
       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
       return name.contains(q) || barcode.contains(q);
@@ -52,10 +58,12 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
 
   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
 
+  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
+
   bool get canStart => _selection.isNotEmpty;
 
-  Future<void> init(CabinRouteContext ctx) {
-    _cabinId = ctx.cabin?.id;
+  Future<void> init(StationCabinsContext ctx) {
+    scope.attach(ctx);
     return _fetchAssignments();
   }
 
@@ -63,18 +71,25 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   Future<void> refreshAfterQueue() => _fetchAssignments();
 
   Future<void> _fetchAssignments() async {
-    final cabinId = _cabinId;
-    if (cabinId == null) return;
+    if (!scope.hasCabins) return;
 
     await execute(
       fetchAssignmentsOp,
-      operation: () => _getAssignments.call(cabinId),
+      operation: () => _getAssignments.call(),
       onData: (list) {
-        _assignments = list;
+        _assignments = scope.stationAssignments(list);
         _selection.clear(); // doldurulan gözler işaretli kalmasın
         notifyListeners();
       },
     );
+  }
+
+  void viewCabin(int cabinId) {
+    if (scope.view(cabinId)) notifyListeners();
+  }
+
+  void setCabinFilter(int? cabinId) {
+    if (scope.setFilter(cabinId)) notifyListeners();
   }
 
   void onSearchChanged(String value) {
@@ -82,18 +97,19 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     notifyListeners();
   }
 
-  void toggleUnit(int cabinDrawerId) {
-    final assignment = AssignmentSelection.unitAssignment(cabinDrawerId, _assignments);
-    if (assignment == null) return;
-    _selection.toggle(assignment);
-    notifyListeners();
-  }
+  void toggleUnit(int cabinDrawerId) =>
+      _toggle(AssignmentSelection.unitAssignment(cabinDrawerId, _assignments));
 
   /// Serum avadanlığı — yalnızca ataması olan avadanlık seçilebilir.
-  void toggleSerumTray(int cellId) {
-    final assignment = AssignmentSelection.serumAssignment(cellId, _assignments);
+  void toggleSerumTray(int cellId) => _toggle(AssignmentSelection.serumAssignment(cellId, _assignments));
+
+  /// Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer —
+  /// kullanıcı açılacak gözü hemen görür.
+  void _toggle(MedicineAssignment? assignment) {
     if (assignment == null) return;
+    final wasSelected = _selection.contains(assignment);
     _selection.toggle(assignment);
+    if (!wasSelected) scope.view(scope.cabinIdOf(assignment));
     notifyListeners();
   }
 
@@ -101,10 +117,7 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     if (_selection.toggleAll(AssignmentSelection.inGroup(group, _assignments))) notifyListeners();
   }
 
-  /// [groups]: kabin görsel verisi — kilitli serum raflarının avadanlık
-  /// kilit adresleri buradan çözülür.
   void startRefill({
-    required List<DrawerGroup> groups,
     required void Function(List<CabinOperationDrawerJob> jobs, int skippedCount) onQueueReady,
     required void Function(CabinOperationFailure failure) onFailed,
   }) {
@@ -114,7 +127,9 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.refill),
-      groups: groups,
+      cabinOrder: scope.cabinOrder,
+      // Kilitli serum raflarının avadanlık kilit adresleri buradan çözülür.
+      groups: scope.allGroups,
     );
 
     if (result.jobs.isEmpty) {
@@ -134,6 +149,6 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       );
     }
 
-    onQueueReady(result.jobs, result.skipped.length);
+    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
   }
 }

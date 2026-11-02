@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../widgets/widgets.dart';
 
 import '../../../dashboard/dashboard.dart';
-import '../../../dashboard/presentation/notifier/dashboard_notifier.dart';
 import '../../../auth/notifier/auth_notifier.dart';
 import '../notifier/master_cabin_stock_notifier.dart';
 import '../receipts/cabin_stock_receipt.dart';
 
 class MasterCabinStockScreen extends ConsumerStatefulWidget {
-  const MasterCabinStockScreen({super.key, required this.cabinRouteContext});
+  const MasterCabinStockScreen({super.key, required this.stationContext});
 
-  final CabinRouteContext cabinRouteContext;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<MasterCabinStockScreen> createState() => MasterCabinStockScreenState();
@@ -28,16 +28,15 @@ class MasterCabinStockScreenState extends ConsumerState<MasterCabinStockScreen> 
     final notifier = ref.read(masterCabinStockNotifierProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      notifier.init(widget.cabinRouteContext);
+      notifier.init(widget.stationContext);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(masterCabinStockNotifierProvider.select((n) => n.isFetchingStocks));
-    final cabinData = widget.cabinRouteContext.cabinData;
 
-    if (cabinData == null) {
+    if (widget.stationContext.cabinDataByCabinId.isEmpty) {
       return Center(child: EmptyStateWidget(variant: EmptyStateVariant.noCabin));
     }
 
@@ -45,50 +44,57 @@ class MasterCabinStockScreenState extends ConsumerState<MasterCabinStockScreen> 
       return Center(child: MedLoadingIndicator());
     }
 
-    return MasterCabinStockIdleView(cabinContext: widget.cabinRouteContext);
+    return MasterCabinStockIdleView(menu: widget.stationContext.menu);
   }
 }
 
+/// İstasyon geneli stok: solda kabin şeridi + görüntülenen kabinin iç
+/// yerleşimi (yalnızca bilgi), sağda tüm kabinlerin stok listesi.
 class MasterCabinStockIdleView extends ConsumerWidget {
-  const MasterCabinStockIdleView({super.key, required this.cabinContext});
+  const MasterCabinStockIdleView({super.key, required this.menu});
 
-  final CabinRouteContext cabinContext;
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.watch(masterCabinStockNotifierProvider);
-    final cabin = cabinContext.cabin;
-    final groups = cabinContext.cabinData?.groups;
-    final menu = cabinContext.menu;
+    final scope = notifier.scope;
     final visibleStocks = notifier.visibleStocks;
+    final printed = notifier.filteredStocks;
+    final filterCabin = scope.cabins.where((c) => c.id == scope.cabinFilter).firstOrNull;
 
     return CabinOperationSelectionLayout(
       isLoading: notifier.isFetchingStocks,
-      left: Column(
-        children: [
-          Expanded(
-            child: CabinOverviewSelectionPanel(
-              cabin: cabin,
-              onChangeCabin: () => ref.read(dashboardNotifierProvider.notifier).changeCabin(),
-              groups: groups ?? [],
-              assignments: notifier.stocks,
-              selectedUnitIds: {},
-              onDrawerTap: null,
-              onCellTap: null,
-            ),
-          ),
-        ],
+      left: StationCabinSelectionPanel(
+        cabins: scope.cabins,
+        viewedCabinId: scope.viewedCabinId,
+        onCabinTap: notifier.viewCabin,
+        interior: CabinOverviewSelectionPanel(
+          key: ValueKey(scope.viewedCabinId),
+          cabin: scope.viewedCabin,
+          groups: scope.viewedGroups,
+          assignments: notifier.stocks,
+          selectedUnitIds: const {},
+        ),
       ),
-
       right: CabinSelectionContentShell(
         menu: menu,
-        // [SWREQ-PRN-102] Kabindeki tüm atamalar — arama uygulanmadan.
+        // [SWREQ-PRN-102] Filtredeki kabin(ler)in tüm atamaları — arama
+        // uygulanmadan. Filtre "Tümü" iken istasyondaki tüm kabinler basılır.
         menuTrailing: ReceiptPrintButton(
-          enabled: !notifier.isFetchingStocks && notifier.stocks.isNotEmpty,
+          enabled: !notifier.isFetchingStocks && printed.isNotEmpty,
           buildReceipt: () => buildCabinStockReceipt(
-            cabinName: cabin?.name,
-            stocks: notifier.stocks,
+            cabinName: filterCabin?.name ?? (scope.cabins.length == 1 ? scope.cabins.first.name : null),
+            stocks: printed,
             operatorName: ref.read(authNotifierProvider.notifier).currentUser?.fullName,
+          ),
+        ),
+        extra: Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: StationCabinFilterBar(
+            cabins: scope.cabins,
+            selectedCabinId: scope.cabinFilter,
+            onChanged: notifier.setCabinFilter,
           ),
         ),
         searchQuery: notifier.search,
@@ -98,7 +104,12 @@ class MasterCabinStockIdleView extends ConsumerWidget {
         emptyMessage: context.l10n.refill_hint_noMedicines,
         content: visibleStocks.isEmpty
             ? null
-            : CabinAssignmentListView(items: visibleStocks, selectedItemIds: {}, onToggle: null),
+            : CabinAssignmentListView(
+                items: visibleStocks,
+                selectedItemIds: const {},
+                onToggle: null,
+                cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+              ),
       ),
     );
   }

@@ -1,9 +1,11 @@
 part of '../../fault_view.dart';
 
+/// Kabin seçim adımı yok: üstteki kabin şeridinden görüntülenen kabin
+/// değiştirilir, alttaki çekmece/göz/arıza panelleri o kabine göre yüklenir.
 class MasterFaultView extends ConsumerStatefulWidget {
-  const MasterFaultView({super.key, this.data});
+  const MasterFaultView({super.key, required this.stationContext});
 
-  final CabinVisualizerData? data;
+  final StationCabinsContext stationContext;
 
   @override
   ConsumerState<MasterFaultView> createState() => _MasterFaultViewState();
@@ -12,19 +14,36 @@ class MasterFaultView extends ConsumerStatefulWidget {
 class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
   late final TextEditingController _descriptionController;
 
+  /// Arıza kayıtları kabin bazlı — görüntülenen kabin burada tutulur.
+  final StationCabinScope _scope = StationCabinScope();
+
+  CabinVisualizerData? get _data => widget.stationContext.dataFor(_scope.viewedCabinId);
+
   @override
   void initState() {
     super.initState();
     _descriptionController = TextEditingController();
-    _initialize(widget.data);
+    _scope.attach(widget.stationContext);
+    _initialize(_data);
   }
 
   @override
   void didUpdateWidget(MasterFaultView old) {
     super.didUpdateWidget(old);
-    if (widget.data != old.data) {
-      _initialize(widget.data);
+    // Kayıt sonrası kabin görsel verisi yenilenince (refreshCabinVisualizer)
+    // görüntülenen kabin korunarak yeniden yüklenir.
+    final previous = old.stationContext.dataFor(_scope.viewedCabinId);
+    _scope.attach(widget.stationContext);
+    if (_data != previous) {
+      _initialize(_data);
     }
+  }
+
+  void _onCabinTap(int cabinId) {
+    if (ref.read(masterFaultNotifierProvider) is MasterFaultSaving) return;
+    if (!_scope.view(cabinId)) return;
+    setState(() {});
+    _initialize(_data);
   }
 
   @override
@@ -79,12 +98,23 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
       }
     });
 
-    if (widget.data == null || state is MasterFaultUninitialized) {
-      return const EmptyStateWidget(variant: EmptyStateVariant.cabinData);
+    final strip = StationCabinStrip(cabins: _scope.cabins, viewedCabinId: _scope.viewedCabinId, onCabinTap: _onCabinTap);
+
+    Widget withStrip(Widget body) => Column(
+      spacing: MedSpacing.lg,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        strip,
+        Expanded(child: body),
+      ],
+    );
+
+    if (_data == null || state is MasterFaultUninitialized) {
+      return withStrip(const EmptyStateWidget(variant: EmptyStateVariant.cabinData));
     }
 
     if (state is MasterFaultLoading) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return withStrip(const Center(child: CircularProgressIndicator(strokeWidth: 2)));
     }
 
     final groups = state.groups;
@@ -93,7 +123,7 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
     final selectedUnitId = state.selectedUnitId;
     final faults = state.faults;
 
-    return CabinOperationScaffold(
+    return withStrip(CabinOperationScaffold(
       leftPanel: MasterCabinOverviewPanel(
         groups: groups,
         selectedSlotId: selectedSlotId,
@@ -123,6 +153,6 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
           },
         ),
       ),
-    );
+    ));
   }
 }

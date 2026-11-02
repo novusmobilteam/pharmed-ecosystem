@@ -9055,4 +9055,21 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fingerprint_login_resumeButton => 'Dinle';
+
+  @override
+  String get cabinSelection_stripTitle => 'Kabinler';
+
+  @override
+  String get cabinSelection_stripHint => 'İç yerleşimi görmek için kabine dokunun';
+
+  @override
+  String cabinSelection_selectedCountBadge(int count) {
+    return '$count seçili';
+  }
+
+  @override
+  String get cabinAssignmentList_cabinColumn => 'Kabin';
+
+  @override
+  String get unload_hint_noReturnDrawerInCabin => 'Bu kabinde iade çekmecesi tanımlı değil';
 }

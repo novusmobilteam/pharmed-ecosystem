@@ -1,38 +1,40 @@
 part of 'cabin_type_reference_view.dart';
 
+/// Kilitli dolap: üstte durum paneli, altında iki kanatlı kapı.
 class CabinTypeCabinet extends StatelessWidget {
   const CabinTypeCabinet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: MedSpacing.insetMd,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: MedColors.border2,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(color: MedColors.text3),
-      ),
+    return _CabinBody(
       child: Column(
-        spacing: 4.0,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 3,
         children: [
-          // Ekran
-          Container(
-            height: 20,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: MedColors.surface2,
-              borderRadius: MedRadius.smAll,
-              border: Border.all(color: MedColors.border),
+          // Durum paneli — kilit + LED
+          Expanded(
+            flex: 2,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: _faceDecoration(color: MedColors.surface2),
+              child: Row(
+                children: [
+                  Icon(PhosphorIcons.lock(), size: 9, color: MedColors.text3),
+                  const Spacer(),
+                  const _Led(),
+                ],
+              ),
             ),
           ),
-          // Body
+          // Kapılar
           Expanded(
+            flex: 14,
             child: Row(
-              spacing: 4.0,
+              spacing: 2,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: _doorView(Alignment.centerRight)),
-                Expanded(child: _doorView(Alignment.centerLeft)),
+                Expanded(child: _door(Alignment.centerRight)),
+                Expanded(child: _door(Alignment.centerLeft)),
               ],
             ),
           ),
@@ -41,20 +43,12 @@ class CabinTypeCabinet extends StatelessWidget {
     );
   }
 
-  Widget _doorView(AlignmentGeometry alignment) {
+  Widget _door(Alignment handleSide) {
     return Container(
-      alignment: alignment,
-      decoration: BoxDecoration(
-        color: MedColors.surface2,
-        borderRadius: MedRadius.smAll,
-        border: Border.all(color: MedColors.border),
-      ),
-      child: Container(
-        width: 4,
-        height: 30,
-        margin: EdgeInsets.all(4.0),
-        decoration: BoxDecoration(color: MedColors.text3, borderRadius: MedRadius.smAll),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      alignment: handleSide,
+      decoration: _faceDecoration(),
+      child: const _Handle(vertical: true),
     );
   }
 }

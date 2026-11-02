@@ -1,7 +1,8 @@
 // [SWREQ-CLI-MDESTRUCTION-001] [IEC 62304 §5.5]
-// Master kabin imhasının seçim fazı: seçilen kabinin imha edilebilir
-// malzemelerini çeker, kullanıcının yetkili olduğu ve stoğu olan gözlerin
-// seçimini yönetir, kuyruğu hazırlayıp execution notifier'a devreder.
+// Master kabin imhasının seçim fazı: istasyondaki tüm kabinlerin imha
+// edilebilir malzemelerini çeker (kabin seçim adımı yok), kullanıcının yetkili
+// olduğu ve stoğu olan gözlerin seçimini kabinler arası yönetir, kuyruğu kabin
+// sırasıyla hazırlayıp execution notifier'a devreder.
 //
 // Sınıf: Class B
 
@@ -36,10 +37,7 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
 
   final OperationKey fetchAssignmentsOp = OperationKey.fetch();
 
-  Set<int> _cabinSlotIds = const {};
-
-  /// Kabin görsel verisi — serum avadanlıklarının kilit adresleri için.
-  List<DrawerGroup> _groups = const [];
+  final StationCabinScope scope = StationCabinScope();
 
   List<MedicineAssignment> _assignments = [];
   final AssignmentSelection _selection = AssignmentSelection();
@@ -56,8 +54,9 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
 
   List<MedicineAssignment> get visibleAssignments {
     final q = _search.trim().toLowerCase();
-    if (q.isEmpty) return _assignments;
-    return _assignments.where((a) {
+    final byCabin = scope.filtered(_assignments);
+    if (q.isEmpty) return byCabin;
+    return byCabin.where((a) {
       final name = a.medicine?.name?.toLowerCase() ?? '';
       final barcode = a.medicine?.barcode?.toLowerCase() ?? '';
       return name.contains(q) || barcode.contains(q);
@@ -65,6 +64,8 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
   }
 
   List<MedicineAssignment> get selectedAssignments => _selection.selectedFrom(_assignments);
+
+  Map<int, int> get selectedCountByCabin => scope.countByCabin(selectedAssignments);
 
   bool get canStart => _selection.isNotEmpty;
 
@@ -81,27 +82,34 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
   /// Seçilebilir mi: çekmecesi çözülmüş, kullanıcı yetkili ve gözde stok var.
   bool canSelect(MedicineAssignment a) => a.cabinDrawerId != null && isAuthorized(a) && a.totalQuantity > 0;
 
-  Future<void> init(CabinRouteContext ctx) {
-    _groups = ctx.cabinData?.groups ?? const <DrawerGroup>[];
-    _cabinSlotIds = {for (final g in _groups) ?g.slot.id};
+  Future<void> init(StationCabinsContext ctx) {
+    scope.attach(ctx);
     return _fetchAssignments();
   }
 
   Future<void> refreshAfterQueue() => _fetchAssignments();
 
   Future<void> _fetchAssignments() async {
+    if (!scope.hasCabins) return;
+
     await execute(
       fetchAssignmentsOp,
       operation: () => _getAssignments.call(),
       onData: (all) {
-        _assignments = all.where((a) {
-          final slotId = a.drawerUnit?.drawerSlot?.id ?? a.drawerUnit?.drawerSlotId;
-          return slotId != null && _cabinSlotIds.contains(slotId);
-        }).toList();
+        // Yalnızca işlem yapılabilir kabinlere bağlanan malzemeler.
+        _assignments = scope.stationAssignments(all);
         _selection.clear(); // imha bilinçli seçim ister — varsayılan seçim yok
         notifyListeners();
       },
     );
+  }
+
+  void viewCabin(int cabinId) {
+    if (scope.view(cabinId)) notifyListeners();
+  }
+
+  void setCabinFilter(int? cabinId) {
+    if (scope.setFilter(cabinId)) notifyListeners();
   }
 
   void onSearchChanged(String value) {
@@ -117,7 +125,10 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
 
   void toggleAssignment(MedicineAssignment? assignment) {
     if (assignment == null || !canSelect(assignment)) return;
+    final wasSelected = _selection.contains(assignment);
     _selection.toggle(assignment);
+    // Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer.
+    if (!wasSelected) scope.view(scope.cabinIdOf(assignment));
     notifyListeners();
   }
 
@@ -136,7 +147,8 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
       items: selectedAssignments,
       assignmentOf: (a) => a,
       targetOf: (_, a) => CabinOperationTarget.fromAssignment(a, CabinOperationMode.destruction),
-      groups: _groups,
+      cabinOrder: scope.cabinOrder,
+      groups: scope.allGroups,
     );
 
     if (result.jobs.isEmpty) {
@@ -156,6 +168,6 @@ class MasterDestructionSelectionNotifier extends ChangeNotifier with ApiRequestM
       );
     }
 
-    onQueueReady(result.jobs, result.skipped.length);
+    onQueueReady(scope.withCabinIds(result.jobs), result.skipped.length);
   }
 }

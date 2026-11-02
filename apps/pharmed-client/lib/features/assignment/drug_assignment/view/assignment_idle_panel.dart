@@ -7,6 +7,10 @@ class _AssignmentIdlePanel extends StatelessWidget {
     required this.onEdit,
     required this.menu,
     required this.onAssignmentSearchChanged,
+    this.cabins = const [],
+    this.cabinFilter,
+    this.onCabinFilterChanged,
+    this.cabinLabelOf,
   });
 
   final MenuItem menu;
@@ -15,10 +19,26 @@ class _AssignmentIdlePanel extends StatelessWidget {
   final ValueChanged<MedicineAssignment> onEdit;
   final Function(String? query) onAssignmentSearchChanged;
 
+  /// İstasyon geneli: kabin filtresi ve "Kabin" sütunu.
+  final List<Cabin> cabins;
+  final int? cabinFilter;
+  final ValueChanged<int?>? onCabinFilterChanged;
+  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
+
   @override
   Widget build(BuildContext context) {
     return CabinSelectionContentShell(
       menu: menu,
+      extra: onCabinFilterChanged == null || cabins.length < 2
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: StationCabinFilterBar(
+                cabins: cabins,
+                selectedCabinId: cabinFilter,
+                onChanged: onCabinFilterChanged!,
+              ),
+            ),
       searchQuery: '',
       showSearch: true,
       onSearchQueryChanged: (value) => onAssignmentSearchChanged(value),
@@ -30,7 +50,12 @@ class _AssignmentIdlePanel extends StatelessWidget {
           else
             Expanded(
               child: SingleChildScrollView(
-                child: _AssignmentTable(assignments: assignments, groups: groups, onEdit: onEdit),
+                child: _AssignmentTable(
+                  assignments: assignments,
+                  groups: groups,
+                  onEdit: onEdit,
+                  cabinLabelOf: cabinLabelOf,
+                ),
               ),
             ),
         ],
@@ -40,26 +65,39 @@ class _AssignmentIdlePanel extends StatelessWidget {
 }
 
 class _AssignmentTable extends StatelessWidget {
-  const _AssignmentTable({required this.assignments, required this.groups, required this.onEdit});
+  const _AssignmentTable({required this.assignments, required this.groups, required this.onEdit, this.cabinLabelOf});
 
   final List<MedicineAssignment> assignments;
   final List<DrawerGroup> groups;
   final ValueChanged<MedicineAssignment> onEdit;
+  final String? Function(MedicineAssignment assignment)? cabinLabelOf;
 
   @override
   Widget build(BuildContext context) {
-    final rows = assignments.where((a) => a.medicine != null).toList()
-      ..sort((a, b) => (a.cabinDrawerId ?? 0).compareTo(b.cabinDrawerId ?? 0));
+    // Gelen sıra kabin sırasıdır — kabin içinde göz sırasına göre dizilir
+    // (List.sort kararlı olmadığı için kabin sırası açıkça korunur).
+    final filled = assignments.where((a) => a.medicine != null).toList();
+    final cabinRank = <String?, int>{};
+    for (final a in filled) {
+      cabinRank.putIfAbsent(cabinLabelOf?.call(a), () => cabinRank.length);
+    }
+    final rows = filled
+      ..sort((a, b) {
+        final byCabin = cabinRank[cabinLabelOf?.call(a)]!.compareTo(cabinRank[cabinLabelOf?.call(b)]!);
+        if (byCabin != 0) return byCabin;
+        return (a.cabinDrawerId ?? 0).compareTo(b.cabinDrawerId ?? 0);
+      });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _TableHeaderRow(),
+        _TableHeaderRow(showCabin: cabinLabelOf != null),
         const Divider(height: 1, color: MedColors.border2),
         for (final assignment in rows)
           _TableDataRow(
             assignment: assignment,
             locationLabel: _locationLabel(assignment, groups, context),
+            cabinLabel: cabinLabelOf == null ? null : (cabinLabelOf!(assignment) ?? '—'),
             onEdit: () => onEdit(assignment),
           ),
       ],
@@ -91,7 +129,9 @@ class _AssignmentTable extends StatelessWidget {
 }
 
 class _TableHeaderRow extends StatelessWidget {
-  const _TableHeaderRow();
+  const _TableHeaderRow({this.showCabin = false});
+
+  final bool showCabin;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +140,7 @@ class _TableHeaderRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
+          if (showCabin) Expanded(flex: 3, child: Text(context.l10n.cabinAssignmentList_cabinColumn, style: style)),
           Expanded(flex: 3, child: Text(context.l10n.assignment_idle_columnLocation, style: style)),
           Expanded(flex: 4, child: Text(context.l10n.assignment_idle_columnDrug, style: style)),
           Expanded(flex: 2, child: Text(context.l10n.assignment_idle_columnMin, style: style)),
@@ -113,11 +154,14 @@ class _TableHeaderRow extends StatelessWidget {
 }
 
 class _TableDataRow extends StatelessWidget {
-  const _TableDataRow({required this.assignment, required this.locationLabel, required this.onEdit});
+  const _TableDataRow({required this.assignment, required this.locationLabel, required this.onEdit, this.cabinLabel});
 
   final MedicineAssignment assignment;
   final String locationLabel;
   final VoidCallback onEdit;
+
+  /// null → kabin sütunu gösterilmez.
+  final String? cabinLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +172,15 @@ class _TableDataRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
+          if (cabinLabel != null)
+            Expanded(
+              flex: 3,
+              child: Text(
+                cabinLabel!,
+                style: MedTextStyles.bodySm(color: MedColors.text3),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           Expanded(
             flex: 3,
             child: Text(locationLabel, style: MedTextStyles.bodySm(color: MedColors.text3)),
