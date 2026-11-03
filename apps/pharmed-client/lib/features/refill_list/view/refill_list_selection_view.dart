@@ -43,7 +43,6 @@ class RefillListSelectionView extends StatelessWidget {
   }
 }
 
-// TODO : Localization
 class _LeftPanel extends StatelessWidget {
   const _LeftPanel({super.key, required this.notifier});
 
@@ -61,12 +60,12 @@ class _LeftPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Dolum Listeleri', style: MedTextStyles.titleSm()),
+                Text(context.l10n.refillList_panelTitle, style: MedTextStyles.titleSm()),
                 SizedBox(height: 12.0),
                 MedSegmentedButton(
                   selectedIndex: notifier.selectedTypeIndex,
                   onChanged: (index) => notifier.selectType(index),
-                  labels: ['Bekleyen', 'Tamamlanan'],
+                  labels: [context.l10n.refillList_tab_waiting, context.l10n.refillList_tab_completed],
                 ),
               ],
             ),
@@ -168,12 +167,12 @@ class _RefillListHeaderView extends StatelessWidget {
             spacing: 4.0,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Dolum Listesi #${item?.id}', style: MedTextStyles.titleLg()),
+              Text(context.l10n.refillList_listTitle(item?.id ?? 0), style: MedTextStyles.titleLg()),
               Row(
                 spacing: 6.0,
                 children: [
                   Text(
-                    '${context.l10n.enumCore_prescriptionMovementPendingApprovalActorLabel}: ${user?.fullName}',
+                    context.l10n.refillList_assignedUserNameLabel(user?.fullName ?? '-'),
                     style: MedTextStyles.bodyMd(),
                   ),
                   Text('-'),

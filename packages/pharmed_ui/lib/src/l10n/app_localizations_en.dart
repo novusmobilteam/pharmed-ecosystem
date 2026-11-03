@@ -2102,6 +2102,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboard_roomBedLabel => 'ROOM / BED';
 
   @override
+  String get dashboard_serviceLabel => 'SERVICE';
+
+  @override
+  String remainingDayChip_overdueLabel(int days) {
+    return '$days days overdue';
+  }
+
+  @override
+  String remainingDayChip_daysLabel(int days) {
+    return '$days days';
+  }
+
+  @override
   String get dashboardUpcomingTreatmentsPanelTitle => 'UPCOMING TREATMENTS';
 
   @override

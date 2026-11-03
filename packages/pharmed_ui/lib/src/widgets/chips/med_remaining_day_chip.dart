@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-// TODO : Localization
-
 // ─────────────────────────────────────────────────────────────────
 // MedRemainingDayChip
 // [SWREQ-UI-CHIP-RDC-001]
@@ -31,25 +29,25 @@ class MedRemainingDayChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (_status) {
       _RdcStatus.expired => MedChip(
-        label: '${days.abs()}g geçti',
+        label: context.l10n.remainingDayChip_overdueLabel(days.abs()),
         icon: PhosphorIcons.warning(),
         style: MedChipStyle.danger,
         mono: false,
       ),
       _RdcStatus.critical => MedChip(
-        label: '$days gün',
+        label: context.l10n.remainingDayChip_daysLabel(days),
         icon: PhosphorIcons.timer(),
         style: MedChipStyle.danger,
         mono: false,
       ),
       _RdcStatus.warning => MedChip(
-        label: '$days gün',
+        label: context.l10n.remainingDayChip_daysLabel(days),
         icon: PhosphorIcons.hourglass(),
         style: MedChipStyle.warning,
         mono: false,
       ),
       _RdcStatus.normal => MedChip(
-        label: '$days gün',
+        label: context.l10n.remainingDayChip_daysLabel(days),
         icon: PhosphorIcons.checkCircle(),
         style: MedChipStyle.success,
         mono: false,

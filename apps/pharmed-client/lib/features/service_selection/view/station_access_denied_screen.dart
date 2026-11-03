@@ -205,8 +205,8 @@ class _IconBadge extends StatelessWidget {
       height: 88,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: accent.withOpacity(0.08),
-        border: Border.all(color: accent.withOpacity(0.18), width: 6),
+        color: accent.withValues(alpha: 0.08),
+        border: Border.all(color: accent.withValues(alpha: 0.18), width: 6),
       ),
       child: Icon(icon, size: 40, color: accent),
     );

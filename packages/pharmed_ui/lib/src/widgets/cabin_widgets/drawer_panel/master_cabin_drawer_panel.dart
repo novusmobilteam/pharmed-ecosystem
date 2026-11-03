@@ -774,16 +774,14 @@ class _MasterCellLegend extends StatelessWidget {
       (CabinCellStatus.empty, context.l10n.cabin_legendFaultEmpty),
     ],
 
-    CabinOperationMode.unload => [
+    // Stoktan çıkaran / iade işlemleri boşaltmayla aynı göz durumlarını
+    // gösterir (eskiden UnimplementedError fırlatıyordu).
+    CabinOperationMode.unload || CabinOperationMode.destruction || CabinOperationMode.refund => [
       (CabinCellStatus.empty, context.l10n.cabin_legendAssignEmpty),
       (CabinCellStatus.assigned, context.l10n.cabin_legendAssignAssigned),
       (CabinCellStatus.fault, context.l10n.cabin_legendAssignFault),
       (CabinCellStatus.maintenance, context.l10n.cabin_legendAssignMaintenance),
     ],
-    // TODO: Handle this case.
-    CabinOperationMode.destruction => throw UnimplementedError(),
-    // TODO: Handle this case.
-    CabinOperationMode.refund => throw UnimplementedError(),
   };
 }
 

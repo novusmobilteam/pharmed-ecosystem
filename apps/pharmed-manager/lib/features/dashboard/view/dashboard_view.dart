@@ -64,10 +64,7 @@ class _DashboardViewState extends State<DashboardView> {
               // Kabin dışı malzeme uyarısı (tüm istasyonlar) — client
               // dashboard'undaki uyarının manager karşılığı.
               if (notifier.outOfCabinCount > 0) ...[
-                _OutOfCabinBanner(
-                  count: notifier.outOfCabinCount,
-                  onTap: () => _showOutOfCabinDialog(context),
-                ),
+                _OutOfCabinBanner(count: notifier.outOfCabinCount, onTap: () => _showOutOfCabinDialog(context)),
                 const SizedBox(height: 12),
               ],
 
@@ -92,8 +89,6 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                     ),
                     Expanded(child: UnappliedPrescriptionPanel(section: notifier.unappliedPrescriptions)),
-                    // TODO : Düzelt
-                    //Expanded(child: UpcomingTreatmentPanel(section: notifier.upcomingTreatments)),
                   ],
                 ),
               ),
@@ -190,7 +185,10 @@ class _OutOfCabinDialog extends StatelessWidget {
       icon: PhosphorIcons.package(),
       width: 820,
       child: section.isLoading && items.isEmpty
-          ? const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator.adaptive()))
+          ? const Padding(
+              padding: EdgeInsets.all(32),
+              child: Center(child: CircularProgressIndicator.adaptive()),
+            )
           : items.isEmpty
           ? EmptyStateWidget(
               icon: PhosphorIcons.checkCircle(),
@@ -469,10 +467,7 @@ class _ExpiredStockCard extends StatelessWidget {
           const SizedBox(height: 12),
           const Divider(height: 1, color: MedColors.border2),
           const SizedBox(height: 12),
-          MedInfoRow(
-            label: context.l10n.dashboard_expiredStockLocationLabel,
-            value: location.isEmpty ? '-' : location,
-          ),
+          MedInfoRow(label: context.l10n.dashboard_expiredStockLocationLabel, value: location.isEmpty ? '-' : location),
           const SizedBox(height: 6),
           MedInfoRow(
             label: context.l10n.dashboard_expiredStockQuantityLabel,
@@ -518,9 +513,9 @@ class UnappliedPrescriptionPanel extends StatelessWidget {
             ),
             DashboardRxInfoLine(context.l10n.dashboard_doctorLabel, item.doctor?.fullName ?? '-'),
             DashboardRxInfoLine(
-              context.l10n.assignment_serviceLabel,
+              context.l10n.dashboard_serviceLabel,
               item.prescription?.hospitalization?.physicalService?.name ?? '-',
-            ), // TODO(l10n): no all-caps ARB key exists for this label yet; see migration report
+            ),
             DashboardRxInfoLine(
               context.l10n.dashboard_roomBedLabel,
               [

@@ -280,14 +280,25 @@ extension PrescriptionMovementTypeStyle on PrescriptionMovementType {
     PrescriptionMovementType.redirected => PhosphorIcons.arrowBendUpRight(PhosphorIconsStyle.fill),
   };
 
+  /// Hareket kartlarının tonu — durumun anlamına göre:
+  ///   başarılı (uygulandı) · bekleyen (onay/alım/dolum/iade bekliyor) ·
+  ///   olumsuz (red, fire, imha, eksik stok) · nötr (iptal, boşaltma) ·
+  ///   bilgi (iade edildi, yönlendirildi).
   MedTone get movementTone => switch (this) {
-    // TODO: enum değerlerini kendi tipine göre eşle
-    PrescriptionMovementType.purchasePending => MedTone.success, // alım
-    PrescriptionMovementType.filledWaiting => MedTone.info, // dolum
-    PrescriptionMovementType.wastaged => MedTone.warning, // iade
-    PrescriptionMovementType.returned => MedTone.error, // fire/imha
+    PrescriptionMovementType.applied => MedTone.success,
+    PrescriptionMovementType.pendingApproval => MedTone.warning,
+    PrescriptionMovementType.purchasePending => MedTone.warning,
+    PrescriptionMovementType.filledWaiting => MedTone.warning,
+    PrescriptionMovementType.returnPending => MedTone.warning,
+    PrescriptionMovementType.replenishmentPending => MedTone.warning,
+    PrescriptionMovementType.rejected => MedTone.error,
+    PrescriptionMovementType.wastaged => MedTone.error,
+    PrescriptionMovementType.destructed => MedTone.error,
+    PrescriptionMovementType.shortageReported => MedTone.error,
+    PrescriptionMovementType.cancelled => MedTone.neutral,
+    PrescriptionMovementType.unloaded => MedTone.neutral,
+    PrescriptionMovementType.returned => MedTone.info,
     PrescriptionMovementType.redirected => MedTone.info,
-    _ => MedTone.info,
   };
 }
 

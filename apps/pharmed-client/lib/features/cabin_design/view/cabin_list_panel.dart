@@ -125,11 +125,7 @@ class _CabinListItem extends StatelessWidget {
       leading: Container(
         width: 8,
         height: 8,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          // TODO: canlı bağlantı durumu henüz bağlanmadı — şimdilik pasif/aktif.
-          color: _isPassive ? MedColors.text4 : MedColors.green,
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: _isPassive ? MedColors.text4 : MedColors.green),
       ),
       title: cabin.name ?? '—',
       subtitle: cabin.type?.label,

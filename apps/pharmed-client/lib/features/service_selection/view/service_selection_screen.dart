@@ -120,7 +120,7 @@ class _ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isSelected ? MedColors.blue.withOpacity(0.08) : MedColors.surface,
+      color: isSelected ? MedColors.blue.withValues(alpha: 0.08) : MedColors.surface,
       borderRadius: MedRadius.lgAll,
       child: InkWell(
         borderRadius: MedRadius.lgAll,

@@ -2488,6 +2488,20 @@
   "@dashboard_roomBedLabel": {
     "description": "Combined column header for room and bed in the unapplied-prescriptions panel"
   },
+  "dashboard_serviceLabel": "SERVİS",
+  "@dashboard_serviceLabel": {
+    "description": "All-caps service label in dashboard prescription cards"
+  },
+  "remainingDayChip_overdueLabel": "{days} gün geçti",
+  "@remainingDayChip_overdueLabel": {
+    "description": "Remaining-days chip label when the expiry date has passed; days is how many days ago",
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "remainingDayChip_daysLabel": "{days} gün",
+  "@remainingDayChip_daysLabel": {
+    "description": "Remaining-days chip label \u2014 days left until expiry",
+    "placeholders": { "days": { "type": "int" } }
+  },
   "dashboardUpcomingTreatmentsPanelTitle": "YAKLAŞAN TEDAVİLER",
   "@dashboardUpcomingTreatmentsPanelTitle": {
     "description": "Panel header title for the dashboard upcoming-treatments panel"

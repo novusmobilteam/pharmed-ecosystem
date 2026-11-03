@@ -3858,6 +3858,24 @@ abstract class AppLocalizations {
   /// **'ROOM / BED'**
   String get dashboard_roomBedLabel;
 
+  /// All-caps service label in dashboard prescription cards
+  ///
+  /// In en, this message translates to:
+  /// **'SERVICE'**
+  String get dashboard_serviceLabel;
+
+  /// Remaining-days chip label when the expiry date has passed; days is how many days ago
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days overdue'**
+  String remainingDayChip_overdueLabel(int days);
+
+  /// Remaining-days chip label — days left until expiry
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String remainingDayChip_daysLabel(int days);
+
   /// No description provided for @dashboardUpcomingTreatmentsPanelTitle.
   ///
   /// In en, this message translates to:

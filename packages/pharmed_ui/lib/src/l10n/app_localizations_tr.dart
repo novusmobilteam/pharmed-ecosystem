@@ -2097,6 +2097,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashboard_roomBedLabel => 'ODA / YATAK';
 
   @override
+  String get dashboard_serviceLabel => 'SERVİS';
+
+  @override
+  String remainingDayChip_overdueLabel(int days) {
+    return '$days gün geçti';
+  }
+
+  @override
+  String remainingDayChip_daysLabel(int days) {
+    return '$days gün';
+  }
+
+  @override
   String get dashboardUpcomingTreatmentsPanelTitle => 'YAKLAŞAN TEDAVİLER';
 
   @override

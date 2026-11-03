@@ -161,7 +161,7 @@ class StockMovementNotifier extends ChangeNotifier with ApiRequestMixin {
           final data = response?.data ?? const <StationTransaction>[];
           collected.addAll(data);
           pageLength = data.length;
-          total = response?.totalCount ?? 0; // TODO: yanıt tipindeki toplam alanının adıyla eşle
+          total = response?.totalCount ?? 0;
         },
         error: (e) => failure = Result.error(e),
       );
