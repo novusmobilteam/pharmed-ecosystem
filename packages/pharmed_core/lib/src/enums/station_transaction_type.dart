@@ -11,7 +11,10 @@ enum StationTransactionType {
   materialPurchasing(7),
   refundInward(8),
   wastage(9),
-  unloading(10);
+  unloading(10),
+
+  /// İmha ekranından yapılan imha. Fire/İmha (9) iade akışındaki fireden ayrı.
+  destruction(11);
 
   const StationTransactionType(this.value);
 
@@ -40,6 +43,7 @@ extension StationTransactionTypeLabel on StationTransactionType {
       StationTransactionType.refundInward => l10n.enumCore_stationTransactionTypeRefundInward,
       StationTransactionType.wastage => l10n.enumCore_stationTransactionTypeWastage,
       StationTransactionType.unloading => l10n.enumCore_stationTransactionTypeUnloading,
+      StationTransactionType.destruction => l10n.enumCore_stationTransactionTypeDestruction,
     };
   }
 }

@@ -8231,6 +8231,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enumCore_stationTransactionTypeUnloading => 'Déchargement';
 
   @override
+  String get enumCore_stationTransactionTypeDestruction => 'Destruction';
+
+  @override
   String get masterDrawer_error_lidDrawerNotOpen =>
       'Le couvercle cubique n\'a pas pu s\'ouvrir car le tiroir n\'est pas complètement ouvert. Tirez le tiroir jusqu\'au bout.';
 

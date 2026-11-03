@@ -14054,6 +14054,12 @@ abstract class AppLocalizations {
   /// **'Unloading'**
   String get enumCore_stationTransactionTypeUnloading;
 
+  /// StationTransactionType.destruction (11) — drug destroyed from the cabin (İmha ekranı)
+  ///
+  /// In en, this message translates to:
+  /// **'Destruction'**
+  String get enumCore_stationTransactionTypeDestruction;
+
   /// No description provided for @masterDrawer_error_lidDrawerNotOpen.
   ///
   /// In en, this message translates to:

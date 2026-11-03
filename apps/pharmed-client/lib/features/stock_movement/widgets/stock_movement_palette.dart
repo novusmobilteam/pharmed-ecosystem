@@ -14,6 +14,9 @@ abstract final class StockMovementPalette {
     const Color(0xFF0891B2),
     const Color(0xFFDB2777),
     const Color(0xFF64748B),
+    const Color(0xFFEA580C),
+    const Color(0xFF65A30D),
+    const Color(0xFF991B1B),
   ];
 
   static Color of(StationTransactionType type) => _colors[type.index % _colors.length];

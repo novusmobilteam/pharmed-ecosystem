@@ -4871,6 +4871,7 @@
 "enumCore_stationTransactionTypeRefundInward": "Retour entrant",
 "enumCore_stationTransactionTypeWastage": "Perte",
 "enumCore_stationTransactionTypeUnloading": "Déchargement",
+"enumCore_stationTransactionTypeDestruction": "Destruction",
 "masterDrawer_error_lidDrawerNotOpen": "Le couvercle cubique n'a pas pu s'ouvrir car le tiroir n'est pas complètement ouvert. Tirez le tiroir jusqu'au bout.",
 "masterDrawer_error_lidNotOpened": "Le couvercle cubique ne s'est pas ouvert. Essayez de l'ouvrir à la main.",
 "masterDrawer_error_lidSensorLost": "L'état du couvercle cubique ne peut pas être lu. Assurez-vous que le couvercle est fermé.",

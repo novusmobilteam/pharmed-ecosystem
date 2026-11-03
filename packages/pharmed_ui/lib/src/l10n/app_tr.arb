@@ -10112,6 +10112,10 @@
 "enumCore_stationTransactionTypeRefundInward": "İade Girişi",
 "enumCore_stationTransactionTypeWastage": "Fire",
 "enumCore_stationTransactionTypeUnloading": "Boşaltma",
+"enumCore_stationTransactionTypeDestruction": "İmha",
+"@enumCore_stationTransactionTypeDestruction": {
+  "description": "StationTransactionType.destruction (11) — drug destroyed from the cabin (İmha ekranı)"
+},
 "masterDrawer_error_lidDrawerNotOpen": "Kübik kapak açılamadı çünkü çekmece tam açık değil. Çekmeceyi sonuna kadar çekin.",
 "@masterDrawer_error_lidDrawerNotOpen": {
   "description": "Shown when a cubic lid cannot open because the main drawer is not fully open (hardware interlock)"

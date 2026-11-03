@@ -5705,6 +5705,7 @@
 "@enumCore_stationTransactionTypeUnloading": {
   "description": "StationTransactionType.unloading (10) — drugs unloaded from the cabin"
 },
+"enumCore_stationTransactionTypeDestruction": "Destruction",
 "masterDrawer_error_lidDrawerNotOpen": "The cubic lid could not open because the drawer is not fully open. Pull the drawer all the way out.",
 "masterDrawer_error_lidNotOpened": "The cubic lid did not open. Try opening the lid by hand.",
 "masterDrawer_error_lidSensorLost": "The cubic lid status cannot be read. Make sure the lid is closed.",

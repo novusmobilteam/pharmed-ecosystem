@@ -8040,6 +8040,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enumCore_stationTransactionTypeUnloading => 'Unloading';
 
   @override
+  String get enumCore_stationTransactionTypeDestruction => 'Destruction';
+
+  @override
   String get masterDrawer_error_lidDrawerNotOpen =>
       'The cubic lid could not open because the drawer is not fully open. Pull the drawer all the way out.';
 

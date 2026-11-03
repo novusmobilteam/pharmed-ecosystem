@@ -7964,6 +7964,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get enumCore_stationTransactionTypeUnloading => 'Boşaltma';
 
   @override
+  String get enumCore_stationTransactionTypeDestruction => 'İmha';
+
+  @override
   String get masterDrawer_error_lidDrawerNotOpen =>
       'Kübik kapak açılamadı çünkü çekmece tam açık değil. Çekmeceyi sonuna kadar çekin.';
 
