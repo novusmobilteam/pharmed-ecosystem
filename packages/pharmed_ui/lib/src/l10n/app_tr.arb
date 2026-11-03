@@ -9623,6 +9623,30 @@
 "@fault_cellValueUnsolved": {
   "description": "Table cell value shown for the status column when a fault/malfunction record's isSolved flag is false"
 },
+"fault_activeListTitle": "ARIZALI / BAKIMDAKİ GÖZLER",
+"@fault_activeListTitle": {
+  "description": "Section title listing cells with an open fault or maintenance record in the viewed cabin"
+},
+"fault_activeListEmpty": "Bu kabinde arızalı veya bakımda göz yok",
+"@fault_activeListEmpty": {
+  "description": "Empty state of the active fault list"
+},
+"fault_assignedMedicineLabel": "ATANMIŞ İLAÇ",
+"@fault_assignedMedicineLabel": {
+  "description": "Section label for the medicine assigned to the selected cell"
+},
+"fault_noAssignedMedicine": "Bu göze ilaç atanmamış",
+"@fault_noAssignedMedicine": {
+  "description": "Shown when the selected cell has no medicine assignment"
+},
+"fault_createRecordButton": "Kayıt Oluştur",
+"@fault_createRecordButton": {
+  "description": "Submit button creating a new fault or maintenance record (master fault screen)"
+},
+"fault_recordTypeLabel": "KAYIT TİPİ",
+"@fault_recordTypeLabel": {
+  "description": "Section label above the fault / maintenance record type selector"
+},
 "cabinAssignmentList_actionsColumn": "İşlemler",
 "@cabinAssignmentList_actionsColumn": {
   "description": "Column header in the cabin assignment list for the delete/replace action buttons, shown only when the row's stock is zero"

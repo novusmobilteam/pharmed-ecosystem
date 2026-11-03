@@ -7476,6 +7476,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fault_cellValueUnsolved => 'Unsolved';
 
   @override
+  String get fault_activeListTitle => 'FAULTY / IN MAINTENANCE CELLS';
+
+  @override
+  String get fault_activeListEmpty => 'No faulty or maintenance cells in this cabin';
+
+  @override
+  String get fault_assignedMedicineLabel => 'ASSIGNED MEDICINE';
+
+  @override
+  String get fault_noAssignedMedicine => 'No medicine assigned to this cell';
+
+  @override
+  String get fault_createRecordButton => 'Create Record';
+
+  @override
+  String get fault_recordTypeLabel => 'RECORD TYPE';
+
+  @override
   String get cabinAssignmentList_actionsColumn => 'Actions';
 
   @override

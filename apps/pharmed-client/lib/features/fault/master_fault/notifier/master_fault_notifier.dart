@@ -102,6 +102,34 @@ class MasterFaultNotifier extends Notifier<MasterFaultState> {
     );
   }
 
+  /// Gözü doğrudan seçer (istasyon geneli arıza ekranı: kabin görselinden ya
+  /// da aktif arıza listesinden). Aynı göz tekrar seçilirse seçim kalkar.
+  void selectUnit(DrawerGroup group, DrawerUnit unit) {
+    final current = state;
+    if (current is MasterFaultSaving || current is MasterFaultLoading || current is MasterFaultUninitialized) return;
+    final groups = current.groups;
+    final faults = current.faults;
+    final cabinId = current.cabinId;
+
+    if (current is MasterFaultCellSelected && current.selectedUnit.id == unit.id) {
+      state = MasterFaultIdle(groups: groups, faults: faults, cabinId: cabinId);
+      return;
+    }
+
+    final activeFault = _findActiveFault(slotId: unit.id, faults: faults);
+    state = MasterFaultCellSelected(
+      groups: groups,
+      faults: faults,
+      cabinId: cabinId,
+      selectedGroup: group,
+      selectedUnit: unit,
+      faultHistory: _findFaultHistory(slotId: unit.id, faults: faults),
+      activeFault: activeFault,
+      selectedStatus: activeFault?.workingStatus ?? CabinWorkingStatus.faulty,
+      description: activeFault?.description,
+    );
+  }
+
   /// Segmented button — sadece yeni kayıt modunda çalışır.
   void onStatusChanged(int index) {
     final current = state;

@@ -1,8 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../core/providers/providers.dart';
 import '../../widgets/widgets.dart';
 import '../dashboard/dashboard.dart';
 import 'master_fault/notifier/master_fault_notifier.dart';
@@ -28,7 +32,9 @@ class FaultView extends StatelessWidget {
 
     return switch (deviceMode) {
       CabinType.master =>
-        stationContext != null ? MasterFaultView(stationContext: stationContext!) : const SizedBox.shrink(),
+        stationContext != null
+            ? MasterFaultView(stationContext: stationContext!, menu: cabinRouteContext?.menu)
+            : const SizedBox.shrink(),
       CabinType.mobile => MobileFaultView(data: cabinData),
       _ => const Center(child: MedLoadingIndicator()),
     };

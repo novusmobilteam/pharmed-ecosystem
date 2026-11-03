@@ -13105,6 +13105,42 @@ abstract class AppLocalizations {
   /// **'Unsolved'**
   String get fault_cellValueUnsolved;
 
+  /// Section title listing cells with an open fault or maintenance record in the viewed cabin
+  ///
+  /// In en, this message translates to:
+  /// **'FAULTY / IN MAINTENANCE CELLS'**
+  String get fault_activeListTitle;
+
+  /// Empty state of the active fault list
+  ///
+  /// In en, this message translates to:
+  /// **'No faulty or maintenance cells in this cabin'**
+  String get fault_activeListEmpty;
+
+  /// Section label for the medicine assigned to the selected cell
+  ///
+  /// In en, this message translates to:
+  /// **'ASSIGNED MEDICINE'**
+  String get fault_assignedMedicineLabel;
+
+  /// Shown when the selected cell has no medicine assignment
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine assigned to this cell'**
+  String get fault_noAssignedMedicine;
+
+  /// Submit button creating a new fault or maintenance record (master fault screen)
+  ///
+  /// In en, this message translates to:
+  /// **'Create Record'**
+  String get fault_createRecordButton;
+
+  /// Section label above the fault / maintenance record type selector
+  ///
+  /// In en, this message translates to:
+  /// **'RECORD TYPE'**
+  String get fault_recordTypeLabel;
+
   /// No description provided for @cabinAssignmentList_actionsColumn.
   ///
   /// In en, this message translates to:

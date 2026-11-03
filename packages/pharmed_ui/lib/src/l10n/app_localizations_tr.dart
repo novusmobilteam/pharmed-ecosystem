@@ -7414,6 +7414,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String get fault_cellValueUnsolved => 'Çözülmedi';
 
   @override
+  String get fault_activeListTitle => 'ARIZALI / BAKIMDAKİ GÖZLER';
+
+  @override
+  String get fault_activeListEmpty => 'Bu kabinde arızalı veya bakımda göz yok';
+
+  @override
+  String get fault_assignedMedicineLabel => 'ATANMIŞ İLAÇ';
+
+  @override
+  String get fault_noAssignedMedicine => 'Bu göze ilaç atanmamış';
+
+  @override
+  String get fault_createRecordButton => 'Kayıt Oluştur';
+
+  @override
+  String get fault_recordTypeLabel => 'KAYIT TİPİ';
+
+  @override
   String get cabinAssignmentList_actionsColumn => 'İşlemler';
 
   @override

@@ -7652,6 +7652,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fault_cellValueUnsolved => 'Non résolu';
 
   @override
+  String get fault_activeListTitle => 'CASES EN PANNE / EN MAINTENANCE';
+
+  @override
+  String get fault_activeListEmpty => 'Aucune case en panne ou en maintenance dans cette cabine';
+
+  @override
+  String get fault_assignedMedicineLabel => 'MÉDICAMENT ASSIGNÉ';
+
+  @override
+  String get fault_noAssignedMedicine => 'Aucun médicament assigné à cette case';
+
+  @override
+  String get fault_createRecordButton => 'Créer l\'enregistrement';
+
+  @override
+  String get fault_recordTypeLabel => 'TYPE D\'ENREGISTREMENT';
+
+  @override
   String get cabinAssignmentList_actionsColumn => 'Actions';
 
   @override

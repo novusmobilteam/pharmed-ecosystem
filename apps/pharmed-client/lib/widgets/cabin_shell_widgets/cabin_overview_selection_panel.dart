@@ -16,7 +16,12 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
     this.onDrawerTap,
     this.onChangeCabin,
     this.cabin,
+    this.allowFaultyTap = false,
   });
+
+  /// true → arızalı/bakımdaki gözler de tıklanabilir (Çekmece Arıza ekranı:
+  /// kaydı kapatmak için). Diğer ekranlarda arızalı göz seçilemez.
+  final bool allowFaultyTap;
 
   final List<DrawerGroup> groups;
   final List<MedicineAssignment> assignments;
@@ -85,6 +90,7 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
                   onCellTap: onCellTap,
                   onSerumTrayTap: onSerumTrayTap,
                   onDrawerTap: onDrawerTap,
+                  allowFaultyTap: allowFaultyTap,
                 );
               },
             ),
@@ -105,8 +111,10 @@ class _DrawerView extends StatelessWidget {
     this.onCellTap,
     this.onSerumTrayTap,
     this.onDrawerTap,
+    this.allowFaultyTap = false,
   });
 
+  final bool allowFaultyTap;
   final DrawerGroup group;
   final List<MedicineAssignment> assignments;
   final Set<int> selectedUnitIds;
@@ -148,30 +156,31 @@ class _DrawerView extends StatelessWidget {
       final status = unit.workingStatus;
       final bool isFaulty = status != CabinWorkingStatus.working;
 
-      final Color cellcolor = isFaulty
-          ? status.color.withAlpha(30)
-          : isSelected
+      // Seçili göz her durumda seçili görünür (arıza ekranında arızalı göz seçilebilir).
+      final Color cellcolor = isSelected
           ? MedColors.blue
+          : isFaulty
+          ? status.color.withAlpha(30)
           : isEmpty
           ? MedColors.surface3
           : MedColors.blueLight;
-      final Color? textColor = isFaulty
-          ? status.color
-          : isSelected
+      final Color? textColor = isSelected
           ? Colors.white
+          : isFaulty
+          ? status.color
           : isEmpty
           ? null
           : MedColors.text;
-      final Color borderColor = isFaulty
-          ? status.color
-          : isSelected
+      final Color borderColor = isSelected
           ? Colors.transparent
+          : isFaulty
+          ? status.color
           : isEmpty
           ? MedColors.border
           : MedColors.blue;
 
       return GestureDetector(
-        onTap: (isFaulty || onCellTap == null) ? null : () => onCellTap!(unit),
+        onTap: ((isFaulty && !allowFaultyTap) || onCellTap == null) ? null : () => onCellTap!(unit),
         child: Container(
           height: _cellHeight,
           padding: MedSpacing.insetMd,
@@ -188,7 +197,10 @@ class _DrawerView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('G-${index + 1}', style: MedTextStyles.monoSm(color: textColor)),
-                  if (isSelected) Icon(PhosphorIcons.checkCircle(), size: 16, color: textColor),
+                  if (isSelected)
+                    Icon(PhosphorIcons.checkCircle(), size: 16, color: textColor)
+                  else if (isFaulty)
+                    Icon(PhosphorIcons.wrench(), size: 16, color: textColor),
                 ],
               ),
               Text(
@@ -289,6 +301,8 @@ class _DrawerView extends StatelessWidget {
                   assignments: assignments,
                   selectedCellIds: selectedCellIds,
                   onTrayTap: onSerumTrayTap,
+                  allowFaultyTap: allowFaultyTap,
+                  selectedShelfIds: allowFaultyTap ? selectedUnitIds : const {},
                 );
               }
 
@@ -367,7 +381,16 @@ class _SerumShelvesView extends StatelessWidget {
     required this.assignments,
     required this.selectedCellIds,
     this.onTrayTap,
+    this.allowFaultyTap = false,
+    this.selectedShelfIds = const {},
   });
+
+  /// Arıza ekranı: arızalı/bakımdaki raflar da tıklanabilir.
+  final bool allowFaultyTap;
+
+  /// Arıza ekranı: arıza kaydı raf (DrawerUnit) bazında tutulur — seçili rafın
+  /// tüm avadanlıkları seçili görünür.
+  final Set<int> selectedShelfIds;
 
   final DrawerGroup group;
   final List<MedicineAssignment> assignments;
@@ -405,9 +428,14 @@ class _SerumShelvesView extends StatelessWidget {
     final onTap = onTrayTap;
     if (onTap == null || tray.id == null || shelf.id == null) return null;
     final unit = group.units.firstWhereOrNull((u) => u.id == shelf.id);
-    if (unit == null || unit.workingStatus != CabinWorkingStatus.working) return null;
+    if (unit == null) return null;
+    if (unit.workingStatus != CabinWorkingStatus.working && !allowFaultyTap) return null;
     return () => onTap(unit, tray);
   }
+
+  /// Rafın çalışma durumu (arıza/bakım kaydı raf bazında).
+  CabinWorkingStatus _shelfStatus(SerumShelfLayout shelf) =>
+      group.units.firstWhereOrNull((u) => u.id == shelf.id)?.workingStatus ?? CabinWorkingStatus.working;
 
   Widget _shelfRow(BuildContext context, SerumShelfLayout shelf, Map<int, MedicineAssignment> byCellId) {
     if (shelf.trays.isEmpty) {
@@ -445,7 +473,10 @@ class _SerumShelvesView extends StatelessWidget {
             child: _SerumTrayCell(
               stepNo: i + 1,
               assignment: tray.id == null ? null : byCellId[tray.id],
-              isSelected: tray.id != null && selectedCellIds.contains(tray.id),
+              isSelected:
+                  (tray.id != null && selectedCellIds.contains(tray.id)) ||
+                  (shelf.id != null && selectedShelfIds.contains(shelf.id)),
+              status: _shelfStatus(shelf),
               onTap: _tapHandler(shelf, tray),
             ),
           ),
@@ -455,8 +486,16 @@ class _SerumShelvesView extends StatelessWidget {
 }
 
 class _SerumTrayCell extends StatelessWidget {
-  const _SerumTrayCell({required this.stepNo, required this.assignment, required this.isSelected, this.onTap});
+  const _SerumTrayCell({
+    required this.stepNo,
+    required this.assignment,
+    required this.isSelected,
+    this.status = CabinWorkingStatus.working,
+    this.onTap,
+  });
 
+  /// Rafın arıza/bakım durumu — normal gözlerle aynı renk diliyle gösterilir.
+  final CabinWorkingStatus status;
   final int stepNo;
   final MedicineAssignment? assignment;
   final bool isSelected;
@@ -467,10 +506,23 @@ class _SerumTrayCell extends StatelessWidget {
     final medicine = assignment?.medicine;
     final isEmpty = medicine == null;
 
-    // Normal gözlerle aynı renk mantığı: seçili > dolu > boş.
-    final Color cellColor = isSelected ? MedColors.blue : (isEmpty ? MedColors.surface3 : MedColors.blueLight);
-    final Color? textColor = isSelected ? Colors.white : (isEmpty ? null : MedColors.text);
-    final Color borderColor = isSelected ? Colors.transparent : (isEmpty ? MedColors.border : MedColors.blue);
+    // Normal gözlerle aynı renk mantığı: seçili > arızalı/bakımda > dolu > boş.
+    final isFaulty = status != CabinWorkingStatus.working;
+    final Color cellColor = isSelected
+        ? MedColors.blue
+        : isFaulty
+        ? status.color.withAlpha(30)
+        : (isEmpty ? MedColors.surface3 : MedColors.blueLight);
+    final Color? textColor = isSelected
+        ? Colors.white
+        : isFaulty
+        ? status.color
+        : (isEmpty ? null : MedColors.text);
+    final Color borderColor = isSelected
+        ? Colors.transparent
+        : isFaulty
+        ? status.color
+        : (isEmpty ? MedColors.border : MedColors.blue);
 
     return GestureDetector(
       onTap: onTap,
@@ -489,7 +541,10 @@ class _SerumTrayCell extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('A-$stepNo', style: MedTextStyles.monoSm(color: textColor)),
-                if (isSelected) Icon(PhosphorIcons.checkCircle(), size: 14, color: textColor),
+                if (isSelected)
+                  Icon(PhosphorIcons.checkCircle(), size: 14, color: textColor)
+                else if (isFaulty)
+                  Icon(PhosphorIcons.wrench(), size: 14, color: textColor),
               ],
             ),
             Text(
