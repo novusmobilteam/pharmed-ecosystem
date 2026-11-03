@@ -4,6 +4,11 @@ import 'package:pharmed_manager/core/core.dart';
 // [SWREQ-MGR-RX-002] [IEC 62304 §5.5]
 // Reçete detay paneli notifier'ı.
 // hospitalization artık constructor'da değil, load() ile set edilir.
+//
+// Kalemler tarih aralığıyla sunucudan çekilir; durum filtresi yerelde
+// uygulanır (durum chip'lerinde sayılar gösterilebilsin diye). Liste GÜN
+// bazında gruplanır — reçete numarası kalem satırında ve aksiyonlarda kalır:
+// seçili kalemler işlem yapılırken reçeteye göre bölünür ([byPrescription]).
 // Sınıf: Class B
 
 class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
@@ -32,7 +37,62 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
   List<PrescriptionItem> _items = [];
   List<PrescriptionItem> get items => _items;
 
-  Map<int, List<PrescriptionItem>> get groupedPrescriptions => _items.groupedById;
+  /// Durum filtresi uygulanmış kalemler.
+  List<PrescriptionItem> get visibleItems => _type == null ? _items : _items.where((i) => i.status == _type).toList();
+
+  /// Durum → kalem sayısı (tarih aralığındaki tüm kalemler üzerinden).
+  Map<PrescriptionMovementType, int> get statusCounts {
+    final counts = <PrescriptionMovementType, int>{};
+    for (final i in _items) {
+      final s = i.status;
+      if (s != null) counts.update(s, (v) => v + 1, ifAbsent: () => 1);
+    }
+    return counts;
+  }
+
+  Map<int, List<PrescriptionItem>> get groupedPrescriptions => visibleItems.groupedById;
+
+  /// Görünen kalemler gün bazında: gün = uygulama zamanı (yoksa reçete
+  /// tarihi). Yeni gün üstte; gün içinde saate göre.
+  List<({DateTime? day, List<PrescriptionItem> items})> get dayGroups {
+    DateTime? dayOf(PrescriptionItem i) {
+      final d = i.time ?? i.prescription?.prescriptionDate ?? i.prescriptionDate;
+      return d == null ? null : DateTime(d.year, d.month, d.day);
+    }
+
+    int byTime(PrescriptionItem a, PrescriptionItem b) {
+      final ta = a.time, tb = b.time;
+      if (ta == null && tb == null) return 0;
+      if (ta == null) return 1;
+      if (tb == null) return -1;
+      return ta.compareTo(tb);
+    }
+
+    final map = <DateTime?, List<PrescriptionItem>>{};
+    for (final i in visibleItems) {
+      map.putIfAbsent(dayOf(i), () => []).add(i);
+    }
+    final groups = [for (final e in map.entries) (day: e.key, items: e.value..sort(byTime))];
+    groups.sort((a, b) {
+      if (a.day == null && b.day == null) return 0;
+      if (a.day == null) return 1;
+      if (b.day == null) return -1;
+      return b.day!.compareTo(a.day!);
+    });
+    return groups;
+  }
+
+  /// Seçili kalemleri reçeteye göre böler — onay/iptal/red servisleri reçete
+  /// bazında çalışır.
+  Map<int, List<PrescriptionItem>> byPrescription(List<PrescriptionItem> items) {
+    final map = <int, List<PrescriptionItem>>{};
+    for (final i in items) {
+      final id = i.prescriptionId;
+      if (id == null) continue;
+      map.putIfAbsent(id, () => []).add(i);
+    }
+    return map;
+  }
 
   Hospitalization? _hospitalization;
   Hospitalization? get hospitalization => _hospitalization;
@@ -58,6 +118,20 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
     getPatientPrescriptionHistory();
   }
 
+  /// Hızlı aralık: son [days] gün (bugün dahil). null → tüm tarihler.
+  void selectQuickRange(int? days) {
+    if (days == null) {
+      _startDate = null;
+      _endDate = null;
+    } else {
+      final now = DateTime.now();
+      _endDate = now;
+      _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: days - 1));
+    }
+    notifyListeners();
+    getPatientPrescriptionHistory();
+  }
+
   void selectStartDate(DateTime? date) {
     _startDate = date;
     getPatientPrescriptionHistory();
@@ -68,10 +142,10 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
     getPatientPrescriptionHistory();
   }
 
+  /// Yerel filtre — sunucuya yeniden gidilmez.
   void selectPrescriptionType(PrescriptionMovementType? type) {
     _type = type;
     notifyListeners();
-    getPatientPrescriptionHistory();
   }
 
   Future<void> getPatientPrescriptionHistory() async {
@@ -85,7 +159,6 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
         params: PagedQueryParams(
           startDate: _startDate?.startOfDay,
           endDate: _endDate?.endOfDay,
-          filters: [if (_type != null) Filter.eq('lastMovement.detailStatusId', _type!.id)],
         ),
       ),
       onData: (history) {

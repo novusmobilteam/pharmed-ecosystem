@@ -2,9 +2,18 @@
 // Reçete grup kartı — accordion detay + RFID altyapısı.
 // [interactive] = true  → checkbox seçim + toplu onay/iptal/red
 // [interactive] = false → salt görüntüleme
+//
+// İki başlık türü:
+//   RxGroupCard(prescriptionId: …)  → tek reçete (reçete no · doktor · tarih)
+//   RxGroupCard.day(day: …)         → tek gün; satırlarda saat ve kalemin
+//                                     reçete no/doktoru görünür. Kalemler farklı
+//                                     reçetelerden olabilir — aksiyon callback'leri
+//                                     seçili kalemleri olduğu gibi verir, reçeteye
+//                                     göre bölmek çağıranın işidir.
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -15,7 +24,7 @@ import 'rx_movement_block.dart';
 class RxGroupCard extends StatefulWidget {
   const RxGroupCard({
     super.key,
-    required this.prescriptionId,
+    required int this.prescriptionId,
     required this.items,
     required this.permissions,
     this.canOverrideRfidLock = false, // <-- isAdmin yerine
@@ -25,9 +34,30 @@ class RxGroupCard extends StatefulWidget {
     this.onCancel,
     this.onRfidTap,
     this.onRfidDelete,
-  });
+  }) : day = null;
 
-  final int prescriptionId;
+  /// Gün bazlı kart: [day] günündeki (saat yok sayılır) kalemler.
+  const RxGroupCard.day({
+    super.key,
+    required this.day,
+    required this.items,
+    required this.permissions,
+    this.canOverrideRfidLock = false,
+    this.onApprove,
+    this.onReject,
+    this.onRejectAfterApprove,
+    this.onCancel,
+    this.onRfidTap,
+    this.onRfidDelete,
+  }) : prescriptionId = null;
+
+  /// Reçete bazlı kartta reçete no; gün bazlı kartta null.
+  final int? prescriptionId;
+
+  /// Gün bazlı kartta grubun günü; reçete bazlı kartta null.
+  final DateTime? day;
+
+  bool get isDayGroup => prescriptionId == null;
   final List<PrescriptionItem> items;
   final PrescriptionActionPermissions permissions;
   final bool canOverrideRfidLock;
@@ -113,11 +143,67 @@ class _RxGroupCardState extends State<RxGroupCard> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  /// Gün kartında "onay bekleyen" sayısı başlıkta öne çıkarılır.
+  int get _pendingApprovalCount =>
+      widget.items.where((i) => i.status == PrescriptionMovementType.pendingApproval).length;
+
+  Widget _buildHeader(BuildContext context) {
+    final onTap = () => setState(() => _isExpanded = !_isExpanded);
+
+    if (widget.isDayGroup) {
+      final d = widget.day;
+      final locale = Localizations.localeOf(context).toString();
+      String? badge;
+      if (d != null) {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final dayOnly = DateTime(d.year, d.month, d.day);
+        if (dayOnly == today) {
+          badge = context.l10n.dateFilter_todayPreset;
+        } else if (dayOnly == today.subtract(const Duration(days: 1))) {
+          badge = context.l10n.dateFilter_yesterday;
+        } else if (dayOnly == today.add(const Duration(days: 1))) {
+          badge = context.l10n.dateFilter_tomorrowPreset;
+        }
+      }
+      final pending = _pendingApprovalCount;
+      return _RxHeader(
+        icon: PhosphorIcons.calendarBlank(PhosphorIconsStyle.duotone),
+        title: d == null ? '—' : DateFormat('d MMMM y', locale).format(d),
+        subtitle: d == null ? null : DateFormat('EEEE', locale).format(d),
+        badge: badge,
+        trailing: pending > 0
+            ? MedChip(
+                label: PrescriptionMovementType.pendingApproval.label(context),
+                count: pending,
+                size: MedChipSize.sm,
+                mono: false,
+                background: PrescriptionMovementType.pendingApproval.backgroundColor,
+                foreground: PrescriptionMovementType.pendingApproval.foregroundColor,
+              )
+            : null,
+        itemCount: widget.items.length,
+        isExpanded: _isExpanded,
+        onTap: onTap,
+      );
+    }
+
     final firstItem = widget.items.first;
     final prescriptionDate = firstItem.prescription?.prescriptionDate?.formattedDate ?? '-';
     final doctorName = firstItem.doctor?.fullName ?? context.l10n.rxGroup_unknownDoctorFallback;
+    return _RxHeader(
+      icon: PhosphorIcons.notepad(PhosphorIconsStyle.duotone),
+      title: context.l10n.rxGroup_headerTitle(widget.prescriptionId!),
+      subtitle: context.l10n.rxGroup_headerSubtitle(doctorName, prescriptionDate),
+      monoTitle: true,
+      itemCount: widget.items.length,
+      isExpanded: _isExpanded,
+      onTap: onTap,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     return Container(
       decoration: BoxDecoration(
@@ -131,14 +217,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _RxHeader(
-              prescriptionId: widget.prescriptionId,
-              prescriptionDate: prescriptionDate,
-              doctorName: doctorName,
-              itemCount: widget.items.length,
-              isExpanded: _isExpanded,
-              onTap: () => setState(() => _isExpanded = !_isExpanded),
-            ),
+            _buildHeader(context),
             if (_isExpanded) ...[
               if (_interactive && _selectableItems.isNotEmpty)
                 _SelectAllBar(
@@ -151,6 +230,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
                 final canModifyTag = widget.canOverrideRfidLock || (item.status?.canModifyRfid ?? false);
                 return _RxDrugBlock(
                   item: item,
+                  dayMode: widget.isDayGroup,
                   isSelected: _selectedIds.contains(item.id),
                   interactive: _interactive,
                   onCheckTap: () => _toggleItem(item.id!),
@@ -200,17 +280,23 @@ class _RxGroupCardState extends State<RxGroupCard> {
 
 class _RxHeader extends StatelessWidget {
   const _RxHeader({
-    required this.prescriptionId,
-    required this.prescriptionDate,
-    required this.doctorName,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
     required this.itemCount,
     required this.isExpanded,
     required this.onTap,
+    this.badge,
+    this.trailing,
+    this.monoTitle = false,
   });
 
-  final int prescriptionId;
-  final String prescriptionDate;
-  final String doctorName;
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? badge;
+  final Widget? trailing;
+  final bool monoTitle;
   final int itemCount;
   final bool isExpanded;
   final VoidCallback onTap;
@@ -226,30 +312,41 @@ class _RxHeader extends StatelessWidget {
           border: Border(bottom: BorderSide(color: isExpanded ? MedColors.border2 : Colors.transparent)),
         ),
         child: Row(
+          spacing: 10,
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(color: MedColors.blueLight, borderRadius: MedRadius.mdAll),
-              child: Icon(PhosphorIcons.notepad(PhosphorIconsStyle.duotone), size: 16, color: MedColors.blue),
+              child: Icon(icon, size: 17, color: MedColors.blue),
             ),
-            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
                 children: [
-                  Text(
-                    context.l10n.rxGroup_headerTitle(prescriptionId),
-                    style: MedTextStyles.monoMd(color: MedColors.text, weight: FontWeight.w600),
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: monoTitle
+                              ? MedTextStyles.monoMd(color: MedColors.text, weight: FontWeight.w600)
+                              : MedTextStyles.titleSm(color: MedColors.text),
+                        ),
+                      ),
+                      if (badge != null)
+                        MedChip(label: badge!, style: MedChipStyle.info, size: MedChipSize.sm, mono: false),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    context.l10n.rxGroup_headerSubtitle(doctorName, prescriptionDate),
-                    style: MedTextStyles.monoSm(),
-                  ),
+                  if (subtitle != null) Text(subtitle!, style: MedTextStyles.monoSm(color: MedColors.text3)),
                 ],
               ),
             ),
+            ?trailing,
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -259,7 +356,6 @@ class _RxHeader extends StatelessWidget {
               ),
               child: Text(context.l10n.rxGroup_itemCountBadge(itemCount), style: MedTextStyles.monoXs()),
             ),
-            const SizedBox(width: 8),
             Icon(
               isExpanded
                   ? PhosphorIcons.caretUp(PhosphorIconsStyle.bold)
@@ -325,6 +421,7 @@ class _SelectAllBar extends StatelessWidget {
 class _RxDrugBlock extends StatefulWidget {
   const _RxDrugBlock({
     required this.item,
+    required this.dayMode,
     required this.isSelected,
     required this.interactive,
     required this.onCheckTap,
@@ -333,6 +430,7 @@ class _RxDrugBlock extends StatefulWidget {
   });
 
   final PrescriptionItem item;
+  final bool dayMode;
   final bool isSelected;
   final bool interactive;
   final VoidCallback onCheckTap;
@@ -408,6 +506,7 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
         children: [
           _DrugRow(
             item: widget.item,
+            dayMode: widget.dayMode,
             isSelected: widget.isSelected,
             isSelectable: _isSelectable,
             isAccordionOpen: _isAccordionOpen,
@@ -442,6 +541,7 @@ class _RxDrugBlockState extends State<_RxDrugBlock> {
 class _DrugRow extends StatelessWidget {
   const _DrugRow({
     required this.item,
+    required this.dayMode,
     required this.isSelected,
     required this.isSelectable,
     required this.isAccordionOpen,
@@ -451,12 +551,28 @@ class _DrugRow extends StatelessWidget {
   });
 
   final PrescriptionItem item;
+
+  /// Gün kartı: solda saat sütunu; ilaç adının altında reçete no · doktor.
+  final bool dayMode;
   final bool isSelected;
   final bool isSelectable;
   final bool isAccordionOpen;
   final bool interactive;
   final VoidCallback onCheckTap;
   final VoidCallback onRowTap;
+
+  static String _hhmm(DateTime t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  /// Barkod; gün kartında ayrıca "Reçete #id · Doktor" (reçete numarası
+  /// arka planda kaybolmasın).
+  String? _subLine(BuildContext context) {
+    final parts = <String>[
+      if (item.medicine?.barcode != null) item.medicine!.barcode!,
+      if (dayMode && item.prescriptionId != null) context.l10n.rxGroup_headerTitle(item.prescriptionId!),
+      if (dayMode && item.doctor != null) item.doctor!.fullName,
+    ];
+    return parts.isEmpty ? null : parts.join('  ·  ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -492,6 +608,24 @@ class _DrugRow extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 14, top: 10, bottom: 10),
                 child: Row(
                   children: [
+                    if (dayMode) ...[
+                      SizedBox(
+                        width: 46,
+                        child: Text(
+                          item.time == null ? '—' : _hhmm(item.time!),
+                          style: MedTextStyles.monoMd(color: MedColors.text, weight: FontWeight.w700),
+                        ),
+                      ),
+                      Container(
+                        width: 3,
+                        height: 30,
+                        margin: const EdgeInsets.only(right: 10),
+                        decoration: BoxDecoration(
+                          color: item.status?.foregroundColor ?? MedColors.border,
+                          borderRadius: MedRadius.smAll,
+                        ),
+                      ),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,15 +639,15 @@ class _DrugRow extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (item.medicine?.barcode != null)
-                            Text(item.medicine!.barcode!, style: MedTextStyles.monoXs()),
+                          if (_subLine(context) case final sub?)
+                            Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: MedTextStyles.monoXs()),
                         ],
                       ),
                     ),
                     const SizedBox(width: 10),
                     DoseChip(item: item),
                     const SizedBox(width: 8),
-                    if (item.time != null) ...[TimeChip(time: item.time!), const SizedBox(width: 6)],
+                    if (!dayMode && item.time != null) ...[TimeChip(time: item.time!), const SizedBox(width: 6)],
                     if (item.status != null) MedRxMovementChip(status: item.status!),
                     const SizedBox(width: 8),
                     Icon(
