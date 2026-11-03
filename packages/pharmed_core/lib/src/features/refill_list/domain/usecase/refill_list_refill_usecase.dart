@@ -18,7 +18,7 @@ class FillingListRefillParams extends CabinRefillParams {
       "cabinDrawrDetailId": cabinDrawerDetailId,
       "quantity": quantity,
       "censusQuantity": censusQuantity,
-      "miadDate": miadDate?.toIso8601String(),
+      "miadDate": miadToJson(miadDate),
     };
   }
 }

@@ -12,6 +12,17 @@
 import 'package:collection/collection.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+/// SKT'yi servise günün SONU (23:59:59) olarak gönderir.
+///
+/// Seçilen tarih gün başı (00:00) olarak tutuluyor; servis SKT'yi şimdiki
+/// zamanla karşılaştırdığı için "bugün" seçilen SKT, günün ilk saniyesinden
+/// sonra geçmiş sayılıp reddediliyordu. SKT bir gündür — o günün sonuna kadar
+/// geçerlidir.
+String? miadToJson(DateTime? miad) {
+  if (miad == null) return null;
+  return DateTime(miad.year, miad.month, miad.day, 23, 59, 59).toIso8601String();
+}
+
 class CabinOperationMedicineParams {
   const CabinOperationMedicineParams({
     required this.materialId,
@@ -41,7 +52,7 @@ class CabinOperationMedicineParams {
     "cabinDrawrDetailId": cabinDrawerDetailId,
     if (countQuantity != null) "censusQuantity": countQuantity,
     if (quantity != null) "quantity": quantity,
-    "miadDate": miadDate?.toIso8601String(),
+    "miadDate": miadToJson(miadDate),
     "shelfNo": shelfNo,
     "corpartmentNo": compartmentNo,
   };
