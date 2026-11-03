@@ -157,7 +157,11 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
   Future<void> submit() async {
     final wasCreate = isCreate;
     setLoading(submitOp);
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: _swreq, message: 'DrugFormNotifier.submit başlatıldı (create: $wasCreate)');
+    MedLogger.info(
+      unit: 'SW-UNIT-UI',
+      swreq: _swreq,
+      message: 'DrugFormNotifier.submit başlatıldı (create: $wasCreate)',
+    );
 
     // ── 1. İlaç kaydı ────────────────────────────────────────────
     AppException? saveError;
@@ -193,7 +197,9 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
         );
         setFailed(
           submitOp,
-          message: contextlessL10n().medicine_independentServicesSaveError(contextlessL10n().common_genericErrorMessage),
+          message: contextlessL10n().medicine_independentServicesSaveError(
+            contextlessL10n().common_genericErrorMessage,
+          ),
         );
         return;
       }
@@ -230,11 +236,7 @@ class DrugFormNotifier extends ChangeNotifier with ApiRequestMixin {
       unit: 'SW-UNIT-UI',
       swreq: _swreq,
       message: 'DrugFormNotifier.submit: $message',
-      context: {
-        if (materialId != null) 'materialId': materialId,
-        'errorType': error.runtimeType.toString(),
-        'message': error.message,
-      },
+      context: {'materialId': ?materialId, 'errorType': error.runtimeType.toString(), 'message': error.message},
       error: error,
     );
   }

@@ -118,8 +118,10 @@ class _EquivalentsMessage extends StatelessWidget {
       spacing: MedSpacing.sm,
       children: [
         Icon(icon, size: 18, color: color),
-        Expanded(child: Text(text, style: MedTextStyles.bodySm(color: color))),
-        if (action != null) action!,
+        Expanded(
+          child: Text(text, style: MedTextStyles.bodySm(color: color)),
+        ),
+        ?action,
       ],
     );
   }

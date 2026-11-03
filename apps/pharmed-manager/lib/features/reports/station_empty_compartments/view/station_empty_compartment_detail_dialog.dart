@@ -136,7 +136,7 @@ class _DetailsSection extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: details.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1, color: MedColors.border2),
+                      separatorBuilder: (_, _) => const Divider(height: 1, color: MedColors.border2),
                       itemBuilder: (context, index) {
                         final d = details[index];
                         return _DetailRow(
@@ -181,8 +181,12 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(flex: 2, child: Text(location, style: style)),
-          Expanded(child: Text(compartmentCount, style: style, textAlign: TextAlign.end)),
-          Expanded(child: Text(stepCount, style: style, textAlign: TextAlign.end)),
+          Expanded(
+            child: Text(compartmentCount, style: style, textAlign: TextAlign.end),
+          ),
+          Expanded(
+            child: Text(stepCount, style: style, textAlign: TextAlign.end),
+          ),
         ],
       ),
     );

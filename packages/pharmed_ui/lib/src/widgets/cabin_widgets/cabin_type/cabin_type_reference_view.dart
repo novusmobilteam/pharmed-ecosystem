@@ -141,6 +141,7 @@ class CabinTypeReferenceView extends StatelessWidget {
 /// Kabin gövdesi: hafif gradyanlı dış kasa + iç çerçeve + iki ayak.
 /// [tint] verilirse gövde o renge çalar (ör. buzdolabı mavisi).
 class _CabinBody extends StatelessWidget {
+  // ignore: unused_element_parameter
   const _CabinBody({required this.child, this.tint, this.innerPadding = 4.0});
 
   final Widget child;
@@ -216,6 +217,7 @@ class _Handle extends StatelessWidget {
 
 /// Küçük durum ışığı.
 class _Led extends StatelessWidget {
+  // ignore: unused_element_parameter
   const _Led({this.color = MedColors.ledGreen});
 
   final Color color;

@@ -148,7 +148,7 @@ class _RxGroupCardState extends State<RxGroupCard> {
       widget.items.where((i) => i.status == PrescriptionMovementType.pendingApproval).length;
 
   Widget _buildHeader(BuildContext context) {
-    final onTap = () => setState(() => _isExpanded = !_isExpanded);
+    void onTap() => setState(() => _isExpanded = !_isExpanded);
 
     if (widget.isDayGroup) {
       final d = widget.day;
@@ -204,7 +204,6 @@ class _RxGroupCardState extends State<RxGroupCard> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       decoration: BoxDecoration(
         color: MedColors.surface,

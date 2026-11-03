@@ -33,6 +33,7 @@ class _DashboardViewState extends State<DashboardView> {
         getUpcomingTreatments: context.read(),
         getDrugActivities: context.read(),
         getExpiredStocks: context.read(),
+        getOrderedNotLoaded: context.read(),
       )..init(),
       child: Consumer<DashboardNotifier>(
         builder: (context, notifier, _) {
@@ -59,6 +60,16 @@ class _DashboardViewState extends State<DashboardView> {
                 lastUpdatedLabel: notifier.cabinsStale ? context.l10n.dashboard_cabinListStaleLabel : context.read(),
               ),
               const SizedBox(height: 12),
+
+              // Kabin dışı malzeme uyarısı (tüm istasyonlar) — client
+              // dashboard'undaki uyarının manager karşılığı.
+              if (notifier.outOfCabinCount > 0) ...[
+                _OutOfCabinBanner(
+                  count: notifier.outOfCabinCount,
+                  onTap: () => _showOutOfCabinDialog(context),
+                ),
+                const SizedBox(height: 12),
+              ],
 
               Expanded(
                 child: Row(
@@ -89,6 +100,178 @@ class _DashboardViewState extends State<DashboardView> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+// ── Kabin dışı malzemeler ──────────────────────────────────────────────────
+
+class _OutOfCabinBanner extends StatelessWidget {
+  const _OutOfCabinBanner({required this.count, required this.onTap});
+
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: MedColors.amberLight,
+      borderRadius: MedRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: MedRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: MedRadius.mdAll,
+            border: Border.all(color: MedColors.amber.withValues(alpha: 0.5)),
+          ),
+          child: Row(
+            spacing: 12,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(color: MedColors.amber, shape: BoxShape.circle),
+                child: Icon(PhosphorIcons.package(PhosphorIconsStyle.fill), size: 18, color: Colors.white),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 2,
+                  children: [
+                    Text(
+                      context.l10n.dashboard_orderedNotLoadedAlertTooltip(count),
+                      style: MedTextStyles.titleMd(color: MedColors.text),
+                    ),
+                    Text(
+                      context.l10n.dashboard_orderedNotLoadedAlertDialogSubtitle,
+                      style: MedTextStyles.bodySm(color: MedColors.text2),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(PhosphorIcons.caretRight(PhosphorIconsStyle.bold), size: 16, color: MedColors.amber),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Liste diyaloğu — açılırken veri tazelenir; istasyon adı her satırda.
+Future<void> _showOutOfCabinDialog(BuildContext context) {
+  final notifier = context.read<DashboardNotifier>();
+  notifier.loadOutOfCabin();
+  return showMedDialog<void>(
+    context: context,
+    builder: (_) => ChangeNotifierProvider.value(value: notifier, child: const _OutOfCabinDialog()),
+  );
+}
+
+class _OutOfCabinDialog extends StatelessWidget {
+  const _OutOfCabinDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final section = context.watch<DashboardNotifier>().outOfCabin;
+    final items = [...?section.data]
+      ..sort((a, b) {
+        final byStation = (a.stationName ?? '').compareTo(b.stationName ?? '');
+        if (byStation != 0) return byStation;
+        return (b.orderDate ?? DateTime(0)).compareTo(a.orderDate ?? DateTime(0));
+      });
+
+    return MedDialog(
+      title: context.l10n.dashboard_orderedNotLoadedAlertDialogTitle,
+      subtitle: context.l10n.dashboard_orderedNotLoadedAlertDialogSubtitle,
+      icon: PhosphorIcons.package(),
+      width: 820,
+      child: section.isLoading && items.isEmpty
+          ? const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator.adaptive()))
+          : items.isEmpty
+          ? EmptyStateWidget(
+              icon: PhosphorIcons.checkCircle(),
+              title: context.l10n.dashboard_orderedNotLoadedAlertEmptyTitle,
+            )
+          : ListView.separated(
+              shrinkWrap: true,
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: MedSpacing.md),
+              itemBuilder: (context, i) => _OutOfCabinRow(item: items[i]),
+            ),
+    );
+  }
+}
+
+class _OutOfCabinRow extends StatelessWidget {
+  const _OutOfCabinRow({required this.item});
+
+  final OrderedNotLoadedMaterial item;
+
+  @override
+  Widget build(BuildContext context) {
+    final unit = item.medicine?.pieceUnitLabel ?? '';
+    final details = <String>[
+      if (item.patientFullName != null) item.patientFullName!,
+      if (item.protocolNo != null) item.protocolNo!,
+      if (item.quantity != null) '${item.quantity.formatFractional} $unit'.trim(),
+      if (item.orderDate != null) item.orderDate!.formattedDateTime,
+    ];
+
+    return Container(
+      padding: MedSpacing.insetLg,
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        borderRadius: MedRadius.mdAll,
+        border: Border.all(color: MedColors.border2),
+      ),
+      child: Row(
+        spacing: MedSpacing.lg,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: MedSpacing.xs,
+              children: [
+                Text(
+                  item.materialName ?? item.medicine?.name ?? '—',
+                  style: MedTextStyles.titleSm(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (details.isNotEmpty)
+                  Text(
+                    details.join('  ·  '),
+                    style: MedTextStyles.bodySm(color: MedColors.text3),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+          if (item.serviceName != null)
+            MedChip(
+              label: item.serviceName!,
+              style: MedChipStyle.warning,
+              shape: MedChipShape.pill,
+              size: MedChipSize.sm,
+              showBorder: false,
+              mono: false,
+            ),
+          if (item.stationName != null)
+            MedChip(
+              label: item.stationName!,
+              icon: PhosphorIcons.buildings(),
+              style: MedChipStyle.info,
+              shape: MedChipShape.pill,
+              size: MedChipSize.sm,
+              showBorder: false,
+              mono: false,
+            ),
+        ],
       ),
     );
   }

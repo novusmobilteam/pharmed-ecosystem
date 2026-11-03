@@ -18,7 +18,9 @@ class DashboardNotifier extends ChangeNotifier {
     required GetUpcomingTreatmentsUseCase getUpcomingTreatments,
     required GetDrugActivitiesUseCase getDrugActivities,
     required GetExpiringMaterialsUseCase getExpiredStocks,
-  }) : _getCabins = getCabins,
+    required GetOrderedNotLoadedMaterialsUseCase getOrderedNotLoaded,
+  }) : _getOrderedNotLoaded = getOrderedNotLoaded,
+       _getCabins = getCabins,
        _getMissingStocks = getMissingStocks,
        _approveMissingStock = approveMissingStock,
        _rejectMissingStock = rejectMissingStock,
@@ -35,6 +37,7 @@ class DashboardNotifier extends ChangeNotifier {
   final GetUpcomingTreatmentsUseCase _getUpcomingTreatments;
   final GetDrugActivitiesUseCase _getDrugActivities;
   final GetExpiringMaterialsUseCase _getExpiredStocks;
+  final GetOrderedNotLoadedMaterialsUseCase _getOrderedNotLoaded;
 
   bool _disposed = false;
 
@@ -73,6 +76,12 @@ class DashboardNotifier extends ChangeNotifier {
 
   DashboardSection<List<PrescriptionItemMovement>> _drugActivities = const DashboardSection();
   DashboardSection<List<PrescriptionItemMovement>> get drugActivities => _drugActivities;
+
+  /// Kabin dışı malzemeler (order edilmiş, hiçbir kabinde yüklü olmayan) —
+  /// TÜM istasyonlar. Client dashboard uyarısının manager karşılığı.
+  DashboardSection<List<OrderedNotLoadedMaterial>> _outOfCabin = const DashboardSection();
+  DashboardSection<List<OrderedNotLoadedMaterial>> get outOfCabin => _outOfCabin;
+  int get outOfCabinCount => _outOfCabin.data?.length ?? 0;
 
   // ── Onay/red işlem id'leri (item bazlı loading) ──
   final Set<int> _processingIds = {};
@@ -151,6 +160,9 @@ class DashboardNotifier extends ChangeNotifier {
     // Uygulanmamış reçete global — mac'ten bağımsız, her turda çek
     _loadUnapplied(silent: silent);
 
+    // Kabin dışı malzeme uyarısı da global (tüm istasyonlar)
+    loadOutOfCabin(silent: silent);
+
     // SKT geçmiş malzemeler yalnızca master panelinde gösterilir — kabinin istasyonuna göre
     if (cabin.type?.isMobile ?? false) {
       _expiredStocks = const DashboardSection();
@@ -214,6 +226,38 @@ class DashboardNotifier extends ChangeNotifier {
         } else {
           _shortage = _shortage.copyWith(isLoading: false, error: e.message);
         }
+      },
+    );
+    _safeNotify();
+  }
+
+  /// [SWREQ-MGR-DASH-004] Kabin dışı malzemeler — "Order Edilmiş / Yüklenmemiş"
+  /// raporunun servisi; istasyon listesi olarak [0] gönderilince servis TÜM
+  /// istasyonları döndürür. Tarih ve sayfalama gönderilmez (aktif tüm kayıtlar).
+  Future<void> loadOutOfCabin({bool silent = false}) async {
+    _outOfCabin = _outOfCabin.copyWith(isLoading: true, error: null);
+    _safeNotify();
+
+    final result = await _getOrderedNotLoaded.call(
+      PagedQueryParams(
+        filters: [
+          Filter.inList('stationId', [0]),
+        ],
+      ),
+    );
+    if (_disposed) return;
+
+    result.when(
+      ok: (response) => _outOfCabin = DashboardSection(data: response?.data ?? const [], isLoading: false),
+      error: (e) {
+        // Uyarı ikincil bilgi — hata panel göstermez, eski veri korunur.
+        _outOfCabin = _outOfCabin.copyWith(isLoading: false, error: silent ? null : e.message);
+        MedLogger.error(
+          unit: 'DashboardNotifier',
+          swreq: 'SWREQ-MGR-DASH-004',
+          message: 'Kabin dışı malzemeler çekilemedi',
+          context: {'error': e.message},
+        );
       },
     );
     _safeNotify();

@@ -177,7 +177,7 @@ class _AlertRowShell extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

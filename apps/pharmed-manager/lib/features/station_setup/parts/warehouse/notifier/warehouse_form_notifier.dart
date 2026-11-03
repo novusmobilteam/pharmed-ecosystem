@@ -25,7 +25,6 @@ class WarehouseFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void updateCode(int? value) {
     _warehouse = _warehouse.updateCode(value);
-    print(value);
     notifyListeners();
   }
 
