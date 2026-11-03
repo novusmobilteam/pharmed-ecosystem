@@ -4388,6 +4388,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinAssignmentList_stockColumn => 'Stok';
 
   @override
+  String get cabinAssignmentList_miadColumn => 'SKT';
+
+  @override
   String get cabinAssignmentList_fillLevelColumn => 'Doluluk';
 
   @override

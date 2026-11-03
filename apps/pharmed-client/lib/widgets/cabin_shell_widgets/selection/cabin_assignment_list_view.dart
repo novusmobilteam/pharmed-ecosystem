@@ -15,6 +15,7 @@ class CabinAssignmentListView extends StatelessWidget {
     this.onDelete,
     this.onReplace,
     this.cabinLabelOf,
+    this.showMiad = false,
   });
 
   final List<MedicineAssignment> items;
@@ -32,7 +33,54 @@ class CabinAssignmentListView extends StatelessWidget {
   /// hangi kabine ait olduğunu belirtir.
   final String? Function(MedicineAssignment assignment)? cabinLabelOf;
 
+  /// true → Stok'un yanında "SKT" sütunu: gözdeki stokların EN ERKEN SKT'si.
+  /// Geçmişse kırmızı, [_expiringSoonDays] gün içindeyse turuncu.
+  final bool showMiad;
+
+  static const _expiringSoonDays = 30;
+
+  /// Pozitif miktarlı stokların en erken anlamlı SKT'si. Boş göz işaret
+  /// tarihi (2099) yok sayılır. Serum avadanlığı satırında yalnızca o gözün
+  /// stokları.
+  static DateTime? _earliestMiad(MedicineAssignment assignment) {
+    final cellId = assignment.cabinDrawerDetailId;
+    DateTime? earliest;
+    for (final s in assignment.stocks ?? const <CabinStock>[]) {
+      if (cellId != null && s.cabinDrawerDetailId != cellId) continue;
+      final d = s.miadDate;
+      if ((s.quantity ?? 0) <= 0 || d == null || d.year >= 2099) continue;
+      if (earliest == null || d.isBefore(earliest)) earliest = d;
+    }
+    return earliest;
+  }
+
+  static Color _miadColor(DateTime? miad) {
+    if (miad == null) return MedColors.text3;
+    if (miad.isExpiredMiad) return MedColors.red;
+    if (miad.difference(todayDateOnly()).inDays <= _expiringSoonDays) return MedColors.amber;
+    return MedColors.text;
+  }
+
   double _ratio(double v, double max) => max > 0 ? (v / max).clamp(0.0, 1.0) : 0.0;
+
+  // Sütun genişlikleri (flex) — başlık ve satır aynı değerleri kullanır.
+  static const _medicineFlex = 4;
+  static const _cabinFlex = 3;
+  static const _locationFlex = 3;
+  static const _stockFlex = 2;
+  static const _miadFlex = 2;
+
+  /// Tüm hücreler aynı boyutta (bodySm); ilaç adı kalın.
+  static TextStyle _cell({Color? color, FontWeight? weight}) =>
+      MedTextStyles.bodySm(color: color ?? MedColors.text, weight: weight);
+
+  static Widget _cellText(String text, {int flex = 1, TextStyle? style}) => Expanded(
+    flex: flex,
+    child: Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: style ?? _cell()),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +92,12 @@ class CabinAssignmentListView extends StatelessWidget {
           children: [
             if (onToggle != null)
               SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_selectColumn, style: textStyle)),
-            Expanded(child: Text(context.l10n.cabinAssignmentList_medicineColumn, style: textStyle)),
+            _cellText(context.l10n.cabinAssignmentList_medicineColumn, flex: _medicineFlex, style: textStyle),
             if (cabinLabelOf != null)
-              Expanded(child: Text(context.l10n.cabinAssignmentList_cabinColumn, style: textStyle)),
-            Expanded(child: Text(context.l10n.cabinAssignmentList_locationColumn, style: textStyle)),
-            Expanded(child: Text(context.l10n.cabinAssignmentList_stockColumn, style: textStyle)),
+              _cellText(context.l10n.cabinAssignmentList_cabinColumn, flex: _cabinFlex, style: textStyle),
+            _cellText(context.l10n.cabinAssignmentList_locationColumn, flex: _locationFlex, style: textStyle),
+            _cellText(context.l10n.cabinAssignmentList_stockColumn, flex: _stockFlex, style: textStyle),
+            if (showMiad) _cellText(context.l10n.cabinAssignmentList_miadColumn, flex: _miadFlex, style: textStyle),
             SizedBox(width: 100, child: Text(context.l10n.cabinAssignmentList_fillLevelColumn, style: textStyle)),
             if (onDelete != null || onReplace != null)
               SizedBox(width: 96, child: Text(context.l10n.cabinAssignmentList_actionsColumn, style: textStyle)),
@@ -127,17 +176,22 @@ class CabinAssignmentListView extends StatelessWidget {
                             color: MedColors.blue,
                           ),
                         ),
-                      Expanded(child: Text(name)),
-                      if (cabinLabelOf != null)
-                        Expanded(
-                          child: Text(
-                            cabinLabelOf!(assignment) ?? '—',
-                            style: MedTextStyles.bodySm(color: MedColors.text3),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      Expanded(child: Text(konum)),
-                      Expanded(child: Text(stock)),
+                      _cellText(name, flex: _medicineFlex, style: _cell(weight: FontWeight.w600)),
+                      if (cabinLabelOf != null) _cellText(cabinLabelOf!(assignment) ?? '—', flex: _cabinFlex),
+                      _cellText(konum, flex: _locationFlex),
+                      _cellText(stock, flex: _stockFlex),
+                      if (showMiad)
+                        () {
+                          final miad = _earliestMiad(assignment);
+                          return _cellText(
+                            miad?.formattedDate ?? '—',
+                            flex: _miadFlex,
+                            style: _cell(
+                              color: _miadColor(miad),
+                              weight: miad != null && miad.isExpiredMiad ? FontWeight.w600 : null,
+                            ),
+                          );
+                        }(),
                       SizedBox(
                         width: 100,
                         child: _StockBar(

@@ -7793,6 +7793,12 @@ abstract class AppLocalizations {
   /// **'Stock'**
   String get cabinAssignmentList_stockColumn;
 
+  /// CabinAssignmentListView — earliest expiry date of the cell's stock (refill selection)
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get cabinAssignmentList_miadColumn;
+
   /// No description provided for @cabinAssignmentList_fillLevelColumn.
   ///
   /// In en, this message translates to:

@@ -4552,6 +4552,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinAssignmentList_stockColumn => 'Stock';
 
   @override
+  String get cabinAssignmentList_miadColumn => 'Péremption';
+
+  @override
   String get cabinAssignmentList_fillLevelColumn => 'Niveau de remplissage';
 
   @override

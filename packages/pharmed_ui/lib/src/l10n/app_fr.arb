@@ -2866,6 +2866,8 @@
   "@cabinAssignmentList_locationColumn": {},
   "cabinAssignmentList_stockColumn": "Stock",
   "@cabinAssignmentList_stockColumn": {},
+  "cabinAssignmentList_miadColumn": "Péremption",
+  "@cabinAssignmentList_miadColumn": {},
   "cabinAssignmentList_fillLevelColumn": "Niveau de remplissage",
   "@cabinAssignmentList_fillLevelColumn": {},
   "cabinAssignmentList_cubicLocationLabel": "Tiroir {drawer} - Colonne {column} - Ligne {row}",

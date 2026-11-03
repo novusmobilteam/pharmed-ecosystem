@@ -5512,6 +5512,10 @@
   "@cabinAssignmentList_stockColumn": {
     "description": "CabinAssignmentListView — stok kolonu başlığı"
   },
+  "cabinAssignmentList_miadColumn": "SKT",
+  "@cabinAssignmentList_miadColumn": {
+    "description": "CabinAssignmentListView — earliest expiry date of the cell's stock (refill selection)"
+  },
   "cabinAssignmentList_fillLevelColumn": "Doluluk",
   "@cabinAssignmentList_fillLevelColumn": {
     "description": "CabinAssignmentListView — doluluk oranı kolonu başlığı"

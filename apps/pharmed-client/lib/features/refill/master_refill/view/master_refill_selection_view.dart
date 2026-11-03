@@ -71,6 +71,7 @@ class MasterRefillSelectionView extends ConsumerWidget {
                 selectedCellIds: selection.selectedSerumCellIds,
                 onToggleCell: selection.toggleSerumTray,
                 cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
+                showMiad: true,
               ),
         footer: selection.canStart
             ? MedButton(
