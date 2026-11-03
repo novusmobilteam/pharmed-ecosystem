@@ -94,7 +94,7 @@ class CabinUnitDoseEntryTable extends StatelessWidget {
             if (miadMode == CabinEntryMiadMode.shared)
               _SharedMiadBar(
                 miad: sharedMiad,
-                hasError: (target.hasEntry && sharedMiad == null) || sharedMiad.isExpiredMiad,
+                hasError: (target.miadRequired && sharedMiad == null) || sharedMiad.isExpiredMiad,
                 picker: picker,
                 onChanged: onSharedMiadChanged!,
               ),
@@ -108,11 +108,11 @@ class CabinUnitDoseEntryTable extends StatelessWidget {
                   final step = target.steps[stepIndex];
                   final miad = step.miadDate;
 
-                  // Göz bazlı SKT zorunluluğu hangi miktara bakar: ikincil sütun varsa
-                  // (dolum) ona, yoksa (sayım) sayıma.
-                  final entry = (_hasSecondary ? step.secondaryQuantity : step.countQuantity) ?? 0;
+                  // Göz bazlı SKT zorunluluğu: miktar girilmiş ya da (dolumda) sayımı/SKT'si
+                  // düzeltilmiş ve gözde stok kalacak — kural target'ta.
                   final miadHasError =
-                      miadMode == CabinEntryMiadMode.perCell && ((entry > 0 && miad == null) || miad.isExpiredMiad);
+                      miadMode == CabinEntryMiadMode.perCell &&
+                      ((target.miadRequiredAt(stepIndex) && miad == null) || miad.isExpiredMiad);
 
                   return _Row(
                     key: ValueKey('cell-$stepIndex'),

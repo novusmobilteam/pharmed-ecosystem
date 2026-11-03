@@ -62,7 +62,7 @@ class CabinOperationEntryBody extends StatelessWidget {
         onSecondaryChanged: secondaryLabel != null ? handlers.onCubicSecondaryChanged : null,
         showMiad: mode.requiresMiad,
         onMiadChanged: handlers.onCubicMiadChanged,
-        miadRequired: mode.requiresMiad && target.hasEntry,
+        miadRequired: target.miadRequired,
       );
     }
 

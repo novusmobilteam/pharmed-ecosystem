@@ -69,11 +69,7 @@ class StationCabinStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: MedSpacing.insetLg,
-      decoration: BoxDecoration(
-        border: Border.all(width: 2, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
+      decoration: MedDecoration.panelDecoration,
       child: Column(
         spacing: MedSpacing.md,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +173,12 @@ class _StripCard extends StatelessWidget {
 
 /// Sağ listenin kabin filtresi: "Tümü" + her kabin.
 class StationCabinFilterBar extends StatelessWidget {
-  const StationCabinFilterBar({super.key, required this.cabins, required this.selectedCabinId, required this.onChanged});
+  const StationCabinFilterBar({
+    super.key,
+    required this.cabins,
+    required this.selectedCabinId,
+    required this.onChanged,
+  });
 
   final List<Cabin> cabins;
 

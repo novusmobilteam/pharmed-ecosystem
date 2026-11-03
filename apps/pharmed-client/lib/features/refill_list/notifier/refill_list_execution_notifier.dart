@@ -97,7 +97,8 @@ class RefillListExecutionNotifier extends ChangeNotifier
   }
 
   Future<bool> _saveTarget(CabinOperationTarget target) async {
-    if (!target.hasEntry) return true; // dolum girilmemiş hedef — kayıt yok, ilerle
+    // Dolum miktarı girilmese de sayım ya da SKT değiştiyse kaydedilir.
+    if (!target.hasChanges) return true; // değişiklik yok — kayıt yok, ilerle
 
     final params = RefillListParamsMapper.toParamsForTarget(target);
     final result = await _refillCabin(params);

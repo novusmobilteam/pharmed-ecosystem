@@ -44,11 +44,7 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(width: 2, color: MedColors.border),
-        color: MedColors.surface,
-        borderRadius: MedRadius.mdAll,
-      ),
+      decoration: MedDecoration.panelDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

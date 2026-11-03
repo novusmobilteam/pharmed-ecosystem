@@ -72,7 +72,7 @@ class CabinTypeReferenceView extends StatelessWidget {
           boxShadow: isActive ? null : MedShadows.sm,
           border: Border.all(color: isActive ? MedColors.blue : MedColors.border, width: isActive ? 2.0 : 1.0),
         ),
-        padding: const EdgeInsets.fromLTRB(MedSpacing.lg, MedSpacing.lg, MedSpacing.lg, MedSpacing.md),
+        padding: MedSpacing.insetSm,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -87,7 +87,10 @@ class CabinTypeReferenceView extends StatelessWidget {
               cabin.name ?? '—',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: MedTextStyles.titleSm(color: isActive ? MedColors.blueDark : MedColors.text),
+              style: MedTextStyles.bodyMd(
+                color: isActive ? MedColors.blueDark : MedColors.text,
+                weight: FontWeight.bold,
+              ),
             ),
             if (cabin.type != null)
               Text(
@@ -167,10 +170,7 @@ class _CabinBody extends StatelessWidget {
         // Ayaklar
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_foot(edge), _foot(edge)],
-          ),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_foot(edge), _foot(edge)]),
         ),
       ],
     );

@@ -22,6 +22,11 @@
 // boş. Kayıttaki stok ayrıca [CabinOperationStepEntry.recordedQuantity]'de
 // tutulur — çıkarma üst sınırı kullanıcının sayımına değil ona bakar.
 //
+// Dolumda kayıt yalnızca dolum miktarına bağlı değildir: sayım ya da SKT
+// tek başına değiştirilmişse de hedef kaydedilir ([hasChanges]). Bunun için
+// açılıştaki SKT de [CabinOperationStepEntry.recordedMiad] /
+// [cubicRecordedMiad]'da tutulur.
+//
 // Saf domain — Flutter bağımsız.
 //
 // Sınıf: Class B
@@ -42,7 +47,13 @@ DateTime? _earlier(DateTime? a, DateTime? b) {
 
 /// Birim doz çekmecesinin tek bir gözünün girdisi.
 class CabinOperationStepEntry {
-  const CabinOperationStepEntry({this.countQuantity, this.secondaryQuantity, this.miadDate, this.recordedQuantity = 0});
+  const CabinOperationStepEntry({
+    this.countQuantity,
+    this.secondaryQuantity,
+    this.miadDate,
+    this.recordedQuantity = 0,
+    this.recordedMiad,
+  });
 
   /// Kullanıcının sayımı. Kör sayımda / sayımsız ilaçta girilene kadar null.
   final double? countQuantity;
@@ -56,6 +67,10 @@ class CabinOperationStepEntry {
   /// Bu gözün kayıttaki stoğu (adet) — kullanıcı değiştiremez.
   final double recordedQuantity;
 
+  /// Açılıştaki SKT (kayıttan) — kullanıcının değiştirip değiştirmediğini
+  /// anlamak için.
+  final DateTime? recordedMiad;
+
   CabinOperationStepEntry copyWith({
     double? countQuantity,
     double? secondaryQuantity,
@@ -66,6 +81,7 @@ class CabinOperationStepEntry {
     secondaryQuantity: secondaryQuantity ?? this.secondaryQuantity,
     miadDate: clearMiad ? null : (miadDate ?? this.miadDate),
     recordedQuantity: recordedQuantity,
+    recordedMiad: recordedMiad,
   );
 }
 
@@ -80,6 +96,7 @@ class CabinOperationTarget implements DrawerJobTarget {
     required this.steps,
     required this.singleMiad,
     required this.countType,
+    this.cubicRecordedMiad,
     this.plannedQuantity,
     this.sourceId,
     this.openUntilStep,
@@ -103,6 +120,9 @@ class CabinOperationTarget implements DrawerJobTarget {
   final double? cubicCount;
   final double cubicSecondary;
   final DateTime? cubicMiad;
+
+  /// Kübik gözün açılıştaki SKT'si (kayıttan).
+  final DateTime? cubicRecordedMiad;
 
   /// Birim doz gözleri (kübikte boş).
   final List<CabinOperationStepEntry> steps;
@@ -199,6 +219,7 @@ class CabinOperationTarget implements DrawerJobTarget {
         cubicCount: prefillCount ? assignment.totalQuantity : null,
         cubicSecondary: 0,
         cubicMiad: miad,
+        cubicRecordedMiad: miad,
         steps: const [],
         singleMiad: miad,
         countType: countType,
@@ -232,6 +253,7 @@ class CabinOperationTarget implements DrawerJobTarget {
           countQuantity: prefillCount ? quantities[i] : null,
           miadDate: miads[i],
           recordedQuantity: quantities[i],
+          recordedMiad: miads[i],
         ),
       ),
       singleMiad: miads.fold<DateTime?>(null, _earlier),
@@ -255,6 +277,63 @@ class CabinOperationTarget implements DrawerJobTarget {
     return _activeIndexes.any(hasEntryAt);
   }
 
+  // ── Dolumda sayım / SKT düzeltmesi ───────────────────────────────────
+
+  /// Sayım + konulacak miktar + SKT birlikte giren işlem (dolum). Yalnızca bu
+  /// modda sayım ya da SKT tek başına bir değişikliktir.
+  bool get _tracksCorrections => mode.hasCountField && mode.hasSecondaryField && mode.requiresMiad;
+
+  bool _countChanged(double? count, double recorded) => showsCount && count != null && count != recorded;
+
+  bool _miadChanged(DateTime? current, DateTime? recorded) {
+    final a = _isMeaningfulMiad(current) ? current : null;
+    final b = _isMeaningfulMiad(recorded) ? recorded : null;
+    if (a == null || b == null) return a != b;
+    return a.year != b.year || a.month != b.month || a.day != b.day;
+  }
+
+  /// İşlemden sonra gözde kalacak miktar (sayım girilmediyse kayıttaki).
+  double _resultingAt(int i) =>
+      (steps[i].countQuantity ?? steps[i].recordedQuantity) + (mode.hasSecondaryField ? (steps[i].secondaryQuantity ?? 0) : 0);
+
+  double get _cubicResulting => (cubicCount ?? currentQuantity) + (mode.hasSecondaryField ? cubicSecondary : 0);
+
+  /// Sayım değişti ya da (gözde stok kalacakken) SKT değişti.
+  bool _correctedAt(int i) {
+    if (!_tracksCorrections) return false;
+    if (_countChanged(steps[i].countQuantity, steps[i].recordedQuantity)) return true;
+    return _resultingAt(i) > 0 && _miadChanged(steps[i].miadDate ?? singleMiad, steps[i].recordedMiad);
+  }
+
+  bool get _cubicCorrected {
+    if (!_tracksCorrections) return false;
+    if (_countChanged(cubicCount, currentQuantity)) return true;
+    return _cubicResulting > 0 && _miadChanged(cubicMiad, cubicRecordedMiad);
+  }
+
+  /// Kaydedilecek bir değişiklik var mı: girilen miktar ya da (dolumda)
+  /// tek başına değiştirilmiş sayım / SKT. false → bu hedef için istek atılmaz.
+  bool get hasChanges {
+    if (hasEntry) return true;
+    if (isKubik) return _cubicCorrected;
+    return _activeIndexes.any(_correctedAt);
+  }
+
+  /// Bu gözde SKT girilmesi zorunlu mu: miktar girilmiş ya da (dolumda)
+  /// sayımı/SKT'si düzeltilmiş ve gözde stok kalacak.
+  bool miadRequiredAt(int i) {
+    if (!mode.requiresMiad || i < 0 || i >= steps.length) return false;
+    if (hasEntryAt(i)) return true;
+    return _correctedAt(i) && _resultingAt(i) > 0;
+  }
+
+  /// Hedefte SKT zorunlu mu (kübikte gözün, birim dozda herhangi bir gözün).
+  bool get miadRequired {
+    if (!mode.requiresMiad) return false;
+    if (isKubik) return hasEntry || (_cubicCorrected && _cubicResulting > 0);
+    return _activeIndexes.any(miadRequiredAt);
+  }
+
   /// Kayda hazır mı:
   ///   1. SKT isteyen işlemlerde girdi olan her yerde geçerli ve GEÇMEMİŞ SKT
   ///      (backend'in kontrolüyle aynı kural).
@@ -266,11 +345,22 @@ class CabinOperationTarget implements DrawerJobTarget {
         if (_entryValue(cubicCount, cubicSecondary) > 0 && (cubicMiad == null || cubicMiad.isExpiredMiad)) {
           return false;
         }
+        // Yalnızca sayım/SKT düzeltmesi: stok kalacaksa SKT olmalı; yeni
+        // girilen SKT geçmiş olamaz (kayıttaki geçmiş SKT'ye dokunulmadıysa
+        // sayım düzeltmesi engellenmez).
+        if (_cubicCorrected && _cubicResulting > 0) {
+          if (cubicMiad == null) return false;
+          if (_miadChanged(cubicMiad, cubicRecordedMiad) && cubicMiad.isExpiredMiad) return false;
+        }
       } else {
         for (final i in _activeIndexes) {
-          if (!hasEntryAt(i)) continue;
           final miad = steps[i].miadDate ?? singleMiad;
-          if (miad == null || miad.isExpiredMiad) return false;
+          if (hasEntryAt(i)) {
+            if (miad == null || miad.isExpiredMiad) return false;
+          } else if (miadRequiredAt(i)) {
+            if (miad == null) return false;
+            if (_miadChanged(miad, steps[i].recordedMiad) && miad.isExpiredMiad) return false;
+          }
         }
       }
     }
@@ -310,6 +400,7 @@ class CabinOperationTarget implements DrawerJobTarget {
     cubicCount: cubicCount ?? this.cubicCount,
     cubicSecondary: cubicSecondary ?? this.cubicSecondary,
     cubicMiad: clearCubicMiad ? null : (cubicMiad ?? this.cubicMiad),
+    cubicRecordedMiad: cubicRecordedMiad,
     steps: steps ?? this.steps,
     singleMiad: clearSingleMiad ? null : (singleMiad ?? this.singleMiad),
     countType: countType,
