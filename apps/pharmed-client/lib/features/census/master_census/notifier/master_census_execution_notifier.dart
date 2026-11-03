@@ -21,7 +21,7 @@ final masterCensusExecutionNotifierProvider = ChangeNotifierProvider.autoDispose
     drawerSession: ref.read(drawerExecutionSessionProvider),
     recordingCoordinator: ref.read(operationRecordingCoordinatorProvider),
     completeCensus: ref.read(completeMasterCensusUseCaseProvider),
-    isPerCellMiadEnabled: ref.read(isPerCellMiadEnabledProvider),
+    readPerCellMiad: () => ref.read(isPerCellMiadEnabledProvider),
   );
 });
 
@@ -36,8 +36,9 @@ class MasterCensusExecutionNotifier extends ChangeNotifier
     required IMasterDrawerSession drawerSession,
     required OperationRecordingCoordinator recordingCoordinator,
     required CompleteMasterCensusUseCase completeCensus,
-    required this.isPerCellMiadEnabled,
-  }) : _drawerSession = drawerSession,
+    required bool Function() readPerCellMiad,
+  }) : _readPerCellMiad = readPerCellMiad,
+       _drawerSession = drawerSession,
        _recordingCoordinator = recordingCoordinator,
        _completeCensus = completeCensus {
     attachDrawerSession();
@@ -50,9 +51,14 @@ class MasterCensusExecutionNotifier extends ChangeNotifier
   @override
   IMasterDrawerSession get drawerSession => _drawerSession;
 
-  /// SKT modu — ekran açıldığı anın ayarı, kuyruk boyunca sabit.
+  /// SKT modu (her göz için ayrı SKT). Ayar ekran açılınca servisten yeniden
+  /// çekildiği için değer kuyruk BAŞLARKEN okunur ve kuyruk boyunca sabit
+  /// kalır — ekranın gösterdiği mod ile kaydın kullandığı mod ayrışmaz.
+  final bool Function() _readPerCellMiad;
+  late bool _isPerCellMiadEnabled = _readPerCellMiad();
+
   @override
-  final bool isPerCellMiadEnabled;
+  bool get isPerCellMiadEnabled => _isPerCellMiadEnabled;
 
   @override
   OperationRecordingCoordinator get recordingCoordinator => _recordingCoordinator;
@@ -66,7 +72,10 @@ class MasterCensusExecutionNotifier extends ChangeNotifier
     super.dispose();
   }
 
-  Future<void> start(List<CabinOperationDrawerJob> jobs) => startQueue(jobs);
+  Future<void> start(List<CabinOperationDrawerJob> jobs) {
+    _isPerCellMiadEnabled = _readPerCellMiad();
+    return startQueue(jobs);
+  }
 
   @override
   Future<void> confirmCurrent() async {

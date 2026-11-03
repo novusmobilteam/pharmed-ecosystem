@@ -20,7 +20,7 @@ final refillListExecutionNotifierProvider = ChangeNotifierProvider.autoDispose<R
   return RefillListExecutionNotifier(
     drawerSession: ref.read(drawerExecutionSessionProvider),
     refillCabin: ref.read(refillListRefillUseCaseProvider),
-    isPerCellMiadEnabled: ref.read(isPerCellMiadEnabledProvider),
+    readPerCellMiad: () => ref.read(isPerCellMiadEnabledProvider),
   );
 });
 
@@ -33,8 +33,9 @@ class RefillListExecutionNotifier extends ChangeNotifier
   RefillListExecutionNotifier({
     required IMasterDrawerSession drawerSession,
     required RefillListRefillUseCase refillCabin,
-    required this.isPerCellMiadEnabled,
-  }) : _drawerSession = drawerSession,
+    required bool Function() readPerCellMiad,
+  }) : _readPerCellMiad = readPerCellMiad,
+       _drawerSession = drawerSession,
        _refillCabin = refillCabin {
     attachDrawerSession();
   }
@@ -63,10 +64,14 @@ class RefillListExecutionNotifier extends ChangeNotifier
     return id == null ? null : _detailsById[id];
   }
 
-  /// SKT modu — ekran açıldığı anın ayarı. Kuyruk boyunca sabit kalır, böylece
-  /// ekranın gösterdiği mod ile kaydın/doğrulamanın kullandığı mod ayrışmaz.
+  /// SKT modu (her göz için ayrı SKT). Ayar ekran açılınca servisten yeniden
+  /// çekildiği için değer kuyruk BAŞLARKEN okunur ve kuyruk boyunca sabit
+  /// kalır — ekranın gösterdiği mod ile kaydın kullandığı mod ayrışmaz.
+  final bool Function() _readPerCellMiad;
+  late bool _isPerCellMiadEnabled = _readPerCellMiad();
+
   @override
-  final bool isPerCellMiadEnabled;
+  bool get isPerCellMiadEnabled => _isPerCellMiadEnabled;
 
   @override
   void dispose() {
@@ -80,6 +85,7 @@ class RefillListExecutionNotifier extends ChangeNotifier
     required List<RefillListDetail> details,
     int skippedCount = 0,
   }) {
+    _isPerCellMiadEnabled = _readPerCellMiad();
     _fillingListId = fillingListId;
     _skippedCount = skippedCount;
     _detailsById = {

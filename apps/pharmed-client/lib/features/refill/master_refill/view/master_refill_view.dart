@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../dashboard/dashboard.dart';
+import '../../../settings/notifier/settings_notifier.dart';
 import '../notifier/master_refill_execution_notifier.dart';
 import '../notifier/master_refill_selection_notifier.dart';
 import 'master_refill_execution_view.dart';
@@ -26,6 +27,9 @@ class _MasterRefillViewState extends ConsumerState<MasterRefillView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ref.read(masterRefillSelectionNotifierProvider).init(widget.stationContext);
+      // "Her göz için ayrı SKT" ayarı manager'dan değişmiş olabilir — ekrana
+      // her girişte yeniden çekilir; kuyruk başlarken güncel değer okunur.
+      ref.read(settingsNotifierProvider.notifier).refreshSystemParameters();
     });
 
     _executionNotifier = ref.read(masterRefillExecutionNotifierProvider);

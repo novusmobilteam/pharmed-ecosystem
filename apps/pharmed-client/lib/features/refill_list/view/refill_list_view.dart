@@ -8,6 +8,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../core/hardware/hardware.dart';
 import '../../../widgets/widgets.dart';
 import '../../dashboard/dashboard.dart';
+import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/refill_list_execution_notifier.dart';
 import '../notifier/refill_list_selection_notifier.dart';
 import 'refill_list_execution_view.dart';
@@ -34,6 +35,9 @@ class _RefillListViewState extends ConsumerState<RefillListView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ref.read(refillListSelectionNotifierProvider).init(widget.stationContext);
+      // "Her göz için ayrı SKT" ayarı manager'dan değişmiş olabilir — ekrana
+      // her girişte yeniden çekilir; kuyruk başlarken güncel değer okunur.
+      ref.read(settingsNotifierProvider.notifier).refreshSystemParameters();
     });
 
     _executionNotifier = ref.read(refillListExecutionNotifierProvider);
