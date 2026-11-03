@@ -122,7 +122,7 @@ class _RightPanel extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: MedSpacing.insetMd,
-                  child: RxCarousel(items: notifier.items),
+                  child: RxCarousel(items: notifier.items, groupBy: RxGroupBy.day),
                 ),
               ),
             ],
