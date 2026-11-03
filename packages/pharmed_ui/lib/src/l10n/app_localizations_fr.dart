@@ -6097,6 +6097,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Date d\'admission';
 
   @override
+  String get unappliedPrescription_table_prescriptionDateColumn => 'Date de prescription';
+
+  @override
   String get unappliedPrescription_table_pendingCountColumn => 'En attente';
 
   @override

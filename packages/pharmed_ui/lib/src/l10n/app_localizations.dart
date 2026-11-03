@@ -10563,6 +10563,12 @@ abstract class AppLocalizations {
   /// **'Admission Date'**
   String get unappliedPrescription_table_admissionDateColumn;
 
+  /// Table column header — prescription date (also the date filter field), unapplied prescriptions screen
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription Date'**
+  String get unappliedPrescription_table_prescriptionDateColumn;
+
   /// No description provided for @unappliedPrescription_table_pendingCountColumn.
   ///
   /// In en, this message translates to:

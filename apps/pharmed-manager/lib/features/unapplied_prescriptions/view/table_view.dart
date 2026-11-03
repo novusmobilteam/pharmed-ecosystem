@@ -78,6 +78,10 @@ List<TableColumnDef<Prescription>> _buildColumnDefs(BuildContext context) => [
     displayValue: (item) => item.hospitalizationDate?.formattedDate,
   ),
   TableColumnDef(
+    title: context.l10n.unappliedPrescription_table_prescriptionDateColumn,
+    displayValue: (item) => item.prescriptionDate?.formattedDate,
+  ),
+  TableColumnDef(
     title: context.l10n.unappliedPrescription_table_pendingCountColumn,
     displayValue: (item) => item.remainingCount?.toCustomString(),
   ),

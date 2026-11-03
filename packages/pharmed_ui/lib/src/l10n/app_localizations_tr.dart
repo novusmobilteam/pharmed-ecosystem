@@ -5898,6 +5898,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unappliedPrescription_table_admissionDateColumn => 'Yatış Tarihi';
 
   @override
+  String get unappliedPrescription_table_prescriptionDateColumn => 'Reçete Tarihi';
+
+  @override
   String get unappliedPrescription_table_pendingCountColumn => 'Bekleyen Adet';
 
   @override

@@ -3898,6 +3898,7 @@
   "unappliedPrescription_table_patientColumn": "Patient",
   "unappliedPrescription_table_hospitalizationCodeColumn": "Code d'admission",
   "unappliedPrescription_table_admissionDateColumn": "Date d'admission",
+  "unappliedPrescription_table_prescriptionDateColumn": "Date de prescription",
   "unappliedPrescription_table_pendingCountColumn": "En attente",
   "unappliedPrescription_overdueTable_medicineColumn": "Médicament",
   "unappliedPrescription_overdueTable_doseColumn": "Dose",

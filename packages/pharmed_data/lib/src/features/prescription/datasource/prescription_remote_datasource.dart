@@ -127,7 +127,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       startDate: params?.startDate,
       endDate: params?.endDate,
       searchFields: ['patientHospitalization.patient.name'],
-      dateField: 'hospitalizationDate',
+      // Reçetenin tarihine göre — yatış tarihi eski kaldığı için güncel
+      // reçeteler filtreye girmiyordu.
+      dateField: 'prescriptionDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
       successLog: 'Unapplied prescriptions fetched',
@@ -147,7 +149,9 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       startDate: params?.startDate,
       endDate: params?.endDate,
       searchFields: ['prescription.patientHospitalization.patient.name', 'material.name'],
-      dateField: 'time',
+      // Geciken uygulamalar uygulama zamanına göre filtrelenir — planlanan
+      // saat (time) eski günlerde kalabildiği için yeni uygulamalar görünmüyordu.
+      dateField: 'applicationDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemDto.fromJson),
       successLog: 'Overdue applications fetched',
