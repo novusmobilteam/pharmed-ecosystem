@@ -155,6 +155,9 @@ class RefillListSelectionNotifier extends ChangeNotifier with ApiRequestMixin {
         final completed = <RefillList>[];
 
         for (final list in data) {
+          // İptal edilen listeler (manager'da iptal) client'ta hiç gösterilmez —
+          // durumları ne olursa olsun.
+          if (list.isCancel) continue;
           switch (list.status) {
             case RefillListStatus.send:
             case RefillListStatus.partiallyCompleted:
