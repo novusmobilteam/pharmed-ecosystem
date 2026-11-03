@@ -2028,6 +2028,8 @@
   "@patientPicker_orderedToggleLabel": {},
   "patientPicker_myPatientsToggleLabel": "Mes patients",
   "@patientPicker_myPatientsToggleLabel": {},
+  "patientPicker_otherServiceToggleLabel": "Autre service",
+  "patientPicker_inpatientServiceLabel": "Hospitalisé en : {name}",
   "patientPicker_urgentPatientHint": "Créez un dossier pour un patient urgent qui ne figure pas dans la liste.",
   "@patientPicker_urgentPatientHint": {},
   "patientPicker_createUrgentPatientButton": "Créer un patient urgent",

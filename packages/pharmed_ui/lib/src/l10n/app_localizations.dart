@@ -6318,6 +6318,18 @@ abstract class AppLocalizations {
   /// **'My Patients'**
   String get patientPicker_myPatientsToggleLabel;
 
+  /// Intake patient picker tab — patients physically in this service but hospitalized in another service
+  ///
+  /// In en, this message translates to:
+  /// **'Other Service'**
+  String get patientPicker_otherServiceToggleLabel;
+
+  /// Line under a patient card in the 'Diğer Servis' tab showing the inpatient (hospitalization) service
+  ///
+  /// In en, this message translates to:
+  /// **'Hospitalized in: {name}'**
+  String patientPicker_inpatientServiceLabel(String name);
+
   /// No description provided for @patientPicker_urgentPatientHint.
   ///
   /// In en, this message translates to:

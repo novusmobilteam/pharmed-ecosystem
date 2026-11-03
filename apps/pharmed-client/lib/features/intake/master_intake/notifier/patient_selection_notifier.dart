@@ -11,34 +11,62 @@ final patientSelection2NotifierProvider = ChangeNotifierProvider.autoDispose<Pat
   return PatientSelectionNotifier2(
     authNotifier: ref.read(authNotifierProvider.notifier),
     getHospitalizationsByServiceUseCase: ref.read(getHospitalizationsByServiceUseCaseProvider),
+    getOtherServiceHospitalizationsUseCase: ref.read(getOtherServiceHospitalizationsUseCaseProvider),
+    getMyPatientsUseCase: ref.read(getMyPatientsUseCaseProvider),
     activeServiceNotifier: ref.read(activeServiceNotifierProvider),
     createUrgentPatientUseCase: ref.read(createUrgentPatientUseCaseProvider),
     deleteUrgentPatientUseCase: ref.read(deleteUrgentPatientUseCaseProvider),
   );
 });
 
-enum HospitalizationType { all, myPatients }
+/// Tüm Hastalar · Hastalarım · Diğer Servis (fiziki olarak bu serviste,
+/// yatışı başka serviste olan hastalar).
+enum HospitalizationType { all, myPatients, otherService }
 
 class PatientSelectionNotifier2 extends ChangeNotifier with ApiRequestMixin {
   final AuthNotifier _authNotifier;
   final ActiveServiceNotifier _activeServiceNotifier;
   final GetHospitalizationsByServiceUseCase _getHospitalizationsByServiceUseCase;
+  final GetOtherServiceHospitalizationsUseCase _getOtherServiceHospitalizationsUseCase;
+  final GetMyPatientsUseCase _getMyPatientsUseCase;
   final CreateUrgentPatientUseCase _createUrgentPatientUseCase;
   final DeleteUrgentPatientUseCase _deleteUrgentPatientUseCase;
 
   PatientSelectionNotifier2({
     required AuthNotifier authNotifier,
     required GetHospitalizationsByServiceUseCase getHospitalizationsByServiceUseCase,
+    required GetOtherServiceHospitalizationsUseCase getOtherServiceHospitalizationsUseCase,
+    required GetMyPatientsUseCase getMyPatientsUseCase,
     required ActiveServiceNotifier activeServiceNotifier,
     required CreateUrgentPatientUseCase createUrgentPatientUseCase,
     required DeleteUrgentPatientUseCase deleteUrgentPatientUseCase,
   }) : _authNotifier = authNotifier,
        _activeServiceNotifier = activeServiceNotifier,
        _getHospitalizationsByServiceUseCase = getHospitalizationsByServiceUseCase,
+       _getOtherServiceHospitalizationsUseCase = getOtherServiceHospitalizationsUseCase,
+       _getMyPatientsUseCase = getMyPatientsUseCase,
        _createUrgentPatientUseCase = createUrgentPatientUseCase,
        _deleteUrgentPatientUseCase = deleteUrgentPatientUseCase {
-    _getHospitalizations();
+    _init();
   }
+
+  /// Kullanıcının "Hastalarım" listesinde en az bir hasta varsa ekran
+  /// Hastalarım sekmesiyle açılır; yoksa (ya da liste okunamazsa) Tüm Hastalar.
+  Future<void> _init() async {
+    _initializing = true;
+    final result = await _getMyPatientsUseCase.call();
+    final hasMyPatients = result.when(ok: (list) => list.isNotEmpty, error: (_) => false);
+    if (hasMyPatients) {
+      _type = HospitalizationType.myPatients;
+    }
+    _initializing = false;
+    notifyListeners();
+    await _getHospitalizations();
+  }
+
+  /// Açılışta "Hastalarım" kontrolü sürerken de liste yükleniyor görünür.
+  bool _initializing = false;
+  bool get isFetching => _initializing || isLoading(fetchHospitalizationsOp);
 
   int get _activeServiceId => _activeServiceNotifier.activeService?.id ?? 0;
   Station? get _currentStation => _activeServiceNotifier.station;
@@ -90,7 +118,9 @@ class PatientSelectionNotifier2 extends ChangeNotifier with ApiRequestMixin {
   }
 
   void selectType(HospitalizationType type) {
+    if (_type == type) return;
     _type = type;
+    _hospitalizations = [];
     notifyListeners();
     _getHospitalizations();
   }
@@ -102,14 +132,18 @@ class PatientSelectionNotifier2 extends ChangeNotifier with ApiRequestMixin {
   }
 
   Future<void> _getHospitalizations() async {
+    final type = _type;
     await execute(
       fetchHospitalizationsOp,
-      operation: () => _getHospitalizationsByServiceUseCase.call(
-        serviceId: _activeServiceId,
-        filter: _patientFilterType,
-        myPatients: _type == HospitalizationType.myPatients,
-      ),
+      operation: () => type == HospitalizationType.otherService
+          ? _getOtherServiceHospitalizationsUseCase.call(serviceId: _activeServiceId, filter: _patientFilterType)
+          : _getHospitalizationsByServiceUseCase.call(
+              serviceId: _activeServiceId,
+              filter: _patientFilterType,
+              myPatients: type == HospitalizationType.myPatients,
+            ),
       onData: (hospitalizations) {
+        if (type != _type) return; // bu arada sekme değişti
         _hospitalizations = hospitalizations;
         notifyListeners();
       },

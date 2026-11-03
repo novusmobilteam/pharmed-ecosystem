@@ -3432,6 +3432,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get patientPicker_myPatientsToggleLabel => 'My Patients';
 
   @override
+  String get patientPicker_otherServiceToggleLabel => 'Other Service';
+
+  @override
+  String patientPicker_inpatientServiceLabel(String name) {
+    return 'Hospitalized in: $name';
+  }
+
+  @override
   String get patientPicker_urgentPatientHint =>
       'Create a record for an urgent patient not on the list.';
 

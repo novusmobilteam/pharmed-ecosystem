@@ -365,6 +365,10 @@ final getHospitalizationsByServiceUseCaseProvider = Provider((ref) {
   return GetHospitalizationsByServiceUseCase(ref.read(hospitalizationRepositoryProvider));
 });
 
+final getOtherServiceHospitalizationsUseCaseProvider = Provider((ref) {
+  return GetOtherServiceHospitalizationsUseCase(ref.read(hospitalizationRepositoryProvider));
+});
+
 final createUrgentPatientUseCaseProvider = Provider((ref) {
   return CreateUrgentPatientUseCase(ref.read(patientRepositoryProvider));
 });

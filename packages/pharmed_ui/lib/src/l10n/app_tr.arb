@@ -4235,6 +4235,15 @@
   "@patientPicker_myPatientsToggleLabel": {
     "description": "Toggle button label for filtering to the current user's own patients"
   },
+  "patientPicker_otherServiceToggleLabel": "Diğer Servis",
+  "@patientPicker_otherServiceToggleLabel": {
+    "description": "Intake patient picker tab — patients physically in this service but hospitalized in another service"
+  },
+  "patientPicker_inpatientServiceLabel": "Yattığı servis: {name}",
+  "@patientPicker_inpatientServiceLabel": {
+    "description": "Line under a patient card in the 'Diğer Servis' tab showing the inpatient (hospitalization) service",
+    "placeholders": { "name": { "type": "String" } }
+  },
   "patientPicker_urgentPatientHint": "Listede olmayan acil hasta için kayıt oluşturun.",
   "@patientPicker_urgentPatientHint": {
     "description": "Hint text explaining how to create an urgent patient record"

@@ -122,6 +122,19 @@ class HospitalizationRemoteDataSource extends BaseRemoteDataSource {
     return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
   }
 
+  /// Fiziki olarak [serviceId] servisinde bulunan, başka serviste yatan hastalar.
+  Future<Result<List<HospitalizationDto>>> getOtherServiceHospitalizations({
+    required int serviceId,
+    required PatientFilterType filter,
+  }) async {
+    final res = await fetchRequest<List<HospitalizationDto>>(
+      path: '$_basePath/inpatientService/$serviceId',
+      query: {'typeId': filter.id},
+      parser: BaseRemoteDataSource.listParser(HospitalizationDto.fromJson),
+    );
+    return res.when(ok: (data) => Result.ok(data ?? const <HospitalizationDto>[]), error: Result.error);
+  }
+
   Future<Result<void>> discharge(int hospitalizationId) async {
     final res = await putRequest(
       path: '/Patient/hospitalizationExit/$hospitalizationId',

@@ -110,6 +110,15 @@ class HospitalizationRepositoryImpl implements IHospitalizationRepository {
   }
 
   @override
+  Future<Result<List<Hospitalization>>> getOtherServiceHospitalizations({
+    required int serviceId,
+    required PatientFilterType filter,
+  }) async {
+    final r = await _dataSource.getOtherServiceHospitalizations(serviceId: serviceId, filter: filter);
+    return r.when(ok: (dtos) => Result.ok(_mapper.toEntityList(dtos)), error: (e) => Result.error(e));
+  }
+
+  @override
   Future<Result<void>> discharge(int hospitalizationId) async {
     final result = await _dataSource.discharge(hospitalizationId);
     return result.when(ok: (dtos) => Result.ok(null), error: (e) => Result.error(e));

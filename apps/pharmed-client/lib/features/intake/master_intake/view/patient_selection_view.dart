@@ -160,7 +160,11 @@ class _HospitalizationListView extends StatelessWidget {
               notifier.selectType(HospitalizationType.values.elementAt(index));
               //widget.onTypeChanged?.call();
             },
-            labels: [context.l10n.enumCore_patientFilterAll, context.l10n.patientPicker_myPatientsToggleLabel],
+            labels: [
+              context.l10n.enumCore_patientFilterAll,
+              context.l10n.patientPicker_myPatientsToggleLabel,
+              context.l10n.patientPicker_otherServiceToggleLabel,
+            ],
           ),
         ),
         SizedBox(height: MedSpacing.sm),
@@ -177,7 +181,7 @@ class _HospitalizationListView extends StatelessWidget {
             labelBuilder: (type) => type?.label,
           ),
         ),
-        if (notifier.isLoading(notifier.fetchHospitalizationsOp))
+        if (notifier.isFetching)
           Expanded(child: Center(child: MedLoadingIndicator()))
         else
           Expanded(
@@ -197,7 +201,7 @@ class _HospitalizationListView extends StatelessWidget {
                         if (isUrgent) {
                           return SizedBox.shrink();
                         }
-                        return PatientSelectionCard(
+                        final card = PatientSelectionCard(
                           hospitalization: hosp,
                           onTap: () {
                             notifier.selectHospitalization(hosp);
@@ -206,6 +210,36 @@ class _HospitalizationListView extends StatelessWidget {
                           showChevron: false,
                           isSelected: isSelected,
                           isRedirected: isRedirected,
+                        );
+                        // Diğer Servis: kartta fiziki servis görünür; hastanın
+                        // yattığı servis ayrıca belirtilir.
+                        final inpatientService = hosp.inpatientService?.name;
+                        if (notifier.type != HospitalizationType.otherService || inpatientService == null) {
+                          return card;
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 4,
+                          children: [
+                            card,
+                            Padding(
+                              padding: const EdgeInsets.only(left: MedSpacing.md),
+                              child: Row(
+                                spacing: 4,
+                                children: [
+                                  Icon(PhosphorIcons.bed(), size: 14, color: MedColors.amber),
+                                  Flexible(
+                                    child: Text(
+                                      context.l10n.patientPicker_inpatientServiceLabel(inpatientService),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: MedTextStyles.bodySm(color: MedColors.amber, weight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),

@@ -3528,6 +3528,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientPicker_myPatientsToggleLabel => 'Mes patients';
 
   @override
+  String get patientPicker_otherServiceToggleLabel => 'Autre service';
+
+  @override
+  String patientPicker_inpatientServiceLabel(String name) {
+    return 'Hospitalisé en : $name';
+  }
+
+  @override
   String get patientPicker_urgentPatientHint =>
       'Créez un dossier pour un patient urgent qui ne figure pas dans la liste.';
 

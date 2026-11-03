@@ -2269,6 +2269,8 @@
   "@patientPicker_orderedToggleLabel": {},
   "patientPicker_myPatientsToggleLabel": "My Patients",
   "@patientPicker_myPatientsToggleLabel": {},
+  "patientPicker_otherServiceToggleLabel": "Other Service",
+  "patientPicker_inpatientServiceLabel": "Hospitalized in: {name}",
   "patientPicker_urgentPatientHint": "Create a record for an urgent patient not on the list.",
   "@patientPicker_urgentPatientHint": {},
   "patientPicker_createUrgentPatientButton": "Create Urgent Patient",

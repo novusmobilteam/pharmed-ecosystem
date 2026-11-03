@@ -32,6 +32,13 @@ abstract interface class IHospitalizationRepository {
     bool myPatients = false,
   });
 
+  /// Fiziki olarak bu serviste bulunan ama başka bir serviste yatan hastalar
+  /// (`Patient/hospitalization/inpatientService/{serviceId}`).
+  Future<Result<List<Hospitalization>>> getOtherServiceHospitalizations({
+    required int serviceId,
+    required PatientFilterType filter,
+  });
+
   /// Taburcu etme servisi
   Future<Result<void>> discharge(int hospitalizationId);
 }

@@ -3415,6 +3415,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get patientPicker_myPatientsToggleLabel => 'Hastalarım';
 
   @override
+  String get patientPicker_otherServiceToggleLabel => 'Diğer Servis';
+
+  @override
+  String patientPicker_inpatientServiceLabel(String name) {
+    return 'Yattığı servis: $name';
+  }
+
+  @override
   String get patientPicker_urgentPatientHint =>
       'Listede olmayan acil hasta için kayıt oluşturun.';
 
