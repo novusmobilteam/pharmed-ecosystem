@@ -462,7 +462,7 @@ Widget _measurementDoseField() {
       final enabled = vm.drug.isMeasureUnit;
       return MedTextInputField(
         key: ValueKey('measureDose-$enabled'),
-        label: context.l10n.medicine_fieldDose,
+        label: context.l10n.medicine_fieldUsageMeasureUnit,
         enabled: enabled,
         initialValue: vm.drug.doseMeasureUnit.toCustomString(),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],

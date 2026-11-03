@@ -2375,6 +2375,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get medicine_fieldDose => 'Dose';
 
   @override
+  String get medicine_fieldUsageMeasureUnit => 'Usage Measurement Unit';
+
+  @override
   String get medicine_fieldManufacturer => 'Manufacturer';
 
   @override

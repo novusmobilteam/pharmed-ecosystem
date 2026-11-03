@@ -2367,6 +2367,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get medicine_fieldDose => 'Doz';
 
   @override
+  String get medicine_fieldUsageMeasureUnit => 'Kullanım Ölçü Birimi';
+
+  @override
   String get medicine_fieldManufacturer => 'Üretici Firma';
 
   @override

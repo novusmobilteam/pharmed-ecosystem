@@ -2828,7 +2828,11 @@
   },
   "medicine_fieldDose": "Doz",
   "@medicine_fieldDose": {
-    "description": "Text field label for dose, used for both the main dose and measurement dose fields"
+    "description": "Text field label for the main dose field"
+  },
+  "medicine_fieldUsageMeasureUnit": "Kullanım Ölçü Birimi",
+  "@medicine_fieldUsageMeasureUnit": {
+    "description": "Text field label shown when 'Ölçü Birimi Kullan' is enabled — the usage measurement amount of the drug"
   },
   "medicine_fieldManufacturer": "Üretici Firma",
   "@medicine_fieldManufacturer": {

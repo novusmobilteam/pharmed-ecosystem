@@ -2436,6 +2436,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get medicine_fieldDose => 'Dose';
 
   @override
+  String get medicine_fieldUsageMeasureUnit => 'Unité de mesure d\'utilisation';
+
+  @override
   String get medicine_fieldManufacturer => 'Fabricant';
 
   @override

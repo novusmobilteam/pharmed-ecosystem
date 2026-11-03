@@ -1287,6 +1287,8 @@
   "@medicine_fieldPrescriptionType": {},
   "medicine_fieldDose": "Dose",
   "@medicine_fieldDose": {},
+  "medicine_fieldUsageMeasureUnit": "Unité de mesure d'utilisation",
+  "@medicine_fieldUsageMeasureUnit": {},
   "medicine_fieldManufacturer": "Fabricant",
   "@medicine_fieldManufacturer": {},
   "medicine_fieldDailyMaxUsage": "Quantité d'utilisation maximale quotidienne",

@@ -188,7 +188,11 @@ class MedCheckboxField extends StatelessWidget {
             inactiveColor: inactiveColor,
           ),
           SizedBox(width: spec.gap - MedSpacing.xs),
-          Text(label, style: spec.labelStyle),
+          // Dar alanda taşmak yerine iki satıra kayar (Row min boyutlu olduğu
+          // için geniş alanda davranış değişmez).
+          Flexible(
+            child: Text(label, style: spec.labelStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
         ],
       ),
     );

@@ -4356,6 +4356,12 @@ abstract class AppLocalizations {
   /// **'Dose'**
   String get medicine_fieldDose;
 
+  /// Text field label shown when 'Ölçü Birimi Kullan' is enabled — the usage measurement amount of the drug
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Measurement Unit'**
+  String get medicine_fieldUsageMeasureUnit;
+
   /// No description provided for @medicine_fieldManufacturer.
   ///
   /// In en, this message translates to:

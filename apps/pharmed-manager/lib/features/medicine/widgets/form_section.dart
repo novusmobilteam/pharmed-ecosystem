@@ -74,7 +74,9 @@ class _InlineToggle extends StatelessWidget {
           height: InputFieldTheme.of(context).minHeight,
           child: Align(
             alignment: Alignment.centerLeft,
-            child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: child),
+            // FittedBox kullanılmıyor: uzun etiketli kutuları küçültüp diğerlerinden
+            // küçük fontla gösteriyordu. Etiket sığmazsa alt satıra kayar.
+            child: child,
           ),
         ),
       ],
