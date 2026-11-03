@@ -7735,6 +7735,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get refillList_tab_completed => 'Tamamlanan';
 
   @override
+  String get refillList_tab_cancelled => 'İptal Edilen';
+
+  @override
   String refillList_listTitle(int id) {
     return 'Dolum Listesi #$id';
   }

@@ -17,6 +17,7 @@ class _TableBody<T extends Object> extends StatelessWidget {
     required this.actions,
     required this.horizontalScroll,
     this.minRowWidth,
+    this.rowColor,
   });
 
   final List<T> data;
@@ -34,11 +35,12 @@ class _TableBody<T extends Object> extends StatelessWidget {
   final List<TableActionItem<T>> actions;
   final bool horizontalScroll;
   final double? minRowWidth;
+  final Color? Function(T item)? rowColor;
 
   static const double _multiColW = 44.0;
   static const double _singleColW = 32.0;
   static const double _actionColW = 82.0;
-  static const double _btnW = 32.0;
+  static const double _btnW = 38.0;
 
   bool get _showMulti => selectionMode == TableSelectionMode.multi;
   bool get _showSingle => selectionMode == TableSelectionMode.single;
@@ -179,6 +181,7 @@ class _TableBody<T extends Object> extends StatelessWidget {
                         cols: cols,
                         widths: widths,
                         isEven: i.isEven,
+                        background: rowColor?.call(data[i]),
                         selectionMode: selectionMode,
                         isSelected: selectedItems.contains(data[i]),
                         onToggle: () => onToggleItem(data[i]),
@@ -347,6 +350,7 @@ class _TableRow<T extends Object> extends StatefulWidget {
     required this.cols,
     required this.widths,
     required this.isEven,
+    this.background,
     required this.selectionMode,
     required this.isSelected,
     required this.onToggle,
@@ -360,6 +364,7 @@ class _TableRow<T extends Object> extends StatefulWidget {
   final List<_ColMeta<T>> cols; // ← generic
   final List<double> widths;
   final bool isEven;
+  final Color? background;
   final TableSelectionMode selectionMode;
   final bool isSelected;
   final VoidCallback onToggle;
@@ -383,6 +388,7 @@ class _TableRowState<T extends Object> extends State<_TableRow<T>> {
   Color get _rowBg {
     if (widget.isSelected) return const Color(0xFFEFF6FF);
     if (_hovered) return const Color(0xFFF5F7FA);
+    if (widget.background != null) return widget.background!;
     return widget.isEven ? Colors.white : const Color(0xFFFAFAFB);
   }
 
@@ -526,8 +532,11 @@ class _ActionBtnState extends State<_ActionBtn> {
 
   @override
   Widget build(BuildContext context) {
-    final c = widget.color ?? const Color(0xFF6B7280);
+    // Buton her zaman "basılabilir" görünür: hafif renkli zemin + çerçeve;
+    // üzerine gelince koyulaşır.
+    final c = widget.color ?? const Color(0xFF4B5563);
     return MouseRegion(
+      cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: Tooltip(
@@ -539,12 +548,13 @@ class _ActionBtnState extends State<_ActionBtn> {
             child: Center(
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 100),
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
-                  color: _hovered ? c.withValues(alpha: 0.1) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6),
+                  color: c.withValues(alpha: _hovered ? 0.18 : 0.08),
+                  borderRadius: BorderRadius.circular(7),
+                  border: Border.all(color: c.withValues(alpha: _hovered ? 0.45 : 0.22)),
                 ),
-                child: Icon(widget.icon, size: 15, color: c),
+                child: Icon(widget.icon, size: 17, color: c),
               ),
             ),
           ),

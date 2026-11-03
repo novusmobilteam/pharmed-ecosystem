@@ -7800,6 +7800,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refillList_tab_completed => 'Completed';
 
   @override
+  String get refillList_tab_cancelled => 'Cancelled';
+
+  @override
   String refillList_listTitle(int id) {
     return 'Refill List #$id';
   }

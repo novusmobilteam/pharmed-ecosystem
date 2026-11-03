@@ -4770,6 +4770,7 @@
 "refillList_panelTitle": "Listes de remplissage",
 "refillList_tab_waiting": "En attente",
 "refillList_tab_completed": "Terminées",
+"refillList_tab_cancelled": "Annulées",
 "refillList_listTitle": "Liste de remplissage n°{id}",
 "@refillList_listTitle": {
   "description": "Header title of the selected refill list showing its number",

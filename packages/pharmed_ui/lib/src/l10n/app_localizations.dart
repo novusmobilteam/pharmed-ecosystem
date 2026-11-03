@@ -13641,6 +13641,12 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get refillList_tab_completed;
 
+  /// Segment label for cancelled refill lists (manager refill list screen)
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get refillList_tab_cancelled;
+
   /// Header title of the selected refill list showing its number
   ///
   /// In en, this message translates to:

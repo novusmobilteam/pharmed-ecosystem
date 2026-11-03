@@ -118,6 +118,7 @@ class MedTable<T extends Object> extends StatefulWidget {
     this.categoryTitle,
     this.initialDateRange,
     this.toolbarActions,
+    this.rowColor,
     this.selectedCategoryIds = const {},
     this.onCategorySelectionChanged,
     this.serverFilters = const {},
@@ -244,6 +245,10 @@ class MedTable<T extends Object> extends StatefulWidget {
   final DateTimeRange? initialDateRange;
 
   final List<Widget>? toolbarActions;
+
+  /// Satır zemini (ör. duruma göre boyama). null dönerse varsayılan zebra.
+  /// Seçili / üzerine gelinen satır rengi bunun önüne geçer.
+  final Color? Function(T item)? rowColor;
 
   // ── Server-side kolon filtreleri ────────────────────────────────────────────
   /// Key: TableServerFilter.field, value: seçili option değerleri.
@@ -773,6 +778,7 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
       actions: widget.actions,
       horizontalScroll: widget.horizontalScroll,
       minRowWidth: widget.minTableWidth,
+      rowColor: widget.rowColor,
       onSort: (i) => setState(() {
         _sortColIndex == i ? _sortAsc = !_sortAsc : (_sortColIndex = i, _sortAsc = true);
       }),

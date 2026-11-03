@@ -7987,6 +7987,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get refillList_tab_completed => 'Terminées';
 
   @override
+  String get refillList_tab_cancelled => 'Annulées';
+
+  @override
   String refillList_listTitle(int id) {
     return 'Liste de remplissage n°$id';
   }

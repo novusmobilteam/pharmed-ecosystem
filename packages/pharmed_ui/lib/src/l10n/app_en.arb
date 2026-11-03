@@ -5418,6 +5418,7 @@
 "refillList_panelTitle": "Refill Lists",
 "refillList_tab_waiting": "Pending",
 "refillList_tab_completed": "Completed",
+"refillList_tab_cancelled": "Cancelled",
 "refillList_listTitle": "Refill List #{id}",
 "@refillList_listTitle": {
   "description": "Header title of the selected refill list showing its number",
