@@ -1,0 +1,120 @@
+# Windows build — elle tetiklenebilir + release'te otomatik.
+#
+# Elle: Actions → "Windows Build" → Run workflow → branch / uygulama / flavor seç.
+# Release: "Publish release" edildiğinde iki uygulamayı da dev flavor ile build alıp
+#          zip'leri release'e ekler (eski build-and-attach-release.yml'in yerini alır).
+
+name: Windows Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Hangi uygulama?
+        type: choice
+        options: [client, manager, both]
+        default: client
+      flavor:
+        description: Flavor (lib/main_<flavor>.dart)
+        type: choice
+        options: [dev, prod, mock]
+        default: dev
+  release:
+    types: [published]
+
+concurrency:
+  group: windows-build-${{ github.ref }}-${{ inputs.app || 'release' }}
+  cancel-in-progress: true
+
+jobs:
+  # Seçime göre build matrisini üretir (client / manager / ikisi).
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.pick.outputs.apps }}
+    steps:
+      - id: pick
+        shell: bash
+        run: |
+          case "${{ inputs.app || 'both' }}" in
+            client)  echo 'apps=["pharmed-client"]' >> "$GITHUB_OUTPUT" ;;
+            manager) echo 'apps=["pharmed-manager"]' >> "$GITHUB_OUTPUT" ;;
+            *)       echo 'apps=["pharmed-client","pharmed-manager"]' >> "$GITHUB_OUTPUT" ;;
+          esac
+
+  build:
+    needs: plan
+    runs-on: windows-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.plan.outputs.apps) }}
+    env:
+      FLAVOR: ${{ inputs.flavor || 'dev' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Release'te tag'in kodu, elle çalıştırmada "Run workflow"da seçilen branch.
+          ref: ${{ github.event.release.tag_name || github.ref }}
+
+      - name: Flutter kur
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # IEC 62304 tekrarlanabilirliği için sürümü sabitlemek isterseniz:
+          # flutter-version: 3.38.4
+          cache: true
+
+      - name: Flutter sürümü
+        run: flutter --version
+
+      # pub workspace (resolution: workspace) — kökten tek seferde çözülür.
+      - name: Bağımlılıklar (workspace)
+        run: flutter pub get
+
+      # *.g.dart / *.freezed.dart .gitignore'da olduğu için repoda YOK;
+      # CI'da üretilmezse derleme "part file not found" ile kırılır.
+      - name: Kod üretimi (build_runner)
+        working-directory: packages/pharmed_data
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build ${{ matrix.app }} (${{ env.FLAVOR }})
+        working-directory: apps/${{ matrix.app }}
+        run: flutter build windows --release -t lib/main_${{ env.FLAVOR }}.dart
+
+      - name: Paket adı
+        id: name
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            tag="${{ github.event.release.tag_name }}"
+          else
+            tag="${GITHUB_REF_NAME//\//-}-$(git rev-parse --short HEAD)"
+          fi
+          echo "zip=${{ matrix.app }}-${tag}-${FLAVOR}-windows" >> "$GITHUB_OUTPUT"
+
+      - name: Zip
+        run: >
+          Compress-Archive
+          -Path apps/${{ matrix.app }}/build/windows/x64/runner/Release/*
+          -DestinationPath ${{ steps.name.outputs.zip }}.zip
+
+      # Elle çalıştırmada: run sayfasının altındaki "Artifacts" bölümünden indirilir.
+      - name: Artifact olarak yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.name.outputs.zip }}
+          path: ${{ steps.name.outputs.zip }}.zip
+          retention-days: 14
+
+      - name: Release'e ekle
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: ${{ steps.name.outputs.zip }}.zip
+
+permissions:
+  contents: write   # release'e dosya eklemek için
