@@ -1110,7 +1110,17 @@
   "dashboard_roomBedLabel": "CHAMBRE / LIT",
   "dashboard_serviceLabel": "SERVICE",
   "remainingDayChip_overdueLabel": "Dépassé de {days} j",
+  "@remainingDayChip_overdueLabel": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "remainingDayChip_daysLabel": "{days} j",
+  "@remainingDayChip_daysLabel": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "@dashboard_roomBedLabel": {},
   "dashboardUpcomingTreatmentsPanelTitle": "TRAITEMENTS À VENIR",
   "@dashboardUpcomingTreatmentsPanelTitle": {},
@@ -2033,6 +2043,11 @@
   "@patientPicker_myPatientsToggleLabel": {},
   "patientPicker_otherServiceToggleLabel": "Autre service",
   "patientPicker_inpatientServiceLabel": "Hospitalisé en : {name}",
+  "@patientPicker_inpatientServiceLabel": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "patientPicker_urgentPatientHint": "Créez un dossier pour un patient urgent qui ne figure pas dans la liste.",
   "@patientPicker_urgentPatientHint": {},
   "patientPicker_createUrgentPatientButton": "Créer un patient urgent",
@@ -3973,19 +3988,12 @@
   "patientListPanel_filter_orderStatusLabel": "Statut de Commande",
   "patientListPanel_filter_dialogTitle": "Filtres",
   "masterDrawer_status_devicePreparingTitle": "Préparation",
-  "masterDrawer_status_devicePreparingSubtitle": "Le système se prépare. Veuillez patienter un instant.",
   "masterDrawer_status_lockOpeningTitle": "Déverrouillage",
-  "masterDrawer_status_lockOpeningSubtitle": "Le verrou du tiroir s'ouvre. Veuillez patienter un instant.",
   "masterDrawer_status_waitingPullTitle": "Veuillez Tirer le Tiroir",
-  "masterDrawer_status_waitingPullSubtitle": "Le verrou a été libéré. Tirez le tiroir pour l'ouvrir et continuer.",
   "masterDrawer_status_openingLidTitle": "Ouverture du Compartiment",
-  "masterDrawer_status_openingLidSubtitle": "Le couvercle du compartiment s'ouvre. Veuillez patienter un instant.",
   "masterDrawer_status_waitingCloseTitle": "Veuillez Fermer le Tiroir",
-  "masterDrawer_status_waitingCloseSubtitle": "Fermez le tiroir pour passer à l'étape suivante.",
   "masterDrawer_status_failedTitle": "Un Problème est Survenu",
-  "masterDrawer_status_failedSubtitle": "Veuillez patienter, l'état du tiroir est en cours de vérification.",
   "masterDrawer_status_openingTitle": "Ouverture du Tiroir",
-  "masterDrawer_status_openingSubtitle": "Le tiroir s'ouvre. Veuillez patienter un instant.",
   "masterDrawer_stop_waitingCloseTitle": "Veuillez Fermer le Tiroir Ouvert",
   "masterDrawer_stop_waitingCloseSubtitle": "Veuillez fermer le tiroir ouvert. Le processus s'arrêtera une fois celui-ci fermé.",
   "intake_label_queueProgress": "Tiroir {done}/{total}",
@@ -3997,7 +4005,6 @@
   "refund_hint_searchMedicine": "Rechercher un médicament",
   "refund_hint_selectPatientFirst": "Sélectionnez d'abord un patient",
   "refund_hint_noMedicineFound": "Aucun médicament remboursable trouvé",
-  "refund_action_start": "Démarrer le retour",
   "refund_action_nextCell": "Cellule suivante",
   "refund_action_completeRefund": "Terminer le retour",
   "refund_action_stop": "Arrêter",
@@ -4384,7 +4391,6 @@
   "@cabinDesign_cabinList_noPortLabel": {},
   "cabinDesign_cabinList_passiveBadge": "Inactif",
   "@cabinDesign_cabinList_passiveBadge": {},
-  "cabinDesign_newCabin_typeLabel": "Type d'Armoire",
   "@cabinDesign_newCabin_typeLabel": {},
   "cabinDesign_newCabin_addressLabel": "Adresse",
   "@cabinDesign_newCabin_addressLabel": {},
@@ -4917,7 +4923,6 @@
     }
   },
   "qrScan_operationIntake": "Prise de médicament",
-  "qrScan_operationRefund": "Retour de médicament",
   "qrScan_operationUnscanned": "Codes QR non scannés",
   "qrScan_closeTooltip": "Fermer",
   "qrScan_scannedCounterLabel": "Scannés",
@@ -5170,14 +5175,6 @@
   "intake_overdue_cancelButton": "Annuler",
   "intake_overdue_confirmButton": "Confirmer et continuer",
   "intake_overdue_descriptionRequiredError": "Un motif est requis pour les médicaments en retard.",
-  "refund_error_drawerNotResolved": "{count, plural, one{Tiroir introuvable pour {count} article} other{Tiroir introuvable pour {count} articles}} ; le retour n'a pas été démarré.",
-"@refund_error_drawerNotResolved": {
-  "placeholders": {
-    "count": { "type": "int" }
-  }
-},
-"enumCore_cabinOpModeRefund": "Retour",
-"@enumCore_cabinOpModeRefund": {},
 "cabinOperation_noEntryInstruction": "Placez les articles dans le compartiment indiqué, puis appuyez sur Terminer ou fermez le tiroir.",
 "refund_action_start": "Démarrer le retour",
 "@refund_action_start": {},
@@ -5642,16 +5639,42 @@
   "report_materialUsage_totalLabel": "Total",
   "refillList_form_addSectionTitle": "Ajouter des médicaments",
   "refillList_form_listSectionTitle": "Médicaments de la liste ({count})",
+  "@refillList_form_listSectionTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "refillList_form_searchHint": "Rechercher par nom ou code-barres",
   "refillList_form_selectAll": "Tout sélectionner",
   "refillList_form_addSelectedButton": "Ajouter la sélection ({count})",
+  "@refillList_form_addSelectedButton": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "refillList_form_emptyListHint": "Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».",
   "refillList_form_noCandidates": "Aucun médicament trouvé pour ce type",
   "refillList_form_clearListButton": "Vider la liste",
   "refillList_form_totalLabel": "{count} médicaments · Remplissage total : {quantity}",
+  "@refillList_form_totalLabel": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_currentStockLabel": "Actuel : {quantity}",
+  "@refillList_form_currentStockLabel": {
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_inListBadge": "Dans la liste",
   "refillList_form_suggestedLabel": "Suggéré : {quantity}",
+  "@refillList_form_suggestedLabel": {
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_removeTooltip": "Retirer de la liste",
   "refillList_printTooltip": "Imprimer",
   "refillList_print_noDetails": "Cette liste ne contient aucun médicament à imprimer",

@@ -1,4 +1,4 @@
-﻿.dart_tool/
+.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
@@ -9,3 +9,6 @@ melos_bootstrap.sh
 .idea/
 .vscode/
 *.iml
+
+# FVM Version Cache
+.fvm/

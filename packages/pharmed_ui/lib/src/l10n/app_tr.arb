@@ -7488,19 +7488,12 @@
     "description": "PatientSelectionFilterDialog — hasta seçim panelindeki filtre dialogunun başlığı"
   },
   "masterDrawer_status_devicePreparingTitle": "Hazırlanıyor",
-  "masterDrawer_status_devicePreparingSubtitle": "Sistem hazırlanıyor. Lütfen bir süre bekleyin.",
   "masterDrawer_status_lockOpeningTitle": "Kilit Açılıyor",
-  "masterDrawer_status_lockOpeningSubtitle": "Çekmece kilidi açılıyor. Lütfen bir süre bekleyin.",
   "masterDrawer_status_waitingPullTitle": "Çekmeceyi Çekiniz",
-  "masterDrawer_status_waitingPullSubtitle": "Kilit açıldı. Devam etmek için çekmeceyi çekerek açın.",
   "masterDrawer_status_openingLidTitle": "Göz Kapağı Açılıyor",
-  "masterDrawer_status_openingLidSubtitle": "Göz kapağı açılıyor. Lütfen bir süre bekleyin.",
   "masterDrawer_status_waitingCloseTitle": "Çekmeceyi Kapatınız",
-  "masterDrawer_status_waitingCloseSubtitle": "Sonraki adıma geçmek için çekmeceyi kapatın.",
   "masterDrawer_status_failedTitle": "Bir Sorun Oluştu",
-  "masterDrawer_status_failedSubtitle": "Lütfen bekleyin, çekmece durumu kontrol ediliyor.",
   "masterDrawer_status_openingTitle": "Çekmece Açılıyor",
-  "masterDrawer_status_openingSubtitle": "Çekmece açılıyor. Lütfen bir süre bekleyin.",
   "masterDrawer_stop_waitingCloseTitle": "Açık Çekmeceyi Kapatınız",
   "masterDrawer_stop_waitingCloseSubtitle": "Lütfen açık olan çekmeceyi kapatınız. Çekmece kapandıktan sonra işlem durdurulacaktır.",
   "intake_label_queueProgress": "Çekmece {done}/{total}",
@@ -7512,7 +7505,6 @@
   "refund_hint_searchMedicine": "İlaç ara",
   "refund_hint_selectPatientFirst": "Önce bir hasta seçin",
   "refund_hint_noMedicineFound": "İade edilebilir ilaç bulunamadı",
-  "refund_action_start": "İadeyi Başlat",
   "refund_action_nextCell": "Sonraki Göz",
   "refund_action_completeRefund": "İadeyi Tamamla",
   "refund_action_stop": "Durdur",
@@ -8196,7 +8188,6 @@
   "@cabinDesign_cabinList_passiveBadge": {
     "description": "Badge shown on a cabin list item when the cabin's status is passive/inactive"
   },
-  "cabinDesign_newCabin_typeLabel": "Kabin Tipi",
   "@cabinDesign_newCabin_typeLabel": {
     "description": "Label above the cabin type selector in the new cabin creation form"
   },
@@ -8876,44 +8867,23 @@
   "@masterDrawer_status_devicePreparingTitle": {
     "description": "Title shown while the master cabin drawer hardware is preparing to open (MasterDrawerOpening/devicePreparing stage), shared across all master cabin operation screens (refill, census, intake, etc.)"
   },
-  "@masterDrawer_status_devicePreparingSubtitle": {
-    "description": "Subtitle shown while the master cabin drawer hardware is preparing to open"
-  },
   "@masterDrawer_status_lockOpeningTitle": {
     "description": "Title shown while the master cabin drawer lock is being released (MasterDrawerOpening/lockOpening stage)"
-  },
-  "@masterDrawer_status_lockOpeningSubtitle": {
-    "description": "Subtitle shown while the master cabin drawer lock is being released"
   },
   "@masterDrawer_status_waitingPullTitle": {
     "description": "Title shown when the drawer lock has released and the user needs to physically pull the drawer open (MasterDrawerWaitingForPull stage)"
   },
-  "@masterDrawer_status_waitingPullSubtitle": {
-    "description": "Subtitle shown when waiting for the user to physically pull the drawer open"
-  },
   "@masterDrawer_status_openingLidTitle": {
     "description": "Title shown while a cubic drawer's individual cell lid is opening (MasterDrawerOpeningLid stage)"
-  },
-  "@masterDrawer_status_openingLidSubtitle": {
-    "description": "Subtitle shown while a cubic drawer's individual cell lid is opening"
   },
   "@masterDrawer_status_waitingCloseTitle": {
     "description": "Title shown after the user confirms completion and the system is waiting for the physical drawer to be closed (MasterDrawerWaitingForClose stage)"
   },
-  "@masterDrawer_status_waitingCloseSubtitle": {
-    "description": "Subtitle shown while waiting for the physical drawer to be closed"
-  },
   "@masterDrawer_status_failedTitle": {
     "description": "Title shown when the drawer hardware reports a failure (MasterDrawerFailed stage), before the queue-error confirmation dialog is shown"
   },
-  "@masterDrawer_status_failedSubtitle": {
-    "description": "Subtitle shown when the drawer hardware reports a failure"
-  },
   "@masterDrawer_status_openingTitle": {
     "description": "Fallback title for drawer stages without a dedicated message (Idle/Closed transitional states, or any unmapped stage)"
-  },
-  "@masterDrawer_status_openingSubtitle": {
-    "description": "Fallback subtitle for drawer stages without a dedicated message"
   },
   "@masterDrawer_stop_waitingCloseTitle": {
     "description": "Title shown after the user confirms stopping the queue while a drawer is still physically open — the stop will be applied once the drawer is closed"
@@ -8947,9 +8917,6 @@
   },
   "@refund_hint_noMedicineFound": {
     "description": "Empty-state message shown when the selected patient has no refundable medicines"
-  },
-  "@refund_action_start": {
-    "description": "Button label to start the check/refund process for the selected medicines on the master refund screen"
   },
   "@refund_action_nextCell": {
     "description": "Button label shown in a cubic drawer's refund confirmation form when there are more cells (lids) left to process in the current drawer"
@@ -10245,10 +10212,6 @@
   "@qrScan_operationIntake": {
     "description": "Operation name passed to the QR scan dialog from the intake screen"
   },
-  "qrScan_operationRefund": "İlaç İade",
-  "@qrScan_operationRefund": {
-    "description": "Operation name passed to the QR scan dialog from the return screen"
-  },
   "qrScan_operationUnscanned": "Okutulmayan Karekodlar",
   "@qrScan_operationUnscanned": {
     "description": "Operation name passed to the QR scan dialog from the unscanned QR codes screens"
@@ -10710,17 +10673,6 @@
   "@intake_overdue_descriptionRequiredError": {
     "description": "Error when intake starts without descriptions for overdue items"
   },
-  "refund_error_drawerNotResolved": "{count} kalemin çekmecesi bulunamadı, iade başlatılmadı.",
-"@refund_error_drawerNotResolved": {
-  "description": "Snackbar shown when the refund queue is not started because the physical drawer of some checked items could not be resolved",
-  "placeholders": {
-    "count": { "type": "int" }
-  }
-},
-"enumCore_cabinOpModeRefund": "İade",
-"@enumCore_cabinOpModeRefund": {
-  "description": "Label of the refund value of CabinOperationMode"
-},
 "cabinOperation_noEntryInstruction": "İlaçları işaretli göze yerleştirin, ardından Tamamla'ya basın ya da çekmeceyi kapatın.",
 "@cabinOperation_noEntryInstruction": {
   "description": "Shown in the execution panel instead of the entry form when the operation has no editable fields (e.g. refund); the user only places items and completes"

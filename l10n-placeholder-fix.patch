@@ -1,0 +1,154 @@
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_en.arb b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+index 0b52d15..ddd1bca 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_en.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_en.arb
+@@ -1339,7 +1339,17 @@
+   "dashboard_roomBedLabel": "ROOM / BED",
+   "dashboard_serviceLabel": "SERVICE",
+   "remainingDayChip_overdueLabel": "{days} days overdue",
++  "@remainingDayChip_overdueLabel": {
++    "placeholders": {
++      "days": { "type": "int" }
++    }
++  },
+   "remainingDayChip_daysLabel": "{days} days",
++  "@remainingDayChip_daysLabel": {
++    "placeholders": {
++      "days": { "type": "int" }
++    }
++  },
+   "@dashboard_roomBedLabel": {},
+   "dashboardUpcomingTreatmentsPanelTitle": "UPCOMING TREATMENTS",
+   "@dashboardUpcomingTreatmentsPanelTitle": {},
+@@ -2274,6 +2284,11 @@
+   "@patientPicker_myPatientsToggleLabel": {},
+   "patientPicker_otherServiceToggleLabel": "Other Service",
+   "patientPicker_inpatientServiceLabel": "Hospitalized in: {name}",
++  "@patientPicker_inpatientServiceLabel": {
++    "placeholders": {
++      "name": { "type": "String" }
++    }
++  },
+   "patientPicker_urgentPatientHint": "Create a record for an urgent patient not on the list.",
+   "@patientPicker_urgentPatientHint": {},
+   "patientPicker_createUrgentPatientButton": "Create Urgent Patient",
+@@ -6688,16 +6703,42 @@
+   "report_materialUsage_totalLabel": "Total",
+   "refillList_form_addSectionTitle": "Add Medicines",
+   "refillList_form_listSectionTitle": "Medicines in List ({count})",
++  "@refillList_form_listSectionTitle": {
++    "placeholders": {
++      "count": { "type": "int" }
++    }
++  },
+   "refillList_form_searchHint": "Search by medicine name or barcode",
+   "refillList_form_selectAll": "Select all",
+   "refillList_form_addSelectedButton": "Add Selected ({count})",
++  "@refillList_form_addSelectedButton": {
++    "placeholders": {
++      "count": { "type": "int" }
++    }
++  },
+   "refillList_form_emptyListHint": "No medicines in the list. Check medicines on the left and press \"Add Selected\".",
+   "refillList_form_noCandidates": "No medicines found for this type",
+   "refillList_form_clearListButton": "Clear List",
+   "refillList_form_totalLabel": "{count} medicines · Total refill: {quantity}",
++  "@refillList_form_totalLabel": {
++    "placeholders": {
++      "count": { "type": "int" },
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_currentStockLabel": "Current: {quantity}",
++  "@refillList_form_currentStockLabel": {
++    "placeholders": {
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_inListBadge": "In list",
+   "refillList_form_suggestedLabel": "Suggested: {quantity}",
++  "@refillList_form_suggestedLabel": {
++    "placeholders": {
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_removeTooltip": "Remove from list",
+   "refillList_printTooltip": "Print",
+   "refillList_print_noDetails": "This list has no medicines to print",
+diff --git a/packages/pharmed_ui/lib/src/l10n/app_fr.arb b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+index bcabe78..e965131 100644
+--- a/packages/pharmed_ui/lib/src/l10n/app_fr.arb
++++ b/packages/pharmed_ui/lib/src/l10n/app_fr.arb
+@@ -1110,7 +1110,17 @@
+   "dashboard_roomBedLabel": "CHAMBRE / LIT",
+   "dashboard_serviceLabel": "SERVICE",
+   "remainingDayChip_overdueLabel": "Dépassé de {days} j",
++  "@remainingDayChip_overdueLabel": {
++    "placeholders": {
++      "days": { "type": "int" }
++    }
++  },
+   "remainingDayChip_daysLabel": "{days} j",
++  "@remainingDayChip_daysLabel": {
++    "placeholders": {
++      "days": { "type": "int" }
++    }
++  },
+   "@dashboard_roomBedLabel": {},
+   "dashboardUpcomingTreatmentsPanelTitle": "TRAITEMENTS À VENIR",
+   "@dashboardUpcomingTreatmentsPanelTitle": {},
+@@ -2033,6 +2043,11 @@
+   "@patientPicker_myPatientsToggleLabel": {},
+   "patientPicker_otherServiceToggleLabel": "Autre service",
+   "patientPicker_inpatientServiceLabel": "Hospitalisé en : {name}",
++  "@patientPicker_inpatientServiceLabel": {
++    "placeholders": {
++      "name": { "type": "String" }
++    }
++  },
+   "patientPicker_urgentPatientHint": "Créez un dossier pour un patient urgent qui ne figure pas dans la liste.",
+   "@patientPicker_urgentPatientHint": {},
+   "patientPicker_createUrgentPatientButton": "Créer un patient urgent",
+@@ -5642,16 +5657,42 @@
+   "report_materialUsage_totalLabel": "Total",
+   "refillList_form_addSectionTitle": "Ajouter des médicaments",
+   "refillList_form_listSectionTitle": "Médicaments de la liste ({count})",
++  "@refillList_form_listSectionTitle": {
++    "placeholders": {
++      "count": { "type": "int" }
++    }
++  },
+   "refillList_form_searchHint": "Rechercher par nom ou code-barres",
+   "refillList_form_selectAll": "Tout sélectionner",
+   "refillList_form_addSelectedButton": "Ajouter la sélection ({count})",
++  "@refillList_form_addSelectedButton": {
++    "placeholders": {
++      "count": { "type": "int" }
++    }
++  },
+   "refillList_form_emptyListHint": "Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».",
+   "refillList_form_noCandidates": "Aucun médicament trouvé pour ce type",
+   "refillList_form_clearListButton": "Vider la liste",
+   "refillList_form_totalLabel": "{count} médicaments · Remplissage total : {quantity}",
++  "@refillList_form_totalLabel": {
++    "placeholders": {
++      "count": { "type": "int" },
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_currentStockLabel": "Actuel : {quantity}",
++  "@refillList_form_currentStockLabel": {
++    "placeholders": {
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_inListBadge": "Dans la liste",
+   "refillList_form_suggestedLabel": "Suggéré : {quantity}",
++  "@refillList_form_suggestedLabel": {
++    "placeholders": {
++      "quantity": { "type": "String" }
++    }
++  },
+   "refillList_form_removeTooltip": "Retirer de la liste",
+   "refillList_printTooltip": "Imprimer",
+   "refillList_print_noDetails": "Cette liste ne contient aucun médicament à imprimer",

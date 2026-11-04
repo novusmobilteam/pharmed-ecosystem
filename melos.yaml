@@ -1,4 +1,4 @@
-﻿name: pharmed
+name: pharmed
 
 packages:
   - packages/pharmed_core
@@ -33,3 +33,4 @@ scripts:
   catalog:
     run: melos exec --scope="pharmed_widgetbook" -- flutter run -d chrome
     description: Widget kataloğunu tarayıcıda aç (Widgetbook)
+sdkPath: .fvm/flutter_sdk

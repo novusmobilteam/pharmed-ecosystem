@@ -767,13 +767,9 @@
   "refill_action_complete": "إتمام التعبئة",
   "refill_action_continue": "متابعة التعبئة",
   "refill_success_completedMobile": "تمت التعبئة بنجاح.",
-  "refill_success_completedMaster": "تم حفظ التعبئة بنجاح",
   "refill_hint_selectDrawer": "اختر درجاً من اللوحة اليسرى لبدء التعبئة.",
   "refill_hint_selectCell": "اختر خلية من الدرج.",
   "refill_hint_cellError": "اختر خلية.",
-  "refill_label_countQty": "كمية الجرد",
-  "refill_label_fillQty": "كمية التعبئة",
-  "refill_label_expiryDate": "تاريخ الانتهاء",
 
   "refund_success_title": "تم الإرجاع بنجاح",
 "refund_success_message": "يرجى تسليم الدواء المُرجَع إلى الصيدلي.",
@@ -865,7 +861,6 @@
   "refill_error_queueMessage": "تعذّر حفظ تعبئة هذا الدرج. يُرجى استرجاع الأدوية التي وضعتها.",
   "refill_error_continueNext": "الدرج التالي",
   "refill_error_endProcess": "إنهاء العملية",
-  "refill_status_failed": "فشل",
     "refill_status_failed": "فشل",
   "refill_label_cellProgress": "الخانة {current}/{total}",
   "@refill_label_cellProgress": {

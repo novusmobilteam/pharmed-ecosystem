@@ -1339,7 +1339,17 @@
   "dashboard_roomBedLabel": "ROOM / BED",
   "dashboard_serviceLabel": "SERVICE",
   "remainingDayChip_overdueLabel": "{days} days overdue",
+  "@remainingDayChip_overdueLabel": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "remainingDayChip_daysLabel": "{days} days",
+  "@remainingDayChip_daysLabel": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
   "@dashboard_roomBedLabel": {},
   "dashboardUpcomingTreatmentsPanelTitle": "UPCOMING TREATMENTS",
   "@dashboardUpcomingTreatmentsPanelTitle": {},
@@ -2274,6 +2284,11 @@
   "@patientPicker_myPatientsToggleLabel": {},
   "patientPicker_otherServiceToggleLabel": "Other Service",
   "patientPicker_inpatientServiceLabel": "Hospitalized in: {name}",
+  "@patientPicker_inpatientServiceLabel": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "patientPicker_urgentPatientHint": "Create a record for an urgent patient not on the list.",
   "@patientPicker_urgentPatientHint": {},
   "patientPicker_createUrgentPatientButton": "Create Urgent Patient",
@@ -4414,31 +4429,24 @@
   "@patientListPanel_filter_dialogTitle": {},
   "masterDrawer_status_devicePreparingTitle": "Preparing",
   "@masterDrawer_status_devicePreparingTitle": {},
-  "masterDrawer_status_devicePreparingSubtitle": "The system is getting ready. Please wait a moment.",
   "@masterDrawer_status_devicePreparingSubtitle": {},
   "masterDrawer_status_lockOpeningTitle": "Unlocking",
   "@masterDrawer_status_lockOpeningTitle": {},
-  "masterDrawer_status_lockOpeningSubtitle": "The drawer lock is opening. Please wait a moment.",
   "@masterDrawer_status_lockOpeningSubtitle": {},
   "masterDrawer_status_waitingPullTitle": "Please Pull the Drawer",
   "@masterDrawer_status_waitingPullTitle": {},
-  "masterDrawer_status_waitingPullSubtitle": "The lock has been released. Pull the drawer open to continue.",
   "@masterDrawer_status_waitingPullSubtitle": {},
   "masterDrawer_status_openingLidTitle": "Opening Compartment Lid",
   "@masterDrawer_status_openingLidTitle": {},
-  "masterDrawer_status_openingLidSubtitle": "The compartment lid is opening. Please wait a moment.",
   "@masterDrawer_status_openingLidSubtitle": {},
   "masterDrawer_status_waitingCloseTitle": "Please Close the Drawer",
   "@masterDrawer_status_waitingCloseTitle": {},
-  "masterDrawer_status_waitingCloseSubtitle": "Close the drawer to continue to the next step.",
   "@masterDrawer_status_waitingCloseSubtitle": {},
   "masterDrawer_status_failedTitle": "A Problem Occurred",
   "@masterDrawer_status_failedTitle": {},
-  "masterDrawer_status_failedSubtitle": "Please wait, the system is checking the drawer status.",
   "@masterDrawer_status_failedSubtitle": {},
   "masterDrawer_status_openingTitle": "Opening Drawer",
   "@masterDrawer_status_openingTitle": {},
-  "masterDrawer_status_openingSubtitle": "The drawer is opening. Please wait a moment.",
   "@masterDrawer_status_openingSubtitle": {},
   "masterDrawer_stop_waitingCloseTitle": "Please Close the Open Drawer",
   "@masterDrawer_stop_waitingCloseTitle": {},
@@ -4478,8 +4486,6 @@
   "@refund_hint_selectPatientFirst": {},
   "refund_hint_noMedicineFound": "No refundable medicine found",
   "@refund_hint_noMedicineFound": {},
-  "refund_action_start": "Start Refund",
-  "@refund_action_start": {},
   "refund_action_nextCell": "Next Cell",
   "@refund_action_nextCell": {},
   "refund_action_completeRefund": "Complete Refund",
@@ -4954,8 +4960,6 @@
   "@cabinDesign_cabinList_noPortLabel": {},
   "cabinDesign_cabinList_passiveBadge": "Inactive",
   "@cabinDesign_cabinList_passiveBadge": {},
-  "cabinDesign_newCabin_typeLabel": "Cabinet Type",
-  "@cabinDesign_newCabin_typeLabel": {},
   "cabinDesign_newCabin_addressLabel": "Address",
   "@cabinDesign_newCabin_addressLabel": {},
   "cabinDesign_newCabin_noAddressAvailableWarning": "No address left to assign in this station (all 15 addresses B-P are in use).",
@@ -5751,7 +5755,6 @@
     }
   },
   "qrScan_operationIntake": "Medication Intake",
-  "qrScan_operationRefund": "Medication Return",
   "qrScan_operationUnscanned": "Unscanned QR Codes",
   "qrScan_closeTooltip": "Close",
   "qrScan_scannedCounterLabel": "Scanned",
@@ -6004,14 +6007,6 @@
   "intake_overdue_cancelButton": "Cancel",
   "intake_overdue_confirmButton": "Confirm and Continue",
   "intake_overdue_descriptionRequiredError": "A reason is required for overdue medications.",
-  "refund_error_drawerNotResolved": "{count, plural, one{Drawer could not be resolved for {count} item} other{Drawer could not be resolved for {count} items}}; refund was not started.",
-"@refund_error_drawerNotResolved": {
-  "placeholders": {
-    "count": { "type": "int" }
-  }
-},
-"enumCore_cabinOpModeRefund": "Refund",
-"@enumCore_cabinOpModeRefund": {},
 "cabinOperation_noEntryInstruction": "Place the items in the highlighted cell, then press Complete or close the drawer.",
 "refund_action_start": "Start Refund",
 "@refund_action_start": {},
@@ -6688,16 +6683,42 @@
   "report_materialUsage_totalLabel": "Total",
   "refillList_form_addSectionTitle": "Add Medicines",
   "refillList_form_listSectionTitle": "Medicines in List ({count})",
+  "@refillList_form_listSectionTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "refillList_form_searchHint": "Search by medicine name or barcode",
   "refillList_form_selectAll": "Select all",
   "refillList_form_addSelectedButton": "Add Selected ({count})",
+  "@refillList_form_addSelectedButton": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "refillList_form_emptyListHint": "No medicines in the list. Check medicines on the left and press \"Add Selected\".",
   "refillList_form_noCandidates": "No medicines found for this type",
   "refillList_form_clearListButton": "Clear List",
   "refillList_form_totalLabel": "{count} medicines · Total refill: {quantity}",
+  "@refillList_form_totalLabel": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_currentStockLabel": "Current: {quantity}",
+  "@refillList_form_currentStockLabel": {
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_inListBadge": "In list",
   "refillList_form_suggestedLabel": "Suggested: {quantity}",
+  "@refillList_form_suggestedLabel": {
+    "placeholders": {
+      "quantity": { "type": "String" }
+    }
+  },
   "refillList_form_removeTooltip": "Remove from list",
   "refillList_printTooltip": "Print",
   "refillList_print_noDetails": "This list has no medicines to print",

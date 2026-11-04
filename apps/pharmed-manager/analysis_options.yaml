@@ -12,6 +12,14 @@ analyzer:
     prefer_const_constructors: ignore
     invalid_annotation_target: ignore
     prefer_final_fields: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   strong-mode:
     implicit-dynamic: false
 include: package:flutter_lints/flutter.yaml
