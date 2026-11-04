@@ -19,4 +19,12 @@ abstract interface class IFingerprintRepository {
 
   /// Bir parmağın kaydını siler.
   Future<Result<void>> deleteFinger(FingerPosition position);
+
+  /// [SWREQ-FP-106] Kullanıcı KVKK açık rıza metnini daha önce onaylamış mı?
+  /// GET /Fingerprint/consent/{userId}
+  Future<Result<bool>> hasConsent(int userId);
+
+  /// [SWREQ-FP-106] KVKK açık rızasını kaydeder.
+  /// POST /Fingerprint/consent  { userId, consentAt }
+  Future<Result<void>> saveConsent({required int userId, required DateTime consentAt});
 }

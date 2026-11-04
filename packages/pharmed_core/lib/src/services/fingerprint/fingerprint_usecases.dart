@@ -1,4 +1,4 @@
-// [SWREQ-FP-100..105]
+// [SWREQ-FP-100..106]
 // Parmak izi kaydı ve parmak iziyle giriş use case'leri.
 //
 // Sınıf: Class B
@@ -117,6 +117,29 @@ class DeleteEnrolledFingerUseCase {
   final IFingerprintRepository _repository;
 
   Future<Result<void>> call(FingerPosition position) => _repository.deleteFinger(position);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// KVKK açık rıza
+// ─────────────────────────────────────────────────────────────────
+
+/// [SWREQ-FP-106] Kullanıcının KVKK açık rızası var mı?
+/// `true` → rıza metni gösterilmeden parmak tanıtmaya geçilir.
+class GetFingerprintConsentUseCase {
+  const GetFingerprintConsentUseCase(this._repository);
+  final IFingerprintRepository _repository;
+
+  Future<Result<bool>> call(int userId) => _repository.hasConsent(userId);
+}
+
+/// [SWREQ-FP-106] KVKK açık rızasını kaydeder. Başarılı olmadan parmak tanıtmaya geçilmez.
+class SaveFingerprintConsentUseCase {
+  const SaveFingerprintConsentUseCase(this._repository);
+  final IFingerprintRepository _repository;
+
+  /// [consentAt] verilmezse şu an kullanılır; her durumda UTC'ye çevrilir.
+  Future<Result<void>> call({required int userId, DateTime? consentAt}) =>
+      _repository.saveConsent(userId: userId, consentAt: (consentAt ?? DateTime.now()).toUtc());
 }
 
 // ─────────────────────────────────────────────────────────────────

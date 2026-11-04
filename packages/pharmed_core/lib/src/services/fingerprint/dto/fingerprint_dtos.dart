@@ -96,3 +96,21 @@ class FingerprintLoginRequestDTO {
     if (stationId != null) 'stationId': stationId,
   };
 }
+
+/// POST /Fingerprint/consent  — GET /Fingerprint/consent/{userId} yanıtı da bu alanları taşıyabilir.
+/// KVKK biyometrik veri açık rızası.
+class FingerprintConsentDTO {
+  const FingerprintConsentDTO({this.userId, this.consentAt});
+
+  factory FingerprintConsentDTO.fromJson(Map<String, dynamic> json) => FingerprintConsentDTO(
+    userId: json['userId'] as int?,
+    consentAt: json['consentAt'] as String?,
+  );
+
+  final int? userId;
+
+  /// ISO-8601 (UTC)
+  final String? consentAt;
+
+  Map<String, dynamic> toJson() => {'userId': userId, 'consentAt': consentAt};
+}

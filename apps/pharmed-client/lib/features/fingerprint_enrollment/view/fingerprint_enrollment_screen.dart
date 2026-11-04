@@ -308,12 +308,17 @@ class _ConsentStep extends StatelessWidget {
                 onChanged: n.setConsent,
                 label: context.l10n.fingerprint_enroll_consentCheckbox,
               ),
+              if (n.consentError != null) ...[
+                const SizedBox(height: MedSpacing.lg),
+                _Banner.error(n.consentError!),
+              ],
               const SizedBox(height: MedSpacing.xl),
               MedButton(
                 label: context.l10n.fingerprint_enroll_continueButton,
                 size: MedButtonSize.lg,
                 fullWidth: true,
-                onPressed: n.consentAccepted ? n.continueAfterConsent : null,
+                isLoading: n.isSavingConsent,
+                onPressed: n.consentAccepted && !n.isSavingConsent ? n.continueAfterConsent : null,
               ),
             ],
           ),

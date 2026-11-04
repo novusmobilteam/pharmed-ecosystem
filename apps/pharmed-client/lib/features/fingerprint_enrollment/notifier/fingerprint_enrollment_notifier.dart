@@ -1,10 +1,14 @@
 // pharmed-client/lib/features/fingerprint_enrollment/notifier/fingerprint_enrollment_notifier.dart
 //
-// [SWREQ-FP-100] [SWREQ-FP-101] [SWREQ-FP-102]
+// [SWREQ-FP-100] [SWREQ-FP-101] [SWREQ-FP-102] [SWREQ-FP-106]
 // Parmak izi tanıtma akışı:
 //   1. Şifre doğrulama — açık bırakılmış oturumda başkası kendi parmağını tanıtamasın.
 //      Oturumu etkilemeyen tanık doğrulama servisi kullanılır (dönen kullanıcı = oturumdaki kullanıcı).
 //   2. KVKK aydınlatma + açık rıza.
+//      Şifre doğrulanınca rıza durumu sunucudan sorgulanır (GET /Fingerprint/consent/{userId}):
+//        - rıza varsa bu adım atlanır, doğrudan parmaklara geçilir;
+//        - rıza yoksa (veya durum alınamazsa) metin gösterilir; onaylanınca
+//          POST /Fingerprint/consent gönderilir, YALNIZCA başarılıysa parmaklara geçilir.
 //   3. Parmaklar: seçilen parmak için 3 okuma (her biri kayıt kalitesinde, aralarda parmak kaldırılır).
 //      Zorunlu parmak yoktur; tek bir parmak okunduğunda kaydedilebilir.
 //   4. Gönderim: yalnızca bu oturumda okunan parmaklar tek istekte gider.
@@ -32,6 +36,8 @@ final fingerprintEnrollmentNotifierProvider = ChangeNotifierProvider.autoDispose
     getEnrolled: ref.read(getEnrolledFingersUseCaseProvider),
     enroll: ref.read(enrollFingerprintsUseCaseProvider),
     delete: ref.read(deleteEnrolledFingerUseCaseProvider),
+    getConsent: ref.read(getFingerprintConsentUseCaseProvider),
+    saveConsent: ref.read(saveFingerprintConsentUseCaseProvider),
   ),
 );
 
@@ -48,12 +54,16 @@ class FingerprintEnrollmentNotifier extends ChangeNotifier {
     required GetEnrolledFingersUseCase getEnrolled,
     required EnrollFingerprintsUseCase enroll,
     required DeleteEnrolledFingerUseCase delete,
+    required GetFingerprintConsentUseCase getConsent,
+    required SaveFingerprintConsentUseCase saveConsent,
   }) : _scanner = scanner,
        _user = currentUser,
        _verifyCredentials = verifyCredentials,
        _getEnrolled = getEnrolled,
        _enroll = enroll,
-       _delete = delete;
+       _delete = delete,
+       _getConsent = getConsent,
+       _saveConsent = saveConsent;
 
   static const _unit = 'SW-UNIT-FP';
 
@@ -69,6 +79,8 @@ class FingerprintEnrollmentNotifier extends ChangeNotifier {
   final GetEnrolledFingersUseCase _getEnrolled;
   final EnrollFingerprintsUseCase _enroll;
   final DeleteEnrolledFingerUseCase _delete;
+  final GetFingerprintConsentUseCase _getConsent;
+  final SaveFingerprintConsentUseCase _saveConsent;
   bool _disposed = false;
 
   AppUser? get user => _user;
@@ -81,6 +93,12 @@ class FingerprintEnrollmentNotifier extends ChangeNotifier {
 
   // ── 2. Rıza ───────────────────────────────────────────────────────────
   bool consentAccepted = false;
+
+  /// POST /Fingerprint/consent sürüyor.
+  bool isSavingConsent = false;
+
+  /// Rıza kaydedilemediyse kullanıcıya gösterilecek mesaj.
+  String? consentError;
 
   // ── Okuyucu ───────────────────────────────────────────────────────────
   bool isOpeningScanner = false;
@@ -170,9 +188,22 @@ class FingerprintEnrollmentNotifier extends ChangeNotifier {
       context: {'userId': user.id},
     );
 
+    if (!ok) {
+      isVerifying = false;
+      _notify();
+      return;
+    }
+
+    // Rıza sorgusu sürerken şifre butonu yükleniyor görünür (isVerifying hâlâ true).
+    final consented = await _checkConsent(user.id);
+    if (_disposed) return;
     isVerifying = false;
-    if (ok) step = EnrollmentStep.consent;
-    _notify();
+    if (consented) {
+      await _enterFingersStep();
+    } else {
+      step = EnrollmentStep.consent;
+      _notify();
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -180,18 +211,81 @@ class FingerprintEnrollmentNotifier extends ChangeNotifier {
   // ─────────────────────────────────────────────────────────────────────
 
   void setConsent(bool value) {
+    if (isSavingConsent) return;
     consentAccepted = value;
+    consentError = null;
     _notify();
   }
 
-  Future<void> continueAfterConsent() async {
-    if (!consentAccepted) return;
-    MedLogger.info(
-      unit: _unit,
-      swreq: 'SWREQ-FP-100',
-      message: 'Biyometrik veri açık rızası alındı',
-      context: {'userId': _user?.id, 'at': DateTime.now().toUtc().toIso8601String()},
+  /// Sunucuda rıza var mı? Sorgu başarısızsa `false` döner — metin yeniden
+  /// gösterilir (rızasız parmak tanıtmaya asla geçilmez).
+  Future<bool> _checkConsent(int userId) async {
+    final result = await _getConsent(userId);
+    return result.when(
+      ok: (consented) {
+        MedLogger.info(
+          unit: _unit,
+          swreq: 'SWREQ-FP-106',
+          message: consented ? 'KVKK rızası mevcut, rıza adımı atlandı' : 'KVKK rızası yok, rıza metni gösterilecek',
+          context: {'userId': userId},
+        );
+        return consented;
+      },
+      error: (e) {
+        MedLogger.warn(
+          unit: _unit,
+          swreq: 'SWREQ-FP-106',
+          message: 'KVKK rıza durumu alınamadı, rıza metni gösterilecek',
+          context: {'userId': userId, 'error': e.message},
+        );
+        return false;
+      },
     );
+  }
+
+  /// Rızayı sunucuya kaydeder; yalnızca başarılıysa parmaklara geçer.
+  Future<void> continueAfterConsent() async {
+    final user = _user;
+    if (user == null || !consentAccepted || isSavingConsent) return;
+    isSavingConsent = true;
+    consentError = null;
+    _notify();
+
+    final consentAt = DateTime.now().toUtc();
+    final result = await _saveConsent(userId: user.id, consentAt: consentAt);
+    if (_disposed) return;
+
+    final saved = result.when(
+      ok: (_) {
+        MedLogger.info(
+          unit: _unit,
+          swreq: 'SWREQ-FP-106',
+          message: 'Biyometrik veri açık rızası kaydedildi',
+          context: {'userId': user.id, 'at': consentAt.toIso8601String()},
+        );
+        return true;
+      },
+      error: (e) {
+        consentError = e.userMessage;
+        MedLogger.warn(
+          unit: _unit,
+          swreq: 'SWREQ-FP-106',
+          message: 'Biyometrik veri açık rızası kaydedilemedi',
+          context: {'userId': user.id, 'error': e.message},
+        );
+        return false;
+      },
+    );
+
+    isSavingConsent = false;
+    if (saved) {
+      await _enterFingersStep();
+    } else {
+      _notify();
+    }
+  }
+
+  Future<void> _enterFingersStep() async {
     step = EnrollmentStep.fingers;
     _notify();
     await Future.wait([openScanner(), loadEnrolled()]);

@@ -106,6 +106,31 @@ class FakeFingerprintRepository implements IFingerprintRepository {
     return const Result.ok(null);
   }
 
+  // ── KVKK rızası ──────────────────────────────────────────────────────────
+  // Yalnızca bellekte: uygulama yeniden başlayınca rıza metni tekrar gösterilir
+  // (her iki akışı da denemek için yeterli).
+
+  final Map<int, DateTime> _consents = {};
+
+  @override
+  Future<Result<bool>> hasConsent(int userId) async {
+    await Future<void>.delayed(latency ~/ 2);
+    return Result.ok(_consents.containsKey(userId));
+  }
+
+  @override
+  Future<Result<void>> saveConsent({required int userId, required DateTime consentAt}) async {
+    await Future<void>.delayed(latency ~/ 2);
+    _consents[userId] = consentAt.toUtc();
+    MedLogger.info(
+      unit: _unit,
+      swreq: _swreq,
+      message: 'KVKK rızası kaydı simüle edildi (servis yok)',
+      context: {'userId': userId, 'consentAt': consentAt.toUtc().toIso8601String()},
+    );
+    return const Result.ok(null);
+  }
+
   // ── Dosya ────────────────────────────────────────────────────────────────
 
   Future<Map<String, List<EnrolledFingerDTO>>> _read() async {

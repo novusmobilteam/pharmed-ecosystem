@@ -73,3 +73,11 @@ final getEnrolledFingersUseCaseProvider = Provider(
 final deleteEnrolledFingerUseCaseProvider = Provider(
   (ref) => DeleteEnrolledFingerUseCase(ref.read(fingerprintRepositoryProvider)),
 );
+
+final getFingerprintConsentUseCaseProvider = Provider(
+  (ref) => GetFingerprintConsentUseCase(ref.read(fingerprintRepositoryProvider)),
+);
+
+final saveFingerprintConsentUseCaseProvider = Provider(
+  (ref) => SaveFingerprintConsentUseCase(ref.read(fingerprintRepositoryProvider)),
+);

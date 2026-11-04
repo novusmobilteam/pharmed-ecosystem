@@ -43,4 +43,39 @@ class FingerprintRemoteDataSource extends BaseRemoteDataSource {
     parser: BaseRemoteDataSource.voidParser(),
     successLog: 'Parmak izi kaydı silindi',
   );
+
+  /// [SWREQ-FP-106] GET /Fingerprint/consent/{userId}
+  /// `data` boş (null) gelirse rıza yok sayılır.
+  Future<Result<bool>> getConsent(int userId) async {
+    final res = await fetchRequest<bool>(
+      path: '$_base/consent/$userId',
+      parser: _consentParser,
+      successLog: 'KVKK rıza durumu alındı',
+      emptyLog: 'KVKK rızası yok',
+    );
+    return res.when(ok: (v) => Result.ok(v ?? false), error: Result.error);
+  }
+
+  /// [SWREQ-FP-106] POST /Fingerprint/consent
+  Future<Result<void>> saveConsent(FingerprintConsentDTO dto) => postRequest<void>(
+    path: '$_base/consent',
+    body: dto.toJson(),
+    parser: BaseRemoteDataSource.voidParser(),
+    successLog: 'KVKK rızası kaydedildi',
+  );
+
+  /// Zarfın `data` alanı. Swagger'da GET yanıt şeması tanımlı değil; olası şekiller:
+  ///   `true` / `false`
+  ///   `{ "userId": 1, "consentAt": "..." }` (consentAt doluysa rıza var)
+  ///   `{ "isConsented": true }` / `{ "hasConsent": true }`
+  // TODO(backend): Yanıt şekli netleşince bu parser sadeleştirilsin.
+  static bool? _consentParser(Object? data) => switch (data) {
+    null => false,
+    bool v => v,
+    {'isConsented': bool v} => v,
+    {'hasConsent': bool v} => v,
+    {'consent': bool v} => v,
+    Map<String, dynamic> m => FingerprintConsentDTO.fromJson(m).consentAt != null,
+    _ => throw FormatException('Beklenmeyen KVKK rıza yanıtı: ${data.runtimeType}'),
+  };
 }

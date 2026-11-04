@@ -26,4 +26,12 @@ class FingerprintRepositoryImpl implements IFingerprintRepository {
 
   @override
   Future<Result<void>> deleteFinger(FingerPosition position) => _dataSource.deleteFinger(position.isoCode);
+
+  @override
+  Future<Result<bool>> hasConsent(int userId) => _dataSource.getConsent(userId);
+
+  @override
+  Future<Result<void>> saveConsent({required int userId, required DateTime consentAt}) => _dataSource.saveConsent(
+    FingerprintConsentDTO(userId: userId, consentAt: consentAt.toUtc().toIso8601String()),
+  );
 }
