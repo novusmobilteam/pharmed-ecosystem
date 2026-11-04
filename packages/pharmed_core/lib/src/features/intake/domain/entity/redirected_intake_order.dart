@@ -50,6 +50,13 @@ class RedirectedIntakeOrder extends Equatable {
     final neededDose = dosePiece ?? 0;
     final resolvedStock = stocks.firstWhereOrNull((s) => (s.quantity ?? 0) >= neededDose) ?? stocks.firstOrNull;
 
+    // Yönlendirilen order yanıtındaki stoklar gerçek bir atama taşımıyor;
+    // CabinStockMapper cabinDrawrDetail zincirinden STOKSUZ sentetik bir
+    // assignment kuruyor. hasNoStock ve doz sınırları assignment.stocks'a
+    // baktığı için alınacak stok atamaya eklenir. Ordered check de yalnızca
+    // resolvedStock'tan tek detay ürettiğinden kapsam bununla aynı.
+    final assignment = resolvedStock == null ? null : resolvedStock.assignment?.copyWith(stocks: [resolvedStock]);
+
     return IntakeItem(
       id: id,
       type: IntakeType.ordered,
@@ -59,7 +66,7 @@ class RedirectedIntakeOrder extends Equatable {
       firstDoseEmergency: firstDoseEmergency,
       askDoctor: askDoctor,
       inCaseOfNecessity: inCaseOfNecessity,
-      assignment: resolvedStock?.assignment,
+      assignment: assignment,
       stock: resolvedStock,
       redirectedOrder: this,
     );
