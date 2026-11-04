@@ -246,4 +246,29 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
       parser: BaseRemoteDataSource.apiResponseListParser(InertMaterialDto.fromJson),
     );
   }
+
+  /// Yetki Kırım raporu — istasyon ve tarih aralığı query parametresiyle gider:
+  /// `/Report/authorizationBreakdownList?stationId=1&startDate=2026-11-01&endDate=2026-11-04`
+  Future<Result<ApiResponse<List<AuthorizationBreakdownDto>>?>> getAuthorizationBreakdowns({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/authorizationBreakdownList',
+      query: {
+        'stationId': stationId,
+        if (params?.startDate != null) 'startDate': _dateOnly(params!.startDate!),
+        if (params?.endDate != null) 'endDate': _dateOnly(params!.endDate!),
+      },
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(AuthorizationBreakdownDto.fromJson),
+    );
+  }
+
+  /// `yyyy-MM-dd` — servis tarih aralığını gün bazında alır.
+  static String _dateOnly(DateTime d) => d.toIso8601String().split('T').first;
 }

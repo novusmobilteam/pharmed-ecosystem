@@ -53,4 +53,10 @@ abstract interface class IReportRepository {
 
   /// Hareketsiz Malzeme
   Future<Result<ApiResponse<List<InertMaterial>>?>> getInertMaterials({PagedQueryParams? params});
+
+  /// Yetki Kırım
+  Future<Result<ApiResponse<List<AuthorizationBreakdown>>?>> getAuthorizationBreakdowns({
+    PagedQueryParams? params,
+    required int stationId,
+  });
 }

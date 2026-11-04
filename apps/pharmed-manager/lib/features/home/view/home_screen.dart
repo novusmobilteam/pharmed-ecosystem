@@ -14,6 +14,7 @@ import 'package:pharmed_manager/features/reports/ordered_not_loaded_materials/vi
 import 'package:pharmed_manager/features/reports/ordered_loaded_materials/view/ordered_loaded_materials_report_screen.dart';
 import 'package:pharmed_manager/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart';
 import 'package:pharmed_manager/features/reports/inert_materials/view/inert_materials_report_screen.dart';
+import 'package:pharmed_manager/features/reports/authorization_breakdown/view/authorization_breakdown_report_screen.dart';
 import 'package:pharmed_manager/features/role/view/role_screen.dart';
 import 'package:pharmed_manager/features/settings/view/settings_view.dart';
 import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
@@ -222,6 +223,7 @@ class _HomeContent extends StatelessWidget {
       'patient-inventory-list' => PatientInventoryReportScreen(menu: menu!),
       'material-usage-list' => MaterialUsageReportScreen(menu: menu!),
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
+      'authorization-breakdown-list' => AuthorizationBreakdownReportScreen(menu: menu!),
       'heatControl' => CabinTemperatureScreen(menu: menu!),
       'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
       'stationStock' => StationStockListScreen(menu: menu!),

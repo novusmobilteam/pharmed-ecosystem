@@ -5659,6 +5659,42 @@
 "@tableCore_inertMaterialQuantityColumn": {
   "description": "Inert materials report table column header for the quantity of the inert material in the station"
 },
+"tableCore_authorizationBreakdownDateColumn": "Date",
+"@tableCore_authorizationBreakdownDateColumn": {
+  "description": "Authorization breakdown report table column header for the intake (application) date"
+},
+"tableCore_authorizationBreakdownPatientColumn": "Patient",
+"@tableCore_authorizationBreakdownPatientColumn": {
+  "description": "Authorization breakdown report table column header for the patient full name"
+},
+"tableCore_authorizationBreakdownMaterialColumn": "Material",
+"@tableCore_authorizationBreakdownMaterialColumn": {
+  "description": "Authorization breakdown report table column header for the material name"
+},
+"tableCore_authorizationBreakdownQuantityColumn": "Quantity",
+"@tableCore_authorizationBreakdownQuantityColumn": {
+  "description": "Authorization breakdown report table column header for the quantity taken"
+},
+"tableCore_authorizationBreakdownTypeColumn": "Breakdown Type",
+"@tableCore_authorizationBreakdownTypeColumn": {
+  "description": "Authorization breakdown report table column header for how the authorization was bypassed (orderless or free access)"
+},
+"tableCore_authorizationBreakdownUserColumn": "User",
+"@tableCore_authorizationBreakdownUserColumn": {
+  "description": "Authorization breakdown report table column header for the user who performed the intake"
+},
+"tableCore_authorizationBreakdownStationColumn": "Station",
+"@tableCore_authorizationBreakdownStationColumn": {
+  "description": "Authorization breakdown report table column header for the station where the intake was performed"
+},
+"report_authorizationBreakdown_orderlessType": "Orderless Intake",
+"@report_authorizationBreakdown_orderlessType": {
+  "description": "Breakdown type cell value in the authorization breakdown report when the intake was made without an order (isOrderlessCollect)"
+},
+"report_authorizationBreakdown_freeAccessType": "Free Access",
+"@report_authorizationBreakdown_freeAccessType": {
+  "description": "Breakdown type cell value in the authorization breakdown report when the intake was made via free access (isFreeAccessCollect)"
+},
 "report_stationTransaction_detailDialogTitle": "Transaction Detail",
 "@report_stationTransaction_detailDialogTitle": {
   "description": "Title of the detail dialog opened from a row in the station transaction report table"

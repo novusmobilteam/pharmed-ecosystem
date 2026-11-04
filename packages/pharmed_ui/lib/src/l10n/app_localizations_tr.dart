@@ -5925,7 +5925,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unappliedPrescription_table_admissionDateColumn => 'Yatış Tarihi';
 
   @override
-  String get unappliedPrescription_table_prescriptionDateColumn => 'Reçete Tarihi';
+  String get unappliedPrescription_table_prescriptionDateColumn =>
+      'Reçete Tarihi';
 
   @override
   String get unappliedPrescription_table_pendingCountColumn => 'Bekleyen Adet';
@@ -6140,48 +6141,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get masterDrawer_status_devicePreparingTitle => 'Hazırlanıyor';
 
   @override
-  String get masterDrawer_status_devicePreparingSubtitle =>
-      'Cihaz hazırlanıyor.';
-
-  @override
   String get masterDrawer_status_lockOpeningTitle => 'Kilit Açılıyor';
-
-  @override
-  String get masterDrawer_status_lockOpeningSubtitle =>
-      'Kilit açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Çekmeceyi Çekiniz';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle => 'Çekmeceyi çekin.';
-
-  @override
   String get masterDrawer_status_openingLidTitle => 'Göz Kapağı Açılıyor';
-
-  @override
-  String get masterDrawer_status_openingLidSubtitle => 'Göz kapağı açılıyor.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Çekmeceyi Kapatınız';
 
   @override
-  String get masterDrawer_status_waitingCloseSubtitle =>
-      'İlacı aldıysanız çekmeceyi kapatabilirsiniz.';
-
-  @override
   String get masterDrawer_status_failedTitle => 'Bir Sorun Oluştu';
 
   @override
-  String get masterDrawer_status_failedSubtitle =>
-      'Bir sorun oluştu, lütfen tekrar deneyin.';
-
-  @override
   String get masterDrawer_status_openingTitle => 'Çekmece Açılıyor';
-
-  @override
-  String get masterDrawer_status_openingSubtitle =>
-      'Çekmece açılıyor, lütfen bekleyin.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle => 'Açık Çekmeceyi Kapatınız';
@@ -6231,9 +6206,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refund_hint_noMedicineFound => 'İade edilebilir ilaç bulunamadı';
-
-  @override
-  String get refund_action_start => 'İadeyi Başlat';
 
   @override
   String get refund_action_nextCell => 'Sonraki Göz';
@@ -6926,9 +6898,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_cabinList_passiveBadge => 'Pasif';
 
   @override
-  String get cabinDesign_newCabin_typeLabel => 'Kabin Tipi';
-
-  @override
   String get cabinDesign_newCabin_addressLabel => 'Adres';
 
   @override
@@ -7592,6 +7561,32 @@ class AppLocalizationsTr extends AppLocalizations {
   String get masterDrawer_status_closureMonitoredPill => 'Kapanış algılanıyor';
 
   @override
+  String get masterDrawer_status_openingSubtitle =>
+      'Çekmece açılıyor, lütfen bekleyin.';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'Kilit açılıyor, lütfen bekleyin.';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle =>
+      'Cihaz hazırlanıyor.';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle => 'Çekmeceyi çekin.';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle => 'Göz kapağı açılıyor.';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'İlacı aldıysanız çekmeceyi kapatabilirsiniz.';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Bir sorun oluştu, lütfen tekrar deneyin.';
+
+  @override
   String refund_appliedDateLabel(String date) {
     return 'Uygulama Tarihi: $date';
   }
@@ -7963,6 +7958,33 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tableCore_inertMaterialQuantityColumn => 'Miktar';
 
   @override
+  String get tableCore_authorizationBreakdownDateColumn => 'Tarih';
+
+  @override
+  String get tableCore_authorizationBreakdownPatientColumn => 'Hasta';
+
+  @override
+  String get tableCore_authorizationBreakdownMaterialColumn => 'Malzeme';
+
+  @override
+  String get tableCore_authorizationBreakdownQuantityColumn => 'Miktar';
+
+  @override
+  String get tableCore_authorizationBreakdownTypeColumn => 'Kırım Tipi';
+
+  @override
+  String get tableCore_authorizationBreakdownUserColumn => 'Kullanıcı';
+
+  @override
+  String get tableCore_authorizationBreakdownStationColumn => 'İstasyon';
+
+  @override
+  String get report_authorizationBreakdown_orderlessType => 'Ordersız Alım';
+
+  @override
+  String get report_authorizationBreakdown_freeAccessType => 'Serbest Erişim';
+
+  @override
   String get report_stationTransaction_detailDialogTitle => 'İşlem Detayı';
 
   @override
@@ -8067,9 +8089,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get qrScan_operationIntake => 'İlaç Alım';
-
-  @override
-  String get qrScan_operationRefund => 'İlaç İade';
 
   @override
   String get qrScan_operationUnscanned => 'Okutulmayan Karekodlar';
@@ -8383,19 +8402,22 @@ class AppLocalizationsTr extends AppLocalizations {
       'Zamanı geçmiş ilaçlar için açıklama girilmelidir.';
 
   @override
+  String get cabinOperation_noEntryInstruction =>
+      'İlaçları işaretli göze yerleştirin, ardından Tamamla\'ya basın ya da çekmeceyi kapatın.';
+
+  @override
+  String get refund_action_start => 'İadeyi Başlat';
+
+  @override
+  String get refund_action_starting => 'Başlatılıyor...';
+
+  @override
   String refund_error_drawerNotResolved(int count) {
     return '$count kalemin çekmecesi bulunamadı, iade başlatılmadı.';
   }
 
   @override
   String get enumCore_cabinOpModeRefund => 'İade';
-
-  @override
-  String get cabinOperation_noEntryInstruction =>
-      'İlaçları işaretli göze yerleştirin, ardından Tamamla\'ya basın ya da çekmeceyi kapatın.';
-
-  @override
-  String get refund_action_starting => 'Başlatılıyor...';
 
   @override
   String get refund_qr_confirmButton => 'İadeye Geç';
@@ -8418,6 +8440,9 @@ class AppLocalizationsTr extends AppLocalizations {
   ) {
     return '$medicine: $required kutu iade edilmek isteniyor ancak alımda $available kutu okutulmuş. İade miktarını düşürün.';
   }
+
+  @override
+  String get qrScan_operationRefund => 'İlaç İade';
 
   @override
   String get movement_range_todaySegment => 'Bugün';
@@ -8512,6 +8537,9 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get cabinDesign_load_cabinIdMissingError =>
       'Seçilen kabinin kimliği yok.';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Kabin Tipi';
 
   @override
   String get cabinDesign_cameraList_sectionTitle => 'Kameralar';
@@ -9232,7 +9260,8 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get refillList_form_emptyListHint => 'Listede ilaç yok. Soldan ilaçları işaretleyip "Seçilenleri Ekle" ile listeye aktarın.';
+  String get refillList_form_emptyListHint =>
+      'Listede ilaç yok. Soldan ilaçları işaretleyip \"Seçilenleri Ekle\" ile listeye aktarın.';
 
   @override
   String get refillList_form_noCandidates => 'Bu tipe uygun ilaç bulunamadı';

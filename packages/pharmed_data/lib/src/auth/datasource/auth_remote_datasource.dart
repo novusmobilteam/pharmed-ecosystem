@@ -8,6 +8,8 @@
 // Sınıf: Class B
 // ─────────────────────────────────────────────────────────────────────────────
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -67,15 +69,28 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
   /// Eşleşme yoksa sunucu 401 döner (bkz. API dokümanı).
   @override
   Future<String> loginWithFingerprint(FingerprintLoginRequestDTO request) async {
-    final response = await _dio.post<Map<String, dynamic>>('/Login/loginFingerprint', data: request.toJson());
+    final body = request.toJson();
+    _debugPrintFingerprintLoginBody(body);
+    final response = await _dio.post<Map<String, dynamic>>('/Login/loginFingerprint', data: body);
 
-    final body = response.data!;
-    final data = body['data'];
+    final data = response.data!['data'];
 
     if (data is! String || data.isEmpty) {
       throw ServiceException(message: contextlessL10n().authError_invalidTokenResponse, statusCode: 500);
     }
 
     return data;
+  }
+
+  /// Servise giden gövdeyi konsola basar — YALNIZCA debug build'de çalışır
+  /// (assert içinde; release/profile'da derleyici tamamen atar).
+  /// Gövdede biyometrik şablon var: MedLogger'a (kalıcı log dosyası)
+  /// bilerek YAZILMAZ (KVKK).
+  static void _debugPrintFingerprintLoginBody(Map<String, dynamic> body) {
+    assert(() {
+      // ignore: avoid_print
+      print('[FP-LOGIN] POST /Login/loginFingerprint body:\n${const JsonEncoder.withIndent('  ').convert(body)}');
+      return true;
+    }());
   }
 }

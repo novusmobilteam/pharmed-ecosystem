@@ -5980,7 +5980,8 @@ class AppLocalizationsAr extends AppLocalizations {
       'Admission Date';
 
   @override
-  String get unappliedPrescription_table_prescriptionDateColumn => 'Prescription Date';
+  String get unappliedPrescription_table_prescriptionDateColumn =>
+      'Prescription Date';
 
   @override
   String get unappliedPrescription_table_pendingCountColumn => 'Pending';
@@ -6195,47 +6196,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get masterDrawer_status_devicePreparingTitle => 'Preparing';
 
   @override
-  String get masterDrawer_status_devicePreparingSubtitle => 'Preparing device.';
-
-  @override
   String get masterDrawer_status_lockOpeningTitle => 'Unlocking';
-
-  @override
-  String get masterDrawer_status_lockOpeningSubtitle =>
-      'Unlocking, please wait.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Please Pull the Drawer';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle => 'Pull the drawer open.';
-
-  @override
   String get masterDrawer_status_openingLidTitle => 'Opening Compartment Lid';
-
-  @override
-  String get masterDrawer_status_openingLidSubtitle => 'Opening cell lid.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle => 'Please Close the Drawer';
 
   @override
-  String get masterDrawer_status_waitingCloseSubtitle =>
-      'If you\'ve taken the medicine, you can close the drawer.';
-
-  @override
   String get masterDrawer_status_failedTitle => 'A Problem Occurred';
 
   @override
-  String get masterDrawer_status_failedSubtitle =>
-      'Something went wrong, please try again.';
-
-  @override
   String get masterDrawer_status_openingTitle => 'Opening Drawer';
-
-  @override
-  String get masterDrawer_status_openingSubtitle =>
-      'Drawer opening, please wait.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle =>
@@ -6287,9 +6263,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get refund_hint_noMedicineFound => 'No refundable medicine found';
-
-  @override
-  String get refund_action_start => 'Start Refund';
 
   @override
   String get refund_action_nextCell => 'Next Cell';
@@ -6982,9 +6955,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cabinDesign_cabinList_passiveBadge => 'Inactive';
 
   @override
-  String get cabinDesign_newCabin_typeLabel => 'Cabin Type';
-
-  @override
   String get cabinDesign_newCabin_addressLabel => 'Address';
 
   @override
@@ -7492,7 +7462,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fault_activeListTitle => 'FAULTY / IN MAINTENANCE CELLS';
 
   @override
-  String get fault_activeListEmpty => 'No faulty or maintenance cells in this cabin';
+  String get fault_activeListEmpty =>
+      'No faulty or maintenance cells in this cabin';
 
   @override
   String get fault_assignedMedicineLabel => 'ASSIGNED MEDICINE';
@@ -7654,6 +7625,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get masterDrawer_status_closureMonitoredPill => 'Detecting closure';
+
+  @override
+  String get masterDrawer_status_openingSubtitle =>
+      'Drawer opening, please wait.';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'Unlocking, please wait.';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle => 'Preparing device.';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle => 'Pull the drawer open.';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle => 'Opening cell lid.';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'If you\'ve taken the medicine, you can close the drawer.';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Something went wrong, please try again.';
 
   @override
   String refund_appliedDateLabel(String date) {
@@ -8031,6 +8027,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tableCore_inertMaterialQuantityColumn => 'Quantity';
 
   @override
+  String get tableCore_authorizationBreakdownDateColumn => 'Date';
+
+  @override
+  String get tableCore_authorizationBreakdownPatientColumn => 'Patient';
+
+  @override
+  String get tableCore_authorizationBreakdownMaterialColumn => 'Material';
+
+  @override
+  String get tableCore_authorizationBreakdownQuantityColumn => 'Quantity';
+
+  @override
+  String get tableCore_authorizationBreakdownTypeColumn => 'Breakdown Type';
+
+  @override
+  String get tableCore_authorizationBreakdownUserColumn => 'User';
+
+  @override
+  String get tableCore_authorizationBreakdownStationColumn => 'Station';
+
+  @override
+  String get report_authorizationBreakdown_orderlessType => 'Orderless Intake';
+
+  @override
+  String get report_authorizationBreakdown_freeAccessType => 'Free Access';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Transaction Detail';
 
@@ -8145,9 +8168,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get qrScan_operationIntake => 'Medication Intake';
-
-  @override
-  String get qrScan_operationRefund => 'Medicine Refund';
 
   @override
   String get qrScan_operationUnscanned => 'Unscanned QR Codes';
@@ -8461,6 +8481,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'A reason is required for overdue medications.';
 
   @override
+  String get cabinOperation_noEntryInstruction =>
+      'Place the items in the highlighted cell, then press Complete or close the drawer.';
+
+  @override
+  String get refund_action_start => 'Start Refund';
+
+  @override
+  String get refund_action_starting => 'Starting...';
+
+  @override
   String refund_error_drawerNotResolved(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -8473,13 +8503,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get enumCore_cabinOpModeRefund => 'Refund';
-
-  @override
-  String get cabinOperation_noEntryInstruction =>
-      'Place the items in the highlighted cell, then press Complete or close the drawer.';
-
-  @override
-  String get refund_action_starting => 'Starting...';
 
   @override
   String get refund_qr_confirmButton => 'Proceed to Refund';
@@ -8502,6 +8525,9 @@ class AppLocalizationsAr extends AppLocalizations {
   ) {
     return '$medicine: $required boxes are being refunded but only $available were scanned at intake. Reduce the refund quantity.';
   }
+
+  @override
+  String get qrScan_operationRefund => 'Medicine Refund';
 
   @override
   String get movement_range_todaySegment => 'Today';
@@ -8597,6 +8623,9 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get cabinDesign_load_cabinIdMissingError =>
       'The selected cabin has no identifier.';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Cabin Type';
 
   @override
   String get cabinDesign_cameraList_sectionTitle => 'Cameras';
@@ -9317,7 +9346,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get refillList_form_emptyListHint => 'No medicines in the list. Check medicines on the left and press "Add Selected".';
+  String get refillList_form_emptyListHint =>
+      'No medicines in the list. Check medicines on the left and press \"Add Selected\".';
 
   @override
   String get refillList_form_noCandidates => 'No medicines found for this type';
@@ -9350,7 +9380,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refillList_printTooltip => 'Print';
 
   @override
-  String get refillList_print_noDetails => 'This list has no medicines to print';
+  String get refillList_print_noDetails =>
+      'This list has no medicines to print';
 
   @override
   String get refillList_print_stationLabel => 'Station';

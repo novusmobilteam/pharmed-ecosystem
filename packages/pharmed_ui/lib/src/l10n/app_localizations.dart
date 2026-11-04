@@ -3858,19 +3858,19 @@ abstract class AppLocalizations {
   /// **'ROOM / BED'**
   String get dashboard_roomBedLabel;
 
-  /// All-caps service label in dashboard prescription cards
+  /// No description provided for @dashboard_serviceLabel.
   ///
   /// In en, this message translates to:
   /// **'SERVICE'**
   String get dashboard_serviceLabel;
 
-  /// Remaining-days chip label when the expiry date has passed; days is how many days ago
+  /// No description provided for @remainingDayChip_overdueLabel.
   ///
   /// In en, this message translates to:
   /// **'{days} days overdue'**
   String remainingDayChip_overdueLabel(int days);
 
-  /// Remaining-days chip label — days left until expiry
+  /// No description provided for @remainingDayChip_daysLabel.
   ///
   /// In en, this message translates to:
   /// **'{days} days'**
@@ -4374,7 +4374,7 @@ abstract class AppLocalizations {
   /// **'Dose'**
   String get medicine_fieldDose;
 
-  /// Text field label shown when 'Ölçü Birimi Kullan' is enabled — the usage measurement amount of the drug
+  /// No description provided for @medicine_fieldUsageMeasureUnit.
   ///
   /// In en, this message translates to:
   /// **'Usage Measurement Unit'**
@@ -6336,13 +6336,13 @@ abstract class AppLocalizations {
   /// **'My Patients'**
   String get patientPicker_myPatientsToggleLabel;
 
-  /// Intake patient picker tab — patients physically in this service but hospitalized in another service
+  /// No description provided for @patientPicker_otherServiceToggleLabel.
   ///
   /// In en, this message translates to:
   /// **'Other Service'**
   String get patientPicker_otherServiceToggleLabel;
 
-  /// Line under a patient card in the 'Diğer Servis' tab showing the inpatient (hospitalization) service
+  /// No description provided for @patientPicker_inpatientServiceLabel.
   ///
   /// In en, this message translates to:
   /// **'Hospitalized in: {name}'**
@@ -7829,7 +7829,7 @@ abstract class AppLocalizations {
   /// **'Stock'**
   String get cabinAssignmentList_stockColumn;
 
-  /// CabinAssignmentListView — earliest expiry date of the cell's stock (refill selection)
+  /// No description provided for @cabinAssignmentList_miadColumn.
   ///
   /// In en, this message translates to:
   /// **'Expiry'**
@@ -10605,7 +10605,7 @@ abstract class AppLocalizations {
   /// **'Admission Date'**
   String get unappliedPrescription_table_admissionDateColumn;
 
-  /// Table column header — prescription date (also the date filter field), unapplied prescriptions screen
+  /// No description provided for @unappliedPrescription_table_prescriptionDateColumn.
   ///
   /// In en, this message translates to:
   /// **'Prescription Date'**
@@ -10986,23 +10986,11 @@ abstract class AppLocalizations {
   /// **'Preparing'**
   String get masterDrawer_status_devicePreparingTitle;
 
-  /// No description provided for @masterDrawer_status_devicePreparingSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparing device.'**
-  String get masterDrawer_status_devicePreparingSubtitle;
-
   /// No description provided for @masterDrawer_status_lockOpeningTitle.
   ///
   /// In en, this message translates to:
   /// **'Unlocking'**
   String get masterDrawer_status_lockOpeningTitle;
-
-  /// No description provided for @masterDrawer_status_lockOpeningSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlocking, please wait.'**
-  String get masterDrawer_status_lockOpeningSubtitle;
 
   /// No description provided for @masterDrawer_status_waitingPullTitle.
   ///
@@ -11010,23 +10998,11 @@ abstract class AppLocalizations {
   /// **'Please Pull the Drawer'**
   String get masterDrawer_status_waitingPullTitle;
 
-  /// No description provided for @masterDrawer_status_waitingPullSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Pull the drawer open.'**
-  String get masterDrawer_status_waitingPullSubtitle;
-
   /// No description provided for @masterDrawer_status_openingLidTitle.
   ///
   /// In en, this message translates to:
   /// **'Opening Compartment Lid'**
   String get masterDrawer_status_openingLidTitle;
-
-  /// No description provided for @masterDrawer_status_openingLidSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Opening cell lid.'**
-  String get masterDrawer_status_openingLidSubtitle;
 
   /// No description provided for @masterDrawer_status_waitingCloseTitle.
   ///
@@ -11034,35 +11010,17 @@ abstract class AppLocalizations {
   /// **'Please Close the Drawer'**
   String get masterDrawer_status_waitingCloseTitle;
 
-  /// No description provided for @masterDrawer_status_waitingCloseSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'If you\'ve taken the medicine, you can close the drawer.'**
-  String get masterDrawer_status_waitingCloseSubtitle;
-
   /// No description provided for @masterDrawer_status_failedTitle.
   ///
   /// In en, this message translates to:
   /// **'A Problem Occurred'**
   String get masterDrawer_status_failedTitle;
 
-  /// No description provided for @masterDrawer_status_failedSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong, please try again.'**
-  String get masterDrawer_status_failedSubtitle;
-
   /// No description provided for @masterDrawer_status_openingTitle.
   ///
   /// In en, this message translates to:
   /// **'Opening Drawer'**
   String get masterDrawer_status_openingTitle;
-
-  /// No description provided for @masterDrawer_status_openingSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Drawer opening, please wait.'**
-  String get masterDrawer_status_openingSubtitle;
 
   /// No description provided for @masterDrawer_stop_waitingCloseTitle.
   ///
@@ -11129,12 +11087,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No refundable medicine found'**
   String get refund_hint_noMedicineFound;
-
-  /// No description provided for @refund_action_start.
-  ///
-  /// In en, this message translates to:
-  /// **'Start Refund'**
-  String get refund_action_start;
 
   /// No description provided for @refund_action_nextCell.
   ///
@@ -12277,12 +12229,6 @@ abstract class AppLocalizations {
   /// **'Inactive'**
   String get cabinDesign_cabinList_passiveBadge;
 
-  /// New cabin form: label above the cabin type options
-  ///
-  /// In en, this message translates to:
-  /// **'Cabin Type'**
-  String get cabinDesign_newCabin_typeLabel;
-
   /// No description provided for @cabinDesign_newCabin_addressLabel.
   ///
   /// In en, this message translates to:
@@ -13123,37 +13069,37 @@ abstract class AppLocalizations {
   /// **'Unsolved'**
   String get fault_cellValueUnsolved;
 
-  /// Section title listing cells with an open fault or maintenance record in the viewed cabin
+  /// No description provided for @fault_activeListTitle.
   ///
   /// In en, this message translates to:
   /// **'FAULTY / IN MAINTENANCE CELLS'**
   String get fault_activeListTitle;
 
-  /// Empty state of the active fault list
+  /// No description provided for @fault_activeListEmpty.
   ///
   /// In en, this message translates to:
   /// **'No faulty or maintenance cells in this cabin'**
   String get fault_activeListEmpty;
 
-  /// Section label for the medicine assigned to the selected cell
+  /// No description provided for @fault_assignedMedicineLabel.
   ///
   /// In en, this message translates to:
   /// **'ASSIGNED MEDICINE'**
   String get fault_assignedMedicineLabel;
 
-  /// Shown when the selected cell has no medicine assignment
+  /// No description provided for @fault_noAssignedMedicine.
   ///
   /// In en, this message translates to:
   /// **'No medicine assigned to this cell'**
   String get fault_noAssignedMedicine;
 
-  /// Submit button creating a new fault or maintenance record (master fault screen)
+  /// No description provided for @fault_createRecordButton.
   ///
   /// In en, this message translates to:
   /// **'Create Record'**
   String get fault_createRecordButton;
 
-  /// Section label above the fault / maintenance record type selector
+  /// No description provided for @fault_recordTypeLabel.
   ///
   /// In en, this message translates to:
   /// **'RECORD TYPE'**
@@ -13404,6 +13350,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Detecting closure'**
   String get masterDrawer_status_closureMonitoredPill;
+
+  /// No description provided for @masterDrawer_status_openingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer opening, please wait.'**
+  String get masterDrawer_status_openingSubtitle;
+
+  /// No description provided for @masterDrawer_status_lockOpeningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking, please wait.'**
+  String get masterDrawer_status_lockOpeningSubtitle;
+
+  /// No description provided for @masterDrawer_status_devicePreparingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing device.'**
+  String get masterDrawer_status_devicePreparingSubtitle;
+
+  /// No description provided for @masterDrawer_status_waitingPullSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the drawer open.'**
+  String get masterDrawer_status_waitingPullSubtitle;
+
+  /// No description provided for @masterDrawer_status_openingLidSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening cell lid.'**
+  String get masterDrawer_status_openingLidSubtitle;
+
+  /// No description provided for @masterDrawer_status_waitingCloseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve taken the medicine, you can close the drawer.'**
+  String get masterDrawer_status_waitingCloseSubtitle;
+
+  /// No description provided for @masterDrawer_status_failedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong, please try again.'**
+  String get masterDrawer_status_failedSubtitle;
 
   /// No description provided for @refund_appliedDateLabel.
   ///
@@ -13707,7 +13695,7 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get refillList_tab_completed;
 
-  /// Segment label for cancelled refill lists (manager refill list screen)
+  /// No description provided for @refillList_tab_cancelled.
   ///
   /// In en, this message translates to:
   /// **'Cancelled'**
@@ -14048,6 +14036,60 @@ abstract class AppLocalizations {
   /// **'Quantity'**
   String get tableCore_inertMaterialQuantityColumn;
 
+  /// Authorization breakdown report table column header for the intake (application) date
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get tableCore_authorizationBreakdownDateColumn;
+
+  /// Authorization breakdown report table column header for the patient full name
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get tableCore_authorizationBreakdownPatientColumn;
+
+  /// Authorization breakdown report table column header for the material name
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get tableCore_authorizationBreakdownMaterialColumn;
+
+  /// Authorization breakdown report table column header for the quantity taken
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get tableCore_authorizationBreakdownQuantityColumn;
+
+  /// Authorization breakdown report table column header for how the authorization was bypassed (orderless or free access)
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown Type'**
+  String get tableCore_authorizationBreakdownTypeColumn;
+
+  /// Authorization breakdown report table column header for the user who performed the intake
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get tableCore_authorizationBreakdownUserColumn;
+
+  /// Authorization breakdown report table column header for the station where the intake was performed
+  ///
+  /// In en, this message translates to:
+  /// **'Station'**
+  String get tableCore_authorizationBreakdownStationColumn;
+
+  /// Breakdown type cell value in the authorization breakdown report when the intake was made without an order (isOrderlessCollect)
+  ///
+  /// In en, this message translates to:
+  /// **'Orderless Intake'**
+  String get report_authorizationBreakdown_orderlessType;
+
+  /// Breakdown type cell value in the authorization breakdown report when the intake was made via free access (isFreeAccessCollect)
+  ///
+  /// In en, this message translates to:
+  /// **'Free Access'**
+  String get report_authorizationBreakdown_freeAccessType;
+
   /// Title of the detail dialog opened from a row in the station transaction report table
   ///
   /// In en, this message translates to:
@@ -14144,7 +14186,7 @@ abstract class AppLocalizations {
   /// **'Unloading'**
   String get enumCore_stationTransactionTypeUnloading;
 
-  /// StationTransactionType.destruction (11) — drug destroyed from the cabin (İmha ekranı)
+  /// No description provided for @enumCore_stationTransactionTypeDestruction.
   ///
   /// In en, this message translates to:
   /// **'Destruction'**
@@ -14233,12 +14275,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medication Intake'**
   String get qrScan_operationIntake;
-
-  /// No description provided for @qrScan_operationRefund.
-  ///
-  /// In en, this message translates to:
-  /// **'Medicine Refund'**
-  String get qrScan_operationRefund;
 
   /// No description provided for @qrScan_operationUnscanned.
   ///
@@ -14744,6 +14780,24 @@ abstract class AppLocalizations {
   /// **'A reason is required for overdue medications.'**
   String get intake_overdue_descriptionRequiredError;
 
+  /// No description provided for @cabinOperation_noEntryInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the items in the highlighted cell, then press Complete or close the drawer.'**
+  String get cabinOperation_noEntryInstruction;
+
+  /// No description provided for @refund_action_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Refund'**
+  String get refund_action_start;
+
+  /// No description provided for @refund_action_starting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting...'**
+  String get refund_action_starting;
+
   /// No description provided for @refund_error_drawerNotResolved.
   ///
   /// In en, this message translates to:
@@ -14755,18 +14809,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refund'**
   String get enumCore_cabinOpModeRefund;
-
-  /// No description provided for @cabinOperation_noEntryInstruction.
-  ///
-  /// In en, this message translates to:
-  /// **'Place the items in the highlighted cell, then press Complete or close the drawer.'**
-  String get cabinOperation_noEntryInstruction;
-
-  /// No description provided for @refund_action_starting.
-  ///
-  /// In en, this message translates to:
-  /// **'Starting...'**
-  String get refund_action_starting;
 
   /// No description provided for @refund_qr_confirmButton.
   ///
@@ -14795,6 +14837,12 @@ abstract class AppLocalizations {
     int required,
     int available,
   );
+
+  /// No description provided for @qrScan_operationRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine Refund'**
+  String get qrScan_operationRefund;
 
   /// No description provided for @movement_range_todaySegment.
   ///
@@ -14951,6 +14999,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The selected cabin has no identifier.'**
   String get cabinDesign_load_cabinIdMissingError;
+
+  /// New cabin form: label above the cabin type options
+  ///
+  /// In en, this message translates to:
+  /// **'Cabin Type'**
+  String get cabinDesign_newCabin_typeLabel;
 
   /// Sidebar: cameras section title
   ///
@@ -16146,109 +16200,109 @@ abstract class AppLocalizations {
   /// **'Total'**
   String get report_materialUsage_totalLabel;
 
-  /// Title of the left pane in the refill list form where medicines are picked
+  /// No description provided for @refillList_form_addSectionTitle.
   ///
   /// In en, this message translates to:
   /// **'Add Medicines'**
   String get refillList_form_addSectionTitle;
 
-  /// Title of the right pane listing medicines in the refill list with count
+  /// No description provided for @refillList_form_listSectionTitle.
   ///
   /// In en, this message translates to:
   /// **'Medicines in List ({count})'**
   String refillList_form_listSectionTitle(int count);
 
-  /// Search hint for candidate medicines in the refill list form
+  /// No description provided for @refillList_form_searchHint.
   ///
   /// In en, this message translates to:
   /// **'Search by medicine name or barcode'**
   String get refillList_form_searchHint;
 
-  /// Checkbox label to select all visible candidate medicines
+  /// No description provided for @refillList_form_selectAll.
   ///
   /// In en, this message translates to:
   /// **'Select all'**
   String get refillList_form_selectAll;
 
-  /// Button adding checked candidate medicines to the refill list
+  /// No description provided for @refillList_form_addSelectedButton.
   ///
   /// In en, this message translates to:
   /// **'Add Selected ({count})'**
   String refillList_form_addSelectedButton(int count);
 
-  /// Hint shown when the refill list has no medicines yet
+  /// No description provided for @refillList_form_emptyListHint.
   ///
   /// In en, this message translates to:
-  /// **'No medicines in the list. Check medicines on the left and press "Add Selected".'**
+  /// **'No medicines in the list. Check medicines on the left and press \"Add Selected\".'**
   String get refillList_form_emptyListHint;
 
-  /// Empty state when no candidate medicines match the selected type or search
+  /// No description provided for @refillList_form_noCandidates.
   ///
   /// In en, this message translates to:
   /// **'No medicines found for this type'**
   String get refillList_form_noCandidates;
 
-  /// Button clearing all medicines from the refill list
+  /// No description provided for @refillList_form_clearListButton.
   ///
   /// In en, this message translates to:
   /// **'Clear List'**
   String get refillList_form_clearListButton;
 
-  /// Summary line with medicine count and total filling quantity
+  /// No description provided for @refillList_form_totalLabel.
   ///
   /// In en, this message translates to:
   /// **'{count} medicines · Total refill: {quantity}'**
   String refillList_form_totalLabel(int count, String quantity);
 
-  /// Current stock of a medicine in the refill list form
+  /// No description provided for @refillList_form_currentStockLabel.
   ///
   /// In en, this message translates to:
   /// **'Current: {quantity}'**
   String refillList_form_currentStockLabel(String quantity);
 
-  /// Badge on a candidate medicine that is already in the refill list
+  /// No description provided for @refillList_form_inListBadge.
   ///
   /// In en, this message translates to:
   /// **'In list'**
   String get refillList_form_inListBadge;
 
-  /// Suggested filling quantity for a candidate medicine
+  /// No description provided for @refillList_form_suggestedLabel.
   ///
   /// In en, this message translates to:
   /// **'Suggested: {quantity}'**
   String refillList_form_suggestedLabel(String quantity);
 
-  /// Tooltip of the button removing a medicine from the refill list
+  /// No description provided for @refillList_form_removeTooltip.
   ///
   /// In en, this message translates to:
   /// **'Remove from list'**
   String get refillList_form_removeTooltip;
 
-  /// Tooltip of the row action printing a refill list
+  /// No description provided for @refillList_printTooltip.
   ///
   /// In en, this message translates to:
   /// **'Print'**
   String get refillList_printTooltip;
 
-  /// Error when the refill list to print has no medicines
+  /// No description provided for @refillList_print_noDetails.
   ///
   /// In en, this message translates to:
   /// **'This list has no medicines to print'**
   String get refillList_print_noDetails;
 
-  /// Station label in the refill list printout header
+  /// No description provided for @refillList_print_stationLabel.
   ///
   /// In en, this message translates to:
   /// **'Station'**
   String get refillList_print_stationLabel;
 
-  /// Filling quantity column of the refill list printout
+  /// No description provided for @refillList_print_fillingColumn.
   ///
   /// In en, this message translates to:
   /// **'Refill'**
   String get refillList_print_fillingColumn;
 
-  /// Current stock column of the refill list printout
+  /// No description provided for @refillList_print_currentColumn.
   ///
   /// In en, this message translates to:
   /// **'Current'**

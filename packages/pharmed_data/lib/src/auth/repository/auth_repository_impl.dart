@@ -147,6 +147,7 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request) async {
+    print(request.toString());
     try {
       final token = await _remote.loginWithFingerprint(const FingerprintMapper().toLoginDto(request));
       return await _completeLogin(token);

@@ -17,6 +17,7 @@ class ReportRepositoryImpl implements IReportRepository {
   final OrderedLoadedMaterialMapper _orderedLoadedMaterialMapper;
   final StationEmptyCompartmentMapper _stationEmptyCompartmentMapper;
   final InertMaterialMapper _inertMaterialMapper;
+  final AuthorizationBreakdownMapper _authorizationBreakdownMapper;
 
   ReportRepositoryImpl({
     required ReportRemoteDataSource dataSource,
@@ -34,6 +35,7 @@ class ReportRepositoryImpl implements IReportRepository {
     required OrderedLoadedMaterialMapper orderedLoadedMaterialMapper,
     required StationEmptyCompartmentMapper stationEmptyCompartmentMapper,
     required InertMaterialMapper inertMaterialMapper,
+    AuthorizationBreakdownMapper authorizationBreakdownMapper = const AuthorizationBreakdownMapper(),
   }) : _dataSource = dataSource,
        _cabinStockMapper = cabinStockMapper,
        _stockTransactionMapper = stockTransactionMapper,
@@ -48,7 +50,8 @@ class ReportRepositoryImpl implements IReportRepository {
        _orderedNotLoadedMaterialMapper = orderedNotLoadedMaterialMapper,
        _orderedLoadedMaterialMapper = orderedLoadedMaterialMapper,
        _stationEmptyCompartmentMapper = stationEmptyCompartmentMapper,
-       _inertMaterialMapper = inertMaterialMapper;
+       _inertMaterialMapper = inertMaterialMapper,
+       _authorizationBreakdownMapper = authorizationBreakdownMapper;
 
   @override
   Future<Result<ApiResponse<List<CabinStock>>?>> getExpiredStocks({
@@ -270,6 +273,24 @@ class ReportRepositoryImpl implements IReportRepository {
       ok: (apiResponse) => Result.ok(
         ApiResponse<List<InertMaterial>>(
           data: apiResponse?.data != null ? _inertMaterialMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
+  Future<Result<ApiResponse<List<AuthorizationBreakdown>>?>> getAuthorizationBreakdowns({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getAuthorizationBreakdowns(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<AuthorizationBreakdown>>(
+          data: apiResponse?.data != null ? _authorizationBreakdownMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess,
           totalCount: apiResponse?.totalCount,
         ),

@@ -6124,7 +6124,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'Date d\'admission';
 
   @override
-  String get unappliedPrescription_table_prescriptionDateColumn => 'Date de prescription';
+  String get unappliedPrescription_table_prescriptionDateColumn =>
+      'Date de prescription';
 
   @override
   String get unappliedPrescription_table_pendingCountColumn => 'En attente';
@@ -6343,51 +6344,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get masterDrawer_status_devicePreparingTitle => 'Préparation';
 
   @override
-  String get masterDrawer_status_devicePreparingSubtitle =>
-      'Préparation de l\'appareil.';
-
-  @override
   String get masterDrawer_status_lockOpeningTitle => 'Déverrouillage';
-
-  @override
-  String get masterDrawer_status_lockOpeningSubtitle =>
-      'Déverrouillage, veuillez patienter.';
 
   @override
   String get masterDrawer_status_waitingPullTitle => 'Veuillez Tirer le Tiroir';
 
   @override
-  String get masterDrawer_status_waitingPullSubtitle =>
-      'Tirez le tiroir pour l\'ouvrir.';
-
-  @override
   String get masterDrawer_status_openingLidTitle => 'Ouverture du Compartiment';
-
-  @override
-  String get masterDrawer_status_openingLidSubtitle =>
-      'Ouverture du couvercle.';
 
   @override
   String get masterDrawer_status_waitingCloseTitle =>
       'Veuillez Fermer le Tiroir';
 
   @override
-  String get masterDrawer_status_waitingCloseSubtitle =>
-      'Si vous avez pris le médicament, vous pouvez fermer le tiroir.';
-
-  @override
   String get masterDrawer_status_failedTitle => 'Un Problème est Survenu';
 
   @override
-  String get masterDrawer_status_failedSubtitle =>
-      'Une erreur s\'est produite, veuillez réessayer.';
-
-  @override
   String get masterDrawer_status_openingTitle => 'Ouverture du Tiroir';
-
-  @override
-  String get masterDrawer_status_openingSubtitle =>
-      'Ouverture du tiroir, veuillez patienter.';
 
   @override
   String get masterDrawer_stop_waitingCloseTitle =>
@@ -6441,9 +6414,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get refund_hint_noMedicineFound =>
       'Aucun médicament remboursable trouvé';
-
-  @override
-  String get refund_action_start => 'Démarrer le retour';
 
   @override
   String get refund_action_nextCell => 'Cellule suivante';
@@ -7151,9 +7121,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_cabinList_passiveBadge => 'Inactif';
 
   @override
-  String get cabinDesign_newCabin_typeLabel => 'Type de cabine';
-
-  @override
   String get cabinDesign_newCabin_addressLabel => 'Adresse';
 
   @override
@@ -7668,13 +7635,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fault_activeListTitle => 'CASES EN PANNE / EN MAINTENANCE';
 
   @override
-  String get fault_activeListEmpty => 'Aucune case en panne ou en maintenance dans cette cabine';
+  String get fault_activeListEmpty =>
+      'Aucune case en panne ou en maintenance dans cette cabine';
 
   @override
   String get fault_assignedMedicineLabel => 'MÉDICAMENT ASSIGNÉ';
 
   @override
-  String get fault_noAssignedMedicine => 'Aucun médicament assigné à cette case';
+  String get fault_noAssignedMedicine =>
+      'Aucun médicament assigné à cette case';
 
   @override
   String get fault_createRecordButton => 'Créer l\'enregistrement';
@@ -7836,6 +7805,34 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get masterDrawer_status_closureMonitoredPill =>
       'Détection de la fermeture';
+
+  @override
+  String get masterDrawer_status_openingSubtitle =>
+      'Ouverture du tiroir, veuillez patienter.';
+
+  @override
+  String get masterDrawer_status_lockOpeningSubtitle =>
+      'Déverrouillage, veuillez patienter.';
+
+  @override
+  String get masterDrawer_status_devicePreparingSubtitle =>
+      'Préparation de l\'appareil.';
+
+  @override
+  String get masterDrawer_status_waitingPullSubtitle =>
+      'Tirez le tiroir pour l\'ouvrir.';
+
+  @override
+  String get masterDrawer_status_openingLidSubtitle =>
+      'Ouverture du couvercle.';
+
+  @override
+  String get masterDrawer_status_waitingCloseSubtitle =>
+      'Si vous avez pris le médicament, vous pouvez fermer le tiroir.';
+
+  @override
+  String get masterDrawer_status_failedSubtitle =>
+      'Une erreur s\'est produite, veuillez réessayer.';
 
   @override
   String refund_appliedDateLabel(String date) {
@@ -8219,6 +8216,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tableCore_inertMaterialQuantityColumn => 'Quantité';
 
   @override
+  String get tableCore_authorizationBreakdownDateColumn => 'Date';
+
+  @override
+  String get tableCore_authorizationBreakdownPatientColumn => 'Patient';
+
+  @override
+  String get tableCore_authorizationBreakdownMaterialColumn => 'Article';
+
+  @override
+  String get tableCore_authorizationBreakdownQuantityColumn => 'Quantité';
+
+  @override
+  String get tableCore_authorizationBreakdownTypeColumn => 'Type de dérogation';
+
+  @override
+  String get tableCore_authorizationBreakdownUserColumn => 'Utilisateur';
+
+  @override
+  String get tableCore_authorizationBreakdownStationColumn => 'Station';
+
+  @override
+  String get report_authorizationBreakdown_orderlessType =>
+      'Prise sans ordonnance';
+
+  @override
+  String get report_authorizationBreakdown_freeAccessType => 'Accès libre';
+
+  @override
   String get report_stationTransaction_detailDialogTitle =>
       'Détail de l\'opération';
 
@@ -8336,9 +8361,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get qrScan_operationIntake => 'Prise de médicament';
-
-  @override
-  String get qrScan_operationRefund => 'Retour de médicament';
 
   @override
   String get qrScan_operationUnscanned => 'Codes QR non scannés';
@@ -8655,6 +8677,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Un motif est requis pour les médicaments en retard.';
 
   @override
+  String get cabinOperation_noEntryInstruction =>
+      'Placez les articles dans le compartiment indiqué, puis appuyez sur Terminer ou fermez le tiroir.';
+
+  @override
+  String get refund_action_start => 'Démarrer le retour';
+
+  @override
+  String get refund_action_starting => 'Démarrage...';
+
+  @override
   String refund_error_drawerNotResolved(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -8667,13 +8699,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get enumCore_cabinOpModeRefund => 'Retour';
-
-  @override
-  String get cabinOperation_noEntryInstruction =>
-      'Placez les articles dans le compartiment indiqué, puis appuyez sur Terminer ou fermez le tiroir.';
-
-  @override
-  String get refund_action_starting => 'Démarrage...';
 
   @override
   String get refund_qr_confirmButton => 'Passer au retour';
@@ -8696,6 +8721,9 @@ class AppLocalizationsFr extends AppLocalizations {
   ) {
     return '$medicine : $required boîtes à retourner, mais seulement $available scannées lors de la prise. Réduisez la quantité retournée.';
   }
+
+  @override
+  String get qrScan_operationRefund => 'Retour de médicament';
 
   @override
   String get movement_range_todaySegment => 'Aujourd\'hui';
@@ -8792,6 +8820,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get cabinDesign_load_cabinIdMissingError =>
       'La cabine sélectionnée n\'a pas d\'identifiant.';
+
+  @override
+  String get cabinDesign_newCabin_typeLabel => 'Type de cabine';
 
   @override
   String get cabinDesign_cameraList_sectionTitle => 'Caméras';
@@ -9524,10 +9555,12 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get refillList_form_emptyListHint => 'Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».';
+  String get refillList_form_emptyListHint =>
+      'Aucun médicament dans la liste. Cochez des médicaments à gauche puis appuyez sur « Ajouter la sélection ».';
 
   @override
-  String get refillList_form_noCandidates => 'Aucun médicament trouvé pour ce type';
+  String get refillList_form_noCandidates =>
+      'Aucun médicament trouvé pour ce type';
 
   @override
   String get refillList_form_clearListButton => 'Vider la liste';
@@ -9557,7 +9590,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get refillList_printTooltip => 'Imprimer';
 
   @override
-  String get refillList_print_noDetails => 'Cette liste ne contient aucun médicament à imprimer';
+  String get refillList_print_noDetails =>
+      'Cette liste ne contient aucun médicament à imprimer';
 
   @override
   String get refillList_print_stationLabel => 'Station';
