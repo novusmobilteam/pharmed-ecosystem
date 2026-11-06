@@ -1,52 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:pharmed_manager/features/assignment/view/assignment_screen.dart';
-import 'package:pharmed_manager/features/auth/notifier/auth_notifier.dart';
-import 'package:pharmed_manager/features/cabin_temperature/view/cabin_temperature_screen.dart';
-import 'package:pharmed_manager/features/firm/view/firm_screen.dart';
-import 'package:pharmed_manager/features/mail_preference/view/mail_preference_screen.dart';
-import 'package:pharmed_manager/features/prescription/view/prescription_screen.dart';
-import 'package:pharmed_manager/features/refill_list/view/refill_list_screen.dart';
-import 'package:pharmed_manager/features/reports/auth_summary/view/auth_summary_report_screen.dart';
-import 'package:pharmed_manager/features/reports/expired_items/view/expired_items_report_screen.dart';
-import 'package:pharmed_manager/features/reports/station_transaction/view/station_transaction_report_screen.dart';
-import 'package:pharmed_manager/features/reports/unordered_loaded_materials/view/unordered_loaded_materials_report_screen.dart';
-import 'package:pharmed_manager/features/reports/ordered_not_loaded_materials/view/ordered_not_loaded_materials_report_screen.dart';
-import 'package:pharmed_manager/features/reports/ordered_loaded_materials/view/ordered_loaded_materials_report_screen.dart';
-import 'package:pharmed_manager/features/reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart';
-import 'package:pharmed_manager/features/reports/inert_materials/view/inert_materials_report_screen.dart';
-import 'package:pharmed_manager/features/reports/authorization_breakdown/view/authorization_breakdown_report_screen.dart';
-import 'package:pharmed_manager/features/role/view/role_screen.dart';
-import 'package:pharmed_manager/features/settings/view/settings_view.dart';
-import 'package:pharmed_manager/features/station_stock_data/view/station_stock_data_screen.dart';
-import 'package:pharmed_manager/features/warning/view/warning_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/core.dart';
+import '../../assignment/view/assignment_screen.dart';
+import '../../auth/notifier/auth_notifier.dart';
 import '../../auth/notifier/auth_state.dart';
 import '../../authorization/authorization_screen.dart';
+import '../../cabin_temperature/view/cabin_temperature_screen.dart';
 import '../../change_password/view/change_password_view.dart';
 import '../../dashboard/view/dashboard_view.dart';
+import '../../firm/view/firm_screen.dart';
 import '../../hospitalization/view/hospitalization_screen.dart';
 import '../../inconsistency/view/inconsistency_screen.dart';
+import '../../mail_preference/view/mail_preference_screen.dart';
 import '../../medicine/view/medicine_screen.dart';
-
+import '../../prescription/view/prescription_screen.dart';
+import '../../refill_list/view/refill_list_screen.dart';
 import '../../refund/view/drawer_refund_screen.dart';
 import '../../refund/view/pharmacy_refund_screen.dart';
+import '../../reports/auth_summary/view/auth_summary_report_screen.dart';
+import '../../reports/authorization_breakdown/view/authorization_breakdown_report_screen.dart';
 import '../../reports/cabin_temperature/view/cabin_temperature_report_screen.dart';
+import '../../reports/expired_items/view/expired_items_report_screen.dart';
 import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
+import '../../reports/inert_materials/view/inert_materials_report_screen.dart';
 import '../../reports/material_usage/view/material_usage_report_screen.dart';
+import '../../reports/ordered_loaded_materials/view/ordered_loaded_materials_report_screen.dart';
+import '../../reports/ordered_not_loaded_materials/view/ordered_not_loaded_materials_report_screen.dart';
 import '../../reports/patient_inventory/view/patient_inventory_report_screen.dart';
+import '../../reports/station_empty_compartments/view/station_empty_compartments_report_screen.dart';
+import '../../reports/station_transaction/view/station_transaction_report_screen.dart';
+import '../../reports/unordered_loaded_materials/view/unordered_loaded_materials_report_screen.dart';
+import '../../role/view/role_screen.dart';
 import '../../settings/notifier/settings_notifier.dart';
+import '../../settings/view/settings_view.dart';
 import '../../station_setup/view/station_screen.dart';
+import '../../station_stock_data/view/station_stock_data_screen.dart';
 import '../../station_stock_list/view/station_stock_list_screen.dart';
 import '../../unapplied_prescriptions/view/unapplied_prescriptions_screen.dart';
 import '../../unscanned_barcodes/view/unscanned_barcodes_screen.dart';
 import '../../user/view/user_screen.dart';
+import '../../warning/view/warning_screen.dart';
 import '../notifier/home_notifier.dart';
 
-part 'home_sidebar.dart';
 part 'home_appbar.dart';
+part 'home_sidebar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -223,7 +222,7 @@ class _HomeContent extends StatelessWidget {
       'patient-inventory-list' => PatientInventoryReportScreen(menu: menu!),
       'material-usage-list' => MaterialUsageReportScreen(menu: menu!),
       'authorization-list' => AuthSummaryReportScreen(menu: menu!),
-      'authorization-breakdown-list' => AuthorizationBreakdownReportScreen(menu: menu!),
+      'list-of-delegated-authorities' => AuthorizationBreakdownReportScreen(menu: menu!),
       'heatControl' => CabinTemperatureScreen(menu: menu!),
       'station-temperature-list' => CabinTemperatureReportScreen(menu: menu!),
       'stationStock' => StationStockListScreen(menu: menu!),

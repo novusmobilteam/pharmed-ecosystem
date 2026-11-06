@@ -80,6 +80,12 @@ class _TableView extends StatelessWidget {
             tooltip: context.l10n.common_deleteTooltip,
             onPressed: (data) => showDeleteDescriptionView(context, data),
           ),
+        // Tüm modlarda (okutulmayan / okutulan / silinen) satır sonunda detay.
+        TableActionItem(
+          icon: PhosphorIcons.dotsThreeVertical(),
+          tooltip: context.l10n.unscannedBarcodes_detailTooltip,
+          onPressed: (item) => BarcodeDetailDialog.show(context, item: item, mode: notifier.mode),
+        ),
       ],
       emptyWidget: EmptyStateWidget(variant: EmptyStateVariant.noResults),
     );

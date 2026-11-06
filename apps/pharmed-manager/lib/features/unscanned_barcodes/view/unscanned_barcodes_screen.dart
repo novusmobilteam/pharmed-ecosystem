@@ -6,6 +6,7 @@ import '../../../core/core.dart';
 
 import '../notifier/unscanned_barcodes_notifier.dart';
 
+part 'barcode_detail_dialog.dart';
 part 'delete_description_view.dart';
 part 'table_view.dart';
 

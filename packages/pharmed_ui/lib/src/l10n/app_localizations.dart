@@ -12835,6 +12835,54 @@ abstract class AppLocalizations {
   /// **'No unscanned QR codes left'**
   String get unscannedBarcodes_alertEmptyTitle;
 
+  /// No description provided for @unscannedBarcodes_detailTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get unscannedBarcodes_detailTooltip;
+
+  /// No description provided for @unscannedBarcodes_detailDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code Details'**
+  String get unscannedBarcodes_detailDialogTitle;
+
+  /// No description provided for @unscannedBarcodes_detail_orderTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Time'**
+  String get unscannedBarcodes_detail_orderTimeLabel;
+
+  /// No description provided for @unscannedBarcodes_detail_prescribedQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescribed Quantity'**
+  String get unscannedBarcodes_detail_prescribedQuantityLabel;
+
+  /// No description provided for @unscannedBarcodes_detail_appliedQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied Quantity'**
+  String get unscannedBarcodes_detail_appliedQuantityLabel;
+
+  /// No description provided for @unscannedBarcodes_detail_applicationDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Date'**
+  String get unscannedBarcodes_detail_applicationDateLabel;
+
+  /// No description provided for @unscannedBarcodes_detail_deleteDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion Reason'**
+  String get unscannedBarcodes_detail_deleteDescriptionLabel;
+
+  /// No description provided for @unscannedBarcodes_detail_orderDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Note'**
+  String get unscannedBarcodes_detail_orderDescriptionLabel;
+
   /// No description provided for @dashboard_expiringAlertTooltip.
   ///
   /// In en, this message translates to:

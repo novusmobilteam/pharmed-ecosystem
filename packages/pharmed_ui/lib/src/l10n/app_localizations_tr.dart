@@ -7252,6 +7252,30 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unscannedBarcodes_alertEmptyTitle => 'Okutulmayan karekod kalmadı';
 
   @override
+  String get unscannedBarcodes_detailTooltip => 'Detayı Görüntüle';
+
+  @override
+  String get unscannedBarcodes_detailDialogTitle => 'Karekod Detayı';
+
+  @override
+  String get unscannedBarcodes_detail_orderTimeLabel => 'Order Saati';
+
+  @override
+  String get unscannedBarcodes_detail_prescribedQuantityLabel => 'Order Edilen Miktar';
+
+  @override
+  String get unscannedBarcodes_detail_appliedQuantityLabel => 'Uygulanan Miktar';
+
+  @override
+  String get unscannedBarcodes_detail_applicationDateLabel => 'Uygulama Tarihi';
+
+  @override
+  String get unscannedBarcodes_detail_deleteDescriptionLabel => 'Silme Açıklaması';
+
+  @override
+  String get unscannedBarcodes_detail_orderDescriptionLabel => 'Order Açıklaması';
+
+  @override
   String dashboard_expiringAlertTooltip(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

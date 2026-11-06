@@ -7482,6 +7482,30 @@ class AppLocalizationsFr extends AppLocalizations {
       'Plus aucun code QR non scanné';
 
   @override
+  String get unscannedBarcodes_detailTooltip => 'Voir les détails';
+
+  @override
+  String get unscannedBarcodes_detailDialogTitle => 'Détails du code QR';
+
+  @override
+  String get unscannedBarcodes_detail_orderTimeLabel => 'Heure de l\'ordre';
+
+  @override
+  String get unscannedBarcodes_detail_prescribedQuantityLabel => 'Quantité prescrite';
+
+  @override
+  String get unscannedBarcodes_detail_appliedQuantityLabel => 'Quantité administrée';
+
+  @override
+  String get unscannedBarcodes_detail_applicationDateLabel => 'Date d\'administration';
+
+  @override
+  String get unscannedBarcodes_detail_deleteDescriptionLabel => 'Motif de suppression';
+
+  @override
+  String get unscannedBarcodes_detail_orderDescriptionLabel => 'Note de l\'ordre';
+
+  @override
   String dashboard_expiringAlertTooltip(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

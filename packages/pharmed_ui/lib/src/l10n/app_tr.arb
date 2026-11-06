@@ -9425,6 +9425,38 @@
 "@unscannedBarcodes_alertEmptyTitle": {
   "description": "Empty state of the client unscanned QR codes alert dialog after all items are scanned."
 },
+"unscannedBarcodes_detailTooltip": "Detayı Görüntüle",
+"@unscannedBarcodes_detailTooltip": {
+  "description": "Manager unscanned/scanned/deleted QR code table row action tooltip that opens the item detail dialog."
+},
+"unscannedBarcodes_detailDialogTitle": "Karekod Detayı",
+"@unscannedBarcodes_detailDialogTitle": {
+  "description": "Title of the manager QR code item detail dialog (shared by unscanned, scanned and deleted lists)."
+},
+"unscannedBarcodes_detail_orderTimeLabel": "Order Saati",
+"@unscannedBarcodes_detail_orderTimeLabel": {
+  "description": "QR code detail dialog field: scheduled order (prescription) time of the item."
+},
+"unscannedBarcodes_detail_prescribedQuantityLabel": "Order Edilen Miktar",
+"@unscannedBarcodes_detail_prescribedQuantityLabel": {
+  "description": "QR code detail dialog field: quantity ordered in the prescription."
+},
+"unscannedBarcodes_detail_appliedQuantityLabel": "Uygulanan Miktar",
+"@unscannedBarcodes_detail_appliedQuantityLabel": {
+  "description": "QR code detail dialog field: quantity actually applied to the patient."
+},
+"unscannedBarcodes_detail_applicationDateLabel": "Uygulama Tarihi",
+"@unscannedBarcodes_detail_applicationDateLabel": {
+  "description": "QR code detail dialog field: date and time the item was applied."
+},
+"unscannedBarcodes_detail_deleteDescriptionLabel": "Silme Açıklaması",
+"@unscannedBarcodes_detail_deleteDescriptionLabel": {
+  "description": "QR code detail dialog highlighted block (deleted list only): reason entered when the unscanned QR code record was deleted."
+},
+"unscannedBarcodes_detail_orderDescriptionLabel": "Order Açıklaması",
+"@unscannedBarcodes_detail_orderDescriptionLabel": {
+  "description": "QR code detail dialog block: free-text description entered on the prescription item; shown only when present."
+},
 "dashboard_expiringAlertTooltip": "{count, plural, other{{count} SKT yaklaşan ilaç}}",
 "@dashboard_expiringAlertTooltip": {
   "description": "Client dashboard app bar alert button tooltip; count of cabin stocks whose expiry date is approaching.",

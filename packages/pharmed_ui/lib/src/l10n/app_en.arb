@@ -5171,6 +5171,14 @@
 },
 "unscannedBarcodes_scanButton": "Scan QR Code",
 "unscannedBarcodes_alertEmptyTitle": "No unscanned QR codes left",
+"unscannedBarcodes_detailTooltip": "View Details",
+"unscannedBarcodes_detailDialogTitle": "QR Code Details",
+"unscannedBarcodes_detail_orderTimeLabel": "Order Time",
+"unscannedBarcodes_detail_prescribedQuantityLabel": "Prescribed Quantity",
+"unscannedBarcodes_detail_appliedQuantityLabel": "Applied Quantity",
+"unscannedBarcodes_detail_applicationDateLabel": "Application Date",
+"unscannedBarcodes_detail_deleteDescriptionLabel": "Deletion Reason",
+"unscannedBarcodes_detail_orderDescriptionLabel": "Order Note",
 "dashboard_expiringAlertTooltip": "{count, plural, one{{count} expiring medicine} other{{count} expiring medicines}}",
 "@dashboard_expiringAlertTooltip": {
   "placeholders": {
