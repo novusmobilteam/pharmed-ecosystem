@@ -6,7 +6,7 @@ class GetUnappliedPrescriptionsUseCase {
 
   GetUnappliedPrescriptionsUseCase(this._repository);
 
-  Future<Result<ApiResponse<List<Prescription>>?>> call({PagedQueryParams? params}) {
+  Future<Result<ApiResponse<List<UnappliedHospitalization>>?>> call({PagedQueryParams? params}) {
     return _repository.getUnappliedPrescriptions(params: params);
   }
 }

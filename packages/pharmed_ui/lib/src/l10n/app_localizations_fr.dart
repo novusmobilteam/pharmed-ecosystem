@@ -6131,6 +6131,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unappliedPrescription_table_pendingCountColumn => 'En attente';
 
   @override
+  String get unappliedPrescription_table_medicinesColumn => 'Médicaments';
+
+  @override
   String get unappliedPrescription_overdueTable_medicineColumn => 'Médicament';
 
   @override

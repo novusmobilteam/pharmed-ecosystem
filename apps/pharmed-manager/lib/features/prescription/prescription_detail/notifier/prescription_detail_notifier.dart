@@ -52,35 +52,8 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
 
   Map<int, List<PrescriptionItem>> get groupedPrescriptions => visibleItems.groupedById;
 
-  /// Görünen kalemler gün bazında: gün = uygulama zamanı (yoksa reçete
-  /// tarihi). Yeni gün üstte; gün içinde saate göre.
-  List<({DateTime? day, List<PrescriptionItem> items})> get dayGroups {
-    DateTime? dayOf(PrescriptionItem i) {
-      final d = i.time ?? i.prescription?.prescriptionDate ?? i.prescriptionDate;
-      return d == null ? null : DateTime(d.year, d.month, d.day);
-    }
-
-    int byTime(PrescriptionItem a, PrescriptionItem b) {
-      final ta = a.time, tb = b.time;
-      if (ta == null && tb == null) return 0;
-      if (ta == null) return 1;
-      if (tb == null) return -1;
-      return ta.compareTo(tb);
-    }
-
-    final map = <DateTime?, List<PrescriptionItem>>{};
-    for (final i in visibleItems) {
-      map.putIfAbsent(dayOf(i), () => []).add(i);
-    }
-    final groups = [for (final e in map.entries) (day: e.key, items: e.value..sort(byTime))];
-    groups.sort((a, b) {
-      if (a.day == null && b.day == null) return 0;
-      if (a.day == null) return 1;
-      if (b.day == null) return -1;
-      return b.day!.compareTo(a.day!);
-    });
-    return groups;
-  }
+  /// Görünen kalemler gün bazında (bkz. [PrescriptionGrouping.groupedByDay]).
+  List<({DateTime? day, List<PrescriptionItem> items})> get dayGroups => visibleItems.groupedByDay;
 
   /// Seçili kalemleri reçeteye göre böler — onay/iptal/red servisleri reçete
   /// bazında çalışır.

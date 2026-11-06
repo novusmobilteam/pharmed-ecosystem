@@ -8,8 +8,6 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
   static const String _detail = '/Prescription/detail/bulk';
   static const String _unapplied = '$_base/uncollectedPrescriptionMaster';
 
-  static String _unappliedDetail(int id) => '/Prescription/uncollectedPrescriptionDetail/$id';
-
   @override
   String get logSwreq => 'SWREQ-DATA-PRESCRIPTION-001';
 
@@ -118,20 +116,25 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
-  Future<Result<ApiResponse<List<PrescriptionDto>>?>> getUnappliedPrescriptions({PagedQueryParams? params}) async {
-    return await fetchRequest<ApiResponse<List<PrescriptionDto>>>(
+  /// Yatış bazlı uygulanmamış reçeteler. Her satır yatışın bekleyen
+  /// reçetelerini (`prescriptions`) ve kalemlerini (`details`) birlikte taşır.
+  Future<Result<ApiResponse<List<UnappliedHospitalizationDto>>?>> getUnappliedPrescriptions({
+    PagedQueryParams? params,
+  }) async {
+    return await fetchRequest<ApiResponse<List<UnappliedHospitalizationDto>>>(
       path: _unapplied,
+      // Bu endpoint tarih aralığını DevExtreme filtresiyle değil query parametresiyle
+      // alır; servis reçete tarihine (prescriptions[].prescriptionDate) göre süzer.
+      query: {
+        if (params?.startDate != null) 'startDate': params!.startDate!.toIso8601String(),
+        if (params?.endDate != null) 'endDate': params!.endDate!.toIso8601String(),
+      },
       skip: params?.skip,
       take: params?.take,
       searchQuery: params?.searchQuery,
-      startDate: params?.startDate,
-      endDate: params?.endDate,
       searchFields: ['patientHospitalization.patient.name'],
-      // Reçetenin tarihine göre — yatış tarihi eski kaldığı için güncel
-      // reçeteler filtreye girmiyordu.
-      dateField: 'prescriptionDate',
       envelope: ResponseEnvelope.raw,
-      parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionDto.fromJson),
+      parser: BaseRemoteDataSource.apiResponseListParser(UnappliedHospitalizationDto.fromJson),
       successLog: 'Unapplied prescriptions fetched',
       emptyLog: 'No unapplied prescriptions',
     );
@@ -171,15 +174,6 @@ class PrescriptionRemoteDataSource extends BaseRemoteDataSource {
       dateField: 'createdDate',
       envelope: ResponseEnvelope.raw,
       parser: BaseRemoteDataSource.apiResponseListParser(PrescriptionItemMovementDto.fromJson),
-    );
-  }
-
-  Future<Result<List<PrescriptionItemDto>?>> getUnappliedPrescriptionDetail(int prescriptionId) async {
-    return await fetchRequest(
-      path: _unappliedDetail(prescriptionId),
-      parser: BaseRemoteDataSource.listParser(PrescriptionItemDto.fromJson),
-      successLog: 'Unapplied prescription detail fetched',
-      emptyLog: 'No unapplied prescription detail',
     );
   }
 

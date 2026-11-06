@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pharmed_client/core/mixins/api_request_mixin.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import '../../core/mixins/api_request_mixin.dart';
 import '../../core/providers/providers.dart';
 import '../../features/service_selection/service_selection.dart';
 

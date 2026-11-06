@@ -3924,6 +3924,7 @@
   "unappliedPrescription_table_admissionDateColumn": "Date d'admission",
   "unappliedPrescription_table_prescriptionDateColumn": "Date de prescription",
   "unappliedPrescription_table_pendingCountColumn": "En attente",
+  "unappliedPrescription_table_medicinesColumn": "Médicaments",
   "unappliedPrescription_overdueTable_medicineColumn": "Médicament",
   "unappliedPrescription_overdueTable_doseColumn": "Dose",
   "unappliedPrescription_overdueTable_scheduledTimeColumn": "Heure prévue",

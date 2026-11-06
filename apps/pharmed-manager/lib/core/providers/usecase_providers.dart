@@ -127,7 +127,6 @@ class UsecaseProviders {
       Provider(create: (context) => GetScannedBarcodesUseCase(context.read())),
       Provider(create: (context) => GetDeletedBarcodesUseCase(context.read())),
       Provider(create: (context) => GetUnappliedPrescriptionsUseCase(context.read())),
-      Provider(create: (context) => GetUnappliedPrescriptionDetailUseCase(context.read())),
       Provider(create: (context) => AssignRfidTagUseCase(context.read(), context.read())),
       Provider(create: (context) => DeleteRfidTagUseCase(context.read())),
       Provider(create: (context) => CheckAndApprovePrescriptionUseCase(context.read())),

@@ -2,29 +2,30 @@ import 'package:flutter/widgets.dart';
 
 import 'package:pharmed_manager/core/core.dart';
 
-class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin, PaginationMixin<Prescription> {
+/// Uygulanmamış Reçeteler (`Prescription/uncollectedPrescriptionMaster`).
+///
+/// Her satır bir yatıştır; yatışın bekleyen reçete kalemleri listeyle birlikte
+/// geldiği için detay paneli ayrı servis çağırmadan satırdaki kalemleri gösterir.
+class UnappliedPrescriptionsNotifier extends ChangeNotifier
+    with ApiRequestMixin, PaginationMixin<UnappliedHospitalization> {
   final GetUnappliedPrescriptionsUseCase _getUnappliedPrescriptionsUseCase;
-  final GetUnappliedPrescriptionDetailUseCase _getUnappliedPrescriptionDetailUseCase;
 
-  UnappliedPrescriptionsNotifier({
-    required GetUnappliedPrescriptionsUseCase getUnappliedPrescriptionsUseCase,
-    required GetUnappliedPrescriptionDetailUseCase getUnappliedPrescriptionDetailUseCase,
-  }) : _getUnappliedPrescriptionsUseCase = getUnappliedPrescriptionsUseCase,
-       _getUnappliedPrescriptionDetailUseCase = getUnappliedPrescriptionDetailUseCase;
+  UnappliedPrescriptionsNotifier({required GetUnappliedPrescriptionsUseCase getUnappliedPrescriptionsUseCase})
+    : _getUnappliedPrescriptionsUseCase = getUnappliedPrescriptionsUseCase;
 
   OperationKey fetchOp = OperationKey.fetch();
-  OperationKey fetchDetailOp = OperationKey.custom('fetch-detail');
 
   bool get isFetching => isLoading(fetchOp);
-  bool get isFetchingDetail => isLoading(fetchDetailOp);
 
-  List<PrescriptionItem> _prescriptionItems = [];
-  List<PrescriptionItem> get prescriptionItems => _prescriptionItems;
+  UnappliedHospitalization? _selectedHospitalization;
+  UnappliedHospitalization? get selectedHospitalization => _selectedHospitalization;
 
-  Prescription? _selectedPrescription;
-  Prescription? get selectedPrescription => _selectedPrescription;
+  /// Seçili yatışın bekleyen reçete kalemleri.
+  List<PrescriptionItem> get prescriptionItems => _selectedHospitalization?.items ?? const [];
 
-  Map<int, List<PrescriptionItem>> get groupedPrescriptions => _prescriptionItems.groupedById;
+  /// Kalemler gün bazında (detay panelinde `RxGroupCard.day` kartları) —
+  /// reçete işlemleri paneliyle aynı gruplama.
+  List<({DateTime? day, List<PrescriptionItem> items})> get dayGroups => prescriptionItems.groupedByDay;
 
   bool _isPanelOpen = false;
   bool get isPanelOpen => _isPanelOpen;
@@ -34,16 +35,15 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
   bool _showOverdue = false;
   bool get showOverdue => _showOverdue;
 
-  void openPanel(Prescription item) {
-    _selectedPrescription = item;
+  void openPanel(UnappliedHospitalization item) {
+    _selectedHospitalization = item;
     _isPanelOpen = true;
-    _getUnappliedPrescriptionDetail();
     notifyListeners();
   }
 
   void closePanel() {
     _isPanelOpen = false;
-    _selectedPrescription = null;
+    _selectedHospitalization = null;
     notifyListeners();
   }
 
@@ -51,7 +51,7 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
     _showOverdue = !_showOverdue;
     if (_showOverdue) {
       _isPanelOpen = false;
-      _selectedPrescription = null;
+      _selectedHospitalization = null;
     }
     resetFilters(notify: false, resetDate: false);
     notifyListeners();
@@ -61,10 +61,6 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
   @override
   Future<void> fetch() async {
     if (_showOverdue) return;
-    await _fetchAllPrescriptions();
-  }
-
-  Future<void> _fetchAllPrescriptions() async {
     await fetchPagedData(
       fetchMethod: (skip, take) => _getUnappliedPrescriptionsUseCase.call(
         params: PagedQueryParams(
@@ -76,18 +72,20 @@ class UnappliedPrescriptionsNotifier extends ChangeNotifier with ApiRequestMixin
         ),
       ),
     );
+    _syncSelection();
   }
 
-  Future<void> _getUnappliedPrescriptionDetail() async {
-    final prescriptionId = _selectedPrescription?.id;
-    if (prescriptionId == null) return;
-
-    await execute(
-      fetchDetailOp,
-      operation: () => _getUnappliedPrescriptionDetailUseCase.call(prescriptionId),
-      onData: (data) {
-        _prescriptionItems = data;
-      },
-    );
+  /// Liste yenilendiğinde açık paneldeki yatışı yeni veriyle değiştirir;
+  /// yatış artık listede yoksa (tüm kalemleri uygulanmış) paneli kapatır.
+  void _syncSelection() {
+    final selectedId = _selectedHospitalization?.hospitalizationId;
+    if (selectedId == null) return;
+    final fresh = items.where((e) => e.hospitalizationId == selectedId).firstOrNull;
+    if (fresh == null) {
+      closePanel();
+    } else {
+      _selectedHospitalization = fresh;
+      notifyListeners();
+    }
   }
 }

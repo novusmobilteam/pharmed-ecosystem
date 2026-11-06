@@ -16,6 +16,7 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   final PrescriptionMapper _prescriptionMapper;
   final PrescriptionItemMapper _prescriptionItemMapper;
   final PrescriptionItemMovementMapper _prescriptionItemMovementMapper;
+  final UnappliedHospitalizationMapper _unappliedMapper = const UnappliedHospitalizationMapper();
 
   @override
   Future<Result<Prescription?>> createPrescription(Prescription entity) async {
@@ -113,12 +114,14 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
   }
 
   @override
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({PagedQueryParams? params}) async {
+  Future<Result<ApiResponse<List<UnappliedHospitalization>>?>> getUnappliedPrescriptions({
+    PagedQueryParams? params,
+  }) async {
     final result = await _dataSource.getUnappliedPrescriptions(params: params);
     return result.when(
       ok: (apiResponse) => Result.ok(
-        ApiResponse<List<Prescription>>(
-          data: apiResponse?.data != null ? _prescriptionMapper.toEntityList(apiResponse!.data!) : null,
+        ApiResponse<List<UnappliedHospitalization>>(
+          data: apiResponse?.data != null ? _unappliedMapper.toEntityList(apiResponse!.data!) : null,
           isSuccess: apiResponse?.isSuccess ?? true,
           totalCount: apiResponse?.totalCount,
         ),
@@ -138,15 +141,6 @@ class PrescriptionRepositoryImpl implements IPrescriptionRepository {
           totalCount: apiResponse?.totalCount,
         ),
       ),
-      error: (e) => Result.error(e),
-    );
-  }
-
-  @override
-  Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId) async {
-    final result = await _dataSource.getUnappliedPrescriptionDetail(prescriptionId);
-    return result.when(
-      ok: (dtos) => Result.ok(_prescriptionItemMapper.toEntityList(dtos ?? [])),
       error: (e) => Result.error(e),
     );
   }

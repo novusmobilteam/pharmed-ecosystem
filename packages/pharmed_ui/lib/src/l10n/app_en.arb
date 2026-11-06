@@ -4272,6 +4272,7 @@
   "@unappliedPrescription_table_admissionDateColumn": {},
   "unappliedPrescription_table_prescriptionDateColumn": "Prescription Date",
   "unappliedPrescription_table_pendingCountColumn": "Pending",
+  "unappliedPrescription_table_medicinesColumn": "Medicines",
   "@unappliedPrescription_table_pendingCountColumn": {},
   "unappliedPrescription_overdueTable_medicineColumn": "Medicine",
   "@unappliedPrescription_overdueTable_medicineColumn": {

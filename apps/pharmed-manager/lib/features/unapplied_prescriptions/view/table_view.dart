@@ -7,7 +7,7 @@ class TableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MedTable<Prescription>(
+    return MedTable<UnappliedHospitalization>(
       data: notifier.items,
       isLoading: notifier.isFetching,
       enableExcel: true,
@@ -19,7 +19,7 @@ class TableView extends StatelessWidget {
 
       // Tablo Satır Aksiyonları
       actions: [
-        TableActionItem<Prescription>(
+        TableActionItem<UnappliedHospitalization>(
           icon: PhosphorIcons.receipt(),
           tooltip: context.l10n.unappliedPrescription_viewDetailsTooltip,
           color: context.colorScheme.onSurface,
@@ -48,14 +48,14 @@ class TableView extends StatelessWidget {
   }
 }
 
-List<TableColumnDef<Prescription>> _buildColumnDefs(BuildContext context) => [
+List<TableColumnDef<UnappliedHospitalization>> _buildColumnDefs(BuildContext context) => [
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_serviceColumn,
     displayValue: (item) => item.hospitalization?.physicalService?.name,
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_roomColumn,
-    displayValue: (item) => item.hospitalization?.bed?.room?.name,
+    displayValue: (item) => item.hospitalization?.bed?.room?.name ?? item.hospitalization?.room?.name,
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_bedColumn,
@@ -71,7 +71,7 @@ List<TableColumnDef<Prescription>> _buildColumnDefs(BuildContext context) => [
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_hospitalizationCodeColumn,
-    displayValue: (item) => item.hospitalizationId?.toCustomString(),
+    displayValue: (item) => (item.hospitalization?.code ?? item.hospitalizationId)?.toCustomString(),
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_admissionDateColumn,
@@ -79,10 +79,17 @@ List<TableColumnDef<Prescription>> _buildColumnDefs(BuildContext context) => [
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_prescriptionDateColumn,
-    displayValue: (item) => item.prescriptionDate?.formattedDate,
+    displayValue: (item) => item.lastPrescriptionDate?.formattedDate,
+    sortValue: (item) => item.lastPrescriptionDate?.millisecondsSinceEpoch ?? 0,
+  ),
+  TableColumnDef(
+    title: context.l10n.unappliedPrescription_table_medicinesColumn,
+    displayValue: (item) => item.materialNames,
   ),
   TableColumnDef(
     title: context.l10n.unappliedPrescription_table_pendingCountColumn,
+    numeric: true,
     displayValue: (item) => item.remainingCount?.toCustomString(),
+    sortValue: (item) => item.remainingCount ?? 0,
   ),
 ];

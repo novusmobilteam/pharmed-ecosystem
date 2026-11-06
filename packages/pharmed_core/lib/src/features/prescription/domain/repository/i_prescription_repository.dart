@@ -53,9 +53,8 @@ abstract interface class IPrescriptionRepository {
   // Okutulmayan Karekod sil
   Future<Result<void>> deleteUnscannedBarcode({required int prescriptionItemId, required String description});
 
-  // Uygulanmamış Reçeteler
-  Future<Result<ApiResponse<List<Prescription>>?>> getUnappliedPrescriptions({PagedQueryParams? params});
-  Future<Result<List<PrescriptionItem>>> getUnappliedPrescriptionDetail(int prescriptionId);
+  // Uygulanmamış Reçeteler — yatış bazlı; reçeteler ve bekleyen kalemler aynı yanıtta gelir.
+  Future<Result<ApiResponse<List<UnappliedHospitalization>>?>> getUnappliedPrescriptions({PagedQueryParams? params});
   // Geciken uygulamalar
   Future<Result<ApiResponse<List<PrescriptionItem>>?>> getOverduePrescripitons({PagedQueryParams? params});
 

@@ -10617,6 +10617,12 @@ abstract class AppLocalizations {
   /// **'Pending'**
   String get unappliedPrescription_table_pendingCountColumn;
 
+  /// No description provided for @unappliedPrescription_table_medicinesColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines'**
+  String get unappliedPrescription_table_medicinesColumn;
+
   /// Overdue applications table column — medicine name
   ///
   /// In en, this message translates to:

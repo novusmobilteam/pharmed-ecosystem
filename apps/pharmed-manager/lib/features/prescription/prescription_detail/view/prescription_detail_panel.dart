@@ -51,7 +51,7 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (hosp != null) _PatientInfoStrip(hosp: hosp),
+          if (hosp != null) PatientInfoStrip(hospitalization: hosp),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Column(
@@ -168,66 +168,6 @@ class _PrescriptionDetailPanelState extends State<PrescriptionDetailPanel> {
     } else {
       MessageUtils.showSuccessSnackbar(context, context.l10n.prescription_actionCompletedSuccess);
     }
-  }
-}
-
-// ── Hasta bilgisi ───────────────────────────────────────────────────────────
-
-class _PatientInfoStrip extends StatelessWidget {
-  const _PatientInfoStrip({required this.hosp});
-
-  final Hospitalization hosp;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final room = hosp.bed?.room?.name ?? hosp.room?.name;
-    final bed = hosp.bed?.name;
-    final entries = <(IconData, String, String)>[
-      if (hosp.patient?.protocolNo != null)
-        (PhosphorIcons.identificationCard(), l10n.patient_fieldProtocolNo, hosp.patient!.protocolNo!),
-      if (hosp.physicalService?.name != null)
-        (PhosphorIcons.buildings(), l10n.tableCore_serviceColumn, hosp.physicalService!.name!),
-      if (room != null || bed != null)
-        (
-          PhosphorIcons.bed(),
-          '${l10n.unappliedPrescription_table_roomColumn} / ${l10n.unappliedPrescription_table_bedColumn}',
-          [room ?? '—', bed ?? '—'].join(' / '),
-        ),
-      if (hosp.admissionDate != null)
-        (PhosphorIcons.calendarCheck(), l10n.hospitalization_fieldAdmissionDate, hosp.admissionDate!.formattedDate),
-    ];
-    if (entries.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(
-        color: MedColors.surface2,
-        border: Border(bottom: BorderSide(color: MedColors.border2)),
-      ),
-      child: Wrap(
-        spacing: 24,
-        runSpacing: 10,
-        children: [
-          for (final (icon, label, value) in entries)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 8,
-              children: [
-                Icon(icon, size: 16, color: MedColors.text3),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(label, style: MedTextStyles.monoXs(color: MedColors.text3)),
-                    Text(value, style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600)),
-                  ],
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
   }
 }
 

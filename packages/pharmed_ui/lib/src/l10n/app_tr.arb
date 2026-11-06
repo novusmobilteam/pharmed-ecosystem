@@ -7306,6 +7306,7 @@
   "unappliedPrescription_table_admissionDateColumn": "Yatış Tarihi",
   "unappliedPrescription_table_prescriptionDateColumn": "Reçete Tarihi",
   "unappliedPrescription_table_pendingCountColumn": "Bekleyen Adet",
+  "unappliedPrescription_table_medicinesColumn": "İlaçlar",
   "unappliedPrescription_overdueTable_medicineColumn": "İlaç",
   "unappliedPrescription_overdueTable_doseColumn": "Doz",
   "unappliedPrescription_overdueTable_scheduledTimeColumn": "Planlanan Zaman",
@@ -8818,6 +8819,9 @@
   },
   "@unappliedPrescription_table_pendingCountColumn": {
     "description": "Table column header — number of pending unapplied prescription items, unapplied prescriptions screen"
+  },
+  "@unappliedPrescription_table_medicinesColumn": {
+    "description": "Unapplied prescriptions table column: comma-separated names of the pending medicines of the hospitalization."
   },
   "@drugActivity_table_dateColumn": {
     "description": "Table column header — activity date, drug activity screen"

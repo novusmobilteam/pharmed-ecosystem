@@ -24,7 +24,6 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UnappliedPrescriptionsNotifier(
             getUnappliedPrescriptionsUseCase: context.read(),
-            getUnappliedPrescriptionDetailUseCase: context.read(),
           )..fetch(),
         ),
         // Geciken uygulamalar tablosu açıldığında (OverdueTableView) yüklenir.
@@ -44,7 +43,7 @@ class UnappliedPrescriptionsScreen extends StatelessWidget {
                 child: SidePanelWrapper(
                   isOpen: notifier.isPanelOpen,
                   width: 700,
-                  panel: DetailPanel(key: ValueKey(notifier.selectedPrescription?.id ?? 'detail')),
+                  panel: DetailPanel(key: ValueKey(notifier.selectedHospitalization?.hospitalizationId ?? 'detail')),
                   child: notifier.showOverdue
                       ? OverdueTableView(
                           notifier: context.read<OverdueApplicationsNotifier>(),
