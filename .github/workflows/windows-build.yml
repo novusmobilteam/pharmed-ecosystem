@@ -92,21 +92,61 @@ jobs:
           path: apps/${{ matrix.app }}/build/windows/x64/*.7z
           key: media-kit-win-${{ matrix.app }}-${{ hashFiles('**/pubspec.lock') }}
 
-      # Arşiv indirmesi bozuk gelirse ("Integrity check failed") arşivleri silip
-      # en fazla 3 kez yeniden dener.
+      # Arşivleri CMake'ten ÖNCE kendimiz indirip MD5 doğruluyoruz. CMake dosya
+      # zaten varsa ve MD5 tutuyorsa indirmeyi atlar. URL ve MD5'ler, kullanılan
+      # eklenti sürümünün kendi CMakeLists.txt'inden okunur → sürüm değişince
+      # bu adımı güncellemek gerekmez. curl retry + net hata mesajı (HTTP kodu) verir.
+      - name: media_kit arşivlerini önceden indir
+        shell: pwsh
+        env:
+          APP: ${{ matrix.app }}
+        run: |
+          $cfg = Get-Content .dart_tool/package_config.json -Raw | ConvertFrom-Json
+          $pkg = $cfg.packages | Where-Object name -eq 'media_kit_libs_windows_video'
+          if (-not $pkg) { Write-Host 'media_kit_libs_windows_video yok, atlanıyor.'; exit 0 }
+          $root = $pkg.rootUri
+          if ($root -match '^file:') { $root = ([Uri]$root).LocalPath }
+          else { $root = Join-Path (Resolve-Path .dart_tool) $root }
+          $cmake = Get-Content (Join-Path $root 'windows/CMakeLists.txt') -Raw
+          Write-Host "Eklenti: $root"
+
+          $mpv      = [regex]::Match($cmake, 'set\(LIBMPV "(mpv-dev-x86_64[^"]+)"\)')
+          $mpvName  = $mpv.Groups[1].Value
+          $mpvMd5   = [regex]::Match($cmake.Substring($mpv.Index), 'set\(LIBMPV_MD5 "([0-9a-fA-F]{32})"\)').Groups[1].Value
+          $mpvUrl   = [regex]::Match($cmake, 'set\(LIBMPV_URL "([^"]+)"\)').Groups[1].Value.Replace('${LIBMPV}', $mpvName)
+          $angleUrl = [regex]::Match($cmake, 'set\(ANGLE_URL "([^"]+)"\)').Groups[1].Value
+          $angleMd5 = [regex]::Match($cmake, 'set\(ANGLE_MD5 "([0-9a-fA-F]{32})"\)').Groups[1].Value
+          if (-not ($mpvName -and $mpvMd5 -and $mpvUrl -and $angleUrl -and $angleMd5)) {
+            throw 'CMakeLists.txt ayrıştırılamadı (eklenti yapısı değişmiş olabilir).'
+          }
+
+          $dir = "apps/$env:APP/build/windows/x64"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          function Get-Archive([string]$url, [string]$md5, [string]$dest) {
+            if ((Test-Path $dest) -and (Get-FileHash $dest -Algorithm MD5).Hash -eq $md5) {
+              Write-Host "Cache'ten: $dest"; return
+            }
+            for ($i = 1; $i -le 5; $i++) {
+              Remove-Item $dest -Force -ErrorAction SilentlyContinue
+              Write-Host "İndiriliyor ($i/5): $url"
+              curl.exe -fL --retry 3 --retry-all-errors --connect-timeout 30 -o $dest $url
+              $code = $LASTEXITCODE
+              if ($code -eq 0 -and (Test-Path $dest) -and (Get-FileHash $dest -Algorithm MD5).Hash -eq $md5) {
+                Write-Host "OK: $dest"; return
+              }
+              Write-Host "::warning::İndirme/MD5 başarısız (curl exit $code), tekrar denenecek."
+              Start-Sleep -Seconds (15 * $i)
+            }
+            throw "Arşiv indirilemedi: $url"
+          }
+
+          Get-Archive $mpvUrl   $mpvMd5   (Join-Path $dir $mpvName)
+          Get-Archive $angleUrl $angleMd5 (Join-Path $dir 'ANGLE.7z')
+
       - name: Build ${{ matrix.app }} (${{ env.FLAVOR }})
         working-directory: apps/${{ matrix.app }}
-        shell: pwsh
-        run: |
-          for ($i = 1; $i -le 3; $i++) {
-            flutter build windows --release -t lib/main_$($env:FLAVOR).dart
-            if ($LASTEXITCODE -eq 0) { exit 0 }
-            Write-Host "::warning::Build basarisiz (deneme $i/3) - indirilen arsivler temizleniyor..."
-            Remove-Item build/windows/x64/*.7z -Force -ErrorAction SilentlyContinue
-            Start-Sleep -Seconds 20
-          }
-          Write-Host "::error::Build 3 denemede de basarisiz oldu."
-          exit 1
+        run: flutter build windows --release -t lib/main_${{ env.FLAVOR }}.dart
 
       - name: Paket adı
         id: name
