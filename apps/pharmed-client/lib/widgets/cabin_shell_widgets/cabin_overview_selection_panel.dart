@@ -17,7 +17,14 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
     this.onChangeCabin,
     this.cabin,
     this.allowFaultyTap = false,
+    this.wholeDrawerTap = false,
   });
+
+  /// true → çekmecenin herhangi bir yerine (başlık, gözler, boşluklar)
+  /// basmak [onDrawerTap]'i tetikler; tek göz/avadanlık seçimi devre dışı
+  /// kalır. Sayımın "Çekmece Bazlı" modu gibi yalnızca çekmece seçilen
+  /// ekranlar için. [onDrawerTap] verilmezse etkisizdir.
+  final bool wholeDrawerTap;
 
   /// true → arızalı/bakımdaki gözler de tıklanabilir (Çekmece Arıza ekranı:
   /// kaydı kapatmak için). Diğer ekranlarda arızalı göz seçilemez.
@@ -91,6 +98,7 @@ class CabinOverviewSelectionPanel extends StatelessWidget {
                   onSerumTrayTap: onSerumTrayTap,
                   onDrawerTap: onDrawerTap,
                   allowFaultyTap: allowFaultyTap,
+                  wholeDrawerTap: wholeDrawerTap,
                 );
               },
             ),
@@ -112,9 +120,11 @@ class _DrawerView extends StatelessWidget {
     this.onSerumTrayTap,
     this.onDrawerTap,
     this.allowFaultyTap = false,
+    this.wholeDrawerTap = false,
   });
 
   final bool allowFaultyTap;
+  final bool wholeDrawerTap;
   final DrawerGroup group;
   final List<MedicineAssignment> assignments;
   final Set<int> selectedUnitIds;
@@ -147,6 +157,11 @@ class _DrawerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Tüm çekmece tek dokunma hedefi ise tekil göz/avadanlık seçimi kapalı.
+    final bool drawerOnly = wholeDrawerTap && onDrawerTap != null;
+    final cellTap = drawerOnly ? null : onCellTap;
+    final trayTap = drawerOnly ? null : onSerumTrayTap;
+
     Widget container(int index, DrawerUnit unit) {
       final assignment = _assignmentByUnitId[unit.id];
       final medicine = assignment?.medicine;
@@ -180,7 +195,7 @@ class _DrawerView extends StatelessWidget {
           : MedColors.blue;
 
       return GestureDetector(
-        onTap: ((isFaulty && !allowFaultyTap) || onCellTap == null) ? null : () => onCellTap!(unit),
+        onTap: ((isFaulty && !allowFaultyTap) || cellTap == null) ? null : () => cellTap(unit),
         child: Container(
           height: _cellHeight,
           padding: MedSpacing.insetMd,
@@ -269,13 +284,15 @@ class _DrawerView extends StatelessWidget {
         ? assignedSerumCellIds.isNotEmpty && assignedSerumCellIds.every(selectedCellIds.contains)
         : assignedUnitIdsInGroup.isNotEmpty && assignedUnitIdsInGroup.every(selectedUnitIds.contains);
 
-    return Container(
+    final drawer = Container(
       padding: MedSpacing.insetLg,
       child: Column(
         spacing: 4.0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
+            // opaque: başlık satırının boş alanına basmak da çekmeceyi seçer.
+            behavior: HitTestBehavior.opaque,
             onTap: onDrawerTap != null ? () => onDrawerTap!(group) : null,
             child: SizedBox(
               height: 40,
@@ -300,7 +317,7 @@ class _DrawerView extends StatelessWidget {
                   group: group,
                   assignments: assignments,
                   selectedCellIds: selectedCellIds,
-                  onTrayTap: onSerumTrayTap,
+                  onTrayTap: trayTap,
                   allowFaultyTap: allowFaultyTap,
                   selectedShelfIds: allowFaultyTap ? selectedUnitIds : const {},
                 );
@@ -368,6 +385,16 @@ class _DrawerView extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (!drawerOnly) return drawer;
+
+    // Çekmecenin herhangi bir yerine (gözler, boşluklar, kenar boşlukları)
+    // basmak çekmeceyi seçer/seçimi kaldırır.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => onDrawerTap!(group),
+      child: drawer,
     );
   }
 }
