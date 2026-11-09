@@ -91,9 +91,8 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
         // Yalnızca işlem yapılabilir kabinlere bağlanan atamalar.
         _assignments = scope.stationAssignments(all);
         _censusMode = CensusMode.byMedicine;
-        // Önceki davranışla aynı: açılışta (görüntülenen) kabinin tamamı seçili.
+        // Açılışta hiçbir şey seçili değil — kullanıcı seçimi kendisi yapar.
         _selection.clear();
-        _selectViewedCabin();
         notifyListeners();
       },
     );

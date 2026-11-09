@@ -37,6 +37,7 @@ class MasterCensusSelectionView extends ConsumerWidget {
           assignments: selection.assignments,
           selectedUnitIds: selection.selectedUnitIds,
           onDrawerTap: isDrawerMode ? selection.toggleDrawer : null,
+          wholeDrawerTap: isDrawerMode,
           onCellTap: (unit) {
             final id = unit.id;
             if (id != null) selection.toggleUnit(id);
