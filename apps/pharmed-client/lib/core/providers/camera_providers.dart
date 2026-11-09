@@ -6,6 +6,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 
 import 'package:pharmed_client/core/hardware/camera/camera_config.dart';
 import 'package:pharmed_client/core/hardware/camera/ffmpeg_operation_recorder.dart';
+import '../storage/app_data_paths.dart';
 
 /// Paketlenmiş ffmpeg (`<uygulama klasörü>/ffmpeg/ffmpeg.exe`) varsa onu,
 /// yoksa geliştirme ortamında PATH'teki ffmpeg'i kullanır.
@@ -20,10 +21,7 @@ String resolveFfmpegPath() {
 
 /// Kayıt arşivinin kökü — kullanıcı bazlı yazılabilir alan
 /// (Program Files kurulumlarında uygulama klasörü yazılabilir olmayabilir).
-String recordingRootPath() {
-  final base = Platform.environment['LOCALAPPDATA'] ?? Directory.systemTemp.path;
-  return p.join(base, 'PharMed', 'recordings');
-}
+String recordingRootPath() => p.join(pharmedDataRoot(), 'recordings');
 
 /// Kaydedici yarım dosyaları buraya yazar; tamamlananlar arşive taşınır.
 const recordingStagingFolder = '.staging';

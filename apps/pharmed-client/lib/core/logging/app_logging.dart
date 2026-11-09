@@ -1,7 +1,7 @@
 // [SWREQ-CORE-LOG-002] [SWREQ-CORE-LOG-003] [IEC 62304 §9.2]
 // Uygulama açılışında loglamayı kurar:
 //   - MedLogger çıktısı cihazda günlük dosyalara yazılır
-//     (%LOCALAPPDATA%\PharMed\logs\pharmed-client-YYYY-MM-DD.log, 14 gün).
+//     (pharmed-client-YYYY-MM-DD.log, 14 gün; klasör için bkz. appLogDirectoryPath).
 //   - Yakalanmamış Flutter/async hataları loglanır.
 // Sahadaki bir cihazda yarıda kalan bir işlemin sebebi bu dosyalardan bulunur.
 //
@@ -11,19 +11,15 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../flavor/app_flavor.dart';
+import '../storage/app_data_paths.dart';
+
+export '../storage/app_data_paths.dart' show appLogDirectoryPath, revealInFileManager;
 
 const _unit = 'SW-UNIT-APP';
 const _swreq = 'SWREQ-CORE-LOG-003';
-
-/// Log dosyalarının klasörü (kamera kayıtlarıyla aynı kök: %LOCALAPPDATA%\PharMed).
-String appLogDirectoryPath() {
-  final base = Platform.environment['LOCALAPPDATA'] ?? Directory.systemTemp.path;
-  return p.join(base, 'PharMed', 'logs');
-}
 
 /// `FlavorConfig.initialize` sonrasında, `runApp`'ten önce çağrılır.
 Future<void> initAppLogging({required bool verbose}) async {
