@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,8 +66,8 @@ class _SettingsModalBody extends ConsumerWidget {
           ),
         ],
       ),
-      // Debug section sadece debug build'lerde görünür (DebugSettingsView
-      // içindeki assert(kDebugMode) ile de tutarlı).
+      // Debug section'ı yalnızca debug build'lerde göstermek için (şu an
+      // tüm build'lerde görünüyor — sahada log almak için de kullanılıyor).
       // if (kDebugMode)
       //   MedSettingsNavGroup(
       //     items: [

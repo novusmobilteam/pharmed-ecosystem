@@ -20,90 +20,99 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    assert(kDebugMode, 'DebugSettingsView sadece debug modda kullanılabilir');
-
+    // Sekme debug'a özel değil: dev/prod build'lerde de görünür ve çalışır
+    // (ör. sahadaki cihazdan log almak için).
     final state = ref.watch(settingsNotifierProvider);
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(color: MedColors.amberLight, borderRadius: MedRadius.mdAll),
+                child: Icon(PhosphorIcons.bug(), color: MedColors.amber, size: 26),
+              ),
+              const SizedBox(width: MedSpacing.lg),
+              Expanded(
+                child: Text(context.l10n.settingsView_debugNav, style: MedTextStyles.titleMd(color: MedColors.text)),
+              ),
+            ],
+          ),
+          const SizedBox(height: MedSpacing.lg),
           Text(
-            'DEBUG AYARLARI',
-            style: TextStyle(
-              fontFamily: MedFonts.mono,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: MedColors.text3,
-              letterSpacing: 0.8,
-            ),
+            'Geliştirme ve saha tanılaması için araçlar. Buradaki ayarlar kabin işlemlerini etkilemez.',
+            style: MedTextStyles.bodyMd(color: MedColors.text2).copyWith(height: 1.5),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: MedSpacing.xl),
 
-          // ── Kabin seçimi ────────────────────────────────────
-          _SettingRow(
-            label: 'Aktif Kabin',
-            description: 'Seçilen kabin dashboard\'da gösterilir — cache değişmez',
-            trailing: _CabinSelector(
-              cabins: state.cabins,
-              isLoading: state.isLoadingCabins,
-              error: state.cabinsError,
-              selected: state.debugCabin,
-              onSelected: (cabin) => notifier.setDebugCabin(cabin),
-              onRetry: () => notifier.loadCabins(),
-            ),
-          ),
+          _SettingsCard(
+            children: [
+              // ── Kabin seçimi ────────────────────────────────
+              _SettingRow(
+                label: 'Aktif Kabin',
+                description: 'Seçilen kabin dashboard\'da gösterilir — cache değişmez',
+                trailing: _CabinSelector(
+                  cabins: state.cabins,
+                  isLoading: state.isLoadingCabins,
+                  error: state.cabinsError,
+                  selected: state.debugCabin,
+                  onSelected: (cabin) => notifier.setDebugCabin(cabin),
+                  onRetry: () => notifier.loadCabins(),
+                ),
+              ),
 
-          // ── Donanım testleri ────────────────────────────────
-          _SettingRow(
-            label: 'Parmak izi okuyucu',
-            description: 'Okuyucuyu aç, okuma yap; kalite, canlılık skoru ve süreyi gör',
-            trailing: MedButton(
-              label: 'Test ekranını aç',
-              size: MedButtonSize.sm,
-              variant: MedButtonVariant.secondary,
-              prefixIcon: const Icon(Icons.fingerprint),
-              onPressed: () => FingerprintTestScreen.show(context),
-            ),
-          ),
+              // ── Donanım testleri ────────────────────────────
+              _SettingRow(
+                label: 'Parmak izi okuyucu',
+                description: 'Okuyucuyu aç, okuma yap; kalite, canlılık skoru ve süreyi gör',
+                trailing: MedButton(
+                  label: 'Test ekranını aç',
+                  size: MedButtonSize.sm,
+                  variant: MedButtonVariant.secondary,
+                  prefixIcon: Icon(PhosphorIcons.fingerprint()),
+                  onPressed: () => FingerprintTestScreen.show(context),
+                ),
+              ),
 
-          // ── Uygulama logları ────────────────────────────────
-          // Sahadaki cihazda yarıda kalan işlemlerin sebebi bu dosyalardan
-          // bulunur (istek/yanıt, kural redleri, hatalar).
-          _SettingRow(
-            label: 'Uygulama logları',
-            description: appLogDirectoryPath(),
-            trailing: MedButton(
-              label: 'Klasörü aç',
-              size: MedButtonSize.sm,
-              variant: MedButtonVariant.secondary,
-              prefixIcon: const Icon(Icons.folder_open),
-              onPressed: () async {
-                final dir = Directory(appLogDirectoryPath());
-                await dir.create(recursive: true);
-                await Process.run('explorer', [dir.path]);
-              },
-            ),
-          ),
+              // ── Uygulama logları ────────────────────────────
+              // Sahadaki cihazda yarıda kalan işlemlerin sebebi bu dosyalardan
+              // bulunur (istek/yanıt, kural redleri, hatalar).
+              _SettingRow(
+                label: 'Uygulama logları',
+                description: appLogDirectoryPath(),
+                trailing: MedButton(
+                  label: 'Klasörü aç',
+                  size: MedButtonSize.sm,
+                  variant: MedButtonVariant.secondary,
+                  prefixIcon: Icon(PhosphorIcons.folderOpen()),
+                  onPressed: () => revealInFileManager(appLogDirectoryPath()),
+                ),
+              ),
 
-          // ── Placeholder'lar ─────────────────────────────────
-          _SettingRow(
-            label: 'Mock veri modu',
-            description: 'API istekleri yerine mock data kullanır',
-            disabled: true,
-            trailing: _ToggleSwitch(value: false, onChanged: null),
-          ),
-          _SettingRow(
-            label: 'Log seviyesi',
-            description: 'Konsol çıktı detayı',
-            disabled: true,
-            trailing: _SegmentedControl<String>(
-              value: 'Info',
-              options: const [('Info', 'Info'), ('Debug', 'Debug'), ('Verbose', 'Verbose')],
-              onChanged: null,
-            ),
+              // ── Placeholder'lar ─────────────────────────────
+              _SettingRow(
+                label: 'Mock veri modu',
+                description: 'API istekleri yerine mock data kullanır',
+                disabled: true,
+                trailing: _ToggleSwitch(value: false, onChanged: null),
+              ),
+              _SettingRow(
+                label: 'Log seviyesi',
+                description: 'Konsol çıktı detayı',
+                disabled: true,
+                isLast: true,
+                trailing: _SegmentedControl<String>(
+                  value: 'Info',
+                  options: const [('Info', 'Info'), ('Debug', 'Debug'), ('Verbose', 'Verbose')],
+                  onChanged: null,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -148,7 +157,7 @@ class _CabinSelector extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               'Yenile',
-              style: TextStyle(fontFamily: MedFonts.sans, fontSize: 12, color: MedColors.red),
+              style: MedTextStyles.bodySm(color: MedColors.red),
             ),
           ],
         ),
@@ -158,7 +167,7 @@ class _CabinSelector extends StatelessWidget {
     if (cabins.isEmpty) {
       return Text(
         'Kabin bulunamadı',
-        style: TextStyle(fontFamily: MedFonts.mono, fontSize: 11, color: MedColors.text3),
+        style: MedTextStyles.bodySm(color: MedColors.text3),
       );
     }
 
@@ -248,22 +257,50 @@ class _CabinDropdown extends StatelessWidget {
 // Yardımcı widget'lar
 // ─────────────────────────────────────────────────────────────────
 
+/// Diğer ayar sekmelerindeki form kartıyla aynı görünüm (bkz. PrinterSettingsView).
+class _SettingsCard extends StatelessWidget {
+  const _SettingsCard({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: MedSpacing.xl),
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border.all(color: MedColors.border),
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Column(children: children),
+    );
+  }
+}
+
 class _SettingRow extends StatelessWidget {
-  const _SettingRow({required this.label, required this.description, required this.trailing, this.disabled = false});
+  const _SettingRow({
+    required this.label,
+    required this.description,
+    required this.trailing,
+    this.disabled = false,
+    this.isLast = false,
+  });
 
   final String label;
   final String description;
   final Widget trailing;
   final bool disabled;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
     return Opacity(
       opacity: disabled ? 0.4 : 1.0,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: MedSpacing.lg),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: MedColors.border2)),
+          border: isLast ? null : Border(bottom: BorderSide(color: MedColors.border)),
         ),
         child: Row(
           children: [
@@ -271,24 +308,13 @@ class _SettingRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: MedFonts.sans,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: MedColors.text,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    description,
-                    style: TextStyle(fontFamily: MedFonts.sans, fontSize: 11, color: MedColors.text3),
-                  ),
+                  Text(label, style: MedTextStyles.bodyMd(color: MedColors.text).copyWith(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: MedSpacing.xs),
+                  Text(description, style: MedTextStyles.bodySm(color: MedColors.text3)),
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: MedSpacing.xl),
             trailing,
           ],
         ),
