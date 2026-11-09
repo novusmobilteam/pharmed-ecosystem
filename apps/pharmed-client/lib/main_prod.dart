@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_client/main.dart';
 import 'core/flavor/app_flavor.dart';
+import 'core/logging/app_logging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //await initWindowManager();
   FlavorConfig.initialize(AppFlavor.prod);
+  await initAppLogging(verbose: false);
   await Hive.initFlutter();
   runApp(const ProviderScope(child: MyApp()));
 }

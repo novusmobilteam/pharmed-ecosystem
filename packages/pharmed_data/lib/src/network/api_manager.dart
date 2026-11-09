@@ -11,6 +11,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'auth_token_provider.dart';
+import 'network_log_interceptor.dart';
 import 'token_interceptor.dart';
 
 class APIManager {
@@ -29,7 +30,12 @@ class APIManager {
            headers: {'Content-Type': 'application/json'},
          ),
        ) {
-    _dio.interceptors.addAll([TokenInterceptor(tokenProvider: tokenProvider), ...?extraInterceptors]);
+    // NetworkLogInterceptor en sonda: token eklenmiş, nihai isteği loglar.
+    _dio.interceptors.addAll([
+      TokenInterceptor(tokenProvider: tokenProvider),
+      ...?extraInterceptors,
+      NetworkLogInterceptor(),
+    ]);
   }
 
   final Dio _dio;
@@ -104,24 +110,11 @@ class APIManager {
     required String method,
     required String path,
   }) async {
-    MedLogger.info(
-      unit: 'SW-UNIT-NET',
-      swreq: 'SWREQ-NET-001',
-      message: '$method isteği başlatıldı',
-      context: {'path': path},
-    );
-
+    // İstek/yanıt ayrıntıları NetworkLogInterceptor'da (korelasyon id'li).
     try {
       final response = await call();
       final statusCode = response.statusCode ?? 0;
       final body = response.data;
-
-      MedLogger.info(
-        unit: 'SW-UNIT-NET',
-        swreq: 'SWREQ-NET-001',
-        message: '$method yanıt alındı',
-        context: {'path': path, 'status': statusCode},
-      );
 
       // parser null → void dönüş
       if (parser == null) {
@@ -198,9 +191,8 @@ class APIManager {
     MedLogger.error(
       unit: 'SW-UNIT-NET',
       swreq: 'SWREQ-NET-001',
-      message: 'DioException: ${e.type.name}',
-      context: {'path': path, 'statusCode': e.response?.statusCode},
-      error: e,
+      message: 'DioException: ${e.type.name} → ${exception.runtimeType}',
+      context: {'path': path, 'req': NetworkLogInterceptor.requestIdOf(e.requestOptions), ...exception.logContext},
     );
 
     return exception;

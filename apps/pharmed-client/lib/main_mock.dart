@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_data/pharmed_data.dart';
-import 'package:pharmed_ui/pharmed_ui.dart';
 import 'core/flavor/app_flavor.dart';
+import 'core/logging/app_logging.dart';
 import 'main.dart';
 
 void main() async {
@@ -13,7 +13,7 @@ void main() async {
 
   FlavorConfig.initialize(AppFlavor.mock);
   await Hive.initFlutter();
-  MedLogger.configure(verboseLogging: true);
+  await initAppLogging(verbose: true);
 
   // Mock test için cache'i temizle
   final container = ProviderContainer();

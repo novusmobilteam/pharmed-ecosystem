@@ -92,8 +92,23 @@ mixin ApiRequestMixin on ChangeNotifier {
   void setSuccess(OperationKey key, {String? message, dynamic data}) =>
       _setOperation(key, APIRequestStatus.success, message: message, data: data);
 
-  void setFailed(OperationKey key, {required String message, dynamic data}) =>
-      _setOperation(key, APIRequestStatus.failed, message: message, data: data);
+  /// [rule]: işlem servise gitmeden bir client kuralına takıldıysa sabit,
+  /// aranabilir kural kodu (ör. `INTAKE_TOTAL_EXCEEDS_STOCK`). [logContext]
+  /// kararı veren değerleri (id'ler, miktarlar) log'a taşır — kullanıcıya
+  /// gösterilmez. Bkz. [SWREQ-CORE-LOG-004].
+  void setFailed(
+    OperationKey key, {
+    required String message,
+    dynamic data,
+    String? rule,
+    Map<String, dynamic>? logContext,
+  }) => _setOperation(
+    key,
+    APIRequestStatus.failed,
+    message: message,
+    data: data,
+    logContext: {'rule': ?rule, ...?logContext},
+  );
 
   void clearOperation(OperationKey key) {
     _operations.remove(key);
@@ -105,7 +120,13 @@ mixin ApiRequestMixin on ChangeNotifier {
     notifyListeners();
   }
 
-  void _setOperation(OperationKey key, APIRequestStatus status, {String? message, dynamic data}) {
+  void _setOperation(
+    OperationKey key,
+    APIRequestStatus status, {
+    String? message,
+    dynamic data,
+    Map<String, dynamic>? logContext,
+  }) {
     _operations[key] = OperationStatus(key: key, status: status, message: message, data: data);
     notifyListeners();
 
@@ -130,7 +151,7 @@ mixin ApiRequestMixin on ChangeNotifier {
           unit: 'SW-UNIT-UI',
           swreq: 'SWREQ-UI-MIXIN-001',
           message: '$notifierName.$key → failed',
-          context: message != null ? {'message': message} : null,
+          context: {'message': ?message, ...?logContext},
         );
 
       case APIRequestStatus.initial:
@@ -167,12 +188,7 @@ mixin ApiRequestMixin on ChangeNotifier {
           unit: 'SW-UNIT-UI',
           swreq: swreq,
           message: '$notifierName.$key hata',
-          context: {
-            'errorType': error.runtimeType.toString(),
-            'message': error.message,
-            'isRetryable': error.isRetryable,
-          },
-          error: error,
+          context: {...error.logContext, 'isRetryable': error.isRetryable},
         );
         setFailed(key, message: error.userMessage);
         onFailed?.call(error);
@@ -210,8 +226,7 @@ mixin ApiRequestMixin on ChangeNotifier {
           unit: 'SW-UNIT-UI',
           swreq: swreq,
           message: '$notifierName.$key hata',
-          context: {'errorType': error.runtimeType.toString(), 'message': error.message},
-          error: error,
+          context: error.logContext,
         );
         setFailed(key, message: error.userMessage);
         onFailed?.call(error);

@@ -497,7 +497,9 @@ class DashboardNotifier extends ChangeNotifier with ApiRequestMixin {
       _ => 'dashboard',
     };
 
-    debugPrint(route);
+    // [SWREQ-CORE-LOG-003] Ekran izi — bir işlemin hangi ekranda başladığı.
+    MedLogger.setSessionValue('screen', route);
+    MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-UI-NAV-001', message: 'Ekran: $route');
 
     if (route == 'dashboard') {
       _activeRoute = 'dashboard';

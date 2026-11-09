@@ -15,6 +15,8 @@
 // Production'da LAN log sunucusuna gönderilir.
 // Mock/Dev'de debugPrint kullanılır.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 // ─────────────────────────────────────────────────────────────────
@@ -47,6 +49,7 @@ class LogEntry {
     this.context,
     this.error,
     this.stackTrace,
+    this.session,
   });
 
   final DateTime timestamp;
@@ -58,6 +61,10 @@ class LogEntry {
   final Object? error;
   final StackTrace? stackTrace;
 
+  /// Kaydın anındaki oturum bağlamı (kullanıcı, istasyon, servis, ekran).
+  /// Bkz. [MedLogger.setSessionValue].
+  final Map<String, Object?>? session;
+
   Map<String, dynamic> toJson() => {
     'timestamp': timestamp.toIso8601String(),
     'level': level.tag.trim(),
@@ -66,7 +73,35 @@ class LogEntry {
     'message': message,
     if (context != null) 'context': context,
     if (error != null) 'error': error.toString(),
+    if (session != null && session!.isNotEmpty) 'session': session,
+    if (stackTrace != null) 'stackTrace': stackTrace.toString(),
   };
+
+  /// Dosyaya yazılan satır: tek satır başlık + (varsa) girintili stack trace.
+  /// Context/session JSON olarak yazılır — Map.toString() tırnakları yuttuğu
+  /// için değerler (ör. servis yanıt gövdesi) okunamaz hale geliyordu.
+  String toLogLine() {
+    final b = StringBuffer()
+      ..write(timestamp.toIso8601String())
+      ..write(' ${level.tag} [$unit][$swreq] $message');
+    if (context != null && context!.isNotEmpty) b.write(' | ctx=${_json(context)}');
+    if (session != null && session!.isNotEmpty) b.write(' | session=${_json(session)}');
+    if (error != null) b.write(' | error=$error');
+    if (stackTrace != null) {
+      for (final line in stackTrace.toString().trimRight().split('\n').take(40)) {
+        b.write('\n    $line');
+      }
+    }
+    return b.toString();
+  }
+
+  static String _json(Object? value) {
+    try {
+      return jsonEncode(value, toEncodable: (o) => o.toString());
+    } catch (_) {
+      return value.toString();
+    }
+  }
 
   @override
   String toString() {
@@ -94,6 +129,12 @@ abstract final class MedLogger {
   // Remote sink — production'da LAN log sunucusuna gönderir
   static LogSink? _remoteSink;
 
+  // Ek hedefler (ör. cihazdaki günlük log dosyası — FileLogSink).
+  static final List<LogSink> _sinks = [];
+
+  // Her kayda eklenen oturum bağlamı.
+  static final Map<String, Object?> _session = {};
+
   // FlavorConfig yerine dışarıdan configure edilir
   static bool _verboseLogging = false;
 
@@ -105,6 +146,29 @@ abstract final class MedLogger {
   static void setRemoteSink(LogSink sink) {
     _remoteSink = sink;
   }
+
+  /// Ek log hedefi ekler (ör. dosya). Aynı sink iki kez eklenmez.
+  static void addSink(LogSink sink) {
+    if (!_sinks.contains(sink)) _sinks.add(sink);
+  }
+
+  // ── Oturum bağlamı ──────────────────────────────────────────
+  // [SWREQ-CORE-LOG-003] Bir işlemin kim tarafından, hangi istasyon/servis ve
+  // ekranda yapıldığı her kayıtta görünsün diye. Kişisel veri (hasta bilgisi)
+  // buraya KONMAZ — yalnızca operatör ve cihaz bağlamı.
+
+  /// [value] null ise anahtar kaldırılır.
+  static void setSessionValue(String key, Object? value) {
+    if (value == null) {
+      _session.remove(key);
+    } else {
+      _session[key] = value;
+    }
+  }
+
+  static void clearSession() => _session.clear();
+
+  static Map<String, Object?> get session => Map.unmodifiable(_session);
 
   // ── Public API ──────────────────────────────────────────────
 
@@ -137,6 +201,22 @@ abstract final class MedLogger {
     _log(LogLevel.error, unit, swreq, message, context, error: error, stackTrace: stackTrace);
   }
 
+  /// [SWREQ-CORE-LOG-004] Bir işlem servise GİTMEDEN client kuralına
+  /// takıldığında çağrılır. [rule] sabit, aranabilir bir koddur
+  /// (ör. `INTAKE_WITNESS_REQUIRED`); [context] kararı veren değerleri taşır.
+  static void ruleRejected({
+    required String unit,
+    required String swreq,
+    required String rule,
+    String? message,
+    Map<String, dynamic>? context,
+  }) {
+    _log(LogLevel.warn, unit, swreq, 'Kural reddi: $rule${message != null ? ' — $message' : ''}', {
+      'rule': rule,
+      ...?context,
+    });
+  }
+
   // ── Buffer erişimi (dashboard / health endpoint için) ────────
 
   static List<LogEntry> get recentLogs => List.unmodifiable(_buffer);
@@ -167,6 +247,7 @@ abstract final class MedLogger {
       context: context,
       error: error,
       stackTrace: stackTrace,
+      session: _session.isEmpty ? null : Map.of(_session),
     );
 
     // Buffer
@@ -180,8 +261,13 @@ abstract final class MedLogger {
       debugPrint(entry.toString());
     }
 
-    // Remote sink (prod'da LAN log sunucusu)
-    _remoteSink?.write(entry);
+    // Remote sink (prod'da LAN log sunucusu) ve ek hedefler.
+    // Bir sink'in hatası loglamayı (ve uygulamayı) durdurmamalı.
+    for (final sink in [?_remoteSink, ..._sinks]) {
+      try {
+        sink.write(entry);
+      } catch (_) {}
+    }
   }
 }
 

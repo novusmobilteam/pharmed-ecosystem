@@ -169,7 +169,13 @@ class AuthNotifier extends Notifier<AuthState> {
     _tokenHolder.setToken(null);
     await _cache.clear();
     _activeServiceNotifier.reset();
+    _endLogSession('logout');
     state = AuthLoggedOut(showLockedDashboard: true);
+  }
+
+  void _endLogSession(String reason) {
+    MedLogger.info(unit: 'SW-UNIT-UI', swreq: 'SWREQ-CORE-LOG-003', message: 'Oturum kapandı', context: {'reason': reason});
+    MedLogger.clearSession();
   }
 
   void onUnauthorized() {
@@ -181,6 +187,7 @@ class AuthNotifier extends Notifier<AuthState> {
     // Kilitli dashboard'dan farklı bir kullanıcı girebilir — istasyon yetkisi
     // ve servis seçimi yeniden doğrulanmalı.
     _activeServiceNotifier.reset();
+    _endLogSession('unauthorized');
     state = const AuthLoggedOut(showLockedDashboard: true);
   }
 
@@ -233,6 +240,15 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void _setLoggedIn(AppUser user) {
+    // [SWREQ-CORE-LOG-003] Bundan sonraki her log satırı bu kullanıcıyla etiketlenir.
+    MedLogger.setSessionValue('userId', user.id);
+    MedLogger.setSessionValue('user', user.fullName);
+    MedLogger.info(
+      unit: 'SW-UNIT-UI',
+      swreq: 'SWREQ-CORE-LOG-003',
+      message: 'Oturum açıldı',
+      context: {'userId': user.id, 'roleId': user.roleId},
+    );
     state = AuthLoggedIn(user: user);
     _startSessionTimer();
   }

@@ -66,6 +66,23 @@ class CheckIntakeUseCase {
 
   final IIntakeRepository _repository;
 
+  static const _unit = 'SW-UNIT-INTAKE';
+  static const _swreq = 'SWREQ-DATA-INTAKE-002';
+
+  /// Kalemin log bağlamı — hangi kalem, hangi stok/atama, ne kadar.
+  static Map<String, dynamic> _paramsLog(CheckIntakeParams p) => {
+    'type': p.type.name,
+    'prescriptionDetailId': p.prescriptionDetailId,
+    'hospitalizationId': p.hospitalizationId,
+    'dose': p.dosePiece,
+    'resolvedStockId': p.resolvedStock?.id,
+    'resolvedStockQty': p.resolvedStock?.quantity,
+    'assignmentId': p.assignment.id,
+    'assignmentStocks': [
+      for (final st in p.assignment.stocks ?? const <CabinStock>[]) '${st.id}:${st.quantity}',
+    ],
+  };
+
   Future<Result<List<IntakeDetail>>> call(CheckIntakeParams params) async {
     final details = _resolveDetails(params);
 
@@ -73,6 +90,18 @@ class CheckIntakeUseCase {
     // yok) kontrol GÖNDERİLMEZ — eksik planla alım yapılmamalı.
     final planned = details.fold<double>(0, (sum, d) => sum + d.dosePiece);
     if (details.isEmpty || planned < params.dosePiece) {
+      // [SWREQ-CORE-LOG-004] Servise GİDİLMEDİ — client planı yetersiz.
+      MedLogger.ruleRejected(
+        unit: _unit,
+        swreq: _swreq,
+        rule: 'INTAKE_PLAN_INSUFFICIENT',
+        message: 'Alım planı istenen miktarı karşılamıyor, check gönderilmedi',
+        context: {
+          ..._paramsLog(params),
+          'planned': planned,
+          'plan': [for (final d in details) '${d.stockId}:${d.dosePiece}'],
+        },
+      );
       return Result.error(CustomException(message: contextlessL10n().intake_hint_noStock));
     }
 
@@ -94,7 +123,19 @@ class CheckIntakeUseCase {
 
     // Sunucu yalnızca doğrulama sonucu döner, tahsis bilgisi taşımaz —
     // dönüş değeri bilerek kullanılmıyor, yukarıda hesaplanan plan döner.
-    return result.when(ok: (_) => Result.ok(details), error: Result.error);
+    return result.when(
+      ok: (_) => Result.ok(details),
+      error: (e) {
+        // İstek/yanıt ayrıntısı NetworkLogInterceptor'da; burada kalemle eşlenir.
+        MedLogger.warn(
+          unit: _unit,
+          swreq: _swreq,
+          message: 'Alım check servisi kalemi reddetti',
+          context: {..._paramsLog(params), 'plan': [for (final d in details) '${d.stockId}:${d.dosePiece}'], ...e.logContext},
+        );
+        return Result.error(e);
+      },
+    );
   }
 
   /// Seçili kalemleri sırayla kontrol eder ve başarılı olanların planını
@@ -125,6 +166,13 @@ class CheckIntakeUseCase {
       // hiç çözülememiş demektir, boş istek göndermek yerine hata üret.
       final assignment = item.assignment;
       if (item.stock == null && assignment == null) {
+        MedLogger.ruleRejected(
+          unit: _unit,
+          swreq: _swreq,
+          rule: 'INTAKE_TARGET_UNRESOLVED',
+          message: 'Kalemin stoğu ve ataması yok, check gönderilmedi',
+          context: {'itemId': item.id, 'type': type.name, 'medicineId': item.medicine?.id},
+        );
         report(item.id, CheckFailed(message: contextlessL10n().cabinCore_targetDrawerNotFound));
         continue;
       }
