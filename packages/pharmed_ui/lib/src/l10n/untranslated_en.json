@@ -1607,6 +1607,8 @@
     "cabinDesign_serum_traySizeLargeLabel",
     "cabinDesign_serum_trayListItemLabel",
     "cabinDesign_serum_areaUsedLabel",
+    "cabinDesign_serum_invalidLayoutError",
+    "cabinDesign_serum_incompleteLayoutError",
     "cabinDesign_serum_capacityFullWarning",
     "cabinDesign_serum_leftLabel",
     "cabinDesign_serum_rightLabel",

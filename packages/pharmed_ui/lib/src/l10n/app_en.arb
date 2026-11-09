@@ -4889,6 +4889,14 @@
   "@cabinDesign_serum_areaUsedLabel": {
     "placeholders": { "used": { "type": "int" }, "total": { "type": "int" } }
   },
+  "cabinDesign_serum_invalidLayoutError": "The saved shelf layout of this serum cabinet is invalid (shelf numbers: {orderNos}). It can't be edited until it is corrected; please contact your system administrator.",
+  "@cabinDesign_serum_invalidLayoutError": {
+    "placeholders": { "orderNos": { "type": "String" } }
+  },
+  "cabinDesign_serum_incompleteLayoutError": "The saved layout of this serum cabinet is incomplete: {saved} of {total} shelves are registered. It can't be edited until it is completed; please contact your system administrator.",
+  "@cabinDesign_serum_incompleteLayoutError": {
+    "placeholders": { "saved": { "type": "int" }, "total": { "type": "int" } }
+  },
   "cabinDesign_serum_capacityFullWarning": "Shelf is full, no more trays can be added",
   "cabinDesign_serum_leftLabel": "Left",
   "cabinDesign_serum_rightLabel": "Right",

@@ -8080,6 +8080,16 @@
   "description": "Area usage indicator shown in the shelf top-view panel",
   "placeholders": { "used": { "type": "int" }, "total": { "type": "int" } }
 },
+"cabinDesign_serum_invalidLayoutError": "Bu serum kabininin kayıtlı raf yerleşimi geçersiz (raf numaraları: {orderNos}). Düzeltilene kadar düzenlenemez; lütfen sistem yöneticinize başvurun.",
+"@cabinDesign_serum_invalidLayoutError": {
+  "description": "Cabin design serum panel / save error: the saved serum shelf layout returned by the server has missing, out-of-range or duplicate shelf numbers, so it can't be edited",
+  "placeholders": { "orderNos": { "type": "String" } }
+},
+"cabinDesign_serum_incompleteLayoutError": "Bu serum kabininin kayıtlı yerleşimi eksik: {total} raftan {saved} tanesi kayıtlı. Tamamlanana kadar düzenlenemez; lütfen sistem yöneticinize başvurun.",
+"@cabinDesign_serum_incompleteLayoutError": {
+  "description": "Cabin design serum panel / save error: only some of the serum cabinet's shelves are registered on the server, so the layout can't be edited",
+  "placeholders": { "saved": { "type": "int" }, "total": { "type": "int" } }
+},
 "cabinDesign_serum_capacityFullWarning": "Raf dolu, yeni avadanlık eklenemez",
 "@cabinDesign_serum_capacityFullWarning": {
   "description": "Warning shown when all 8 area units of a shelf are occupied"

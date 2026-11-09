@@ -3,9 +3,42 @@
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class SerumLayoutMapper {
   const SerumLayoutMapper();
+
+  /// GET cevabını [toShelves]'dan ÖNCE doğrular; geçersizse kullanıcıya
+  /// gösterilecek hatayı döner.
+  ///
+  /// Hiç kayıt yoksa (raf listesi boş) geçerlidir — ilk kayıt POST ile yapılır.
+  /// Kayıt varsa 3 rafın tamamı 1..3 arası benzersiz `orderNo` ile ve id'li
+  /// gelmelidir. Aksi halde [toShelves] eşleşmeyen rafları sessizce boş/id'siz
+  /// doldurur: id'li ve id'siz raflar karışır (kayıt hiçbir zaman geçmez) ya
+  /// da hiçbiri eşleşmezse PUT yerine POST'a düşülür (mükerrer raf kaydı).
+  BusinessRuleException? validate(SerumLayoutDTO? dto) {
+    final shelves = dto?.shelves ?? const <SerumShelfDTO>[];
+    if (shelves.isEmpty) return null;
+
+    const total = SerumShelfLayout.shelfCount;
+    final orders = shelves.map((s) => s.orderNo).toList();
+    final hasInvalidOrder = orders.toSet().length != orders.length || orders.any((o) => o < 1 || o > total);
+    if (hasInvalidOrder) {
+      return BusinessRuleException(
+        message: contextlessL10n().cabinDesign_serum_invalidLayoutError(orders.join(', ')),
+        ruleCode: 'SERUM_LAYOUT_INVALID_ORDER',
+      );
+    }
+
+    final saved = shelves.where((s) => s.id != null).length;
+    if (shelves.length != total || saved != total) {
+      return BusinessRuleException(
+        message: contextlessL10n().cabinDesign_serum_incompleteLayoutError(saved, total),
+        ruleCode: 'SERUM_LAYOUT_INCOMPLETE',
+      );
+    }
+    return null;
+  }
 
   /// Kayıtlı yerleşimi her zaman 3 rafa tamamlar. Eksik raf (hiç kayıt
   /// yoksa hepsi) boş ve kayıtsız (id=null) gelir. Avadanlıklar `stepNo`

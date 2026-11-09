@@ -295,7 +295,28 @@ class CabinRepositoryImpl implements ICabinRepository {
   @override
   Future<Result<List<SerumShelfLayout>>> getSerumLayout(int slotId) async {
     final result = await _remote.getSerumLayout(slotId);
-    return result.when(ok: (dto) => Result.ok(const SerumLayoutMapper().toShelves(dto)), error: Result.error);
+    return result.when(
+      ok: (dto) {
+        const mapper = SerumLayoutMapper();
+        final invalid = mapper.validate(dto);
+        if (invalid != null) {
+          MedLogger.warn(
+            unit: 'SW-UNIT-CABIN',
+            swreq: 'SWREQ-DATA-CABIN-SERUM-001',
+            message: 'Serum yerleşimi beklenmeyen veri içeriyor',
+            context: {
+              'slotId': slotId,
+              'rule': invalid.ruleCode,
+              // id:orderNo:avadanlıkSayısı
+              'shelves': dto!.shelves.map((s) => '${s.id}:${s.orderNo}:${s.trays.length}').join(','),
+            },
+          );
+          return Result<List<SerumShelfLayout>>.error(invalid);
+        }
+        return Result<List<SerumShelfLayout>>.ok(mapper.toShelves(dto));
+      },
+      error: Result.error,
+    );
   }
 
   @override
