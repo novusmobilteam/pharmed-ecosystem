@@ -40,6 +40,8 @@ class NetworkLogInterceptor extends Interceptor {
   static final List<RegExp> _routinePaths = [
     RegExp(r'/CabinTemperatureValues$'),
     RegExp(r'/videos/[^/]+/chunks/\d+$'),
+    // Log gönderiminin kendi isteği — loglanırsa her gönderim yeni log üretir.
+    RegExp(r'/DeviceLog/batch$'),
   ];
 
   static bool _isRoutine(RequestOptions o) =>
@@ -57,6 +59,8 @@ class NetworkLogInterceptor extends Interceptor {
 
     final context = {
       'req': id,
+      'method': options.method,
+      'path': options.path,
       if (options.queryParameters.isNotEmpty) 'query': LogRedactor.redact(options.queryParameters),
       if (options.data != null) 'body': LogRedactor.compact(options.data),
     };
@@ -131,8 +135,11 @@ class NetworkLogInterceptor extends Interceptor {
     return watch is Stopwatch ? watch.elapsed : Duration.zero;
   }
 
+  // method/path: log gönderiminde `http` alanına çıkarılır (#119).
   Map<String, dynamic> _base(RequestOptions options, int? status) => {
     'req': options.extra[_idKey],
+    'method': options.method,
+    'path': options.path,
     'status': ?status,
     'ms': _elapsed(options).inMilliseconds,
   };

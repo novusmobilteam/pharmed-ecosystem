@@ -64,13 +64,20 @@ class APIManager {
         path: path,
       );
 
+  /// [headers]: yalnızca bu isteğe eklenen header'lar (ör. `X-Device-Key`).
   Future<Result<T>> post<T>(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Map<String, String>? headers,
     T Function(dynamic)? parser,
   }) => _execute(
-    call: () => _dio.post<dynamic>(path, data: data, queryParameters: queryParameters),
+    call: () => _dio.post<dynamic>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: headers == null ? null : Options(headers: headers),
+    ),
     parser: parser,
     method: 'POST',
     path: path,
