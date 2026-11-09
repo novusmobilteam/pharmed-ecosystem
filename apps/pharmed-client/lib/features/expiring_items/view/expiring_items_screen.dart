@@ -4,29 +4,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
+
+import '../../../widgets/widgets.dart';
 import '../notifier/expiring_items_notifier.dart';
-import '../notifier/expiring_items_state.dart';
 
 part 'table_view.dart';
 
 class ExpiringItemsScreen extends ConsumerWidget {
-  const ExpiringItemsScreen({super.key});
+  const ExpiringItemsScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(expiringItemsNotifierProvider);
-    final notifier = ref.read(expiringItemsNotifierProvider.notifier);
-
-    return Scaffold(
-      body: switch (state) {
-        ExpiringItemsLoading() => const Center(child: MedLoadingIndicator()),
-        ExpiringItemsLoaded(:final items, :final isLoading) => TableView(
-          items: items,
-          isLoading: isLoading,
-          notifier: notifier,
-        ),
-        ExpiringItemsError() => Center(child: EmptyStateWidget(variant: EmptyStateVariant.noResults)),
-      },
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScreenTitle(menu: menu),
+        const Expanded(child: TableView()),
+      ],
     );
   }
 }

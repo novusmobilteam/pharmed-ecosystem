@@ -90,7 +90,7 @@ class DashboardRouteContent extends ConsumerWidget {
                   : const SizedBox.shrink(),
             'daily-job-list' =>
               cabinRouteContext != null ? JobListScreen(cabinRouteContext: cabinRouteContext) : const SizedBox.shrink(),
-            'expiring-materials' => ExpiringItemsScreen(),
+            'expiring-materials' => ExpiringItemsScreen(menu: activeMenu!),
             'unscanned-barcodes' => UnscannedBarcodesScreen(menu: activeMenu!),
             'cabin-design' => _CabinDesignRouteHandler(notifier: notifier),
             'return-box-unload' =>
@@ -98,7 +98,7 @@ class DashboardRouteContent extends ConsumerWidget {
                   ? UnloadDrawerScreen(stationContext: stationCabinsContext)
                   : const SizedBox.shrink(),
             'station-inventory' => InventoryScreen(menu: activeMenu!),
-            'directed-orders' => RedirectedOrdersScreen(),
+            'directed-orders' => RedirectedOrdersScreen(menu: activeMenu!),
             'emergency-patient-end' =>
               stationCabinsContext != null
                   ? UrgentPatientScreen(stationContext: stationCabinsContext)
