@@ -651,7 +651,18 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       });
 
       if (exceeds) {
-        setFailed(checkItemOpFor(plan.item.id), message: contextlessL10n().intake_error_totalExceedsStock);
+        setFailed(
+          checkItemOpFor(plan.item.id),
+          message: contextlessL10n().intake_error_totalExceedsStock,
+          rule: 'INTAKE_TOTAL_EXCEEDS_STOCK',
+          logContext: {
+            ..._itemLog(plan.item),
+            'details': [
+              for (final d in plan.details)
+                {'stockId': d.stockId, 'dose': d.dosePiece, 'alreadyUsed': usedByStock[d.stockId] ?? 0, 'capacity': capacityOf(d.stockId)},
+            ],
+          },
+        );
         continue;
       }
       for (final d in plan.details) {
@@ -788,20 +799,80 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
     notifyListeners();
   }
 
+  // ── Log [SWREQ-CORE-LOG-004] ──────────────────────────────────────────
+  // Alım servise gitmeden bir kurala takılırsa kural kodu ve kararı veren
+  // değerler loglanır; servis tarafı NetworkLogInterceptor'da.
+
+  static const _logUnit = 'SW-UNIT-UI';
+  static const _logSwreq = 'SWREQ-CLI-MINTAKE-006';
+
+  void _rejectStart(String rule, String message, {Map<String, dynamic>? context}) {
+    MedLogger.ruleRejected(unit: _logUnit, swreq: _logSwreq, rule: rule, message: message, context: context);
+  }
+
+  Map<String, dynamic> _itemLog(IntakeItem it) => {
+    'itemId': it.id,
+    'medicineId': it.medicine?.id,
+    'assignmentId': it.assignment?.id,
+    'stockId': it.stock?.id,
+    'dose': it.dosePiece,
+    if (it.isEquivalentIntake) 'equivalentMaterialId': it.selectedEquivalent?.materialId,
+  };
+
   Future<void> startIntake({
     required void Function(List<CabinOperationDrawerJob> jobs, List<IntakePlan> plans) onQueueReady,
     void Function(String message)? onFailed,
   }) async {
-    if (!canStart || isStartingIntake || isOverdueSelectionLocked) return;
+    if (!canStart || isStartingIntake || isOverdueSelectionLocked) {
+      _rejectStart(
+        'INTAKE_START_BLOCKED',
+        'Alım başlatılamaz durumda',
+        context: {'canStart': canStart, 'isStarting': isStartingIntake, 'overdueLocked': isOverdueSelectionLocked},
+      );
+      return;
+    }
+
+    MedLogger.info(
+      unit: _logUnit,
+      swreq: _logSwreq,
+      message: 'Alım başlatıldı',
+      context: {
+        'type': _intakeType.name,
+        'hospitalizationId': _hospitalization?.id,
+        'items': selectedItems.map(_itemLog).toList(),
+      },
+    );
 
     if (hasMissingWitness) {
-      onFailed?.call(contextlessL10n().intake_error_witnessRequired);
+      final message = contextlessL10n().intake_error_witnessRequired;
+      _rejectStart(
+        'INTAKE_WITNESS_REQUIRED',
+        message,
+        context: {
+          'itemIds': [
+            for (final it in selectedItems)
+              if (needsWitness(it) && witnessContextOf(it).witness == null) it.id,
+          ],
+        },
+      );
+      onFailed?.call(message);
       return;
     }
 
     if (requiresOverdueDescription &&
         selectedItems.any((it) => (_overdueDescriptions[it.id]?.trim().isEmpty ?? true))) {
-      onFailed?.call(contextlessL10n().intake_overdue_descriptionRequiredError);
+      final message = contextlessL10n().intake_overdue_descriptionRequiredError;
+      _rejectStart(
+        'INTAKE_OVERDUE_DESCRIPTION_REQUIRED',
+        message,
+        context: {
+          'itemIds': [
+            for (final it in selectedItems)
+              if (_overdueDescriptions[it.id]?.trim().isEmpty ?? true) it.id,
+          ],
+        },
+      );
+      onFailed?.call(message);
       return;
     }
 
@@ -826,7 +897,15 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       final target = IntakeTargetMapper.build(group.merged.item, group.merged.details);
       if (target == null) {
         for (final m in group.members) {
-          setFailed(checkItemOpFor(m.item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+          setFailed(
+            checkItemOpFor(m.item.id),
+            message: contextlessL10n().cabinCore_targetDrawerNotFound,
+            rule: 'INTAKE_TARGET_DRAWER_NOT_FOUND',
+            logContext: {
+              ..._itemLog(m.item),
+              'detailStockIds': m.details.map((d) => d.stockId).toList(),
+            },
+          );
         }
         continue;
       }
@@ -846,15 +925,30 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
 
     // Hatalı kalemler kuyruğa hiç girmedi — "hatasızlarla devam et" senaryosu
     // için ayrıca filtrelemeye gerek yok.
-    final anyFailed = selectedItems.any((it) => isFailed(checkItemOpFor(it.id)));
-    if (anyFailed) {
-      setFailed(startIntakeOp, message: contextlessL10n().intake_status_checkFailed);
+    final failedIds = [
+      for (final it in selectedItems)
+        if (isFailed(checkItemOpFor(it.id))) it.id,
+    ];
+    if (failedIds.isNotEmpty) {
+      setFailed(
+        startIntakeOp,
+        message: contextlessL10n().intake_status_checkFailed,
+        rule: 'INTAKE_CHECK_FAILED',
+        logContext: {
+          'failedItems': {for (final id in failedIds) '$id': message(checkItemOpFor(id))},
+        },
+      );
       onFailed?.call(contextlessL10n().intake_status_checkFailed);
       return; // dialog açık kalır — kullanıcı "Devam Et" ya da "İptal" seçer
     }
 
     if (_pendingJobs.isEmpty) {
-      setFailed(startIntakeOp, message: contextlessL10n().intake_error_noValidTargets);
+      setFailed(
+        startIntakeOp,
+        message: contextlessL10n().intake_error_noValidTargets,
+        rule: 'INTAKE_NO_VALID_TARGETS',
+        logContext: {'planCount': plans.length, 'targetCount': built.length},
+      );
       onFailed?.call(contextlessL10n().intake_error_noValidTargets);
       return;
     }
@@ -879,6 +973,8 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
         CheckFailed(:final message) => setFailed(
           checkItemOpFor(itemId),
           message: message ?? contextlessL10n().intake_status_checkFailed,
+          rule: 'INTAKE_ITEM_CHECK_FAILED',
+          logContext: {'itemId': itemId},
         ),
         CheckIdle() => null,
       },
@@ -903,9 +999,14 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
         ),
       );
 
-      final error = result.when(ok: (_) => null, error: (e) => e.message);
+      final error = result.when(ok: (_) => null, error: (e) => e);
       if (error != null) {
-        setFailed(checkItemOpFor(item.id), message: error);
+        setFailed(
+          checkItemOpFor(item.id),
+          message: error.message,
+          rule: 'INTAKE_EQUIVALENT_CHECK_FAILED',
+          logContext: {..._itemLog(item), ...error.logContext},
+        );
         continue;
       }
 
@@ -918,7 +1019,18 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
       // kart "başarılı" görünüp alım yapılmaması kullanıcıyı yanıltır.
       final plan = _buildEquivalentPlan(item, allAssignments ?? []);
       if (plan == null) {
-        setFailed(checkItemOpFor(item.id), message: contextlessL10n().cabinCore_targetDrawerNotFound);
+        setFailed(
+          checkItemOpFor(item.id),
+          message: contextlessL10n().cabinCore_targetDrawerNotFound,
+          rule: 'INTAKE_EQUIVALENT_TARGET_NOT_FOUND',
+          logContext: {
+            ..._itemLog(item),
+            'equivalentStocks': [
+              for (final st in item.selectedEquivalent?.stocks ?? const <CabinStock>[])
+                {'stockId': st.id, 'qty': st.quantity, 'cellId': st.cabinDrawerDetail?.id},
+            ],
+          },
+        );
         continue;
       }
 

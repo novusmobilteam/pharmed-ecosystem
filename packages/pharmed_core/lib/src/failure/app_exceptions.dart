@@ -235,3 +235,28 @@ extension AppExceptionUiMessage on AppException {
     };
   }
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Log bağlamı
+// [SWREQ-CORE-LOG-004] Bir işlem neden kesildiyse kayıtta tipiyle ve
+// ayırt edici alanlarıyla (statusCode, traceId, ruleCode, field…) görünür.
+// ─────────────────────────────────────────────────────────────────
+
+extension AppExceptionLogContext on AppException {
+  Map<String, dynamic> get logContext => {
+    'errorType': runtimeType.toString(),
+    'message': message,
+    ...switch (this) {
+      ServiceException(:final statusCode, :final traceId) => {'statusCode': statusCode, 'traceId': ?traceId},
+      BusinessRuleException(:final ruleCode) => {'rule': ruleCode},
+      ValidationException(:final field, :final value) => {'field': ?field, 'value': ?value?.toString()},
+      CacheException(:final boxName, :final key) => {'box': ?boxName, 'key': ?key},
+      MalformedDataException(:final rawData) => {'rawData': ?_truncate(rawData)},
+      _ => const <String, dynamic>{},
+    },
+    if (cause != null && cause is! AppException) 'cause': _truncate(cause.toString()),
+  };
+
+  static String? _truncate(String? s, [int max = 1000]) =>
+      s == null || s.length <= max ? s : '${s.substring(0, max)}…(+${s.length - max})';
+}

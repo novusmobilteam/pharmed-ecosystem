@@ -274,7 +274,8 @@ abstract class BaseRemoteDataSource {
       unit: logUnit,
       swreq: logSwreq,
       message: '${method.name} başlatıldı: $path',
-      context: {'query': query, 'body': body},
+      // Gövde burada değil, NetworkLogInterceptor'da maskelenerek loglanır.
+      context: {'query': ?query},
     );
 
     try {
@@ -313,7 +314,16 @@ abstract class BaseRemoteDataSource {
                 }
               }
               final apiError = ApiError.fromJson(rawData);
-              MedLogger.warn(unit: logUnit, swreq: logSwreq, message: apiError.message ?? 'Hata');
+              MedLogger.warn(
+                unit: logUnit,
+                swreq: logSwreq,
+                message: 'Servis başarısız yanıt döndü: $path',
+                context: {
+                  'statusCode': apiError.statusCode,
+                  'message': apiError.message,
+                  'error': apiError.error,
+                },
+              );
               return Result.error(
                 ServiceException(
                   message: apiError.message ?? apiError.error ?? contextlessL10n().dataError_envelopeErrorFallback,
@@ -335,7 +345,16 @@ abstract class BaseRemoteDataSource {
                 return Result.ok(apiRes?.data);
               } else {
                 final apiError = ApiError.fromJson(rawData);
-                MedLogger.warn(unit: logUnit, swreq: logSwreq, message: apiError.message ?? 'Hata');
+                MedLogger.warn(
+                unit: logUnit,
+                swreq: logSwreq,
+                message: 'Servis başarısız yanıt döndü: $path',
+                context: {
+                  'statusCode': apiError.statusCode,
+                  'message': apiError.message,
+                  'error': apiError.error,
+                },
+              );
                 return Result.error(
                   ServiceException(
                     message: apiError.message ?? apiError.error ?? contextlessL10n().dataError_envelopeErrorFallback,
@@ -357,8 +376,12 @@ abstract class BaseRemoteDataSource {
           }
         },
         error: (failure) {
-          print('❌ ERROR BRANCH - message: ${failure.message}');
-          MedLogger.error(unit: logUnit, swreq: logSwreq, message: 'İstek Hatası', error: failure);
+          MedLogger.error(
+            unit: logUnit,
+            swreq: logSwreq,
+            message: 'İstek hatası: ${method.name} $path',
+            context: failure.logContext,
+          );
           return Result.error(failure);
         },
       );

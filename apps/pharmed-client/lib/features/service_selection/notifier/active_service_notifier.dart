@@ -91,6 +91,7 @@ class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
         // Yanıt gelene kadar logout/başka kullanıcı girişi olduysa sonuç bayattır.
         if (_checkedUserId != user.id) return;
         _station = station;
+        MedLogger.setSessionValue('stationId', station?.id);
 
         if (!user.hasAccessToStation(station?.id)) {
           _accessStatus = StationAccessStatus.denied;
@@ -108,6 +109,7 @@ class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
         _accessStatus = StationAccessStatus.granted;
         _availableServices = station?.services ?? [];
         _activeService = _availableServices.length == 1 ? _availableServices.first : null;
+        MedLogger.setSessionValue('serviceId', _activeService?.id);
         notifyListeners();
       },
     );
@@ -118,6 +120,13 @@ class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
     if (!isAccessGranted) return;
     if (!_availableServices.any((s) => s.id == service.id)) return;
     _activeService = service;
+    MedLogger.setSessionValue('serviceId', service.id);
+    MedLogger.info(
+      unit: 'SW-UNIT-UI',
+      swreq: 'SWREQ-CORE-LOG-003',
+      message: 'Servis seçildi',
+      context: {'serviceId': service.id, 'stationId': _station?.id},
+    );
     notifyListeners();
   }
 

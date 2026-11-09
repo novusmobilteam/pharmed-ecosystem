@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../core/logging/app_logging.dart';
 import '../../change_password/change_password.dart';
 import '../../fingerprint_enrollment/fingerprint_enrollment.dart';
 import '../../fingerprint_test/fingerprint_test.dart';

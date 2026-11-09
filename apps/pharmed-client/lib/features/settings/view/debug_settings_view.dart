@@ -69,6 +69,25 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
             ),
           ),
 
+          // ── Uygulama logları ────────────────────────────────
+          // Sahadaki cihazda yarıda kalan işlemlerin sebebi bu dosyalardan
+          // bulunur (istek/yanıt, kural redleri, hatalar).
+          _SettingRow(
+            label: 'Uygulama logları',
+            description: appLogDirectoryPath(),
+            trailing: MedButton(
+              label: 'Klasörü aç',
+              size: MedButtonSize.sm,
+              variant: MedButtonVariant.secondary,
+              prefixIcon: const Icon(Icons.folder_open),
+              onPressed: () async {
+                final dir = Directory(appLogDirectoryPath());
+                await dir.create(recursive: true);
+                await Process.run('explorer', [dir.path]);
+              },
+            ),
+          ),
+
           // ── Placeholder'lar ─────────────────────────────────
           _SettingRow(
             label: 'Mock veri modu',
