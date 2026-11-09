@@ -1,10 +1,21 @@
 // [SWREQ-NET-006] [IEC 62304 §9.2]
 // Her HTTP isteğini ve sonucunu tek bir korelasyon id'si (`req`) ile loglar:
 //   → istek   : method, path, query, gövde (hassas alanlar maskeli)
-//   ← yanıt   : status, süre; zarf `isSuccess=false` ise yanıt gövdesi
+//   ← yanıt   : status, süre; başarılı yazmada operationId; `isSuccess=false`
+//               ise yanıt gövdesi
 //   ✕ hata    : status, süre, yanıt gövdesi, Dio hata tipi
 // Amaç: sahadaki bir cihazda "işlem neden kesildi" sorusunun, hangi servise
 // hangi parametrelerle gidildiği ve servisin ne döndüğüyle cevaplanabilmesi.
+//
+// LOG POLİTİKASI (#115) — dosya ve uzak hedef için aynı:
+//   - Okuma (GET) ve rutin yazma istekleri ([_routinePaths]: telemetri,
+//     kamera parça yüklemesi) başarılıysa DEBUG — kalıcı loga yazılmaz,
+//     yalnızca bellekteki "önceki adımlar"a girer; ilk WARN/ERROR kaydına
+//     eklenir.
+//   - Bunlar hata verirse ERROR/WARN; aynı hata [MedLogger.dedupeWindow]
+//     içinde tekrar ederse bastırılır.
+//   - Diğer POST/PUT/DELETE istekleri (işlem yapan istekler) her zaman INFO+.
+//   - [slowThreshold]'u aşan her yanıt WARN.
 //
 // Sınıf: Class B
 
@@ -22,6 +33,18 @@ class NetworkLogInterceptor extends Interceptor {
 
   static int _seq = 0;
 
+  /// Bu süreyi aşan yanıtlar WARN olarak kalıcı loga yazılır.
+  static const slowThreshold = Duration(seconds: 5);
+
+  /// İşlem yapmayan, sık tekrarlanan yazma istekleri — GET gibi ele alınır.
+  static final List<RegExp> _routinePaths = [
+    RegExp(r'/CabinTemperatureValues$'),
+    RegExp(r'/videos/[^/]+/chunks/\d+$'),
+  ];
+
+  static bool _isRoutine(RequestOptions o) =>
+      o.method.toUpperCase() == 'GET' || _routinePaths.any((r) => r.hasMatch(o.path));
+
   /// İsteğin korelasyon id'si — diğer loglar (ör. APIManager hata eşlemesi)
   /// aynı isteği işaret etmek için kullanır.
   static String? requestIdOf(RequestOptions options) => options.extra[_idKey] as String?;
@@ -32,16 +55,17 @@ class NetworkLogInterceptor extends Interceptor {
     options.extra[_idKey] = id;
     options.extra[_watchKey] = Stopwatch()..start();
 
-    MedLogger.info(
-      unit: _unit,
-      swreq: _swreq,
-      message: '→ ${options.method} ${options.path}',
-      context: {
-        'req': id,
-        if (options.queryParameters.isNotEmpty) 'query': LogRedactor.redact(options.queryParameters),
-        if (options.data != null) 'body': LogRedactor.compact(options.data),
-      },
-    );
+    final context = {
+      'req': id,
+      if (options.queryParameters.isNotEmpty) 'query': LogRedactor.redact(options.queryParameters),
+      if (options.data != null) 'body': LogRedactor.compact(options.data),
+    };
+    final message = '→ ${options.method} ${options.path}';
+    if (_isRoutine(options)) {
+      MedLogger.debug(unit: _unit, swreq: _swreq, message: message, context: context);
+    } else {
+      MedLogger.info(unit: _unit, swreq: _swreq, message: message, context: context);
+    }
     handler.next(options);
   }
 
@@ -50,17 +74,35 @@ class NetworkLogInterceptor extends Interceptor {
     final options = response.requestOptions;
     final data = response.data;
     final base = _base(options, response.statusCode);
+    final routine = _isRoutine(options);
+    final target = '${options.method} ${options.path}';
 
-    // 200 dönüp zarfta başarısızlık bildiren servisler (`isSuccess: false`).
     if (data is Map && data['isSuccess'] == false) {
+      // 200 dönüp zarfta başarısızlık bildiren servisler.
       MedLogger.warn(
         unit: _unit,
         swreq: _swreq,
-        message: '← ${options.method} ${options.path} isSuccess=false',
+        message: '← $target isSuccess=false',
         context: {...base, 'response': LogRedactor.compact(data)},
+        dedupeKey: routine ? 'net:$target:isSuccess=false' : null,
       );
+    } else if (_elapsed(options) > slowThreshold) {
+      MedLogger.warn(
+        unit: _unit,
+        swreq: _swreq,
+        message: '← $target yavaş yanıt',
+        context: base,
+        dedupeKey: routine ? 'net:$target:slow' : null,
+      );
+    } else if (routine) {
+      MedLogger.debug(unit: _unit, swreq: _swreq, message: '← $target', context: base);
     } else {
-      MedLogger.info(unit: _unit, swreq: _swreq, message: '← ${options.method} ${options.path}', context: base);
+      MedLogger.info(
+        unit: _unit,
+        swreq: _swreq,
+        message: '← $target',
+        context: {...base, if (data is Map && data['operationId'] != null) 'operationId': data['operationId']},
+      );
     }
     handler.next(response);
   }
@@ -68,10 +110,12 @@ class NetworkLogInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final options = err.requestOptions;
+    final target = '${options.method} ${options.path}';
     MedLogger.error(
       unit: _unit,
       swreq: _swreq,
-      message: '✕ ${options.method} ${options.path} (${err.type.name})',
+      message: '✕ $target (${err.type.name})',
+      dedupeKey: _isRoutine(options) ? 'net:$target:${err.type.name}:${err.response?.statusCode}' : null,
       context: {
         ..._base(options, err.response?.statusCode),
         if (err.response?.data != null) 'response': LogRedactor.compact(err.response?.data),
@@ -82,14 +126,16 @@ class NetworkLogInterceptor extends Interceptor {
     handler.next(err);
   }
 
-  Map<String, dynamic> _base(RequestOptions options, int? status) {
+  Duration _elapsed(RequestOptions options) {
     final watch = options.extra[_watchKey];
-    return {
-      'req': options.extra[_idKey],
-      'status': ?status,
-      if (watch is Stopwatch) 'ms': watch.elapsedMilliseconds,
-    };
+    return watch is Stopwatch ? watch.elapsed : Duration.zero;
   }
+
+  Map<String, dynamic> _base(RequestOptions options, int? status) => {
+    'req': options.extra[_idKey],
+    'status': ?status,
+    'ms': _elapsed(options).inMilliseconds,
+  };
 }
 
 /// Log'a yazılan istek/yanıt gövdelerinden hassas alanları maskeler ve

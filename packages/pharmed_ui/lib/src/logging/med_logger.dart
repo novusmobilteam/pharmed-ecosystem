@@ -24,11 +24,15 @@ import 'package:flutter/foundation.dart';
 // ─────────────────────────────────────────────────────────────────
 
 enum LogLevel {
+  /// Yalnızca konsol (verbose) ve bellekteki "önceki adımlar" — dosyaya ve
+  /// uzak hedefe yazılmaz. Başarılı okuma istekleri, ekran verisi yükleme vb.
+  debug,
   info,
   warn,
   error;
 
   String get tag => switch (this) {
+    LogLevel.debug => 'DEBUG',
     LogLevel.info => 'INFO ',
     LogLevel.warn => 'WARN ',
     LogLevel.error => 'ERROR',
@@ -50,6 +54,7 @@ class LogEntry {
     this.error,
     this.stackTrace,
     this.session,
+    this.breadcrumbs,
   });
 
   final DateTime timestamp;
@@ -65,6 +70,10 @@ class LogEntry {
   /// Bkz. [MedLogger.setSessionValue].
   final Map<String, Object?>? session;
 
+  /// WARN/ERROR kayıtlarında, kayıttan hemen önceki (dosyaya yazılmamış)
+  /// debug adımları — "hatadan önce ne oldu". Bkz. [MedLogger.breadcrumbCapacity].
+  final List<String>? breadcrumbs;
+
   Map<String, dynamic> toJson() => {
     'timestamp': timestamp.toIso8601String(),
     'level': level.tag.trim(),
@@ -75,7 +84,18 @@ class LogEntry {
     if (error != null) 'error': error.toString(),
     if (session != null && session!.isNotEmpty) 'session': session,
     if (stackTrace != null) 'stackTrace': stackTrace.toString(),
+    if (breadcrumbs != null && breadcrumbs!.isNotEmpty) 'breadcrumbs': breadcrumbs,
   };
+
+  /// "Önceki adımlar" listesindeki tek satır: saat + mesaj + kısa bağlam.
+  String toBreadcrumbLine() {
+    final t = timestamp;
+    String two(int v) => v.toString().padLeft(2, '0');
+    final time = '${two(t.hour)}:${two(t.minute)}:${two(t.second)}.${t.millisecond.toString().padLeft(3, '0')}';
+    if (context == null || context!.isEmpty) return '$time $message';
+    final ctx = _json(context);
+    return '$time $message ${ctx.length > 300 ? '${ctx.substring(0, 300)}…' : ctx}';
+  }
 
   /// Dosyaya yazılan satır: tek satır başlık + (varsa) girintili stack trace.
   /// Context/session JSON olarak yazılır — Map.toString() tırnakları yuttuğu
@@ -90,6 +110,12 @@ class LogEntry {
     if (stackTrace != null) {
       for (final line in stackTrace.toString().trimRight().split('\n').take(40)) {
         b.write('\n    $line');
+      }
+    }
+    if (breadcrumbs != null && breadcrumbs!.isNotEmpty) {
+      b.write('\n    önceki adımlar (${breadcrumbs!.length}):');
+      for (final line in breadcrumbs!) {
+        b.write('\n      · $line');
       }
     }
     return b.toString();
@@ -135,6 +161,15 @@ abstract final class MedLogger {
   // Her kayda eklenen oturum bağlamı.
   static final Map<String, Object?> _session = {};
 
+  /// Bellekte tutulan, henüz kalıcı loga yazılmamış debug adımı sayısı.
+  /// İlk WARN/ERROR kaydına "önceki adımlar" olarak eklenip boşaltılır.
+  static const int breadcrumbCapacity = 100;
+  static final List<LogEntry> _breadcrumbs = [];
+
+  /// Aynı [dedupeKey] ile gelen kayıtlar bu süre içinde tekrar yazılmaz.
+  static const Duration dedupeWindow = Duration(minutes: 5);
+  static final Map<String, ({DateTime since, int suppressed})> _dedupe = {};
+
   // FlavorConfig yerine dışarıdan configure edilir
   static bool _verboseLogging = false;
 
@@ -172,6 +207,16 @@ abstract final class MedLogger {
 
   // ── Public API ──────────────────────────────────────────────
 
+  /// Kalıcı loga yazılmaz — bkz. [LogLevel.debug].
+  static void debug({
+    required String unit,
+    required String swreq,
+    required String message,
+    Map<String, dynamic>? context,
+  }) {
+    _log(LogLevel.debug, unit, swreq, message, context);
+  }
+
   static void info({
     required String unit,
     required String swreq,
@@ -181,13 +226,17 @@ abstract final class MedLogger {
     _log(LogLevel.info, unit, swreq, message, context);
   }
 
+  /// [dedupeKey]: rutin, tekrarlayabilen hatalar (ör. ağ kopukken periyodik
+  /// istekler) için. Aynı anahtar [dedupeWindow] içinde tekrar yazılmaz;
+  /// pencere dolduktan sonraki ilk kayıtta bastırılan sayı belirtilir.
   static void warn({
     required String unit,
     required String swreq,
     required String message,
     Map<String, dynamic>? context,
+    String? dedupeKey,
   }) {
-    _log(LogLevel.warn, unit, swreq, message, context);
+    _log(LogLevel.warn, unit, swreq, message, context, dedupeKey: dedupeKey);
   }
 
   static void error({
@@ -197,8 +246,9 @@ abstract final class MedLogger {
     Map<String, dynamic>? context,
     Object? error,
     StackTrace? stackTrace,
+    String? dedupeKey,
   }) {
-    _log(LogLevel.error, unit, swreq, message, context, error: error, stackTrace: stackTrace);
+    _log(LogLevel.error, unit, swreq, message, context, error: error, stackTrace: stackTrace, dedupeKey: dedupeKey);
   }
 
   /// [SWREQ-CORE-LOG-004] Bir işlem servise GİTMEDEN client kuralına
@@ -227,6 +277,9 @@ abstract final class MedLogger {
 
   static void clearBuffer() => _buffer.clear();
 
+  /// Henüz kalıcı loga yazılmamış debug adımları.
+  static List<LogEntry> get pendingBreadcrumbs => List.unmodifiable(_breadcrumbs);
+
   // ── İç implementasyon ───────────────────────────────────────
 
   static void _log(
@@ -237,9 +290,49 @@ abstract final class MedLogger {
     Map<String, dynamic>? context, {
     Object? error,
     StackTrace? stackTrace,
+    String? dedupeKey,
   }) {
+    final now = DateTime.now();
+
+    // Debug: konsol (verbose) + bellek. Kalıcı hedeflere gitmez.
+    if (level == LogLevel.debug) {
+      final entry = LogEntry(
+        timestamp: now,
+        level: level,
+        unit: unit,
+        swreq: swreq,
+        message: message,
+        context: context,
+      );
+      _breadcrumbs.add(entry);
+      if (_breadcrumbs.length > breadcrumbCapacity) _breadcrumbs.removeAt(0);
+      _addToBuffer(entry);
+      if (_verboseLogging) debugPrint(entry.toString());
+      return;
+    }
+
+    // Tekrarlayan rutin hata bastırma.
+    if (dedupeKey != null) {
+      final state = _dedupe[dedupeKey];
+      if (state != null && now.difference(state.since) < dedupeWindow) {
+        _dedupe[dedupeKey] = (since: state.since, suppressed: state.suppressed + 1);
+        return;
+      }
+      _dedupe[dedupeKey] = (since: now, suppressed: 0);
+      if (state != null && state.suppressed > 0) {
+        context = {...?context, 'suppressedRepeats': state.suppressed};
+      }
+    }
+
+    // WARN/ERROR: bekleyen debug adımları "önceki adımlar" olarak eklenir.
+    List<String>? breadcrumbs;
+    if (level.index >= LogLevel.warn.index && _breadcrumbs.isNotEmpty) {
+      breadcrumbs = [for (final b in _breadcrumbs) b.toBreadcrumbLine()];
+      _breadcrumbs.clear();
+    }
+
     final entry = LogEntry(
-      timestamp: DateTime.now(),
+      timestamp: now,
       level: level,
       unit: unit,
       swreq: swreq,
@@ -248,13 +341,10 @@ abstract final class MedLogger {
       error: error,
       stackTrace: stackTrace,
       session: _session.isEmpty ? null : Map.of(_session),
+      breadcrumbs: breadcrumbs,
     );
 
-    // Buffer
-    _buffer.add(entry);
-    if (_buffer.length > _bufferMaxSize) {
-      _buffer.removeAt(0);
-    }
+    _addToBuffer(entry);
 
     // Console (mock/dev'de)
     if (_verboseLogging || level == LogLevel.error) {
@@ -267,6 +357,13 @@ abstract final class MedLogger {
       try {
         sink.write(entry);
       } catch (_) {}
+    }
+  }
+
+  static void _addToBuffer(LogEntry entry) {
+    _buffer.add(entry);
+    if (_buffer.length > _bufferMaxSize) {
+      _buffer.removeAt(0);
     }
   }
 }

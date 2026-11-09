@@ -120,12 +120,17 @@ mixin ApiRequestMixin on ChangeNotifier {
     notifyListeners();
   }
 
+  /// Ekran verisi yükleme operasyonu mu — tekrarlayan hatası bastırılabilir.
+  bool _isFetch(OperationKey key) =>
+      key.type == OperationType.fetch || (key.customKey?.startsWith('fetch') ?? false);
+
   void _setOperation(
     OperationKey key,
     APIRequestStatus status, {
     String? message,
     dynamic data,
     Map<String, dynamic>? logContext,
+    bool fromException = false,
   }) {
     _operations[key] = OperationStatus(key: key, status: status, message: message, data: data);
     notifyListeners();
@@ -137,7 +142,9 @@ mixin ApiRequestMixin on ChangeNotifier {
       case APIRequestStatus.success:
         final msg = message ?? contextlessL10n().common_defaultSuccessMessage;
         _onSuccessCallbacks[key]?.call(msg);
-        MedLogger.info(
+        // Başarı kalıcı loga yazılmaz (#115); işlem yapan isteklerin sonucu
+        // NetworkLogInterceptor'da zaten INFO.
+        MedLogger.debug(
           unit: 'SW-UNIT-UI',
           swreq: 'SWREQ-UI-MIXIN-001',
           message: '$notifierName.$key → success',
@@ -146,17 +153,43 @@ mixin ApiRequestMixin on ChangeNotifier {
 
       case APIRequestStatus.failed:
         _onErrorCallbacks[key]?.call(message);
-        // [HAZ-004] Hata sessiz geçmez
-        MedLogger.warn(
-          unit: 'SW-UNIT-UI',
-          swreq: 'SWREQ-UI-MIXIN-001',
-          message: '$notifierName.$key → failed',
-          context: {'message': ?message, ...?logContext},
-        );
+        // [HAZ-004] Hata sessiz geçmez — exception'dan geldiyse ERROR,
+        // client kuralı/doğrulama ise WARN. Veri yükleme hataları (ör. ağ
+        // kopukken periyodik yenileme) tekrar ederse bastırılır.
+        final failContext = {'message': ?message, ...?logContext};
+        final failMessage = '$notifierName.$key → failed';
+        final dedupeKey = _isFetch(key) ? 'op:$notifierName.$key' : null;
+        if (fromException) {
+          MedLogger.error(
+            unit: 'SW-UNIT-UI',
+            swreq: 'SWREQ-UI-MIXIN-001',
+            message: failMessage,
+            context: failContext,
+            dedupeKey: dedupeKey,
+          );
+        } else {
+          MedLogger.warn(
+            unit: 'SW-UNIT-UI',
+            swreq: 'SWREQ-UI-MIXIN-001',
+            message: failMessage,
+            context: failContext,
+            dedupeKey: dedupeKey,
+          );
+        }
 
       case APIRequestStatus.initial:
         break;
     }
+  }
+
+  void _failFromException(OperationKey key, AppException error, {required String swreq}) {
+    _setOperation(
+      key,
+      APIRequestStatus.failed,
+      message: error.userMessage,
+      logContext: {...error.logContext, 'isRetryable': error.isRetryable, 'swreq': swreq},
+      fromException: true,
+    );
   }
 
   // ── execute — Result<T> dönen operasyonlar ────────────────────
@@ -173,7 +206,7 @@ mixin ApiRequestMixin on ChangeNotifier {
   }) async {
     setLoading(key, message: loadingMessage);
 
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: swreq, message: '$notifierName.$key başlatıldı');
+    MedLogger.debug(unit: 'SW-UNIT-UI', swreq: swreq, message: '$notifierName.$key başlatıldı');
 
     final response = await operation();
 
@@ -183,14 +216,8 @@ mixin ApiRequestMixin on ChangeNotifier {
         setSuccess(key, message: successMessage);
       },
       error: (error) {
-        // [HAZ-004] Hata her zaman loglanır, sessiz geçmez
-        MedLogger.error(
-          unit: 'SW-UNIT-UI',
-          swreq: swreq,
-          message: '$notifierName.$key hata',
-          context: {...error.logContext, 'isRetryable': error.isRetryable},
-        );
-        setFailed(key, message: error.userMessage);
+        // [HAZ-004] Hata her zaman loglanır, sessiz geçmez — tek kayıt.
+        _failFromException(key, error, swreq: swreq);
         onFailed?.call(error);
       },
     );
@@ -211,7 +238,7 @@ mixin ApiRequestMixin on ChangeNotifier {
   }) async {
     setLoading(key, message: loadingMessage);
 
-    MedLogger.info(unit: 'SW-UNIT-UI', swreq: swreq, message: '$notifierName.$key başlatıldı');
+    MedLogger.debug(unit: 'SW-UNIT-UI', swreq: swreq, message: '$notifierName.$key başlatıldı');
 
     final response = await operation();
 
@@ -221,14 +248,8 @@ mixin ApiRequestMixin on ChangeNotifier {
         onSuccess?.call();
       },
       error: (error) {
-        // [HAZ-004] Hata her zaman loglanır, sessiz geçmez
-        MedLogger.error(
-          unit: 'SW-UNIT-UI',
-          swreq: swreq,
-          message: '$notifierName.$key hata',
-          context: error.logContext,
-        );
-        setFailed(key, message: error.userMessage);
+        // [HAZ-004] Hata her zaman loglanır, sessiz geçmez — tek kayıt.
+        _failFromException(key, error, swreq: swreq);
         onFailed?.call(error);
       },
     );

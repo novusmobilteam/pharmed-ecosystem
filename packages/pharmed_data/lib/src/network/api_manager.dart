@@ -188,7 +188,9 @@ class APIManager {
       _ => UnexpectedException(message: msg ?? contextlessL10n().dataError_genericApiError, cause: e),
     };
 
-    MedLogger.error(
+    // Ayrıntı (yanıt gövdesi dahil) NetworkLogInterceptor'da kalıcı loglanır;
+    // burası yalnızca eşlemenin izi.
+    MedLogger.debug(
       unit: 'SW-UNIT-NET',
       swreq: 'SWREQ-NET-001',
       message: 'DioException: ${e.type.name} → ${exception.runtimeType}',
