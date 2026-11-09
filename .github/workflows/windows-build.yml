@@ -81,9 +81,32 @@ jobs:
         working-directory: packages/pharmed_data
         run: dart run build_runner build --delete-conflicting-outputs
 
+      # media_kit_libs_windows_video, CMake aşamasında ANGLE.7z ve libmpv arşivlerini
+      # GitHub release'lerinden indirip MD5 kontrolü yapar. Bu arşivleri cache'leyerek
+      # her build'de yeniden indirmeyi (ve geçici ağ hatalarını) önlüyoruz.
+      # actions/cache yalnızca job BAŞARILI biterse kaydeder → bozuk arşiv cache'e giremez.
+      # Key pubspec.lock'a bağlı → eklenti sürümü değişince cache otomatik yenilenir.
+      - name: Cache media_kit native arşivleri
+        uses: actions/cache@v4
+        with:
+          path: apps/${{ matrix.app }}/build/windows/x64/*.7z
+          key: media-kit-win-${{ matrix.app }}-${{ hashFiles('**/pubspec.lock') }}
+
+      # Arşiv indirmesi bozuk gelirse ("Integrity check failed") arşivleri silip
+      # en fazla 3 kez yeniden dener.
       - name: Build ${{ matrix.app }} (${{ env.FLAVOR }})
         working-directory: apps/${{ matrix.app }}
-        run: flutter build windows --release -t lib/main_${{ env.FLAVOR }}.dart
+        shell: pwsh
+        run: |
+          for ($i = 1; $i -le 3; $i++) {
+            flutter build windows --release -t lib/main_$($env:FLAVOR).dart
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            Write-Host "::warning::Build basarisiz (deneme $i/3) - indirilen arsivler temizleniyor..."
+            Remove-Item build/windows/x64/*.7z -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 20
+          }
+          Write-Host "::error::Build 3 denemede de basarisiz oldu."
+          exit 1
 
       - name: Paket adı
         id: name
