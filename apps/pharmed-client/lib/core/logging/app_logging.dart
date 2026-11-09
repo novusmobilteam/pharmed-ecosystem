@@ -34,7 +34,7 @@ Future<void> initAppLogging({required bool verbose}) async {
     debugPrint('Log klasörü açılamadı (${dir.path}): $e');
   }
 
-  // [SWREQ-NET-007] Backend'e gönderim (LOG_UPLOAD_ENABLED ile açılır).
+  // [SWREQ-NET-007] Backend'e gönderim (varsayılan açık; LOG_UPLOAD_ENABLED=false ile kapanır).
   // Kuyruk burada kurulur ki açılış satırları da gitsin; gönderici
   // logShippingBootstrapProvider ile Riverpod hazır olunca başlar.
   final shipping = LogShipping.init(
