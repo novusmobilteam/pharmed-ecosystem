@@ -10,10 +10,17 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 // Fiziksel stok tahsisi (hangi cabinDrawrStockId'den ne kadar) İKİ farklı
 // kaynaktan gelir:
 //   - ORDERED akış: servis (GetIntakeItemsUseCase → item.stock) her
-//     prescriptionDetail için hedef stoğu ZATEN ÇÖZMÜŞ olarak döner. Client
-//     bunu OLDUĞU GİBİ kullanır — yeniden hesaplamaz.
+//     prescriptionDetail için hedef stoğu ÇÖZMÜŞ olarak döner. Client önce
+//     o kayıttan, kaydın miktarı kadar alır. Kayıt dozu tek başına
+//     karşılamıyorsa kalan miktar aynı atamanın diğer kayıtlarından FIFO ile
+//     tamamlanır (#123) — seçim ekranı atamanın TOPLAM stoğuna göre izin
+//     verdiği için dozun tamamı tek kayda yazılırsa kayıt bazlı kontrol
+//     reddediyordu.
 //   - ORDERLESS/FREE akış: servis önceden bir stok çözmez — client
 //     assignment.stocks üzerinden FIFO ile (önden arkaya) tahsis yapar.
+//
+// Toplu kontrolde aynı kayıtları paylaşan kalemler için önceki kalemlerin
+// planladığı miktar düşülür (CheckIntakeParams.alreadyPlanned).
 //
 // Çıktı bir PLANDIR (kalem + stok detayları). Sayım değerleri burada
 // yazılmaz — ilacın sayım tipine göre CabinOperationTarget belirler, kullanıcı
@@ -36,6 +43,7 @@ class CheckIntakeParams {
     this.resolvedStock,
     required this.dosePiece,
     this.overdueDescription,
+    this.alreadyPlanned = const {},
   });
 
   final IntakeType type;
@@ -51,6 +59,9 @@ class CheckIntakeParams {
   /// Alınacak miktar (adet).
   final double dosePiece;
   final String? overdueDescription;
+
+  /// Aynı toplu kontrolde önceki kalemlerin planladığı miktar: stokId → adet.
+  final Map<int, double> alreadyPlanned;
 }
 
 class IntakeBatchCheckResult {
@@ -139,9 +150,9 @@ class CheckIntakeUseCase {
   }
 
   /// Seçili kalemleri sırayla kontrol eder ve başarılı olanların planını
-  /// döner. Ordered akışta her kalem kendi `resolvedStock`'unu taşıdığı için
-  /// kalemler arası tüketim takibi GEREKMEZ — servis zaten farklı kalemleri
-  /// farklı stoklara dağıtmış olarak döner.
+  /// döner. Başarılı kalemlerin planladığı miktar sonraki kalemlerin
+  /// planından düşülür: aynı gözden alınan order'lar aynı stok kayıtlarını
+  /// paylaşabilir (ör. ikisinin resolvedStock'u aynı kayıt).
   Future<IntakeBatchCheckResult> callBatch({
     required IntakeType type,
     required int userId,
@@ -152,6 +163,9 @@ class CheckIntakeUseCase {
   }) async {
     final plans = <IntakePlan>[];
     final statuses = <int, IntakeCheckState>{};
+    // Başarılı kontrollerin planladığı miktar — sonraki kalemler aynı
+    // kayıttan bunu düşerek planlar.
+    final planned = <int, double>{};
 
     void report(int itemId, IntakeCheckState status) {
       statuses[itemId] = status;
@@ -187,11 +201,15 @@ class CheckIntakeUseCase {
           resolvedStock: item.stock,
           dosePiece: item.dosePiece ?? 0,
           overdueDescription: overdueDescriptions[item.id],
+          alreadyPlanned: Map.unmodifiable(planned),
         ),
       );
 
       result.when(
         ok: (details) {
+          for (final d in details) {
+            planned.update(d.stockId, (v) => v + d.dosePiece, ifAbsent: () => d.dosePiece);
+          }
           plans.add((item: item, details: details));
           report(item.id, const CheckSuccess());
         },
@@ -203,20 +221,53 @@ class CheckIntakeUseCase {
   }
 
   List<IntakeDetail> _resolveDetails(CheckIntakeParams params) {
-    // Servis hedef stoğu önceden çözmüşse (ordered akış) DOĞRUDAN onu kullan.
     final resolved = params.resolvedStock;
-    if (resolved != null) {
-      final id = resolved.id;
-      return id == null ? const [] : [IntakeDetail(stockId: id, dosePiece: params.dosePiece)];
-    }
+    if (resolved != null) return _planFromResolved(params, resolved);
 
     // Orderless/free: servis stok çözmedi, client FIFO ile tahsis eder.
-    return _prepareWithdrawDetails(params.assignment, params.dosePiece);
+    return _prepareWithdrawDetails(params.assignment, params.dosePiece, used: params.alreadyPlanned);
+  }
+
+  /// Ordered: önce servisin çözdüğü kayıt, kaydın miktarı kadar; kalan
+  /// miktar aynı atamanın diğer kayıtlarından FIFO.
+  List<IntakeDetail> _planFromResolved(CheckIntakeParams params, CabinStock resolved) {
+    final id = resolved.id;
+    if (id == null) return const [];
+
+    // Kaydın miktarı: ekrandaki atama listesi (kayıt bazlı kontrolün de
+    // kullandığı kaynak), yoksa servisin döndürdüğü kayıt.
+    num? known;
+    for (final s in params.assignment.stocks ?? const <CabinStock>[]) {
+      if (s.id == id) known = s.quantity;
+    }
+    known ??= resolved.quantity;
+    // Miktar bilinmiyorsa servisin kararı geçerli — dozun tamamı bu kayıttan.
+    if (known == null) return [IntakeDetail(stockId: id, dosePiece: params.dosePiece)];
+
+    final available = known.toDouble() - (params.alreadyPlanned[id] ?? 0);
+    if (available >= params.dosePiece) return [IntakeDetail(stockId: id, dosePiece: params.dosePiece)];
+
+    final fromResolved = available > 0 ? available : 0.0;
+    return [
+      if (fromResolved > 0) IntakeDetail(stockId: id, dosePiece: fromResolved),
+      ..._prepareWithdrawDetails(
+        params.assignment,
+        params.dosePiece - fromResolved,
+        used: params.alreadyPlanned,
+        exclude: {id},
+      ),
+    ];
   }
 
   /// FIFO: gözler önden arkaya (stepNo artan) dolaşılır, her gözdeki
-  /// stoktan istenen miktar dolana kadar alınır.
-  List<IntakeDetail> _prepareWithdrawDetails(MedicineAssignment assignment, double amount) {
+  /// stoktan istenen miktar dolana kadar alınır. [used]: önceki kalemlerin
+  /// planladığı miktar düşülür; [exclude]: zaten planlanmış kayıtlar.
+  List<IntakeDetail> _prepareWithdrawDetails(
+    MedicineAssignment assignment,
+    double amount, {
+    Map<int, double> used = const {},
+    Set<int> exclude = const {},
+  }) {
     final requestList = <IntakeDetail>[];
     var remaining = amount;
 
@@ -230,8 +281,9 @@ class CheckIntakeUseCase {
       for (final stock in stocksInCell) {
         if (remaining <= 0) break;
         final id = stock.id;
-        final available = (stock.quantity ?? 0).toDouble();
-        if (id == null || available <= 0) continue;
+        if (id == null || exclude.contains(id)) continue;
+        final available = (stock.quantity ?? 0).toDouble() - (used[id] ?? 0);
+        if (available <= 0) continue;
 
         final take = available < remaining ? available : remaining;
         requestList.add(IntakeDetail(stockId: id, dosePiece: take));
