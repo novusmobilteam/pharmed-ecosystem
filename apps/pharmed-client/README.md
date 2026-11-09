@@ -1,16 +1,26 @@
-# pharmed_client
+# pharmed-client
 
-A new Flutter project.
+Kabin yanındaki Windows kioskta çalışan dokunmatik uygulama: ilaç alım, iade, dolum, sayım, boşaltma ve imha işlemleri; kabin donanımı (RS485 çekmece kartları, RFID), parmak izi ile giriş, fiş yazıcı ve işlem sırasında kamera kaydı.
 
-## Getting Started
+Kurulum, flavor'lar, Windows/macOS build, `--dart-define` ayarları ve CI için kökteki [README](../../README.md).
 
-This project is a starting point for a Flutter application.
+## Kısa yol
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter run -d windows -t lib/main_dev.dart     # Windows
+flutter run -d macos -t lib/main_dev.dart \
+  --dart-define=FINGERPRINT_MOCK=true --dart-define=PRINTER_MOCK=true   # macOS
+flutter run -t lib/main_mock.dart               # sahte veri, donanımsız
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Klasörler
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Klasör | İçerik |
+| --- | --- |
+| `lib/features/` | Ekranlar; her biri `notifier/` + `view/` |
+| `lib/core/hardware/` | Seri port, kabin kartları, RFID, parmak izi, yazıcı, kamera |
+| `lib/core/logging/` | Dosyaya loglama, yakalanmamış hatalar, backend'e log gönderimi (`shipping/`) |
+| `lib/core/recording/` | Kamera kayıtlarının saklanması ve yüklenmesi |
+| `lib/core/providers/` | Riverpod provider'ları |
+| `lib/core/flavor/` | `mock` / `dev` / `prod` ayarları |
+| `test/` | Birim testleri (`flutter test`) |
