@@ -657,6 +657,7 @@ class MasterIntakeSelectionNotifier extends ChangeNotifier with ApiRequestMixin,
           rule: 'INTAKE_TOTAL_EXCEEDS_STOCK',
           logContext: {
             ..._itemLog(plan.item),
+            'assignmentStocks': [for (final st in stocks) '${st.id}:${st.quantity}'],
             'details': [
               for (final d in plan.details)
                 {'stockId': d.stockId, 'dose': d.dosePiece, 'alreadyUsed': usedByStock[d.stockId] ?? 0, 'capacity': capacityOf(d.stockId)},

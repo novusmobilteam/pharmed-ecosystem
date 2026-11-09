@@ -56,8 +56,12 @@ const RULES: Record<string, RuleInfo> = {
   },
   INTAKE_TOTAL_EXCEEDS_STOCK: {
     what: 'Aynı gözden alınan kalemlerin toplamı gözdeki stoğu aşıyor; fazla olan kalem kuyruğa alınmadı.',
-    cause: 'Backend kalemleri tek tek kontrol ediyor; aynı gözden birden fazla order seçildiğinde toplamı client sınırlıyor.',
-    checks: ['Bağlamdaki "details" içinde capacity, alreadyUsed ve dose değerlerine bakın.'],
+    cause:
+      'Backend kalemleri tek tek kontrol ediyor; client kalemlerin planını stok kaydı bazında yeniden doğrular. Aynı gözden birden fazla order seçildiğinde ya da plan bir kayda kaydın miktarından fazlasını yazdığında görülür.',
+    checks: [
+      'Bağlamdaki "details" içinde capacity, alreadyUsed ve dose değerlerine bakın.',
+      '"assignmentStocks" toplamı dozu karşılıyorsa sorun planlamadadır: istemci sürümü #123 düzeltmesini içeriyor mu?',
+    ],
   },
   INTAKE_TARGET_DRAWER_NOT_FOUND: {
     what: 'Kontrol geçti ama alınacak fiziksel göz çözülemedi; kalem kuyruğa alınmadı.',
