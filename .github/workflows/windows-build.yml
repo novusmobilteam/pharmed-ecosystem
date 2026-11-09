@@ -152,12 +152,15 @@ jobs:
         id: name
         shell: bash
         run: |
+          # Türkiye saati (UTC+3, yaz saati uygulaması yok) — örn. 20261109-1056
+          stamp="$(date -u -d '+3 hours' +%Y%m%d-%H%M)"
           if [ -n "${{ github.event.release.tag_name }}" ]; then
             tag="${{ github.event.release.tag_name }}"
           else
             tag="${GITHUB_REF_NAME//\//-}-$(git rev-parse --short HEAD)"
           fi
-          echo "zip=${{ matrix.app }}-${tag}-${FLAVOR}-windows" >> "$GITHUB_OUTPUT"
+          # örn. pharmed-manager-20261109-1056-dev-a896dab-dev-windows
+          echo "zip=${{ matrix.app }}-${stamp}-${tag}-${FLAVOR}-windows" >> "$GITHUB_OUTPUT"
 
       - name: Zip
         run: >
