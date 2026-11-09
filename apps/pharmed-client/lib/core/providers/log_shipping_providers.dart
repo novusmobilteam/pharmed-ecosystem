@@ -28,7 +28,13 @@ final deviceLogRemoteDataSourceProvider = Provider<DeviceLogRemoteDataSource>(
 final logUploadWorkerProvider = Provider<LogUploadWorker?>((ref) {
   final shipping = LogShipping.instance;
   if (shipping == null) return null;
-  final worker = LogUploadWorker(shipping: shipping, post: ref.read(deviceLogRemoteDataSourceProvider).postBatch);
+  final tokens = ref.read(tokenHolderProvider);
+  final worker = LogUploadWorker(
+    shipping: shipping,
+    post: ref.read(deviceLogRemoteDataSourceProvider).postBatch,
+    // Backend kullanıcı/istasyonu token'dan alır — oturum yokken beklenir.
+    canUpload: () => (tokens.accessToken ?? '').isNotEmpty,
+  );
   ref.onDispose(worker.dispose);
   return worker;
 });

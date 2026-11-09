@@ -8,6 +8,9 @@
 //   güvenlidir.
 // - Uzun süre hiçbir şey gönderilmediyse boş gönderim yapar (canlılık).
 // - Backend'in reddettiği kayıtlar tekrar gönderilmez.
+// - Oturum (token) yokken BEKLER: backend kullanıcı ve istasyonu token'dan
+//   alır; girişten önceki kayıtlar giriş yapılınca gider (kaydın kendi
+//   session bilgisi gerçek kullanıcıyı taşır).
 //
 // Sınıf: Class B
 
@@ -21,16 +24,18 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'log_shipping.dart';
 
-typedef PostLogBatch = Future<Result<DeviceLogBatchResult>> Function(Map<String, dynamic> body, {String? deviceKey});
+typedef PostLogBatch = Future<Result<DeviceLogBatchResult>> Function(Map<String, dynamic> body);
 
 class LogUploadWorker {
   LogUploadWorker({
     required LogShipping shipping,
     required PostLogBatch post,
+    bool Function()? canUpload,
     DateTime Function() clock = DateTime.now,
     Random? random,
   }) : _shipping = shipping,
        _post = post,
+       _canUpload = canUpload ?? (() => true),
        _clock = clock,
        _random = random ?? Random();
 
@@ -39,6 +44,9 @@ class LogUploadWorker {
 
   final LogShipping _shipping;
   final PostLogBatch _post;
+
+  /// Geçerli bir oturum (token) var mı?
+  final bool Function() _canUpload;
   final DateTime Function() _clock;
   final Random _random;
 
@@ -71,7 +79,7 @@ class LogUploadWorker {
   /// Bir gönderim turu başlatır; biri sürüyorsa ya da bekleme süresi
   /// dolmadıysa bir şey yapmaz.
   void kick() {
-    if (_disposed || _running) return;
+    if (_disposed || _running || !_canUpload()) return;
     final wait = _nextAttemptAt;
     if (wait != null && _clock().isBefore(wait)) return;
     _running = true;
@@ -135,12 +143,11 @@ class LogUploadWorker {
   }
 
   Future<bool> _send(List<Map<String, dynamic>> entries) async {
-    final stationId = MedLogger.session['stationId'];
     final body = {
-      'device': _shipping.device.toJson(stationId: stationId is int ? stationId : null),
+      'device': _shipping.device.toJson(application: _shipping.config.application),
       'entries': entries,
     };
-    final result = await _post(body, deviceKey: _shipping.config.deviceKey);
+    final result = await _post(body);
     return result.when(
       ok: (r) {
         _failures = 0;
@@ -152,7 +159,7 @@ class LogUploadWorker {
             unit: _unit,
             swreq: _swreq,
             message: 'Backend bazı log kayıtlarını reddetti',
-            context: {'rejected': r.rejected.length, 'sample': r.rejected.entries.take(3).map((e) => '${e.key}: ${e.value}').toList()},
+            context: {'rejected': r.rejectedCount, 'sample': r.rejected.entries.take(3).map((e) => '${e.key}: ${e.value}').toList()},
             dedupeKey: 'log-rejected',
           );
         }

@@ -66,12 +66,16 @@ class DeviceIdentity {
     );
   }
 
-  Map<String, dynamic> toJson({int? stationId}) => {
+  /// FrontendLogDeviceModel. İstasyon ve kullanıcı backend'de token'dan
+  /// alınır — burada gönderilmez (şema ek alan kabul etmiyor).
+  Map<String, dynamic> toJson({required String application}) => {
     'deviceId': deviceId,
-    'hostName': hostName,
-    'stationId': stationId,
-    'appVersion': appVersion,
-    'flavor': flavor,
-    'os': os,
+    'application': _cap(application, 32),
+    'hostName': _cap(hostName, 200),
+    'appVersion': _cap(appVersion, 64),
+    'flavor': _cap(flavor, 16),
+    'os': _cap(os, 256),
   };
+
+  static String _cap(String s, int max) => s.length <= max ? s : s.substring(0, max);
 }

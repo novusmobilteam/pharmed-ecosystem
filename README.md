@@ -137,8 +137,7 @@ Hepsi derleme zamanında verilir: `flutter run|build … --dart-define=AD=değer
 | Ayar | Varsayılan | Ne yapar |
 | --- | --- | --- |
 | `APP_VERSION` | `dev` | Loglarda ve log panelinde görünen sürüm. CI otomatik verir |
-| `LOG_UPLOAD_ENABLED` | `false` | Logların backend'e gönderimi. Backend endpoint'i (`POST /api/DeviceLog/batch`) hazır olana kadar kapalı |
-| `LOG_DEVICE_KEY` | — | Log gönderiminde `X-Device-Key` header'ı |
+| `LOG_UPLOAD_ENABLED` | `true` | Logların backend'e (`POST /api/FrontendLog/batch`) gönderimi. Kapatmak için `false` |
 | `RECORDING_UPLOAD_ENABLED` | `true` | Kamera kayıtlarının backend'e yüklenmesi |
 
 **Donanım (client)**
@@ -208,7 +207,7 @@ Klasöre uygulamada **Ayarlar → Debug → Uygulama logları → Klasörü aç*
 
 Log politikası: işlem yapan istekler (POST/PUT/DELETE), hatalı istekler, 5 sn'yi aşan yanıtlar, uygulama kuralı redleri ve yakalanmamış hatalar yazılır. Başarılı okuma istekleri yazılmaz; son 100 adım bellekte tutulur ve bir hata yazıldığında kaydın altına "önceki adımlar" olarak eklenir. Ayrıntı: `packages/pharmed_data/lib/src/network/network_log_interceptor.dart`.
 
-`LOG_UPLOAD_ENABLED=true` ile aynı kayıtlar diskte bir kuyruğa (`<veri kökü>/log-outbox`) da yazılır ve arka planda backend'e gönderilir (`apps/pharmed-client/lib/core/logging/shipping/`).
+INFO/WARN/ERROR kayıtları diskte bir kuyruğa (`<veri kökü>/log-outbox`) da yazılır ve arka planda `POST /api/FrontendLog/batch` ile backend'e gönderilir (`apps/pharmed-client/lib/core/logging/shipping/`). Gönderim oturumdaki Bearer token ile yapılır; backend kullanıcı ve istasyonu token'dan alır, bu yüzden giriş yapılmamışken kayıtlar kuyrukta bekler. Backend'in kabul ettiği/yinelenen saydığı kayıtlar kuyruktan silinir, reddettikleri tekrar gönderilmez. `LOG_UPLOAD_ENABLED=false` ile kapatılabilir.
 
 ## Geliştirme akışı
 

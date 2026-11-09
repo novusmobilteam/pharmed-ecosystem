@@ -1,14 +1,13 @@
 // [SWREQ-NET-007] Log gönderim ayarları.
 //
-// Backend endpoint'i (POST /api/DeviceLog/batch) hazır olana kadar gönderim
-// KAPALI: kapalıyken kuyruğa da yazılmaz (disk dolmasın). Açmak için:
-//   flutter build windows --dart-define=LOG_UPLOAD_ENABLED=true \
-//     --dart-define=LOG_DEVICE_KEY=<istasyon anahtarı>
+// Backend: POST /api/FrontendLog/batch. Varsayılan AÇIK; kapatmak için
+//   --dart-define=LOG_UPLOAD_ENABLED=false
+// Kapalıyken kuyruğa da yazılmaz (disk dolmasın).
 
 class LogShippingConfig {
   const LogShippingConfig({
     required this.enabled,
-    this.deviceKey,
+    this.application = 'pharmed-client',
     this.appVersion = 'dev',
     this.batchSize = 200,
     this.maxBatchBytes = 1500 * 1024,
@@ -19,19 +18,15 @@ class LogShippingConfig {
     this.maxBackoff = const Duration(hours: 1),
   });
 
-  factory LogShippingConfig.fromEnvironment() {
-    const key = String.fromEnvironment('LOG_DEVICE_KEY');
-    return const LogShippingConfig(
-      enabled: bool.fromEnvironment('LOG_UPLOAD_ENABLED'),
-      deviceKey: key == '' ? null : key,
-      appVersion: String.fromEnvironment('APP_VERSION', defaultValue: 'dev'),
-    );
-  }
+  factory LogShippingConfig.fromEnvironment() => const LogShippingConfig(
+    enabled: bool.fromEnvironment('LOG_UPLOAD_ENABLED', defaultValue: true),
+    appVersion: String.fromEnvironment('APP_VERSION', defaultValue: 'dev'),
+  );
 
   final bool enabled;
 
-  /// `X-Device-Key` — istasyon başına manager'dan üretilecek anahtar.
-  final String? deviceKey;
+  /// Backend'de logu üreten uygulamayı ayırt eder (device.application, ≤ 32).
+  final String application;
 
   /// Build sırasında `--dart-define=APP_VERSION=…` ile verilir.
   final String appVersion;

@@ -41,7 +41,7 @@ class NetworkLogInterceptor extends Interceptor {
     RegExp(r'/CabinTemperatureValues$'),
     RegExp(r'/videos/[^/]+/chunks/\d+$'),
     // Log gönderiminin kendi isteği — loglanırsa her gönderim yeni log üretir.
-    RegExp(r'/DeviceLog/batch$'),
+    RegExp(r'/FrontendLog/batch$'),
   ];
 
   static bool _isRoutine(RequestOptions o) =>

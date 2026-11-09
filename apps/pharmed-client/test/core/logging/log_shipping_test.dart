@@ -53,6 +53,7 @@ void main() {
       expect(json['rule'], 'INTAKE_CHECK_FAILED');
       expect(json['errorType'], 'ServiceException');
       expect(json['http'], {'method': 'POST', 'path': '/Prescription/detail/checkCollect', 'status': 400, 'ms': 312});
+      expect(json.containsKey('relatedOperationId'), isFalse);
       expect(json['session'], {'userId': 14, 'stationId': 3});
       expect(json['breadcrumbs'], ['14:21:58.402 → GET /x']);
     });
@@ -64,6 +65,19 @@ void main() {
       expect(json.containsKey('context'), isFalse);
       expect(json['level'], 'INFO');
       expect(json['id'], matches(RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+    });
+
+    test('işlem kimliği relatedOperationId olarak gönderilir', () {
+      final json = DeviceLogMapper.toJson(_entry(level: LogLevel.info, context: {'operationId': 17814}), appRunId: 'r')!;
+      expect(json['relatedOperationId'], 17814);
+    });
+
+    test('uzun mesaj şema sınırına kırpılır', () {
+      final json = DeviceLogMapper.toJson(
+        LogEntry(timestamp: DateTime.utc(2026), level: LogLevel.warn, unit: 'U', swreq: 'S', message: 'x' * 1500),
+        appRunId: 'r',
+      )!;
+      expect((json['message'] as String).length, DeviceLogMapper.maxMessage);
     });
 
     test('DEBUG kayıtları gönderilmez', () {
@@ -159,7 +173,7 @@ void main() {
       }
       final worker = LogUploadWorker(
         shipping: shipping,
-        post: (body, {deviceKey}) async {
+        post: (body) async {
           sent.add(body['entries'] as List);
           return Result.ok(DeviceLogBatchResult(accepted: (body['entries'] as List).length, duplicates: 0, rejected: const {}));
         },
@@ -175,11 +189,27 @@ void main() {
       expect(shipping.outbox.batches(), isEmpty);
     });
 
+    test('oturum yokken gönderim yapılmaz', () async {
+      shipping.outbox.append({'id': 'e0'});
+      final worker = LogUploadWorker(
+        shipping: shipping,
+        canUpload: () => false,
+        post: (body) async {
+          sent.add(body['entries'] as List);
+          return Result.ok(const DeviceLogBatchResult(accepted: 1, duplicates: 0, rejected: {}));
+        },
+      );
+      worker.kick();
+      await settle();
+      worker.dispose();
+      expect(sent, isEmpty);
+    });
+
     test('hata olursa kayıtlar kuyrukta kalır', () async {
       shipping.outbox.append({'id': 'e0'});
       final worker = LogUploadWorker(
         shipping: shipping,
-        post: (body, {deviceKey}) async =>
+        post: (body) async =>
             const Result.error(ServiceException(message: 'yok', statusCode: 404)),
       );
       worker.kick();
@@ -193,9 +223,12 @@ void main() {
     test('gönderilecek bir şey yoksa canlılık sinyali (boş gönderim) yapılır', () async {
       final worker = LogUploadWorker(
         shipping: shipping,
-        post: (body, {deviceKey}) async {
+        post: (body) async {
           sent.add(body['entries'] as List);
-          expect((body['device'] as Map)['deviceId'], shipping.device.deviceId);
+          final device = body['device'] as Map;
+          expect(device['deviceId'], shipping.device.deviceId);
+          expect(device['application'], 'pharmed-client');
+          expect(device.containsKey('stationId'), isFalse);
           return Result.ok(const DeviceLogBatchResult(accepted: 0, duplicates: 0, rejected: {}));
         },
       );

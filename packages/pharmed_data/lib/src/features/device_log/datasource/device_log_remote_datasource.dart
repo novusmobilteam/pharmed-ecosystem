@@ -1,7 +1,10 @@
 // [SWREQ-NET-007] [IEC 62304 §5.5]
-// Kiosk loglarının toplu gönderimi — "PharMed Cihaz Logları — Backend API
-// Sözleşmesi", POST /api/DeviceLog/batch. Gövde client tarafında hazırlanır
-// (DeviceLogMapper); burası yalnızca taşır ve yanıtı okur.
+// Kiosk loglarının toplu gönderimi — backend FrontendLog servisi,
+// POST /api/FrontendLog/batch (Swagger: FrontendLogBatchModel). Gövde client
+// tarafında hazırlanır (DeviceLogMapper); burası yalnızca taşır ve yanıtı okur.
+//
+// Kimlik mevcut Bearer token'dır; kullanıcı ve istasyonu backend token'dan
+// alır. Yanıt zarfının `data` alanı accepted / duplicates / rejected taşır.
 //
 // Sınıf: Class B
 
@@ -15,21 +18,41 @@ class DeviceLogBatchResult {
   final int accepted;
   final int duplicates;
 
-  /// Backend'in reddettiği kayıtlar: id → sebep. Tekrar gönderilmez.
+  /// Backend'in satır doğrulamasında reddettiği kayıtlar: id → sebep (id
+  /// bilinmiyorsa sıra numarası). Tekrar gönderilmez.
   final Map<String, String> rejected;
 
+  int get rejectedCount => rejected.length;
+
   factory DeviceLogBatchResult.fromJson(Object? json, {required int sent}) {
-    if (json is! Map) return DeviceLogBatchResult(accepted: sent, duplicates: 0, rejected: const {});
+    // Zarf: { statusCode, isSuccess, data: { accepted, duplicates, rejected } }
+    final root = json is Map ? json : const <String, dynamic>{};
+    final data = root['data'] is Map ? root['data'] as Map : root;
+    if (data.isEmpty) return DeviceLogBatchResult(accepted: sent, duplicates: 0, rejected: const {});
+
     final rejected = <String, String>{};
-    final list = json['rejected'];
-    if (list is List) {
-      for (final r in list) {
-        if (r is Map && r['id'] != null) rejected['${r['id']}'] = '${r['reason'] ?? ''}';
+    final raw = data['rejected'];
+    if (raw is List) {
+      for (final (i, r) in raw.indexed) {
+        if (r is Map) {
+          final id = r['id'] ?? r['entryId'] ?? '#$i';
+          final reason = r['reason'] ?? r['message'] ?? r['errors'] ?? '';
+          rejected['$id'] = '$reason';
+        } else {
+          rejected['$r'] = '';
+        }
+      }
+    } else if (raw is num) {
+      for (var i = 0; i < raw.toInt(); i++) {
+        rejected['#$i'] = '';
       }
     }
+
+    int? count(Object? v) => v is num ? v.toInt() : (v is List ? v.length : null);
+    final duplicates = count(data['duplicates']) ?? 0;
     return DeviceLogBatchResult(
-      accepted: (json['accepted'] as num?)?.toInt() ?? sent - rejected.length,
-      duplicates: (json['duplicates'] as num?)?.toInt() ?? 0,
+      accepted: count(data['accepted']) ?? sent - duplicates - rejected.length,
+      duplicates: duplicates,
       rejected: rejected,
     );
   }
@@ -40,21 +63,26 @@ class DeviceLogRemoteDataSource {
 
   final APIManager _api;
 
-  static const path = '/DeviceLog/batch';
+  static const path = '/FrontendLog/batch';
 
-  /// [body]: `{ "device": {...}, "entries": [...] }`.
-  /// [deviceKey] verilirse `X-Device-Key` header'ı ile gönderilir.
-  Future<Result<DeviceLogBatchResult>> postBatch(Map<String, dynamic> body, {String? deviceKey}) async {
+  /// [body]: `{ "device": {...}, "entries": [...] }` (FrontendLogBatchModel).
+  Future<Result<DeviceLogBatchResult>> postBatch(Map<String, dynamic> body) async {
     final sent = (body['entries'] as List?)?.length ?? 0;
-    final result = await _api.post<DeviceLogBatchResult>(
-      path,
-      data: body,
-      headers: deviceKey == null || deviceKey.isEmpty ? null : {'X-Device-Key': deviceKey},
-      parser: (json) => DeviceLogBatchResult.fromJson(json, sent: sent),
-    );
-    // Gövdesiz 2xx (ör. 204) da başarıdır — tümü kabul edilmiş sayılır.
-    return result.when(
-      ok: Result.ok,
+    final result = await _api.post<Object?>(path, data: body, parser: (json) => json);
+    return result.when<Result<DeviceLogBatchResult>>(
+      ok: (json) {
+        // Zarf başarısızlık bildiriyorsa (isSuccess: false) kuyruk korunur.
+        if (json is Map && json['isSuccess'] == false) {
+          return Result.error(
+            ServiceException(
+              message: '${json['message'] ?? json['error'] ?? 'Log gönderimi reddedildi'}',
+              statusCode: (json['statusCode'] as num?)?.toInt() ?? 0,
+            ),
+          );
+        }
+        return Result.ok(DeviceLogBatchResult.fromJson(json, sent: sent));
+      },
+      // Gövdesiz 2xx (ör. 204) da başarıdır — tümü kabul edilmiş sayılır.
       error: (e) => e is EmptyResponseException
           ? Result.ok(DeviceLogBatchResult(accepted: sent, duplicates: 0, rejected: const {}))
           : Result.error(e),
