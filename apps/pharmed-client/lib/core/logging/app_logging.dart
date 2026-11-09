@@ -15,6 +15,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../flavor/app_flavor.dart';
 import '../storage/app_data_paths.dart';
+import 'shipping/shipping.dart';
 
 export '../storage/app_data_paths.dart' show appLogDirectoryPath, revealInFileManager;
 
@@ -32,6 +33,15 @@ Future<void> initAppLogging({required bool verbose}) async {
     // Dosyaya yazılamıyorsa uygulama yine açılmalı — konsola düşer.
     debugPrint('Log klasörü açılamadı (${dir.path}): $e');
   }
+
+  // [SWREQ-NET-007] Backend'e gönderim (LOG_UPLOAD_ENABLED ile açılır).
+  // Kuyruk burada kurulur ki açılış satırları da gitsin; gönderici
+  // logShippingBootstrapProvider ile Riverpod hazır olunca başlar.
+  final shipping = LogShipping.init(
+    config: LogShippingConfig.fromEnvironment(),
+    dataRoot: pharmedDataRoot(),
+    flavor: FlavorConfig.instance.flavor.name,
+  );
 
   final previousFlutterHandler = FlutterError.onError;
   FlutterError.onError = (details) {
@@ -66,6 +76,10 @@ Future<void> initAppLogging({required bool verbose}) async {
       'os': Platform.operatingSystemVersion,
       'host': Platform.localHostname,
       'logDir': dir.path,
+      'logUpload': shipping != null,
+      if (shipping != null) 'deviceId': shipping.device.deviceId,
+      if (shipping != null) 'appRunId': shipping.appRunId,
+      if (shipping != null) 'appVersion': shipping.config.appVersion,
     },
   );
 }

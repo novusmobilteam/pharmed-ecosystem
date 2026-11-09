@@ -35,6 +35,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     // upload. Operasyonlar girişten sonra başladığı için kurtarma onlardan önce
     // biter.
     ref.read(recordingPipelineBootstrapProvider);
+
+    // [SWREQ-NET-007] Log gönderimi (LOG_UPLOAD_ENABLED=false ise bir şey yapmaz).
+    ref.read(logShippingBootstrapProvider);
   }
 
   @override
