@@ -5,22 +5,25 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../widgets/widgets.dart';
 import '../notifier/redirected_orders_notifier.dart';
 
 part 'table_view.dart';
 
 class RedirectedOrdersScreen extends StatelessWidget {
-  const RedirectedOrdersScreen({super.key});
+  const RedirectedOrdersScreen({super.key, required this.menu});
+
+  final MenuItem menu;
 
   @override
   Widget build(BuildContext context) {
-    return MedResponsiveLayout(
-      mobile: const MedMobileLayout(),
-      tablet: const MedTabletLayout(),
-      desktop: Center(
-        //actions: [],
-        child: TableView(),
-      ),
+    return Column(
+      spacing: 16.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScreenTitle(menu: menu),
+        const Expanded(child: TableView()),
+      ],
     );
   }
 }
