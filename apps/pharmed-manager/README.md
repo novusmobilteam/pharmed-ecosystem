@@ -1,16 +1,21 @@
-# pharmed
+# pharmed-manager
 
-A new Flutter project.
+Windows masaüstünde çalışan yönetim paneli: ilaç, kullanıcı, rol ve istasyon tanımları, reçete onayı, dolum listeleri ve raporlar.
 
-## Getting Started
+Kurulum, flavor'lar, Windows/macOS build ve CI için kökteki [README](../../README.md).
 
-This project is a starting point for a Flutter application.
+## Kısa yol
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter run -d windows -t lib/main_dev.dart
+flutter run -d macos -t lib/main_dev.dart
+flutter build windows --release -t lib/main_prod.dart --dart-define=APP_VERSION=v0.4.1
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Klasörler
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Klasör | İçerik |
+| --- | --- |
+| `lib/features/` | Ekranlar (Provider / ChangeNotifier) |
+| `lib/core/flavor/` | `mock` / `dev` / `prod` ayarları |
+| `docs/` | Donanım protokol notları |
