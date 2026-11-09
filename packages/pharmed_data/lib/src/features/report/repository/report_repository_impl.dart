@@ -72,6 +72,24 @@ class ReportRepositoryImpl implements IReportRepository {
   }
 
   @override
+  Future<Result<ApiResponse<List<CabinStock>>?>> getExpiryDateStocks({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    final result = await _dataSource.getExpiryDateStocks(params: params, stationId: stationId);
+    return result.when(
+      ok: (apiResponse) => Result.ok(
+        ApiResponse<List<CabinStock>>(
+          data: apiResponse?.data != null ? _cabinStockMapper.toEntityList(apiResponse!.data!) : null,
+          isSuccess: apiResponse?.isSuccess,
+          totalCount: apiResponse?.totalCount,
+        ),
+      ),
+      error: (e) => Result.error(e),
+    );
+  }
+
+  @override
   Future<Result<ApiResponse<List<StationTransaction>>?>> getStationTransactions({PagedQueryParams? params}) async {
     final result = await _dataSource.getStationTransactions(params: params);
     return result.when(

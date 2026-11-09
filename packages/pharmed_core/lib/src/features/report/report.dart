@@ -11,6 +11,7 @@ export 'domain/entity/inert_material.dart';
 export 'domain/entity/authorization_breakdown.dart';
 
 export 'domain/usecase/get_expired_stocks_usecase.dart';
+export 'domain/usecase/get_expiry_date_stocks_usecase.dart';
 export 'domain/usecase/get_station_transactions_usecase.dart';
 export 'domain/usecase/get_hospital_stocks_usecase.dart';
 export 'domain/usecase/get_patient_inventory_usecase.dart';

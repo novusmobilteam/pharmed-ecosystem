@@ -23,6 +23,7 @@ import '../../reports/auth_summary/view/auth_summary_report_screen.dart';
 import '../../reports/authorization_breakdown/view/authorization_breakdown_report_screen.dart';
 import '../../reports/cabin_temperature/view/cabin_temperature_report_screen.dart';
 import '../../reports/expired_items/view/expired_items_report_screen.dart';
+import '../../reports/expiry_date_materials/view/expiry_date_materials_report_screen.dart';
 import '../../reports/hospital_stocks/view/hospital_stocks_report_screen.dart';
 import '../../reports/inert_materials/view/inert_materials_report_screen.dart';
 import '../../reports/material_usage/view/material_usage_report_screen.dart';
@@ -210,6 +211,7 @@ class _HomeContent extends StatelessWidget {
       'unappliedPrescriptions' => UnappliedPrescriptionsScreen(menu: menu!),
       'inconsistency' => InconsistencyScreen(menu: menu!),
       'expiring-materials-report' => ExpiredItemsReportScreen(menu: menu!),
+      'expiry-date-material-list' => ExpiryDateMaterialsReportScreen(menu: menu!),
       'cabin-transaction-report' => StationTransactionReportScreen(menu: menu!),
       'unordered-loaded-materials' => UnorderedLoadedMaterialsReportScreen(menu: menu!),
       'ordered-unloaded-materials' => OrderedNotLoadedMaterialsReportScreen(menu: menu!),

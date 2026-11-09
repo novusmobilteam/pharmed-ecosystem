@@ -30,6 +30,25 @@ class ReportRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  /// SKT Malzeme Listesi — tarih aralığı `miadDate` alanına DevExtreme filtresiyle.
+  Future<Result<ApiResponse<List<CabinStockDTO>>?>> getExpiryDateStocks({
+    PagedQueryParams? params,
+    required int stationId,
+  }) async {
+    return await fetchRequest(
+      path: '$_basePath/remainingMiadDate/$stationId',
+      skip: params?.skip,
+      take: params?.take,
+      searchQuery: params?.searchQuery,
+      searchFields: params?.searchFields,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      dateField: 'miadDate',
+      envelope: ResponseEnvelope.raw,
+      parser: BaseRemoteDataSource.apiResponseListParser(CabinStockDTO.fromJson),
+    );
+  }
+
   Future<Result<ApiResponse<List<StationTransactionDto>>?>> getStationTransactions({PagedQueryParams? params}) async {
     return await fetchRequest(
       path: '$_basePath/cabinStockTransaction',
