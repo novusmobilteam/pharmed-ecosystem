@@ -58,7 +58,8 @@ class OperationRecordingRemoteDataSource extends BaseRemoteDataSource {
   /// PUT /OperationRecording/{opId}/videos/{camId}/chunks/{index} — multipart.
   /// PUT: aynı indeks tekrar gönderilirse üzerine yazılır (idempotent).
   Future<Result<void>> uploadChunk(String operationId, String cameraId, int index, List<int> bytes) {
-    _log('Video parçası gönderiliyor', {
+    // Parça başına kalıcı log yazılmaz (#115) — başlangıç/bitiş/hata yeterli.
+    MedLogger.debug(unit: logUnit, swreq: logSwreq, message: 'Video parçası gönderiliyor', context: {
       'operationId': operationId,
       'cameraId': cameraId,
       'index': index,

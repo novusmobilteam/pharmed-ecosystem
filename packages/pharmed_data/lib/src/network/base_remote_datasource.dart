@@ -270,7 +270,7 @@ abstract class BaseRemoteDataSource {
     String? emptyLog,
     ResponseEnvelope envelope = ResponseEnvelope.auto,
   }) async {
-    MedLogger.info(
+    MedLogger.debug(
       unit: logUnit,
       swreq: logSwreq,
       message: '${method.name} başlatıldı: $path',
@@ -290,7 +290,7 @@ abstract class BaseRemoteDataSource {
       return result.when(
         ok: (rawData) {
           if (rawData == null || (rawData is String && rawData.trim().isEmpty)) {
-            MedLogger.info(unit: logUnit, swreq: logSwreq, message: emptyLog ?? 'Boş yanıt');
+            MedLogger.debug(unit: logUnit, swreq: logSwreq, message: emptyLog ?? 'Boş yanıt');
             return Result.ok(null);
           }
 
@@ -306,7 +306,7 @@ abstract class BaseRemoteDataSource {
               if ((rawData['isSuccess'] as bool?) ?? true) {
                 try {
                   final parsed = parser != null ? parser(rawData) : null;
-                  MedLogger.info(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
+                  MedLogger.debug(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
                   return Result.ok(parsed);
                 } catch (e) {
                   MedLogger.error(unit: logUnit, swreq: logSwreq, message: 'Parse Hatası', error: e);
@@ -314,7 +314,7 @@ abstract class BaseRemoteDataSource {
                 }
               }
               final apiError = ApiError.fromJson(rawData);
-              MedLogger.warn(
+              MedLogger.debug(
                 unit: logUnit,
                 swreq: logSwreq,
                 message: 'Servis başarısız yanıt döndü: $path',
@@ -338,14 +338,14 @@ abstract class BaseRemoteDataSource {
 
               if (isSuccess) {
                 if (apiRes?.data == null) {
-                  MedLogger.info(unit: logUnit, swreq: logSwreq, message: emptyLog ?? 'Veri null');
+                  MedLogger.debug(unit: logUnit, swreq: logSwreq, message: emptyLog ?? 'Veri null');
                   return Result.ok(null);
                 }
-                MedLogger.info(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
+                MedLogger.debug(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
                 return Result.ok(apiRes?.data);
               } else {
                 final apiError = ApiError.fromJson(rawData);
-                MedLogger.warn(
+                MedLogger.debug(
                 unit: logUnit,
                 swreq: logSwreq,
                 message: 'Servis başarısız yanıt döndü: $path',
@@ -368,7 +368,7 @@ abstract class BaseRemoteDataSource {
           // Raw Parse (Envelope raw ise veya data Map değilse direkt burası çalışır)
           try {
             final parsed = parser != null ? parser(rawData) : null;
-            MedLogger.info(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
+            MedLogger.debug(unit: logUnit, swreq: logSwreq, message: successLog ?? 'Başarılı');
             return Result.ok(parsed);
           } catch (e) {
             MedLogger.error(unit: logUnit, swreq: logSwreq, message: 'Parse Hatası', error: e);
@@ -376,7 +376,8 @@ abstract class BaseRemoteDataSource {
           }
         },
         error: (failure) {
-          MedLogger.error(
+          // Kalıcı kayıt NetworkLogInterceptor'da (yanıt gövdesiyle).
+          MedLogger.debug(
             unit: logUnit,
             swreq: logSwreq,
             message: 'İstek hatası: ${method.name} $path',
