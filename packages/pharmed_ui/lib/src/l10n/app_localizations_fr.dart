@@ -6977,6 +6977,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String cabinDesign_serum_invalidLayoutError(String orderNos) {
+    return 'La disposition enregistrée des étagères de cette armoire à sérum est invalide (numéros d\'étagère : $orderNos). Elle ne peut pas être modifiée tant qu\'elle n\'est pas corrigée ; veuillez contacter votre administrateur système.';
+  }
+
+  @override
+  String cabinDesign_serum_incompleteLayoutError(int saved, int total) {
+    return 'La disposition enregistrée de cette armoire à sérum est incomplète : $saved étagère(s) sur $total enregistrée(s). Elle ne peut pas être modifiée tant qu\'elle n\'est pas complétée ; veuillez contacter votre administrateur système.';
+  }
+
+  @override
   String get cabinDesign_serum_capacityFullWarning =>
       'Étagère pleine, impossible d\'ajouter un plateau';
 

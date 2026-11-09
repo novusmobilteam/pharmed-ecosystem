@@ -6815,6 +6815,16 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String cabinDesign_serum_invalidLayoutError(String orderNos) {
+    return 'The saved shelf layout of this serum cabinet is invalid (shelf numbers: $orderNos). It can\'t be edited until it is corrected; please contact your system administrator.';
+  }
+
+  @override
+  String cabinDesign_serum_incompleteLayoutError(int saved, int total) {
+    return 'The saved layout of this serum cabinet is incomplete: $saved of $total shelves are registered. It can\'t be edited until it is completed; please contact your system administrator.';
+  }
+
+  @override
   String get cabinDesign_serum_capacityFullWarning =>
       'Shelf is full, no more trays can be added';
 

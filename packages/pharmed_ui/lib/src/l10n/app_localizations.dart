@@ -11989,6 +11989,18 @@ abstract class AppLocalizations {
   /// **'{used}/{total} slots used'**
   String cabinDesign_serum_areaUsedLabel(int used, int total);
 
+  /// No description provided for @cabinDesign_serum_invalidLayoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'The saved shelf layout of this serum cabinet is invalid (shelf numbers: {orderNos}). It can\'t be edited until it is corrected; please contact your system administrator.'**
+  String cabinDesign_serum_invalidLayoutError(String orderNos);
+
+  /// No description provided for @cabinDesign_serum_incompleteLayoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'The saved layout of this serum cabinet is incomplete: {saved} of {total} shelves are registered. It can\'t be edited until it is completed; please contact your system administrator.'**
+  String cabinDesign_serum_incompleteLayoutError(int saved, int total);
+
   /// No description provided for @cabinDesign_serum_capacityFullWarning.
   ///
   /// In en, this message translates to:

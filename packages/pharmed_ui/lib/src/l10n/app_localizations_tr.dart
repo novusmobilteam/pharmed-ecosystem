@@ -6758,6 +6758,16 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String cabinDesign_serum_invalidLayoutError(String orderNos) {
+    return 'Bu serum kabininin kayıtlı raf yerleşimi geçersiz (raf numaraları: $orderNos). Düzeltilene kadar düzenlenemez; lütfen sistem yöneticinize başvurun.';
+  }
+
+  @override
+  String cabinDesign_serum_incompleteLayoutError(int saved, int total) {
+    return 'Bu serum kabininin kayıtlı yerleşimi eksik: $total raftan $saved tanesi kayıtlı. Tamamlanana kadar düzenlenemez; lütfen sistem yöneticinize başvurun.';
+  }
+
+  @override
   String get cabinDesign_serum_capacityFullWarning =>
       'Raf dolu, yeni avadanlık eklenemez';
 
