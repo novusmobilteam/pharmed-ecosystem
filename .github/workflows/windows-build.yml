@@ -176,6 +176,18 @@ jobs:
             --dart-define=APP_VERSION="$version" \
             ${hw:+--dart-define=HARDWARE=$hw}
 
+      # VC++ runtime DLL'leri CMake (InstallRequiredSystemLibraries) ile exe'nin yanına
+      # kopyalanır. Eksikse paket, redist kurulu olmayan makinede
+      # "VCRUNTIME140_1.dll bulunamadı" hatasıyla açılmaz → build'i burada kır.
+      - name: VC++ runtime DLL kontrolü
+        shell: pwsh
+        run: |
+          $dir = "apps/${{ matrix.app }}/build/windows/x64/runner/Release"
+          $missing = @('vcruntime140.dll','vcruntime140_1.dll','msvcp140.dll') |
+            Where-Object { -not (Test-Path (Join-Path $dir $_)) }
+          if ($missing) { throw "Pakette eksik VC++ runtime DLL: $($missing -join ', ')" }
+          Write-Host "VC++ runtime DLL'leri pakette."
+
       - name: Paket adı
         id: name
         shell: bash

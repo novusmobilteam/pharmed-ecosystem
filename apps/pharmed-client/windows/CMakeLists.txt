@@ -130,3 +130,19 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Visual C++ calisma zamani DLL'leri (vcruntime140.dll, vcruntime140_1.dll, msvcp140.dll ...)
+# exe'nin yanina kopyalanir (app-local deployment). Boylece hedef makinede
+# "Microsoft Visual C++ Redistributable" kurulu olmasa da uygulama acilir
+# ("VCRUNTIME140_1.dll bulunamadi" hatasi). DLL'ler derleyen makinedeki MSVC
+# kurulumundan (VS 2022 / CI windows-latest) alinir.
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+set(CMAKE_INSTALL_UCRT_LIBRARIES FALSE)
+include(InstallRequiredSystemLibraries)
+if(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+  install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
+else()
+  message(WARNING "MSVC runtime DLL'leri bulunamadi - paket VC++ redist kurulu olmayan makinede acilmayabilir.")
+endif()
