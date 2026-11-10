@@ -7,6 +7,7 @@ import 'core/providers/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/service.dart';
 import 'features/settings/notifier/settings_notifier.dart';
+import 'widgets/build_variant_badge.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +65,8 @@ class _MyAppState extends ConsumerState<MyApp> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr')],
+        // [SWREQ-CORE-002] Test sürümlerinde köşede DEV · PC / DEV · KABİN etiketi.
+        builder: (context, child) => BuildVariantBadge(child: child ?? const SizedBox.shrink()),
         home: const AppRouter(),
       ),
     );

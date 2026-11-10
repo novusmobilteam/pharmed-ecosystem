@@ -18,6 +18,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
 import 'package:pharmed_client/core/flavor/app_flavor.dart';
+import 'package:pharmed_client/core/hardware/hardware_mode.dart';
 import 'package:pharmed_client/core/hardware/fingerprint/fingerprint.dart';
 import 'package:pharmed_client/core/providers/network_providers.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
@@ -30,7 +31,7 @@ final fingerprintScannerProvider = Provider<IFingerprintScanner>((ref) {
 
 IFingerprintScanner createFingerprintScanner() {
   const forceMock = bool.fromEnvironment('FINGERPRINT_MOCK');
-  if (FlavorConfig.instance.isMock || forceMock) return MockFingerprintScanner();
+  if (HardwareConfig.isMock || forceMock) return MockFingerprintScanner();
 
   IFingerprintScanner secuGen() => SecuGenFingerprintScanner(settings: SecuGenSettings.fromEnvironment());
   IFingerprintScanner bioMini() => BioMiniFingerprintScanner(settings: BioMiniSettings.fromEnvironment());

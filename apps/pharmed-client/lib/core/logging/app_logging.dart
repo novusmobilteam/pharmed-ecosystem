@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../flavor/app_flavor.dart';
+import '../hardware/hardware_mode.dart';
 import '../storage/app_data_paths.dart';
 import 'shipping/shipping.dart';
 
@@ -40,7 +41,7 @@ Future<void> initAppLogging({required bool verbose}) async {
   final shipping = LogShipping.init(
     config: LogShippingConfig.fromEnvironment(),
     dataRoot: pharmedDataRoot(),
-    flavor: FlavorConfig.instance.flavor.name,
+    flavor: HardwareConfig.variant,
   );
 
   final previousFlutterHandler = FlutterError.onError;
@@ -73,6 +74,7 @@ Future<void> initAppLogging({required bool verbose}) async {
     message: 'Uygulama başlatıldı',
     context: {
       'flavor': FlavorConfig.instance.flavor.name,
+      'hardware': HardwareConfig.mode.name,
       'os': Platform.operatingSystemVersion,
       'host': Platform.localHostname,
       'logDir': dir.path,

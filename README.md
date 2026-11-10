@@ -10,6 +10,7 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 - [Gereksinimler](#gereksinimler)
 - [İlk kurulum](#ilk-kurulum)
 - [Flavor'lar](#flavorlar)
+- [Test sürümleri: bilgisayar ve kabin](#test-sürümleri-bilgisayar-ve-kabin)
 - [Windows'ta çalıştırma ve derleme](#windowsta-çalıştırma-ve-derleme)
 - [macOS'ta çalıştırma ve derleme](#macosta-çalıştırma-ve-derleme)
 - [Derleme ayarları (`--dart-define`)](#derleme-ayarları---dart-define)
@@ -86,6 +87,22 @@ Her Flutter uygulamasının üç giriş noktası var: `lib/main_<flavor>.dart`. 
 
 Flavor'lar dev ve mock'ta konsola ayrıntılı log yazar; prod'da konsola yalnızca hatalar düşer. Üçünde de loglar cihazdaki dosyaya yazılır (bkz. [Cihazdaki loglar](#cihazdaki-loglar)).
 
+Flavor yalnızca **hangi backend'e** gidileceğini belirler. Cihazların (seri port, kabin kartı, tepsi kilidi, RFID, parmak izi okuyucu, fiş yazıcı) gerçek mi sahte mi olacağı ayrı bir ayardır: `--dart-define=HARDWARE=mock|real` (client). Verilmezse `prod` → gerçek, `dev` ve `mock` → sahte cihaz.
+
+## Test sürümleri: bilgisayar ve kabin
+
+Testçilere iki client paketi gider; ikisi de gerçek API'ye (`dev`) bağlanır, yalnızca cihaz servisleri farklıdır:
+
+| Paket | Derleme | Cihazlar | Kim kullanır |
+| --- | --- | --- | --- |
+| `pharmed-client-…-dev-pc-windows.zip` | `-t lib/main_dev.dart --dart-define=HARDWARE=mock` | Sahte — kabin ve diğer cihazlar "varmış gibi" davranır | Bilgisayarda test edenler |
+| `pharmed-client-…-dev-kabin-windows.zip` | `-t lib/main_dev.dart --dart-define=HARDWARE=real` | Gerçek kabin donanımı | Kabinde test edenler |
+
+- Release yayınlanınca ikisi otomatik üretilir (bkz. [GitHub Actions](#github-actions)).
+- Uygulamanın sol alt köşesinde sürüm etiketi görünür: **DEV · PC — sahte cihaz** ya da **DEV · KABİN**. `prod` + gerçek cihazda etiket yoktur.
+- Loglarda ve log panelinde sürüm `dev-pc` / `dev-kabin` olarak görünür (gönderimdeki `device.flavor`).
+- Kabin sürümünde tek bir cihaz eksikse yalnızca onu sahtelemek için `FINGERPRINT_MOCK=true` / `PRINTER_MOCK=true` kullanılabilir.
+
 ## Windows'ta çalıştırma ve derleme
 
 Kiosklar ve yönetim bilgisayarları Windows'tadır; sahaya giden sürüm Windows build'idir.
@@ -106,6 +123,7 @@ Dikkat edilecekler:
 
 - **Video bileşeni (media_kit):** CMake aşamasında ANGLE ve libmpv arşivleri GitHub'dan indirilir. İlk build internet ister; arşivler `build/windows/x64/*.7z` altında kalır ve sonraki build'lerde tekrar indirilmez.
 - **Kamera kaydı (client):** `ffmpeg.exe`, exe'nin yanındaki `ffmpeg\` klasöründe aranır; yoksa `PATH`'teki `ffmpeg` kullanılır. CI build'i ffmpeg'i paketlemez, kurulumda ayrıca konur. Geliştirmede `--dart-define=FFMPEG_PATH=C:\...\ffmpeg.exe` verilebilir.
+- **Cihazlar (client):** `dev` build varsayılan olarak sahte cihazlarla çalışır; kabinde `--dart-define=HARDWARE=real` verin (bkz. [Test sürümleri](#test-sürümleri-bilgisayar-ve-kabin)).
 - **Parmak izi (client):** SecuGen / Suprema BioMini SDK DLL'leri gerekir. Okuyucusuz makinede `--dart-define=FINGERPRINT_MOCK=true`.
 - **Fiş yazıcı (client):** Yazıcısız makinede `--dart-define=PRINTER_MOCK=true` — fişler PNG olarak kaydedilir.
 
@@ -144,6 +162,7 @@ Hepsi derleme zamanında verilir: `flutter run|build … --dart-define=AD=değer
 
 | Ayar | Varsayılan | Ne yapar |
 | --- | --- | --- |
+| `HARDWARE` | `prod`'da `real`, diğerlerinde `mock` | Cihaz servisleri: `mock` = sahte (bilgisayarda test), `real` = gerçek kabin donanımı |
 | `FINGERPRINT_MOCK` | `false` | Okuyucusuz makinede sahte parmak izi okuyucu |
 | `FINGERPRINT_VENDOR` | `auto` | `secugen` / `suprema` ile tek üreticiye sabitler |
 | `SECUGEN_DLL_PATH`, `SECUGEN_LIVENESS`, `SECUGEN_SMART_CAPTURE`, `SECUGEN_AREA_QUALITY`, `SECUGEN_FAKE_LEVEL` | — / `true` / `true` / `50` / `0` | SecuGen ayarları |
@@ -164,20 +183,20 @@ client ve/veya manager için Windows build'i alır ve zip olarak yayınlar.
 
 | Tetikleyici | Ne derlenir | Çıktı nereye gider |
 | --- | --- | --- |
-| Elle: Actions → "Windows Build" → Run workflow | Seçilen dal, uygulama (`client` / `manager` / `both`) ve flavor (`dev` / `prod` / `mock`) | Çalıştırma sayfasının altındaki **Artifacts** (14 gün saklanır) |
-| Release yayınlanınca (`release: published`) | Release etiketinin kodu, iki uygulama, **dev** flavor | Artifacts + release'e zip olarak eklenir |
+| Elle: Actions → "Windows Build" → Run workflow | Seçilen dal, uygulama (`client` / `manager` / `both`), flavor (`dev` / `prod` / `mock`) ve client için cihaz (`both` / `pc` / `kabin`) | Çalıştırma sayfasının altındaki **Artifacts** (14 gün saklanır) |
+| Release yayınlanınca (`release: published`) | Release etiketinin kodu, **dev** flavor: client `pc` + client `kabin` + manager | Artifacts + release'e zip olarak eklenir |
 
 Aynı dal ve uygulama için yeni bir çalıştırma başlarsa eskisi iptal edilir.
 
 **Adımlar**
 
-1. `plan` (Ubuntu): seçime göre derlenecek uygulama listesini üretir.
-2. `build` (Windows, uygulama başına paralel):
+1. `plan` (Ubuntu): seçime göre derlenecek paket listesini üretir (client `pc` / `kabin`, manager).
+2. `build` (Windows, paket başına paralel):
     1. Flutter 3.38.6 kurulur (cache'li).
     2. Kökte `flutter pub get`, ardından `packages/pharmed_data`'da `build_runner`.
     3. media_kit'in ANGLE ve libmpv arşivleri, eklentinin kendi `CMakeLists.txt`'inden okunan adres ve MD5 ile önceden indirilip cache'lenir (geçici ağ hatalarında tekrar dener).
-    4. `flutter build windows --release -t lib/main_<flavor>.dart --dart-define=APP_VERSION=<sürüm>`. Sürüm: release'te etiket (ör. `v0.4.1`), elle çalıştırmada `<dal>-<kısa commit>`.
-    5. `build/windows/x64/runner/Release/` zip'lenir. Ad: `<uygulama>-<YYYYMMDD-HHMM>-<etiket ya da dal-commit>-<flavor>-windows.zip` (saat Türkiye saati).
+    4. `flutter build windows --release -t lib/main_<flavor>.dart --dart-define=APP_VERSION=<sürüm>`; client'ta ayrıca `--dart-define=HARDWARE=mock|real`. Sürüm: release'te etiket (ör. `v0.4.1`), elle çalıştırmada `<dal>-<kısa commit>`.
+    5. `build/windows/x64/runner/Release/` zip'lenir. Ad: `<uygulama>-<YYYYMMDD-HHMM>-<etiket ya da dal-commit>-<flavor>[-pc|-kabin]-windows.zip` (saat Türkiye saati).
     6. Zip artifact olarak, release'te ayrıca release'e yüklenir.
 
 CI'da şu an test, analiz, macOS build'i ve log paneli build'i **yoktur**; bunlar yerelde çalıştırılır.
