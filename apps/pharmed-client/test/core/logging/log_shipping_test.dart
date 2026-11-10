@@ -227,7 +227,7 @@ void main() {
           sent.add(body['entries'] as List);
           final device = body['device'] as Map;
           expect(device['deviceId'], shipping.device.deviceId);
-          expect(device['application'], 'pharmed-client');
+          expect(device['application'], 'client');
           expect(device.containsKey('stationId'), isFalse);
           return Result.ok(const DeviceLogBatchResult(accepted: 0, duplicates: 0, rejected: {}));
         },

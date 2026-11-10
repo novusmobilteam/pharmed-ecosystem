@@ -7,7 +7,7 @@
 class LogShippingConfig {
   const LogShippingConfig({
     required this.enabled,
-    this.application = 'pharmed-client',
+    this.application = 'client',
     this.appVersion = 'dev',
     this.batchSize = 200,
     this.maxBatchBytes = 1500 * 1024,
@@ -26,6 +26,8 @@ class LogShippingConfig {
   final bool enabled;
 
   /// Backend'de logu üreten uygulamayı ayırt eder (device.application, ≤ 32).
+  /// Backend yalnızca `client` / `manager` kabul eder; başka değer tüm
+  /// batch'i 400 ile reddeder.
   final String application;
 
   /// Build sırasında `--dart-define=APP_VERSION=…` ile verilir.
