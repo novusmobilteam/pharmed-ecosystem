@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { api } from '../api';
+import { api, API_BASE_URL } from '../api';
+import { logout, useSession } from '../auth';
 import { RANGES, rangeOf } from '../format';
 import { href, updateParams, type Route } from '../router';
 
@@ -8,6 +9,7 @@ const NAV = [
   { path: '/issues', label: 'Sorunlar' },
   { path: '/logs', label: 'Loglar' },
   { path: '/devices', label: 'Kiosklar' },
+  { path: '/server-errors', label: 'Sunucu hataları' },
 ];
 
 function isActive(current: string, path: string) {
@@ -17,6 +19,7 @@ function isActive(current: string, path: string) {
 
 export function Layout({ route, children }: { route: Route; children: ReactNode }) {
   const range = route.params.get('range');
+  const session = useSession();
   return (
     <div className="app">
       <nav className="side" aria-label="Ana menü">
@@ -42,9 +45,19 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
               <strong>Sahte veri.</strong> Backend hazır olunca <code>VITE_API_BASE_URL</code> ile gerçek loglara bağlanır.
             </p>
           ) : (
-            <p>
-              <strong>Canlı veri</strong> — {import.meta.env.VITE_API_BASE_URL}
-            </p>
+            <>
+              <p>
+                <strong>Canlı veri</strong> — {API_BASE_URL?.replace(/^https?:\/\//, '')}
+              </p>
+              {session && (
+                <p className="side-user">
+                  {session.email ?? `#${session.userId}`}
+                  <button className="link" onClick={logout}>
+                    Çıkış
+                  </button>
+                </p>
+              )}
+            </>
           )}
         </div>
       </nav>
@@ -71,5 +84,14 @@ export function PageHead({ title, route, showRange = true, children }: { title: 
         )}
       </div>
     </header>
+  );
+}
+
+/** Panelde hesaplanan istatistikler kayıt sınırına takıldıysa. */
+export function WindowNote() {
+  return (
+    <p className="note">
+      Son 7 günde çok fazla kayıt var; sorunlar ve grafikler yalnızca en yeni 30.000 kayıttan hesaplandı. Ayrıntılı arama için Loglar ekranını kullanın.
+    </p>
   );
 }

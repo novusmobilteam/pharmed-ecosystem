@@ -4,23 +4,7 @@ import type { LogApi } from './types';
 
 export * from './types';
 
-/**
- * VITE_API_BASE_URL verilirse gerçek backend (bkz. API sözleşmesi), verilmezse
- * sahte veri. Token şimdilik localStorage'dan okunur; panelin kendi giriş
- * ekranı backend'deki yetki modeli netleşince eklenecek.
- */
-function createApi(): LogApi {
-  const base = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  if (base) {
-    return new HttpLogApi(base, () => {
-      try {
-        return localStorage.getItem('pharmed-log-panel:token');
-      } catch {
-        return null;
-      }
-    });
-  }
-  return new MockLogApi();
-}
+/** Backend adresi (ör. https://agena.novusyazilim.com). Verilmezse panel sahte veriyle çalışır. */
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() || undefined;
 
-export const api: LogApi = createApi();
+export const api: LogApi = API_BASE_URL ? new HttpLogApi(API_BASE_URL) : new MockLogApi();

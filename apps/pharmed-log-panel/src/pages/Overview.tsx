@@ -1,6 +1,6 @@
 import { api, type LogGroup } from '../api';
 import { BarList, StackedBars } from '../components/charts';
-import { PageHead } from '../components/Layout';
+import { PageHead, WindowNote } from '../components/Layout';
 import { Empty, ErrorBox, LevelTag, Loading, Panel, StatusTag } from '../components/ui';
 import { fmtAgo, fmtCount, fmtMs, rangeBounds, rangeOf } from '../format';
 import { useAsync, useNow } from '../hooks';
@@ -39,6 +39,7 @@ export function Overview({ route }: { route: Route }) {
   return (
     <>
       <PageHead title="Genel bakış" route={route} />
+      {api.capabilities.truncated && <WindowNote />}
       {data.error && <ErrorBox message={data.error} onRetry={data.reload} />}
       {!d && data.loading && <Loading />}
       {d && totals && (

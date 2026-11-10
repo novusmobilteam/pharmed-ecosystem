@@ -19,6 +19,7 @@ function compareVersion(a = '', b = '') {
 
 export function Devices({ route }: { route: Route }) {
   const now = useNow(15_000);
+  const heartbeat = api.capabilities.heartbeat;
   const devices = useAsync(() => api.devices(), []);
   const list = devices.data ?? [];
   const latest = list.reduce((v, d) => (compareVersion(d.appVersion, v) > 0 ? d.appVersion : v), '');
@@ -27,7 +28,9 @@ export function Devices({ route }: { route: Route }) {
     <>
       <PageHead title="Kiosklar" route={route} showRange={false} />
       <p className="lead">
-        Her kiosk 5 dakikada bir sinyal gönderir. {SILENT_MIN} dakikadır sinyal gelmeyen kiosk kapalı, ağsız ya da uygulaması çökmüş olabilir.
+        {heartbeat
+          ? `Her kiosk 5 dakikada bir sinyal gönderir. ${SILENT_MIN} dakikadır sinyal gelmeyen kiosk kapalı, ağsız ya da uygulaması çökmüş olabilir.`
+          : 'Son 7 günde log gönderen kiosklar. Backend kiosk sinyallerini henüz saklamadığı için "sessiz kiosk" tespiti yapılamıyor; son kayıt zamanı gösteriliyor.'}
       </p>
       {devices.error && <ErrorBox message={devices.error} onRetry={devices.reload} />}
       {devices.loading && !devices.data && <Loading />}
@@ -62,7 +65,9 @@ export function Devices({ route }: { route: Route }) {
                       </td>
                       <td>{d.stationName ?? '—'}</td>
                       <td>
-                        {silent ? (
+                        {!heartbeat ? (
+                          <span className="muted">Son kayıt {fmtAgo(d.lastSeenAt, now)}</span>
+                        ) : silent ? (
                           <span className="status status-regressed">Sessiz · {fmtAgo(d.lastSeenAt, now)}</span>
                         ) : (
                           <span className="status status-resolved">Çevrimiçi</span>

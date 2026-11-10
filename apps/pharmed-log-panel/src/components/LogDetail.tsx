@@ -1,6 +1,7 @@
 import { api, type LogEntry } from '../api';
+import { operationIdOf } from '../api/engine';
 import { diagnoseEntry } from '../diagnosis';
-import { fmtDateTime, fmtMillis, fmtMs } from '../format';
+import { fmtDateTime, fmtMillis, fmtMs, shortType } from '../format';
 import { useAsync } from '../hooks';
 import { useDeviceName, useStationName } from '../lookups';
 import { href } from '../router';
@@ -31,6 +32,9 @@ function EntryBody({ e }: { e: LogEntry }) {
   const stationName = useStationName();
   const d = e.level !== 'INFO' ? diagnoseEntry(e) : undefined;
   const s = e.session;
+  const opId = operationIdOf(e);
+  const sender = e.sender;
+  const senderDiffers = sender?.userId !== undefined && s?.userId !== undefined && sender.userId !== s.userId;
 
   return (
     <div className="detail-body">
@@ -62,6 +66,8 @@ function EntryBody({ e }: { e: LogEntry }) {
 
       {d && <DiagnosisCard d={d} />}
 
+      {opId && <ServerSide operationId={opId} />}
+
       <dl className="facts">
         <dt>Kiosk</dt>
         <dd>
@@ -69,7 +75,12 @@ function EntryBody({ e }: { e: LogEntry }) {
           {e.appVersion && <span className="muted"> · {e.appVersion}</span>}
         </dd>
         <dt>Kullanıcı</dt>
-        <dd>{s?.user ? <a href={href('/logs', { user: String(s.userId) })}>{s.user}</a> : 'Oturum yok'}</dd>
+        <dd>
+          {s?.userId ? <a href={href('/logs', { user: String(s.userId) })}>{s.user ?? `#${s.userId}`}</a> : 'Oturum yok'}
+          {senderDiffers && (
+            <div className="muted">Gönderen hesap #{sender!.userId} — kayıt kuyrukta beklerken oturum değişmiş.</div>
+          )}
+        </dd>
         <dt>İstasyon</dt>
         <dd>{s?.stationId ? stationName(s.stationId) : '—'}</dd>
         <dt>Ekran</dt>
@@ -87,6 +98,22 @@ function EntryBody({ e }: { e: LogEntry }) {
               </code>
               {e.http.status !== undefined && <span className="muted"> · {e.http.status}</span>}
               {e.http.ms !== undefined && <span className="muted"> · {fmtMs(e.http.ms)}</span>}
+            </dd>
+          </>
+        )}
+        {opId && (
+          <>
+            <dt>İşlem</dt>
+            <dd>
+              <a href={href('/logs', { op: String(opId), range: '7d' })}>{opId}</a>
+            </dd>
+          </>
+        )}
+        {sender?.ipAddress && (
+          <>
+            <dt>IP</dt>
+            <dd>
+              <code>{sender.ipAddress.replace(/^::ffff:/, '')}</code>
             </dd>
           </>
         )}
@@ -131,5 +158,29 @@ function EntryBody({ e }: { e: LogEntry }) {
         </section>
       )}
     </div>
+  );
+}
+
+/** Aynı işlem için backend'de kayıtlı yakalanmamış hata varsa gösterir. */
+function ServerSide({ operationId }: { operationId: number }) {
+  const { data } = useAsync(
+    () => api.listServerErrors({ from: new Date(0).toISOString(), to: new Date().toISOString(), operationId, take: 5 }),
+    [operationId],
+  );
+  const items = data?.items ?? [];
+  if (!items.length) return null;
+  return (
+    <section className="detail-section">
+      <h3>Sunucu tarafı</h3>
+      {items.map((x) => (
+        <a key={x.id} className="server-link" href={href('/server-errors', { id: String(x.id), op: String(operationId) })}>
+          <strong>Backend'de yakalanmamış hata · {shortType(x.exceptionType)}</strong>
+          <span>{x.exceptionMessage}</span>
+          <code className="muted">
+            {x.service}.{x.action}
+          </code>
+        </a>
+      ))}
+    </section>
   );
 }

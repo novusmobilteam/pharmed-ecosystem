@@ -55,3 +55,6 @@ export function fmtMs(ms?: number) {
 }
 
 export const fmtCount = (n: number) => new Intl.NumberFormat('tr-TR').format(n);
+
+/** `System.ArgumentException` → `ArgumentException` */
+export const shortType = (t: string) => t.split('.').pop() ?? t;

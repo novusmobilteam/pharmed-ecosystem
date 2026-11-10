@@ -1,5 +1,5 @@
-// Sözleşmedeki fingerprint kuralının panel tarafındaki kopyası — yalnızca
-// sahte veri katmanı kullanır; gerçek ortamda fingerprint'i backend üretir.
+// Hata gruplama anahtarı. Backend fingerprint üretmediği için hem sahte veri
+// hem gerçek kayıtlar için panelde hesaplanır.
 
 import type { LogEntry } from './types';
 
@@ -19,7 +19,7 @@ export function normalizeMessage(message: string): string {
   return message.replace(GUID, '*').replace(/\d+/g, '#');
 }
 
-/** SHA-1 yerine kısa, deterministik bir özet — sahte veri için yeterli. */
+/** Kısa, deterministik bir özet — panel içi gruplama için yeterli. */
 function hash(input: string): string {
   let h1 = 0x811c9dc5;
   let h2 = 0x01000193;
