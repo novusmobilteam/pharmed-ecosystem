@@ -156,6 +156,8 @@ class CabinOperationService implements ICabinOperationService {
     // Çoklu kabin senaryosunda "önce A'yı dene, sonra hepsini tara" mantığı yanlış
     // kabini bulabilir — burada hangi kabini arayacağımızı zaten biliyoruz.
     if (targetAddressIndex != null) {
+      String? lastResponse;
+      String? lastError;
       for (int attempt = 0; attempt < 4; attempt++) {
         try {
           final response = await _serialService.sendAndReceive(
@@ -163,6 +165,7 @@ class CabinOperationService implements ICabinOperationService {
             timeout: const Duration(milliseconds: 800),
           );
           debugPrint(response);
+          lastResponse = response;
           if (response != null && response.trim() == '+ok-') {
             MedLogger.info(
               unit: 'CabinOps',
@@ -172,15 +175,30 @@ class CabinOperationService implements ICabinOperationService {
             );
             return ManagementCard(addressIndex: targetAddressIndex);
           }
-        } catch (_) {}
+        } catch (e) {
+          lastError = e.toString();
+        }
         await Future.delayed(const Duration(milliseconds: 150));
       }
+
+      // Teşhis: hatta hangi adreslerin cevap verdiğini kaydet. Kart yanlış adreste mi
+      // (ör. fabrika varsayılanı A), hiç mi yok — loglardan ayırt edilebilsin.
+      // Davranış değişmez: kabin yalnızca hedef adreste kabul edilir.
+      final responders = await _probeResponsiveAddresses(exclude: targetAddressIndex);
 
       MedLogger.error(
         unit: 'CabinOps',
         swreq: 'SWREQ-CABIN-OP-003',
         message: 'Hedef adreste yönetim kartı bulunamadı',
-        context: {'adres': targetAddressIndex},
+        context: {
+          'adres': targetAddressIndex,
+          'adresHarf': ManagementCard(addressIndex: targetAddressIndex).addressChar.toUpperCase(),
+          'sonYanit': lastResponse?.trim(),
+          'sonHata': lastError,
+          'yanitVerenAdresler': responders
+              .map((i) => '$i/${ManagementCard(addressIndex: i).addressChar.toUpperCase()}')
+              .toList(),
+        },
       );
       return null;
     }
@@ -230,6 +248,23 @@ class CabinOperationService implements ICabinOperationService {
       }
     }
     return null;
+  }
+
+  /// 1-16 arası adresleri birer kez yoklar, `+ok-` dönenleri listeler (yalnız teşhis amaçlı).
+  Future<List<int>> _probeResponsiveAddresses({int? exclude}) async {
+    final found = <int>[];
+    for (int i = 1; i <= 16; i++) {
+      if (i == exclude) continue;
+      try {
+        final response = await _serialService.sendAndReceive(
+          CommandBuilder.buildManagementCommand(addressIndex: i, row: 0),
+          timeout: const Duration(milliseconds: 250),
+        );
+        if (response != null && response.trim() == '+ok-') found.add(i);
+      } catch (_) {}
+      await Future.delayed(const Duration(milliseconds: 80));
+    }
+    return found;
   }
 
   @override
