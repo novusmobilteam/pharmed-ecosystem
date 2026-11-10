@@ -27,6 +27,7 @@ function queryFrom(route: Route, from: string, to: string): LogQuery {
     httpStatus: p.get('status') ? Number(p.get('status')) : undefined,
     appVersion: p.get('version') ?? undefined,
     search: p.get('q') ?? undefined,
+    operationId: p.get('op') ? Number(p.get('op')) : undefined,
     take: 100,
   };
 }
@@ -235,6 +236,7 @@ function activeChips(route: Route, f?: { stations: { key: string; label: string 
   if (p.get('path')) chips.push({ key: 'path', label: `İstek: ${p.get('path')}` });
   if (p.get('status')) chips.push({ key: 'status', label: `HTTP ${p.get('status')}` });
   if (p.get('fp')) chips.push({ key: 'fp', label: 'Sorun grubu' });
+  if (p.get('op')) chips.push({ key: 'op', label: `İşlem: ${p.get('op')}` });
   if (p.get('unit')) chips.push({ key: 'unit', label: `Birim: ${p.get('unit')}` });
   return chips;
 }

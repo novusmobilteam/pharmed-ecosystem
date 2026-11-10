@@ -24,7 +24,7 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 | --- | --- | --- | --- |
 | `apps/pharmed-client` | Kiosk uygulaması: ilaç alım, iade, dolum, sayım, boşaltma, imha; kabin donanımı (RS485, RFID), parmak izi, fiş yazıcı, kamera kaydı | Flutter, Riverpod | Kabin yanındaki Windows kiosk |
 | `apps/pharmed-manager` | Yönetim paneli: ilaç/kullanıcı/rol/istasyon tanımları, reçete onayı, raporlar | Flutter, Provider/ChangeNotifier | Windows masaüstü |
-| `apps/pharmed-log-panel` | Kiosk loglarını izleme paneli: sorun grupları, log gezgini, istek izi, teşhis kartı | Vite, React, TypeScript | Tarayıcı (statik dosyalar) |
+| `apps/pharmed-log-panel` | Kiosk ve sunucu loglarını izleme paneli: sorun grupları, log gezgini, istek izi, teşhis kartı, sunucu hataları | Vite, React, TypeScript | Tarayıcı (statik dosyalar) |
 | `apps/pharmed-widgetbook` | `pharmed_ui` bileşen kataloğu | Flutter, Widgetbook | Tarayıcı / Windows |
 | `packages/pharmed_core` | Domain: entity'ler, use case'ler, `Result<T>`, `AppException` | Dart | client + manager |
 | `packages/pharmed_data` | Veri katmanı: `APIManager`, remote/local datasource'lar, repository'ler, ağ loglama | Dart, Dio, Hive | client + manager |
@@ -189,10 +189,10 @@ cd apps/pharmed-log-panel
 npm install
 npm run dev                                       # http://localhost:5173 — sahte veri
 npm run build                                     # dist/ — statik dosyalar
-VITE_API_BASE_URL=https://sunucu npm run build    # gerçek backend'e bağlı build
+VITE_API_BASE_URL=https://agena.novusyazilim.com npm run build    # gerçek backend'e bağlı build
 ```
 
-`VITE_API_BASE_URL` verilmezse panel sahte veriyle çalışır. `dist/` herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanır; yönlendirme hash tabanlı olduğu için sunucuda ek ayar gerekmez. Ekranlar, yapı ve teşhis kataloğu: `apps/pharmed-log-panel/README.md`. Backend endpoint'leri "PharMed Cihaz Logları — Backend API Sözleşmesi" belgesinde.
+`VITE_API_BASE_URL` verilmezse panel sahte veriyle çalışır; verilirse yönetici girişi ister (`/api/Login/login`) ve `FrontendLog` / `BackendLog` servislerinden okur. Değer `/api` olmadan sunucu kökü olmalı. `dist/` herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanır; yönlendirme hash tabanlı olduğu için sunucuda ek ayar gerekmez. Ekranlar, kullanılan servisler ve teşhis kataloğu: `apps/pharmed-log-panel/README.md`.
 
 ## Cihazdaki loglar
 

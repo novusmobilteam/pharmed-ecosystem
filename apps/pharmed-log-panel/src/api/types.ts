@@ -1,5 +1,5 @@
-// "PharMed Cihaz Logları — Backend API Sözleşmesi" ile birebir aynı şekiller.
-// Backend değiştikçe önce burası güncellenir; ekranlar yalnızca bu tipleri bilir.
+// Panelin veri şekilleri. Gerçek backend (FrontendLog / BackendLog) yanıtları
+// api/http.ts içinde bu şekillere çevrilir; ekranlar yalnızca bu tipleri bilir.
 
 export type Level = 'INFO' | 'WARN' | 'ERROR';
 export const LEVELS: Level[] = ['ERROR', 'WARN', 'INFO'];
@@ -40,6 +40,13 @@ export interface LogEntry {
   stackTrace?: string;
   breadcrumbs?: string[];
   fingerprint?: string;
+  /** Kiosk adı (gönderimdeki device.hostName). */
+  hostName?: string;
+  correlationId?: string;
+  /** İşlemin backend'deki kimliği — sunucu hatalarıyla eşleştirme için. */
+  relatedOperationId?: number;
+  /** Backend'in token'dan aldığı gönderen hesap; kaydın kendi oturumundan farklı olabilir. */
+  sender?: { userId?: number; stationId?: number; ipAddress?: string };
 }
 
 export interface LogQuery {
@@ -58,6 +65,8 @@ export interface LogQuery {
   httpStatus?: number;
   appVersion?: string;
   search?: string;
+  /** Backend işlem kimliği (relatedOperationId ya da hata yanıtındaki operationId). */
+  operationId?: number;
   cursor?: string;
   take?: number;
 }
@@ -65,6 +74,8 @@ export interface LogQuery {
 export interface Page<T> {
   items: T[];
   nextCursor?: string;
+  /** Biliniyorsa toplam kayıt sayısı. */
+  total?: number;
 }
 
 export type GroupStatus = 'open' | 'resolved' | 'ignored';
@@ -155,9 +166,52 @@ export interface StatusChange {
   resolvedInVersion?: string;
 }
 
+/** Backend'de yakalanmamış hata (BackendLog). */
+export interface ServerError {
+  id: number;
+  operationId?: number;
+  occurredAt: string;
+  service: string;
+  action: string;
+  requestPath: string;
+  httpMethod: string;
+  exceptionType: string;
+  exceptionMessage: string;
+  userId?: number;
+  stationId?: number;
+  /** Yalnızca ayrıntıda. */
+  exceptionDetails?: string;
+  parameters?: unknown;
+  user?: unknown;
+  station?: unknown;
+}
+
+export interface ServerErrorQuery {
+  from: string;
+  to: string;
+  service?: string;
+  exceptionType?: string;
+  operationId?: number;
+  search?: string;
+  cursor?: string;
+  take?: number;
+}
+
+export interface Capabilities {
+  /** Kiosklar düzenli sinyal gönderiyor ve "sessiz kiosk" tespit edilebiliyor. */
+  heartbeat: boolean;
+  /** Sorun durumları sunucuda (herkes için) saklanıyor. */
+  sharedGroupStatus: boolean;
+  /** Sorunlar/istatistikler sınırlı bir pencereden hesaplandı mı (kayıt sayısı sınıra takıldı). */
+  truncated?: boolean;
+}
+
 /** Panelin konuştuğu tek arayüz — sahte veri ya da gerçek backend. */
 export interface LogApi {
   readonly isMock: boolean;
+  readonly capabilities: Capabilities;
+  listServerErrors(q: ServerErrorQuery): Promise<Page<ServerError>>;
+  getServerError(id: number): Promise<ServerError>;
   listLogs(q: LogQuery): Promise<Page<LogEntry>>;
   getLog(id: string): Promise<LogEntry>;
   surrounding(id: string, before?: number, after?: number): Promise<LogEntry[]>;

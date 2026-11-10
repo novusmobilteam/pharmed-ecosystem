@@ -1,6 +1,6 @@
 import { api, type GroupStatus, type LogGroup } from '../api';
 import { Sparkline } from '../components/charts';
-import { PageHead } from '../components/Layout';
+import { PageHead, WindowNote } from '../components/Layout';
 import { Empty, ErrorBox, LevelTag, Loading, StatusTag } from '../components/ui';
 import { KIND_LABEL, diagnoseGroup } from '../diagnosis';
 import { fmtAgo, fmtCount, rangeBounds, rangeOf } from '../format';
@@ -46,7 +46,11 @@ export function Issues({ route }: { route: Route }) {
   return (
     <>
       <PageHead title="Sorunlar" route={route} />
-      <p className="lead">Aynı hatanın tekrarları tek satırda toplanır. Bir sorunu çözdüğünüzde işaretleyin; yeniden görülürse “Geri döndü” olarak açılır.</p>
+      <p className="lead">
+        Aynı hatanın tekrarları tek satırda toplanır. Bir sorunu çözdüğünüzde işaretleyin; yeniden görülürse “Geri döndü” olarak açılır.
+        {!api.capabilities.sharedGroupStatus && !api.isMock && ' Durumlar şimdilik yalnızca bu tarayıcıda saklanır.'}
+      </p>
+      {api.capabilities.truncated && <WindowNote />}
       <div className="filters">
         <div className="seg" role="tablist" aria-label="Durum">
           {TABS.map((t) => (
