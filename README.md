@@ -119,6 +119,8 @@ flutter build windows --release -t lib/main_prod.dart --dart-define=APP_VERSION=
 
 Çıktı: `build/windows/x64/runner/Release/` — klasörün tamamı dağıtılır (exe tek başına çalışmaz).
 
+Visual C++ çalışma zamanı DLL'leri (`vcruntime140.dll`, `vcruntime140_1.dll`, `msvcp140.dll` vb.) build sırasında CMake (`InstallRequiredSystemLibraries`) ile exe'nin yanına kopyalanır; hedef makinede ayrıca "Microsoft Visual C++ Redistributable" kurmak gerekmez. Bu DLL'ler olmadan uygulama "VCRUNTIME140_1.dll bulunamadı" hatasıyla açılmaz.
+
 Dikkat edilecekler:
 
 - **Video bileşeni (media_kit):** CMake aşamasında ANGLE ve libmpv arşivleri GitHub'dan indirilir. İlk build internet ister; arşivler `build/windows/x64/*.7z` altında kalır ve sonraki build'lerde tekrar indirilmez.
@@ -196,8 +198,9 @@ Aynı dal ve uygulama için yeni bir çalıştırma başlarsa eskisi iptal edili
     2. Kökte `flutter pub get`, ardından `packages/pharmed_data`'da `build_runner`.
     3. media_kit'in ANGLE ve libmpv arşivleri, eklentinin kendi `CMakeLists.txt`'inden okunan adres ve MD5 ile önceden indirilip cache'lenir (geçici ağ hatalarında tekrar dener).
     4. `flutter build windows --release -t lib/main_<flavor>.dart --dart-define=APP_VERSION=<sürüm>`; client'ta ayrıca `--dart-define=HARDWARE=mock|real`. Sürüm: release'te etiket (ör. `v0.4.1`), elle çalıştırmada `<dal>-<kısa commit>`.
-    5. `build/windows/x64/runner/Release/` zip'lenir. Ad: `<uygulama>-<YYYYMMDD-HHMM>-<etiket ya da dal-commit>-<flavor>[-pc|-kabin]-windows.zip` (saat Türkiye saati).
-    6. Zip artifact olarak, release'te ayrıca release'e yüklenir.
+    5. Paket klasöründe VC++ runtime DLL'leri (`vcruntime140.dll`, `vcruntime140_1.dll`, `msvcp140.dll`) var mı kontrol edilir; eksikse build kırılır.
+    6. `build/windows/x64/runner/Release/` zip'lenir. Ad: `<uygulama>-<YYYYMMDD-HHMM>-<etiket ya da dal-commit>-<flavor>[-pc|-kabin]-windows.zip` (saat Türkiye saati).
+    7. Zip artifact olarak, release'te ayrıca release'e yüklenir.
 
 CI'da şu an test, analiz, macOS build'i ve log paneli build'i **yoktur**; bunlar yerelde çalıştırılır.
 
