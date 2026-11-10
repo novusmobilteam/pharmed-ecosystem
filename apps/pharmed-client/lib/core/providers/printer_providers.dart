@@ -15,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 import 'package:pharmed_client/core/cache/app_settings_cache.dart';
-import 'package:pharmed_client/core/flavor/app_flavor.dart';
+import 'package:pharmed_client/core/hardware/hardware_mode.dart';
 import 'package:pharmed_client/core/hardware/printer/printer.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 
@@ -27,7 +27,7 @@ final receiptPrinterProvider = Provider<IReceiptPrinter>((ref) {
 
 IReceiptPrinter createReceiptPrinter(AppSettingsCache settings) {
   const forceMock = bool.fromEnvironment('PRINTER_MOCK');
-  if (FlavorConfig.instance.isMock || forceMock) return MockReceiptPrinter();
+  if (HardwareConfig.isMock || forceMock) return MockReceiptPrinter();
   return EscPosReceiptPrinter(loadConfig: settings.getPrinterConfig);
 }
 

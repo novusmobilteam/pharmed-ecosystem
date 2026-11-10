@@ -1,8 +1,10 @@
 # Windows build — elle tetiklenebilir + release'te otomatik.
 #
-# Elle: Actions → "Windows Build" → Run workflow → branch / uygulama / flavor seç.
-# Release: "Publish release" edildiğinde iki uygulamayı da dev flavor ile build alıp
-#          zip'leri release'e ekler (eski build-and-attach-release.yml'in yerini alır).
+# Elle: Actions → "Windows Build" → Run workflow → branch / uygulama / flavor / cihaz seç.
+# Release: "Publish release" edildiğinde dev flavor ile üç paket üretip release'e ekler:
+#   pharmed-client  …-dev-pc     → bilgisayarda test: gerçek API, sahte cihazlar (HARDWARE=mock)
+#   pharmed-client  …-dev-kabin  → kabinde test: gerçek API, gerçek cihazlar (HARDWARE=real)
+#   pharmed-manager …-dev
 
 name: Windows Build
 
@@ -15,32 +17,46 @@ on:
         options: [client, manager, both]
         default: client
       flavor:
-        description: Flavor (lib/main_<flavor>.dart)
+        description: Flavor (lib/main_<flavor>.dart) — hangi backend
         type: choice
         options: [dev, prod, mock]
         default: dev
+      hardware:
+        description: "Cihazlar (yalnız client): pc = sahte cihaz, kabin = gerçek cihaz, both = ikisi"
+        type: choice
+        options: [both, pc, kabin]
+        default: both
   release:
     types: [published]
 
 concurrency:
-  group: windows-build-${{ github.ref }}-${{ inputs.app || 'release' }}
+  group: windows-build-${{ github.ref }}-${{ inputs.app || 'release' }}-${{ inputs.flavor || 'dev' }}-${{ inputs.hardware || 'both' }}
   cancel-in-progress: true
 
 jobs:
-  # Seçime göre build matrisini üretir (client / manager / ikisi).
+  # Seçime göre build matrisini üretir: her satır bir paket (uygulama + cihaz modu).
+  # Client için hardware: mock (pc) / real (kabin); manager'da cihaz yok.
   plan:
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.pick.outputs.apps }}
+      include: ${{ steps.pick.outputs.include }}
     steps:
       - id: pick
         shell: bash
         run: |
-          case "${{ inputs.app || 'both' }}" in
-            client)  echo 'apps=["pharmed-client"]' >> "$GITHUB_OUTPUT" ;;
-            manager) echo 'apps=["pharmed-manager"]' >> "$GITHUB_OUTPUT" ;;
-            *)       echo 'apps=["pharmed-client","pharmed-manager"]' >> "$GITHUB_OUTPUT" ;;
-          esac
+          app="${{ inputs.app || 'both' }}"
+          hw="${{ inputs.hardware || 'both' }}"
+          rows=()
+          if [ "$app" != "manager" ]; then
+            [ "$hw" != "kabin" ] && rows+=('{"app":"pharmed-client","hardware":"mock","variant":"pc"}')
+            [ "$hw" != "pc" ]    && rows+=('{"app":"pharmed-client","hardware":"real","variant":"kabin"}')
+          fi
+          if [ "$app" != "client" ]; then
+            rows+=('{"app":"pharmed-manager","hardware":"","variant":""}')
+          fi
+          json="[$(IFS=,; echo "${rows[*]}")]"
+          echo "include=$json" >> "$GITHUB_OUTPUT"
+          echo "Matris: $json"
 
   build:
     needs: plan
@@ -49,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: ${{ fromJson(needs.plan.outputs.apps) }}
+        include: ${{ fromJson(needs.plan.outputs.include) }}
     env:
       FLAVOR: ${{ inputs.flavor || 'dev' }}
     steps:
@@ -144,7 +160,7 @@ jobs:
           Get-Archive $mpvUrl   $mpvMd5   (Join-Path $dir $mpvName)
           Get-Archive $angleUrl $angleMd5 (Join-Path $dir 'ANGLE.7z')
 
-      - name: Build ${{ matrix.app }} (${{ env.FLAVOR }})
+      - name: Build ${{ matrix.app }} (${{ env.FLAVOR }}${{ matrix.variant && format(' / {0}', matrix.variant) || '' }})
         working-directory: apps/${{ matrix.app }}
         shell: bash
         run: |
@@ -154,7 +170,11 @@ jobs:
           else
             version="${GITHUB_REF_NAME//\//-}-$(git rev-parse --short HEAD)"
           fi
-          flutter build windows --release -t lib/main_${{ env.FLAVOR }}.dart --dart-define=APP_VERSION="$version"
+          hw="${{ matrix.hardware }}"
+          # HARDWARE: cihaz servisleri gerçek mi sahte mi (bkz. lib/core/hardware/hardware_mode.dart).
+          flutter build windows --release -t lib/main_${{ env.FLAVOR }}.dart \
+            --dart-define=APP_VERSION="$version" \
+            ${hw:+--dart-define=HARDWARE=$hw}
 
       - name: Paket adı
         id: name
@@ -167,8 +187,9 @@ jobs:
           else
             tag="${GITHUB_REF_NAME//\//-}-$(git rev-parse --short HEAD)"
           fi
-          # örn. pharmed-manager-20261109-1056-dev-a896dab-dev-windows
-          echo "zip=${{ matrix.app }}-${stamp}-${tag}-${FLAVOR}-windows" >> "$GITHUB_OUTPUT"
+          variant="${FLAVOR}${{ matrix.variant && format('-{0}', matrix.variant) || '' }}"
+          # örn. pharmed-client-20261110-1056-v0.5.0-dev-kabin-windows
+          echo "zip=${{ matrix.app }}-${stamp}-${tag}-${variant}-windows" >> "$GITHUB_OUTPUT"
 
       - name: Zip
         run: >
