@@ -39,3 +39,7 @@ melos:
     run:manager:dev:
       run: cd apps/pharmed-manager && flutter run -t lib/main_dev.dart -d macos
       description: pharmed-manager dev flavor
+
+    run:hw-test:dev:
+      run: cd apps/pharmed-hw-test && flutter run -t lib/main_dev.dart -d windows
+      description: pharmed-hw-test (donanım test uygulaması) dev ortamı, Windows
