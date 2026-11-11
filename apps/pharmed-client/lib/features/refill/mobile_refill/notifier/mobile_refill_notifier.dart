@@ -503,6 +503,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
         } else {
           // Normal: kapanışı bekle. RFID canlı dinlenmeye devam eder.
           state = MobileRefillWaitingClose(ready: current);
+          closeMockMobileDrawerAfterSave(ref);
         }
       },
       error: (e) {

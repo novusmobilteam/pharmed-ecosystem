@@ -498,6 +498,7 @@ class MobileCensusNotifier extends Notifier<MobileCensusState> {
       ok: (_) async {
         // WaitingClose → drawer fiziksel kapanınca _onDrawerStageChange Success yapar.
         state = MobileCensusWaitingClose(ready: current);
+        closeMockMobileDrawerAfterSave(ref);
       },
       error: (e) async {
         // Kayıt FAIL — RFID state KORUNUR, drawer açık, retry edilebilir

@@ -465,6 +465,7 @@ class MobileUnloadNotifier extends Notifier<MobileUnloadState> {
         // WaitingClose → drawer fiziksel kapanınca _onDrawerStageChange
         // eksik bildirimlerini topluca yapar, sonra Success.
         state = MobileUnloadWaitingClose(ready: current);
+        closeMockMobileDrawerAfterSave(ref);
       },
       error: (e) async {
         // Kayıt FAIL — RFID state KORUNUR, drawer açık, retry edilebilir.
