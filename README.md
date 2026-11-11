@@ -181,6 +181,7 @@ Hepsi derleme zamanında verilir: `flutter run|build … --dart-define=AD=değer
 
 | Ayar | Varsayılan | Ne yapar |
 | --- | --- | --- |
+| `HOSPITAL_UTC_OFFSET_MINUTES` | `180` | Hastane saat dilimi (dakika, UTC'ye göre). Tarih filtreleri ("Bugün" vb.) cihaz saatiyle değil, sunucu saati + bu farkla hesaplanır; veritabanı tarihleri bu saatle tutulur |
 | `APP_VERSION` | `dev` | Loglarda ve log panelinde görünen sürüm. CI otomatik verir |
 | `LOG_UPLOAD_ENABLED` | `true` | Logların backend'e (`POST /api/FrontendLog/batch`) gönderimi. Kapatmak için `false` |
 | `RECORDING_UPLOAD_ENABLED` | `true` | Kamera kayıtlarının backend'e yüklenmesi |

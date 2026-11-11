@@ -97,8 +97,9 @@ class PrescriptionDetailNotifier extends ChangeNotifier with ApiRequestMixin {
       _startDate = null;
       _endDate = null;
     } else {
-      final now = DateTime.now();
-      _endDate = now;
+      // [SWREQ-CORE-007] Sunucu/hastane saati.
+      final now = ServerClock.now();
+      _endDate = ServerClock.endOfDay(now);
       _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: days - 1));
     }
     notifyListeners();

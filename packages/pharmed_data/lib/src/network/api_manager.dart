@@ -12,6 +12,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'auth_token_provider.dart';
 import 'network_log_interceptor.dart';
+import 'server_clock_interceptor.dart';
 import 'token_interceptor.dart';
 
 class APIManager {
@@ -33,6 +34,8 @@ class APIManager {
     // NetworkLogInterceptor en sonda: token eklenmiş, nihai isteği loglar.
     _dio.interceptors.addAll([
       TokenInterceptor(tokenProvider: tokenProvider),
+      // [SWREQ-CORE-007] Sunucu saati (Date başlığı) → ServerClock.
+      ServerClockInterceptor(),
       ...?extraInterceptors,
       NetworkLogInterceptor(),
     ]);

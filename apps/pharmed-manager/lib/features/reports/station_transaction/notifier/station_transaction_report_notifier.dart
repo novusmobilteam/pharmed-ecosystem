@@ -17,8 +17,8 @@ class StationTransactionReportNotifier extends ChangeNotifier
   }) : _getStationsUseCase = getStationsUseCase,
        _getStationTransactionsUseCase = getStationTransactionsUseCase,
        _getTransactionStepsUseCase = getTransactionStepsUseCase {
-    // Varsayılan: bugün 00:00 – 23:59:59.
-    final now = DateTime.now();
+    // Varsayılan: bugün 00:00 – 23:59:59 (sunucu/hastane saatiyle).
+    final now = ServerClock.now();
     initDateRange(
       DateTimeRange(
         start: DateTime(now.year, now.month, now.day),

@@ -8,3 +8,4 @@ export 'src/utils/validators.dart';
 export 'src/utils/create_random_text.dart';
 export 'src/utils/device_info.dart';
 export 'src/utils/format_epc.dart';
+export 'src/utils/server_clock.dart';

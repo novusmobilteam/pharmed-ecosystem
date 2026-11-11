@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 import 'dart:async';
 
@@ -37,8 +38,8 @@ mixin PaginationMixin<T> on ApiRequestMixin {
   DateTimeRange? get dateRange =>
       _dateRange ??
       DateTimeRange(
-        start: _dateRange?.start ?? DateTime.now().subtract(Duration(days: 1)),
-        end: _dateRange?.end ?? DateTime.now(),
+        start: _dateRange?.start ?? ServerClock.now().subtract(Duration(days: 1)),
+        end: _dateRange?.end ?? ServerClock.now(),
       );
 
   DateTime? get startDate => _dateRange?.start;

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../core/mixins/mixins.dart';
 import '../../../core/providers/providers.dart';
@@ -188,7 +189,8 @@ class StockMovementNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void _applyPreset(StockMovementRangePreset preset) {
     _preset = preset;
-    final now = DateTime.now();
+    // [SWREQ-CORE-007] Sunucu/hastane saati.
+    final now = ServerClock.now();
     _rangeEnd = now;
     _rangeStart = switch (preset) {
       StockMovementRangePreset.today => DateTime(now.year, now.month, now.day),
