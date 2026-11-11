@@ -26,9 +26,16 @@ flutter run -d windows -t lib/main_dev.dart
 flutter build windows --release -t lib/main_dev.dart --dart-define=APP_VERSION=v0.1.0
 ```
 
+macOS'ta yalnız arayüz kontrol edilebilir (kabin/seri port testi yapılamaz; giriş çalışır):
+
+```bash
+cd apps/pharmed-hw-test
+flutter run -d macos -t lib/main_dev.dart   # ya da: dart run melos run run:hw-test:mac
+```
+
 CI: Actions → "Windows Build" → uygulama `hw-test` (ya da `all`). Release'te otomatik derlenir. Paket VC++ runtime DLL'lerini içerir; zip'i açıp `pharmed_hw_test.exe` çalıştırmak yeterlidir.
 
 ## Notlar
 
-- Mock donanım yoktur; uygulama her zaman gerçek seri port kullanır.
+- Mock donanım yoktur; uygulama her zaman gerçek seri port kullanır. macOS'ta port listesi boş görünebilir.
 - Arayüz yalnız Türkçedir (saha aracı).
