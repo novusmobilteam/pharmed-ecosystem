@@ -41,7 +41,8 @@ final class SerumTrayAddress {
       var areaOffset = 0;
       for (final tray in shelf.trays) {
         if (tray.id == cellId) {
-          if (!shelf.isLocked) return null;
+          // Açık rafta kilit kartı kullanılmaz.
+          if (!shelf.isLocked || shelf.isOpenShelf) return null;
           return SerumTrayAddress(
             deviceId: shelf.orderNo,
             port: areaOffset + 1,

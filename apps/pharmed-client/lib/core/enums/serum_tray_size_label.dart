@@ -8,5 +8,6 @@ extension SerumTraySizeLabel on SerumTraySize {
     SerumTraySize.small => context.l10n.cabinDesign_serum_traySizeSmallLabel,
     SerumTraySize.medium => context.l10n.cabinDesign_serum_traySizeMediumLabel,
     SerumTraySize.large => context.l10n.cabinDesign_serum_traySizeLargeLabel,
+    SerumTraySize.openShelf => context.l10n.cabinDesign_serum_traySizeOpenShelfLabel,
   };
 }

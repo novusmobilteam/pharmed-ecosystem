@@ -6967,6 +6967,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_serum_traySizeLargeLabel => 'Grand';
 
   @override
+  String get cabinDesign_serum_traySizeOpenShelfLabel => 'Étagère ouverte';
+
+  @override
+  String get cabinDesign_serum_shelfTypeLabel => 'Type d\'étagère';
+
+  @override
+  String get cabinDesign_serum_shelfTypeTraysOption => 'Étagère à bacs';
+
+  @override
+  String get cabinDesign_serum_shelfTypeOpenOption => 'Étagère ouverte';
+
+  @override
+  String get cabinDesign_serum_openShelfInfo => 'Une étagère ouverte n\'a pas de bacs ; plusieurs médicaments différents peuvent y être affectés. La serrure électromagnétique et Prendre-Donner ne sont pas utilisés.';
+
+  @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
     return '$index. Plateau • $sizeLabel';
   }

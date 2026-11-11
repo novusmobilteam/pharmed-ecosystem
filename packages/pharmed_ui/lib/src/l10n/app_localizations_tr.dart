@@ -6748,6 +6748,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_serum_traySizeLargeLabel => 'Büyük';
 
   @override
+  String get cabinDesign_serum_traySizeOpenShelfLabel => 'Açık Raf';
+
+  @override
+  String get cabinDesign_serum_shelfTypeLabel => 'Raf Tipi';
+
+  @override
+  String get cabinDesign_serum_shelfTypeTraysOption => 'Avadanlıklı Raf';
+
+  @override
+  String get cabinDesign_serum_shelfTypeOpenOption => 'Açık Raf';
+
+  @override
+  String get cabinDesign_serum_openShelfInfo => 'Açık rafta avadanlık bulunmaz; rafa birden fazla farklı ilaç atanabilir. Elektromanyetik kilit ve Al-Ver kullanılmaz.';
+
+  @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
     return '$index. Avadanlık • $sizeLabel';
   }

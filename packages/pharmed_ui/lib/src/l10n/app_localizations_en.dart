@@ -6804,6 +6804,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_serum_traySizeLargeLabel => 'Large';
 
   @override
+  String get cabinDesign_serum_traySizeOpenShelfLabel => 'Open Shelf';
+
+  @override
+  String get cabinDesign_serum_shelfTypeLabel => 'Shelf Type';
+
+  @override
+  String get cabinDesign_serum_shelfTypeTraysOption => 'Tray Shelf';
+
+  @override
+  String get cabinDesign_serum_shelfTypeOpenOption => 'Open Shelf';
+
+  @override
+  String get cabinDesign_serum_openShelfInfo => 'An open shelf has no trays; several different medicines can be assigned to it. The electromagnetic lock and Take-Give are not used.';
+
+  @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
     return '$index. Tray • $sizeLabel';
   }

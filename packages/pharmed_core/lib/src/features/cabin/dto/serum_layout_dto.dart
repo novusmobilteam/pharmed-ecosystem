@@ -82,7 +82,7 @@ class SerumTrayDTO {
   /// Raftaki sıra — sağdan sola 1, 2, 3…
   final int stepNo;
 
-  /// SerumTraySize.id — 1 küçük, 2 orta, 3 büyük.
+  /// SerumTraySize.id — 1 küçük, 2 orta, 3 büyük, 4 açık raf.
   final int? toolSize;
 
   factory SerumTrayDTO.fromJson(Map<String, dynamic> json) => SerumTrayDTO(

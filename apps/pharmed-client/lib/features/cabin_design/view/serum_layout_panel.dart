@@ -91,11 +91,13 @@ class _SerumManualLayoutPanel extends StatelessWidget {
                 ExpandableIndexedConfigCard(
                   index: shelf.orderNo - 1,
                   title: context.l10n.cabinDesign_serum_shelfCardTitle(shelf.orderNo),
-                  summary: context.l10n.cabinDesign_serum_shelfCardSummary(
-                    shelf.usedArea,
-                    SerumShelfLayout.totalArea,
-                    shelf.trays.length,
-                  ),
+                  summary: shelf.isOpenShelf
+                      ? context.l10n.cabinDesign_serum_traySizeOpenShelfLabel
+                      : context.l10n.cabinDesign_serum_shelfCardSummary(
+                          shelf.usedArea,
+                          SerumShelfLayout.totalArea,
+                          shelf.trays.length,
+                        ),
                   initiallyExpanded: shelf.orderNo == 1,
                   body: _SerumShelfBody(
                     shelf: shelf,
@@ -128,11 +130,63 @@ class _SerumShelfBody extends StatelessWidget {
     onChanged(shelf.copyWith(trays: updated));
   }
 
+  /// Raf tipi değişimi: avadanlıklar ↔ tek açık raf kaydı. Kayıtlı rafta
+  /// değişim kayıtta güncelleme servisine gider; atama/stok varsa API reddeder.
+  void _setOpenShelf(bool open) {
+    if (!enabled || open == shelf.isOpenShelf) return;
+    onChanged(open ? shelf.toOpenShelf() : shelf.toTrayShelf());
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final open = shelf.isOpenShelf;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── Raf tipi: avadanlıklı / açık raf ─────────────────────────
+        Text(l10n.cabinDesign_serum_shelfTypeLabel, style: MedTextStyles.titleSm(color: MedColors.text3)),
+        const SizedBox(height: MedSpacing.sm),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _ShelfTypeChip(
+              label: l10n.cabinDesign_serum_shelfTypeTraysOption,
+              icon: Icons.view_week_outlined,
+              selected: !open,
+              onTap: enabled ? () => _setOpenShelf(false) : null,
+            ),
+            _ShelfTypeChip(
+              label: l10n.cabinDesign_serum_shelfTypeOpenOption,
+              icon: Icons.crop_landscape_rounded,
+              selected: open,
+              onTap: enabled ? () => _setOpenShelf(true) : null,
+            ),
+          ],
+        ),
+        const SizedBox(height: MedSpacing.lg),
+        if (open) ...[
+          Container(
+            padding: MedSpacing.insetMd,
+            decoration: BoxDecoration(
+              color: MedColors.surface2,
+              border: Border.all(color: MedColors.border2),
+              borderRadius: MedRadius.mdAll,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 16, color: MedColors.text3),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(l10n.cabinDesign_serum_openShelfInfo, style: MedTextStyles.bodySm(color: MedColors.text2)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: MedSpacing.xl),
+        ] else ...[
         // ── Elektromanyetik kilit toggle'ı ──────────────────────────
         Row(
           children: [
@@ -223,6 +277,7 @@ class _SerumShelfBody extends StatelessWidget {
           ),
         ],
         const SizedBox(height: MedSpacing.xl),
+        ],
 
         // ── Üstten görünüm (sağdan sola dolum) ───────────────────────
         Container(
@@ -247,6 +302,7 @@ class _SerumShelfBody extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+                  if (!open)
                   Text(
                     context.l10n.cabinDesign_serum_areaUsedLabel(shelf.usedArea, SerumShelfLayout.totalArea),
                     style: TextStyle(fontFamily: MedFonts.mono, fontSize: 10, color: MedColors.text4),
@@ -288,7 +344,7 @@ class _SerumShelfBody extends StatelessWidget {
         ),
 
         // ── Eklenen avadanlıklar listesi (kaldırma) ──────────────────
-        if (shelf.trays.isNotEmpty) ...[
+        if (!open && shelf.trays.isNotEmpty) ...[
           const SizedBox(height: MedSpacing.lg),
           for (var i = 0; i < shelf.trays.length; i++)
             Padding(
@@ -358,6 +414,24 @@ class _TrayBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (size.isOpenShelf) {
+      return Container(
+        decoration: BoxDecoration(
+          color: MedColors.surface,
+          border: Border.all(color: MedColors.blue.withAlpha(120)),
+          borderRadius: MedRadius.smAll,
+        ),
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.medication_liquid_outlined, size: 18, color: MedColors.blue),
+            const SizedBox(width: 6),
+            Text(size.label(context), style: MedTextStyles.bodySm(color: MedColors.blue, weight: FontWeight.w600)),
+          ],
+        ),
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         color: MedColors.blueLight,
@@ -366,6 +440,40 @@ class _TrayBlock extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: Icon(Icons.medication_liquid_outlined, size: 18, color: MedColors.blue),
+    );
+  }
+}
+
+/// Raf tipi seçeneği (avadanlıklı / açık raf).
+class _ShelfTypeChip extends StatelessWidget {
+  const _ShelfTypeChip({required this.label, required this.icon, required this.selected, required this.onTap});
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? MedColors.blue : (onTap == null ? MedColors.text4 : MedColors.text2);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected ? MedColors.blueLight : MedColors.surface,
+          border: Border.all(color: selected ? MedColors.blue : MedColors.border, width: selected ? 2 : 1),
+          borderRadius: MedRadius.mdAll,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 6),
+            Text(label, style: MedTextStyles.bodyMd(color: color, weight: selected ? FontWeight.w600 : null)),
+          ],
+        ),
+      ),
     );
   }
 }

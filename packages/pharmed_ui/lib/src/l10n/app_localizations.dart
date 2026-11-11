@@ -11977,6 +11977,36 @@ abstract class AppLocalizations {
   /// **'Large'**
   String get cabinDesign_serum_traySizeLargeLabel;
 
+  /// No description provided for @cabinDesign_serum_traySizeOpenShelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shelf'**
+  String get cabinDesign_serum_traySizeOpenShelfLabel;
+
+  /// No description provided for @cabinDesign_serum_shelfTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf Type'**
+  String get cabinDesign_serum_shelfTypeLabel;
+
+  /// No description provided for @cabinDesign_serum_shelfTypeTraysOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Tray Shelf'**
+  String get cabinDesign_serum_shelfTypeTraysOption;
+
+  /// No description provided for @cabinDesign_serum_shelfTypeOpenOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shelf'**
+  String get cabinDesign_serum_shelfTypeOpenOption;
+
+  /// No description provided for @cabinDesign_serum_openShelfInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'An open shelf has no trays; several different medicines can be assigned to it. The electromagnetic lock and Take-Give are not used.'**
+  String get cabinDesign_serum_openShelfInfo;
+
   /// No description provided for @cabinDesign_serum_trayListItemLabel.
   ///
   /// In en, this message translates to:
