@@ -22,7 +22,8 @@ class _QuickDateFilterPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now().copyWith(hour: 0, minute: 0);
+    // [SWREQ-CORE-007] Hazır aralıklar sunucu/hastane saatine göre.
+    final now = ServerClock.today();
 
     final todayStart = now;
     final todayEnd = showTime ? _endOf(now) : now.add(const Duration(hours: 23));

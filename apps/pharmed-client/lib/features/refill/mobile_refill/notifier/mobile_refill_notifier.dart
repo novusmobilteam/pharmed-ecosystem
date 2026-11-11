@@ -300,10 +300,7 @@ class MobileRefillNotifier extends Notifier<MobileRefillState> {
       patient!.id!,
       params: PagedQueryParamsBuilder.fromPreset(
         preset: DateRangePreset.today,
-        filters: [
-          Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id),
-          Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id),
-        ],
+        filters: [Filter.eq('lastMovement.detailStatusId', PrescriptionMovementType.filledWaiting.id)],
       ),
     );
 

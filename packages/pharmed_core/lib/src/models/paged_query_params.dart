@@ -1,4 +1,5 @@
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_utils/pharmed_utils.dart';
 
 class PagedQueryParams {
   const PagedQueryParams({
@@ -92,10 +93,13 @@ extension PagedQueryParamsBuilder on PagedQueryParams {
     required DateRangePreset preset,
     List<Object>? filters,
     int skip = 0,
-    int take = 20,
+    // Kabin işlem ekranları sayfalama yapmaz; bir hastanın o günkü tüm
+    // kayıtları tek seferde gelmeli (20'de kesilmesin).
+    int take = 100,
     String? search,
   }) {
-    final range = preset.toRange(DateTime.now());
+    // [SWREQ-CORE-007] Cihaz saati değil, sunucu/hastane saati.
+    final range = preset.toRange(ServerClock.now());
     return PagedQueryParams(
       skip: skip,
       take: take,
