@@ -1,0 +1,33 @@
+name: pharmed_hw_test
+description: PharMed kabin donanımı saha test uygulaması (teknisyenler için)
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  dio: ^5.9.0
+  hive_flutter: ^1.1.0
+
+  pharmed_core:
+    path: ../../packages/pharmed_core
+  pharmed_data:
+    path: ../../packages/pharmed_data
+  pharmed_hardware:
+    path: ../../packages/pharmed_hardware
+  pharmed_ui:
+    path: ../../packages/pharmed_ui
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+resolution: workspace

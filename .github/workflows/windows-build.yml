@@ -1,10 +1,11 @@
 # Windows build — elle tetiklenebilir + release'te otomatik.
 #
 # Elle: Actions → "Windows Build" → Run workflow → branch / uygulama / flavor / cihaz seç.
-# Release: "Publish release" edildiğinde dev flavor ile üç paket üretip release'e ekler:
+# Release: "Publish release" edildiğinde dev flavor ile dört paket üretip release'e ekler:
 #   pharmed-client  …-dev-pc     → bilgisayarda test: gerçek API, sahte cihazlar (HARDWARE=mock)
 #   pharmed-client  …-dev-kabin  → kabinde test: gerçek API, gerçek cihazlar (HARDWARE=real)
 #   pharmed-manager …-dev
+#   pharmed-hw-test …-dev        → saha teknisyenleri için donanım test uygulaması
 
 name: Windows Build
 
@@ -14,7 +15,7 @@ on:
       app:
         description: Hangi uygulama?
         type: choice
-        options: [client, manager, both]
+        options: [client, manager, hw-test, both, all]
         default: client
       flavor:
         description: Flavor (lib/main_<flavor>.dart) — hangi backend
@@ -44,15 +45,19 @@ jobs:
       - id: pick
         shell: bash
         run: |
-          app="${{ inputs.app || 'both' }}"
+          # both = client + manager, all = client + manager + hw-test (release'te all)
+          app="${{ inputs.app || 'all' }}"
           hw="${{ inputs.hardware || 'both' }}"
           rows=()
-          if [ "$app" != "manager" ]; then
+          if [ "$app" = "client" ] || [ "$app" = "both" ] || [ "$app" = "all" ]; then
             [ "$hw" != "kabin" ] && rows+=('{"app":"pharmed-client","hardware":"mock","variant":"pc"}')
             [ "$hw" != "pc" ]    && rows+=('{"app":"pharmed-client","hardware":"real","variant":"kabin"}')
           fi
-          if [ "$app" != "client" ]; then
+          if [ "$app" = "manager" ] || [ "$app" = "both" ] || [ "$app" = "all" ]; then
             rows+=('{"app":"pharmed-manager","hardware":"","variant":""}')
+          fi
+          if [ "$app" = "hw-test" ] || [ "$app" = "all" ]; then
+            rows+=('{"app":"pharmed-hw-test","hardware":"","variant":""}')
           fi
           json="[$(IFS=,; echo "${rows[*]}")]"
           echo "include=$json" >> "$GITHUB_OUTPUT"
@@ -103,6 +108,7 @@ jobs:
       # actions/cache yalnızca job BAŞARILI biterse kaydeder → bozuk arşiv cache'e giremez.
       # Key pubspec.lock'a bağlı → eklenti sürümü değişince cache otomatik yenilenir.
       - name: Cache media_kit native arşivleri
+        if: matrix.app != 'pharmed-hw-test'
         uses: actions/cache@v4
         with:
           path: apps/${{ matrix.app }}/build/windows/x64/*.7z
@@ -113,6 +119,7 @@ jobs:
       # eklenti sürümünün kendi CMakeLists.txt'inden okunur → sürüm değişince
       # bu adımı güncellemek gerekmez. curl retry + net hata mesajı (HTTP kodu) verir.
       - name: media_kit arşivlerini önceden indir
+        if: matrix.app != 'pharmed-hw-test'
         shell: pwsh
         env:
           APP: ${{ matrix.app }}
