@@ -1,5 +1,5 @@
 name: pharmed_hardware
-description: Kabin donanımı (RS485 seri port, yönetim/çekmece/kübik kartları) servisleri — client ve donanım test uygulaması ortak kullanır
+description: Kabin donanımı (RS485 seri port, yönetim/çekmece/kübik kartları, RFID) servisleri — client ve donanım test uygulaması ortak kullanır
 version: 0.0.1
 publish_to: none
 

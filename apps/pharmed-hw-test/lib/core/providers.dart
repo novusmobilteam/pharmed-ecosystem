@@ -76,6 +76,9 @@ final cabinOpsProvider = Provider<ICabinOperationService>((ref) {
   );
 });
 
+/// UHFEx10 RFID okuyucu (TCP) — client ile aynı servis.
+final rfidServiceProvider = Provider<IRfidService>((ref) => RfidService());
+
 // ── Oturum ────────────────────────────────────────────────────────
 
 class SessionState {

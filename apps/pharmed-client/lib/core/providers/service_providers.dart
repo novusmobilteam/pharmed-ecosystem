@@ -4,8 +4,6 @@ import 'package:pharmed_hardware/pharmed_hardware.dart';
 
 import '../cache/app_settings_cache.dart';
 import '../hardware/hardware_mode.dart';
-import '../services/rfid/mock_rfid_service.dart';
-import '../services/rfid/rfid_service.dart';
 import '../services/tray_lock/mock_tray_lock_service.dart';
 import '../services/tray_lock/tray_lock_service.dart';
 

@@ -7,7 +7,9 @@ import '../connection/connection_page.dart';
 import '../console/console_page.dart';
 import '../drawer_test/drawer_test_page.dart';
 import '../line_scan/line_scan_page.dart';
+import '../mobile_cabin/mobile_cabin_page.dart';
 import '../report/report_page.dart';
+import '../rfid/rfid_page.dart';
 import 'traffic_panel.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -24,7 +26,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage()),
     (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage()),
     (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage()),
-    (icon: Icons.inventory_2, label: 'Çekmece testi', page: DrawerTestPage()),
+    (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage()),
+    (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage()),
+    (icon: Icons.sensors, label: 'RFID', page: RfidPage()),
     (icon: Icons.terminal, label: 'Konsol', page: ConsolePage()),
     (icon: Icons.description, label: 'Rapor', page: ReportPage()),
   ];
@@ -71,7 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               children: [
                 Expanded(child: IndexedStack(index: _index, children: [for (final p in _pages) p.page])),
-                if (_index != 4) const SizedBox(height: 220, child: TrafficPanel()),
+                if (_pages[_index].label != 'Konsol') const SizedBox(height: 220, child: TrafficPanel()),
               ],
             ),
           ),

@@ -26,12 +26,12 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 | --- | --- | --- | --- |
 | `apps/pharmed-client` | Kiosk uygulaması: ilaç alım, iade, dolum, sayım, boşaltma, imha; kabin donanımı (RS485, RFID), parmak izi, fiş yazıcı, kamera kaydı | Flutter, Riverpod | Kabin yanındaki Windows kiosk |
 | `apps/pharmed-manager` | Yönetim paneli: ilaç/kullanıcı/rol/istasyon tanımları, reçete onayı, raporlar | Flutter, Provider/ChangeNotifier | Windows masaüstü |
-| `apps/pharmed-hw-test` | Saha teknisyenleri için donanım test uygulaması (istasyondan bağımsız): hat taraması (yönetim kartları a–p), kart taraması (tip/tanım eşleşmesi, kübik göz yoklama), çekmece/kübik/serum açma testi, ham komut konsolu, test raporu. Ayrıntı: [`apps/pharmed-hw-test/README.md`](apps/pharmed-hw-test/README.md) | Flutter, Riverpod | Kabin bilgisayarı (Windows) |
+| `apps/pharmed-hw-test` | Saha teknisyenleri için donanım test uygulaması (istasyondan bağımsız): hat taraması (yönetim kartları a–p), kart taraması (tip/tanım eşleşmesi, kübik göz yoklama), master çekmece/kübik/serum testi, mobil kabin çekmece testi, RFID okuyucu testi, ham komut konsolu, test raporu. Ayrıntı: [`apps/pharmed-hw-test/README.md`](apps/pharmed-hw-test/README.md) | Flutter, Riverpod | Kabin bilgisayarı (Windows) |
 | `apps/pharmed-log-panel` | Kiosk ve sunucu loglarını izleme paneli: sorun grupları, log gezgini, istek izi, teşhis kartı, sunucu hataları | Vite, React, TypeScript | Tarayıcı (statik dosyalar) |
 | `apps/pharmed-widgetbook` | `pharmed_ui` bileşen kataloğu | Flutter, Widgetbook | Tarayıcı / Windows |
 | `packages/pharmed_core` | Domain: entity'ler, use case'ler, `Result<T>`, `AppException` | Dart | client + manager |
 | `packages/pharmed_data` | Veri katmanı: `APIManager`, remote/local datasource'lar, repository'ler, ağ loglama | Dart, Dio, Hive | client + manager |
-| `packages/pharmed_hardware` | Kabin donanımı servisleri: RS485 seri port, yönetim/çekmece/kübik kart komutları (gerçek + mock). Protokol: [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Flutter, flutter_libserialport | client + hw-test |
+| `packages/pharmed_hardware` | Kabin donanımı servisleri: RS485 seri port, yönetim/çekmece/kübik kart komutları, UHFEx10 RFID okuyucu (gerçek + mock). Protokol: [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Flutter, flutter_libserialport | client + hw-test |
 | `packages/pharmed_ui` | Tasarım sistemi (`MedColors`, `MedTextStyles`…), ortak widget'lar, l10n (TR/EN/FR), `MedLogger` | Flutter | client + manager |
 | `packages/pharmed_utils` | Ortak yardımcılar | Dart | client + manager |
 

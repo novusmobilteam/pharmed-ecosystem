@@ -1,4 +1,4 @@
-// pharmed-client/lib/core/services/rfid/rfid_service.dart
+// packages/pharmed_hardware/lib/src/rfid/rfid_service.dart
 //
 // [SWREQ-CLI-RFID-001] [IEC 62304 §5.5]
 // UHF RFID okuyucu (UHFEx10) için TCP üzerinden stream-based implementasyon.
