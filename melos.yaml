@@ -36,6 +36,10 @@ scripts:
     run: cd apps/pharmed-hw-test && flutter run -t lib/main_dev.dart -d windows
     description: pharmed-hw-test (donanım test uygulaması) dev ortamı, Windows
 
+  run:hw-test:mac:
+    run: cd apps/pharmed-hw-test && flutter run -t lib/main_dev.dart -d macos
+    description: pharmed-hw-test macOS'ta (yalnız arayüz kontrolü; seri port/kabin testi yapılamaz)
+
   catalog:
     run: melos exec --scope="pharmed_widgetbook" -- flutter run -d chrome
     description: Widget kataloğunu tarayıcıda aç (Widgetbook)

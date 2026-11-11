@@ -73,7 +73,8 @@ Melos betikleri (kökte):
 | `dart run melos run test` | Tüm paketlerde `flutter test` |
 | `dart run melos run run:client:dev` | Client'ı dev flavor ile çalıştırır |
 | `dart run melos run run:manager:dev` | Manager'ı dev flavor ile macOS'ta çalıştırır |
-| `dart run melos run run:hw-test:dev` | Donanım test uygulamasını dev ortamıyla Windows'ta çalıştırır (seri port gerektiği için yalnız Windows) |
+| `dart run melos run run:hw-test:dev` | Donanım test uygulamasını dev ortamıyla Windows'ta çalıştırır |
+| `dart run melos run run:hw-test:mac` | Donanım test uygulamasını macOS'ta açar — yalnız arayüz kontrolü (seri port/kabin yok) |
 
 Widgetbook kataloğu workspace dışındadır (kendi `pubspec.lock`'u var); kurulumu için `apps/pharmed-widgetbook/README.md`.
 
