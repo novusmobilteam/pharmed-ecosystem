@@ -49,13 +49,11 @@ class ScanCabinUseCase {
       // ── 2. Meta Veri (Paralel) ─────────────────────────────────
       onStatusChanged?.call(ScanStatus.fetchingMetadata);
 
-      final results = await Future.wait([_cabinRepository.getDrawerConfigs(), _cabinRepository.getDrawerTypes()]);
-
-      final configsRes = results[0] as Result<List<DrawerConfig>>;
-      final typesRes = results[1] as Result<List<DrawerType>>;
-
-      final allConfigs = configsRes.when(ok: (data) => data, error: (_) => null);
-      final allTypes = typesRes.when(ok: (data) => data, error: (_) => null);
+      // Tanımlar taramada her zaman backend'den tazelenir: cihaz cache'i süresiz
+      // tutulduğu için backend'de sonradan eklenen/değişen çekmece tanımları
+      // (ör. 20 gözlü kübik) aksi halde hiç görülmez. Ağ yoksa cache'e düşülür.
+      final allConfigs = await _loadDrawerConfigs();
+      final allTypes = await _loadDrawerTypes();
 
       // Herhangi biri başarısız → tarama durur
       if (allConfigs == null || allTypes == null) {
@@ -64,6 +62,7 @@ class ScanCabinUseCase {
       }
 
       onStatusChanged?.call(ScanStatus.metadataReady, detail: '${allConfigs.length} konfigürasyon');
+      _warnDuplicateDeviceTypeNos(allConfigs);
 
       // ── 3. Yönetim Kartı ───────────────────────────────────────
       onStatusChanged?.call(ScanStatus.searchingManager, detail: targetAddressIndex?.toString());
@@ -102,13 +101,32 @@ class ScanCabinUseCase {
           (c) => c?.deviceTypeNo == typeNo,
           orElse: () => null,
         );
-        if (config == null) continue;
+        final DrawerType? type = config == null
+            ? null
+            : allTypes.cast<DrawerType?>().firstWhere((t) => t?.id == config.drawerTypeId, orElse: () => null);
 
-        final DrawerType? type = allTypes.cast<DrawerType?>().firstWhere(
-          (t) => t?.id == config.drawerTypeId,
-          orElse: () => null,
-        );
-        if (type == null) continue;
+        // Her kart için ham tip cevabı ve eşleşme sonucu kaydedilir — çekmecenin
+        // yanlış tipte tanınması (ör. 20 gözlü kübik → 16) loglardan teşhis edilebilsin.
+        final cardLog = {
+          'satir': card.rowAddress,
+          'hamCevap': card.rawTypeResponse.trim(),
+          'tipNo': typeNo,
+          'configId': config?.id,
+          'drawerTypeId': config?.drawerTypeId,
+          'tip': type?.name,
+          'gozSayisi': type?.compartmentCount,
+          'kubik': type?.isKubik,
+        };
+        if (config == null || type == null) {
+          MedLogger.warn(
+            unit: 'SW-UNIT-SCAN',
+            swreq: 'SWREQ-SCAN-002',
+            message: config == null ? 'Kart tip numarası hiçbir tanımla eşleşmedi' : 'Tanımın çekmece tipi bulunamadı',
+            context: cardLog,
+          );
+          continue;
+        }
+        MedLogger.info(unit: 'SW-UNIT-SCAN', swreq: 'SWREQ-SCAN-002', message: 'Kontrol kartı eşleşti', context: cardLog);
 
         final slot = DrawerSlot(
           address: card.rowAddress.toString().padLeft(2, '0'),
@@ -138,5 +156,42 @@ class ScanCabinUseCase {
     } catch (e) {
       return Result.error(CustomException(message: e.toString()));
     }
+  }
+
+  Future<List<DrawerConfig>?> _loadDrawerConfigs() async {
+    final fresh = await _cabinRepository.getDrawerConfigs(forceRefresh: true);
+    final data = fresh.when(ok: (d) => d, error: (_) => null);
+    if (data != null) return data;
+    MedLogger.warn(unit: 'SW-UNIT-SCAN', swreq: 'SWREQ-SCAN-002', message: 'Çekmece tanımları tazelenemedi, cache kullanılıyor');
+    return (await _cabinRepository.getDrawerConfigs()).when(ok: (d) => d, error: (_) => null);
+  }
+
+  Future<List<DrawerType>?> _loadDrawerTypes() async {
+    final fresh = await _cabinRepository.getDrawerTypes(forceRefresh: true);
+    final data = fresh.when(ok: (d) => d, error: (_) => null);
+    if (data != null) return data;
+    MedLogger.warn(unit: 'SW-UNIT-SCAN', swreq: 'SWREQ-SCAN-002', message: 'Çekmece tipleri tazelenemedi, cache kullanılıyor');
+    return (await _cabinRepository.getDrawerTypes()).when(ok: (d) => d, error: (_) => null);
+  }
+
+  /// Aynı cihaz tip numarasına bağlı birden fazla tanım varsa eşleştirme ilk bulunanı
+  /// seçer (sessizce yanlış tip). Bu durumu görünür kılar.
+  void _warnDuplicateDeviceTypeNos(List<DrawerConfig> configs) {
+    final byNo = <int, List<int?>>{};
+    for (final c in configs) {
+      final no = c.deviceTypeNo;
+      if (no == null) continue;
+      byNo.putIfAbsent(no, () => []).add(c.id);
+    }
+    byNo.forEach((no, ids) {
+      if (ids.length > 1) {
+        MedLogger.warn(
+          unit: 'SW-UNIT-SCAN',
+          swreq: 'SWREQ-SCAN-002',
+          message: 'Aynı cihaz tip numarası birden fazla tanımda — ilk tanım kullanılacak',
+          context: {'tipNo': no, 'configIdler': ids},
+        );
+      }
+    });
   }
 }
