@@ -9,6 +9,7 @@
 
 import 'dart:async';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 class StartMobileDrawerSessionUseCase {
   const StartMobileDrawerSessionUseCase(this._scanManager, this._cabinOps);
@@ -16,15 +17,37 @@ class StartMobileDrawerSessionUseCase {
   final ScanManagerUseCase _scanManager;
   final ICabinOperationService _cabinOps;
 
+  static const _unit = 'MobileDrawerSession';
+  static const _swreq = 'SWREQ-CABIN-OP-003';
+
+  /// Hata olayını loglar ve döner — hatalar önceden yalnız ekranda
+  /// gösteriliyordu, sahada sebep loglardan görülemiyordu (#176).
+  DrawerFailed _failed(MobileDrawerFailure failure, {String? detail, required int port, ManagementCard? manager}) {
+    MedLogger.error(
+      unit: _unit,
+      swreq: _swreq,
+      message: 'Mobil çekmece oturumu başarısız',
+      context: {'failure': failure.name, 'detail': detail, 'port': port, 'yonetimKarti': manager?.addressChar},
+    );
+    return DrawerFailed(failure: failure, detail: detail);
+  }
+
   Stream<DrawerSessionEvent> call({required int drawerPort, String? comPort}) async* {
     // 1. Manager edin
     final ManagementCard manager;
     try {
       manager = await _scanManager(targetPort: comPort);
     } on CabinConnectionException catch (e) {
-      yield DrawerFailed(failure: MobileDrawerFailure.managerConnectFailed, detail: e.detail);
+      yield _failed(MobileDrawerFailure.managerConnectFailed, detail: e.detail, port: drawerPort);
       return;
     }
+
+    MedLogger.info(
+      unit: _unit,
+      swreq: _swreq,
+      message: 'Mobil çekmece açılıyor',
+      context: {'port': drawerPort, 'yonetimKarti': manager.addressChar, 'comPort': comPort},
+    );
 
     // 2. Açma komutu
     yield const DrawerOpening();
@@ -32,7 +55,7 @@ class StartMobileDrawerSessionUseCase {
     try {
       await _cabinOps.openMobileDrawer(manager: manager, port: drawerPort);
     } catch (e) {
-      yield DrawerFailed(failure: MobileDrawerFailure.openCommandFailed, detail: e.toString());
+      yield _failed(MobileDrawerFailure.openCommandFailed, detail: e.toString(), port: drawerPort, manager: manager);
       return;
     }
 
@@ -55,7 +78,7 @@ class StartMobileDrawerSessionUseCase {
             }
 
           case DrawerPhysicalStatus.timeoutError:
-            yield const DrawerFailed(failure: MobileDrawerFailure.statusTimeout);
+            yield _failed(MobileDrawerFailure.statusTimeout, port: drawerPort, manager: manager);
             return;
 
           case DrawerPhysicalStatus.waitingPull:
@@ -66,10 +89,10 @@ class StartMobileDrawerSessionUseCase {
       }
 
       if (!wasOpened) {
-        yield const DrawerFailed(failure: MobileDrawerFailure.openNotConfirmed);
+        yield _failed(MobileDrawerFailure.openNotConfirmed, port: drawerPort, manager: manager);
       }
     } catch (e) {
-      yield DrawerFailed(failure: MobileDrawerFailure.statusReadError, detail: e.toString());
+      yield _failed(MobileDrawerFailure.statusReadError, detail: e.toString(), port: drawerPort, manager: manager);
     }
   }
 }

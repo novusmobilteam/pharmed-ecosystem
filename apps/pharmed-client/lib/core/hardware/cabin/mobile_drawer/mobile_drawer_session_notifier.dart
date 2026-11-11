@@ -77,6 +77,15 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
         );
   }
 
+  /// Oturum başlatılamadan oluşan hata (ör. çekmece→port eşlemesi yapılamadı).
+  /// Önceki oturum iptal edilir, ekran hata aşamasına geçer.
+  Future<void> fail({required MobileDrawerFailure failure, required int slotId, String? detail}) async {
+    await _sub?.cancel();
+    _sub = null;
+    _lastSlotId = slotId;
+    _onEvent(DrawerFailed(failure: failure, detail: detail), slotId: slotId);
+  }
+
   /// Aynı slot/port için oturumu yeniden başlatır.
   Future<void> reopen() async {
     if (_lastDrawerPort == null || _lastSlotId == null) return;
