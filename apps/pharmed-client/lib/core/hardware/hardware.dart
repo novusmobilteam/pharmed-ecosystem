@@ -7,6 +7,7 @@ export 'cabin/mobile_drawer/mobile_drawer_orchestrator.dart';
 export 'cabin/mobile_drawer/mobile_drawer_session_notifier.dart';
 export 'cabin/mobile_drawer/mobile_drawer_session_state.dart';
 export 'cabin/mobile_drawer/mobile_drawer_stage.dart';
+export 'cabin/mobile_drawer/mock_mobile_drawer_close.dart';
 
 export 'cabin/master_drawer/master_drawer_session_notifier.dart';
 export 'cabin/master_drawer/master_drawer_stage.dart';

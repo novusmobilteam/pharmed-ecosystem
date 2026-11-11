@@ -107,6 +107,7 @@ Testçilere iki client paketi gider; ikisi de gerçek API'ye (`dev`) bağlanır,
 - Release yayınlanınca ikisi otomatik üretilir (bkz. [GitHub Actions](#github-actions)).
 - Uygulamanın sol alt köşesinde sürüm etiketi görünür: **DEV · PC — sahte cihaz** ya da **DEV · KABİN**. `prod` + gerçek cihazda etiket yoktur.
 - Loglarda ve log panelinde sürüm `dev-pc` / `dev-kabin` olarak görünür (gönderimdeki `device.flavor`).
+- Bilgisayar sürümünde mobil işlemlerde (dolum, alım, sayım, boşaltma) **İşlemi tamamla** kayıttan sonra sahte çekmeceyi de kapatır; fiziksel kapanış beklenmez.
 - Kabin sürümünde tek bir cihaz eksikse yalnızca onu sahtelemek için `FINGERPRINT_MOCK=true` / `PRINTER_MOCK=true` kullanılabilir.
 
 ## Bilgisayarda birden çok kabin (test cihazı)

@@ -456,6 +456,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
         state = MobileIntakeSuccess(ready: current);
       } else {
         state = MobileIntakeWaitingClose(ready: current);
+        closeMockMobileDrawerAfterSave(ref);
       }
       return;
     }
@@ -472,6 +473,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
           state = MobileIntakeSuccess(ready: current);
         } else {
           state = MobileIntakeWaitingClose(ready: current);
+          closeMockMobileDrawerAfterSave(ref);
         }
       },
       error: (e) {
