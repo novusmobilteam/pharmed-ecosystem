@@ -112,8 +112,29 @@ class MobileDrawerOrchestrator {
   ///
   /// RFID polling otomatik olarak Opened anında başlar.
   Future<void> open({required List<MobileSlotVisual> slots, required MobileSlotVisual slot}) async {
-    MedLogger.info(unit: 'Mobile Drawer Orch', swreq: '', message: '_drawer.open()');
-    final port = MobileSlotVisual.portOf(slots, slot);
+    final index = slots.indexWhere((s) => s.slotId == slot.slotId);
+    final int port;
+    try {
+      port = MobileSlotVisual.portOf(slots, slot);
+    } on StateError catch (e) {
+      // Önceden yakalanmıyordu: ekran "açılıyor"da kalıyor, iz kalmıyordu (#176).
+      MedLogger.error(
+        unit: 'Mobile Drawer Orch',
+        swreq: 'SWREQ-CLI-CABIN-OP-005',
+        message: 'Çekmece için kart portu çözülemedi',
+        context: {'slotId': slot.slotId, 'cekmeceSirasi': index + 1, 'toplamCekmece': slots.length, 'error': e.message},
+      );
+      await ref
+          .read(mobileDrawerSessionProvider.notifier)
+          .fail(failure: MobileDrawerFailure.openCommandFailed, slotId: slot.slotId, detail: e.message);
+      return;
+    }
+    MedLogger.info(
+      unit: 'Mobile Drawer Orch',
+      swreq: 'SWREQ-CLI-CABIN-OP-005',
+      message: 'Mobil çekmece açma isteği',
+      context: {'slotId': slot.slotId, 'cekmeceSirasi': index + 1, 'toplamCekmece': slots.length, 'port': port},
+    );
     await ref.read(mobileDrawerSessionProvider.notifier).start(drawerPort: port, slotId: slot.slotId);
   }
 
