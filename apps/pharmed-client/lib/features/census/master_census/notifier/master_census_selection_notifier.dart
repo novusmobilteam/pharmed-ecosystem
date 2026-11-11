@@ -144,6 +144,14 @@ class MasterCensusSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     _toggle(AssignmentSelection.serumAssignment(cellId, _assignments));
   }
 
+  /// Atama bazında seçim — Açık Raf'ta aynı avadanlıktaki ilaçlar ayrı seçilir.
+  void toggleAssignment(MedicineAssignment assignment) {
+    if (_censusMode == CensusMode.allCabin) return; // kilitli seçim
+    _toggle(assignment);
+  }
+
+  bool isSelected(MedicineAssignment assignment) => _selection.contains(assignment);
+
   /// Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer.
   void _toggle(MedicineAssignment? assignment) {
     if (assignment == null) return;

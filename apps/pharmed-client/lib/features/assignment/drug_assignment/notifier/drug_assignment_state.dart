@@ -21,28 +21,40 @@ enum AssignmentQuantityError {
 ///   - Normal göz (kübik / birim doz): yalnızca [unitId] (DrawerUnit).
 ///   - Serum avadanlığı: [unitId] = raf (DrawerUnit), [cellId] = avadanlık (DrawerCell).
 ///     Serumda bir rafta birden fazla atama olduğu için raf tek başına yetmez.
+///   - Serum Açık Raf: avadanlıkta birden çok ilaç olabilir; [assignmentId]
+///     mevcut bir atamayı, [isOpenShelf] && assignmentId == null yeni atamayı
+///     (aynı rafa ilaç ekleme) belirtir.
 final class AssignmentTarget {
-  const AssignmentTarget({required this.unitId, this.cellId});
+  const AssignmentTarget({required this.unitId, this.cellId, this.assignmentId, this.isOpenShelf = false});
 
   final int unitId;
   final int? cellId;
+  final int? assignmentId;
+  final bool isOpenShelf;
 
   bool get isSerumTray => cellId != null;
 
   /// [a] bu hedefin ataması mı. Serumda avadanlık eşleşmesi yeterlidir —
   /// serum ataması cabinDrawrId'siz kaydedildiği için cevapta raf id'si boş
-  /// gelebilir. Diğer çekmecelerde göz (cabinDrawrId) eşleşmeli.
+  /// gelebilir. Diğer çekmecelerde göz (cabinDrawrId) eşleşmeli. Açık Raf'ta
+  /// avadanlık ayırt etmez: atama id'si eşleşmeli, yeni atamada hiçbiri eşleşmez.
   bool matches(MedicineAssignment a) {
+    if (isOpenShelf) return assignmentId != null && a.id == assignmentId;
     final cell = cellId;
     return cell != null ? a.ownsCell(cell) : a.cabinDrawerId == unitId;
   }
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is AssignmentTarget && other.unitId == unitId && other.cellId == cellId;
+      identical(this, other) ||
+      other is AssignmentTarget &&
+          other.unitId == unitId &&
+          other.cellId == cellId &&
+          other.assignmentId == assignmentId &&
+          other.isOpenShelf == isOpenShelf;
 
   @override
-  int get hashCode => Object.hash(unitId, cellId);
+  int get hashCode => Object.hash(unitId, cellId, assignmentId, isOpenShelf);
 }
 
 sealed class DrugAssignmentUiState {

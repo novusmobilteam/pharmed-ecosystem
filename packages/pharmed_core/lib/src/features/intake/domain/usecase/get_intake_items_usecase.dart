@@ -219,10 +219,19 @@ class GetIntakeItemsUseCase {
   MedicineAssignment? _resolveAssignment(CabinTargetedPrescriptionItem task, List<MedicineAssignment> allAssignments) {
     final targetDetailId = task.stock?.cabinDrawerDetailId; // ← göze özel, doğru anahtar
 
+    // Serum Açık Raf'ta aynı avadanlıkta (DrawerCell) birden çok ilaç atanır —
+    // avadanlık tek başına ayırt etmez, ilaç da eşleşmeli. Diğer gözlerde tek
+    // atama olduğundan bu süzgeç sonucu değiştirmez.
+    MedicineAssignment? pick(bool Function(MedicineAssignment a) inCell) {
+      final candidates = allAssignments.where(inCell).toList();
+      if (candidates.length <= 1) return candidates.firstOrNull;
+      final medicineId = task.medicine?.id ?? task.cabinAssignment.medicine?.id;
+      return candidates.firstWhereOrNull((a) => medicineId != null && a.medicine?.id == medicineId) ??
+          candidates.first;
+    }
+
     if (targetDetailId != null) {
-      final byDetail = allAssignments.firstWhereOrNull(
-        (a) => a.cabinDrawerDetail?.any((cell) => cell.id == targetDetailId) ?? false,
-      );
+      final byDetail = pick((a) => a.cabinDrawerDetail?.any((cell) => cell.id == targetDetailId) ?? false);
       if (byDetail != null) return byDetail;
     }
 
@@ -230,7 +239,7 @@ class GetIntakeItemsUseCase {
     // (cabinDrawerId) diğer avadanlıklarıyla karışmasın.
     final serumCellId = task.cabinAssignment.cabinDrawerDetailId;
     if (serumCellId != null) {
-      final bySerumCell = allAssignments.firstWhereOrNull((a) => a.cabinDrawerDetailId == serumCellId);
+      final bySerumCell = pick((a) => a.cabinDrawerDetailId == serumCellId);
       if (bySerumCell != null) return bySerumCell;
     }
 

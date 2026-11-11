@@ -4431,6 +4431,13 @@
     "placeholders": { "index": { "type": "int" } }
   },
   "cabinOperation_serumShelfNoTrays": "Aucun plateau défini",
+  "cabinOperation_openShelfTitle": "Étagère ouverte · Étagère {shelfNo}",
+  "@cabinOperation_openShelfTitle": {"placeholders": {"shelfNo": {"type": "int"}}},
+  "cabinOperation_openShelfMedicineCount": "{count} médicaments",
+  "@cabinOperation_openShelfMedicineCount": {"placeholders": {"count": {"type": "int"}}},
+  "cabinOperation_openShelfEmpty": "Aucun médicament n'est encore affecté à cette étagère.",
+  "cabinOperation_openShelfAddMedicine": "Ajouter un médicament",
+  "cabinOperation_openShelfDeleteNotSupported": "Cette étagère ouverte contient d'autres médicaments ; l'affectation d'un seul médicament ne peut pas être supprimée pour le moment.",
   "assignment_idle_kicker": "CONFIGURATION DE L'ARMOIRE",
   "assignment_idle_title": "Attribution de Médicaments",
   "assignment_idle_description": "Touchez une case de l'armoire à gauche ; choisissez un médicament dans la liste pour cette case et saisissez les quantités minimale, critique et maximale. Touchez une case remplie pour modifier son attribution existante.",

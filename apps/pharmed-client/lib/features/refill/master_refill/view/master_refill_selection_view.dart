@@ -36,9 +36,21 @@ class MasterRefillSelectionView extends ConsumerWidget {
           assignments: selection.assignments,
           selectedUnitIds: selection.selectedUnitIds,
           selectedCellIds: selection.selectedSerumCellIds,
-          onSerumTrayTap: (_, tray) {
+          onSerumTrayTap: (shelf, tray) {
             final id = tray.id;
-            if (id != null) selection.toggleSerumTray(id);
+            if (id == null) return;
+            if (!tray.size.isOpenShelf) {
+              selection.toggleSerumTray(id);
+              return;
+            }
+            // Açık Raf: raftaki ilaçlar listelenir, her biri ayrı seçilir.
+            showOpenShelfDialog(
+              context: context,
+              shelfNo: shelf.orderNo ?? 0,
+              assignments: AssignmentSelection.serumAssignments(id, selection.assignments),
+              isSelected: selection.isSelected,
+              onToggle: selection.toggleAssignment,
+            );
           },
           onDrawerTap: selection.toggleDrawer,
           onCellTap: (unit) {
@@ -70,6 +82,8 @@ class MasterRefillSelectionView extends ConsumerWidget {
                 onToggle: selection.toggleUnit,
                 selectedCellIds: selection.selectedSerumCellIds,
                 onToggleCell: selection.toggleSerumTray,
+                isAssignmentSelected: selection.isSelected,
+                onToggleAssignment: selection.toggleAssignment,
                 cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
                 showMiad: true,
               ),

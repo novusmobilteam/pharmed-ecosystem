@@ -82,7 +82,21 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
           selectedUnitIds: selectedUnitId != null && selectedCellId == null ? {selectedUnitId} : const {},
           selectedCellIds: selectedCellId != null ? {selectedCellId} : const {},
           onCellTap: (unit) => notifier.onCellTap(unit, null),
-          onSerumTrayTap: notifier.onSerumTrayTap,
+          onSerumTrayTap: (shelf, tray) {
+            final cellId = tray.id;
+            if (cellId == null || !tray.size.isOpenShelf) {
+              notifier.onSerumTrayTap(shelf, tray);
+              return;
+            }
+            // Açık Raf: raftaki ilaçlardan biri düzenlenir ya da rafa yeni ilaç eklenir.
+            showOpenShelfDialog(
+              context: context,
+              shelfNo: shelf.orderNo ?? 0,
+              assignments: AssignmentSelection.serumAssignments(cellId, assignments),
+              onOpen: (a) => notifier.onSerumTrayTap(shelf, tray, existing: a),
+              onAdd: () => notifier.onSerumTrayTap(shelf, tray),
+            );
+          },
         ),
       ),
       right: switch (state) {

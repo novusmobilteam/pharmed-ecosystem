@@ -46,12 +46,13 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   String _search = '';
 
   /// Silme/değiştirme isteği süren atamalar — normal gözde (false, göz id),
-  /// serum avadanlığında (true, avadanlık id).
+  /// serum avadanlığında (true, atama id; yoksa avadanlık id). Açık Raf'ta
+  /// aynı avadanlıkta birden çok atama olduğundan serumda atama id'si esas.
   final Set<(bool, int)> _pendingKeys = {};
 
   (bool, int)? _keyOf(MedicineAssignment a) {
     final cellId = a.cabinDrawerDetailId;
-    if (cellId != null) return (true, cellId);
+    if (cellId != null) return (true, a.id ?? cellId);
     final unitId = a.cabinDrawerId;
     return unitId == null ? null : (false, unitId);
   }
@@ -128,6 +129,11 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   /// Serum avadanlığı — normal gözle aynı kurallar.
   void toggleSerumTray(int cellId) => _toggleAssignment(AssignmentSelection.serumAssignment(cellId, _assignments));
 
+  /// Atama bazında seçim — Açık Raf'ta aynı avadanlıktaki ilaçlar ayrı seçilir.
+  void toggleAssignment(MedicineAssignment assignment) => _toggleAssignment(assignment);
+
+  bool isSelected(MedicineAssignment assignment) => _selection.contains(assignment);
+
   void _toggleAssignment(MedicineAssignment? assignment) {
     if (assignment == null) return;
     if (_selection.remove(assignment)) {
@@ -198,8 +204,10 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     // eski davranış korunarak GÖZ kimliği gönderiliyor. Use case ATAMA
     // kimliği (assignment.id) bekliyorsa bu, başka bir atamanın silinmesine
     // yol açar — doğrulanmalı.
-    final (isSerumTray, id) = key;
-    final result = isSerumTray ? await _deleteAssignment.serumTray(id) : await _deleteAssignment.call(id);
+    final serumCellId = assignment.cabinDrawerDetailId;
+    final result = serumCellId != null
+        ? await _deleteSerumAssignment(assignment, serumCellId)
+        : await _deleteAssignment.call(key.$2);
 
     _pendingKeys.remove(key);
     await result.when(
@@ -212,6 +220,22 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
         onFailed?.call(e.message);
       },
     );
+  }
+
+  /// Serum ataması avadanlık kimliğiyle silinir. Açık Raf'ta aynı avadanlıkta
+  /// başka ilaç da varsa avadanlık bazlı silme hepsini etkileyebileceği için
+  /// (backend davranışı doğrulanana kadar) reddedilir.
+  Future<Result<void>> _deleteSerumAssignment(MedicineAssignment assignment, int cellId) async {
+    final others = AssignmentSelection.serumAssignments(cellId, _assignments).where((a) => a.id != assignment.id);
+    if (others.isNotEmpty) {
+      return Result.error(
+        BusinessRuleException(
+          message: contextlessL10n().cabinOperation_openShelfDeleteNotSupported,
+          ruleCode: 'OPEN_SHELF_SINGLE_DELETE',
+        ),
+      );
+    }
+    return _deleteAssignment.serumTray(cellId);
   }
 
   /// Atamanın ilacını değiştirir (muadil ya da tüm ilaç listesinden).

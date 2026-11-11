@@ -103,6 +103,11 @@ class MasterRefillSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
   /// Serum avadanlığı — yalnızca ataması olan avadanlık seçilebilir.
   void toggleSerumTray(int cellId) => _toggle(AssignmentSelection.serumAssignment(cellId, _assignments));
 
+  /// Atama bazında seçim — Açık Raf'ta aynı avadanlıktaki ilaçlar ayrı seçilir.
+  void toggleAssignment(MedicineAssignment assignment) => _toggle(assignment);
+
+  bool isSelected(MedicineAssignment assignment) => _selection.contains(assignment);
+
   /// Listeden başka bir kabinin kalemi seçilince iç yerleşim o kabine geçer —
   /// kullanıcı açılacak gözü hemen görür.
   void _toggle(MedicineAssignment? assignment) {

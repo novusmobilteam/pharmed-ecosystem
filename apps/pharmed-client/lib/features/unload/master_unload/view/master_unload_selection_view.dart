@@ -65,9 +65,22 @@ class MasterUnloadSelectionView extends ConsumerWidget {
             if (id != null) selection.toggleUnit(id);
           },
           selectedCellIds: selection.selectedSerumCellIds,
-          onSerumTrayTap: (_, tray) {
+          onSerumTrayTap: (shelf, tray) {
             final id = tray.id;
-            if (id != null) selection.toggleSerumTray(id);
+            if (id == null) return;
+            if (!tray.size.isOpenShelf) {
+              selection.toggleSerumTray(id);
+              return;
+            }
+            // Açık Raf: raftaki ilaçlar listelenir, her biri ayrı seçilir.
+            showOpenShelfDialog(
+              context: context,
+              shelfNo: shelf.orderNo ?? 0,
+              assignments: AssignmentSelection.serumAssignments(id, selection.assignments),
+              isSelected: selection.isSelected,
+                canSelect: selection.canSelect,
+              onToggle: selection.toggleAssignment,
+            );
           },
         ),
       ),
@@ -94,6 +107,8 @@ class MasterUnloadSelectionView extends ConsumerWidget {
                 onToggle: selection.toggleUnit,
                 selectedCellIds: selection.selectedSerumCellIds,
                 onToggleCell: selection.toggleSerumTray,
+                isAssignmentSelected: selection.isSelected,
+                onToggleAssignment: selection.toggleAssignment,
                 cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
                 onDelete: (assignment) => MessageUtils.showConfirmDeleteDialog(
                   context: context,

@@ -87,8 +87,10 @@ abstract final class RefundJobMapper {
   }
 
   static List<RefundUnitGroup> _groupByUnit(List<RefundableItem> items) {
-    // Anahtar: (iade çekmecesi mi, serum avadanlığı mı, birim/avadanlık id).
-    final byUnit = <(bool, bool, int), List<RefundableItem>>{};
+    // Anahtar: (iade çekmecesi mi, serum avadanlığı mı, birim/avadanlık id,
+    // serumda ilaç id). Serum Açık Raf'ta aynı avadanlıkta birden çok ilaç
+    // bulunur — farklı ilaçlar ayrı hedef olmalı (her biri kendi atamasıyla).
+    final byUnit = <(bool, bool, int, int?), List<RefundableItem>>{};
 
     for (var i = 0; i < items.length; i++) {
       final item = items[i];
@@ -97,7 +99,8 @@ abstract final class RefundJobMapper {
       // gerçek bir id ile çakışmaz.
       final serumCellId = isReturnDrawer ? null : item.resolvedTarget?.cabinDrawerDetailId;
       final unitId = serumCellId ?? item.resolvedTarget?.drawerUnit?.id ?? -(i + 1);
-      byUnit.putIfAbsent((isReturnDrawer, serumCellId != null, unitId), () => []).add(item);
+      final serumMedicineId = serumCellId == null ? null : item.resolvedTarget?.medicine?.id;
+      byUnit.putIfAbsent((isReturnDrawer, serumCellId != null, unitId, serumMedicineId), () => []).add(item);
     }
 
     return [

@@ -427,19 +427,26 @@ class _SerumShelvesView extends StatelessWidget {
   static const double _shelfHeight = 72;
   static const double _spacing = 4;
 
-  /// Avadanlık (DrawerCell) id → atama.
-  Map<int, MedicineAssignment> get _assignmentByCellId => {
-    for (final a in assignments) ...{
-      for (final cell in a.cabinDrawerDetail ?? const <DrawerCell>[])
-        if (cell.id != null) cell.id!: a,
-      if (a.cabinDrawerDetailId != null) a.cabinDrawerDetailId!: a,
-    },
-  };
+  /// Avadanlık (DrawerCell) id → atamalar. Normal avadanlıkta tek atama,
+  /// Açık Raf'ta birden çok ilaç olabilir.
+  Map<int, List<MedicineAssignment>> get _assignmentsByCellId {
+    final map = <int, List<MedicineAssignment>>{};
+    for (final a in assignments) {
+      final cellIds = <int>{
+        for (final cell in a.cabinDrawerDetail ?? const <DrawerCell>[]) ?cell.id,
+        ?a.cabinDrawerDetailId,
+      };
+      for (final id in cellIds) {
+        map.putIfAbsent(id, () => []).add(a);
+      }
+    }
+    return map;
+  }
 
   @override
   Widget build(BuildContext context) {
     final shelves = group.serumShelves ?? SerumShelfLayout.emptyShelves();
-    final byCellId = _assignmentByCellId;
+    final byCellId = _assignmentsByCellId;
 
     return Column(
       spacing: _spacing,
@@ -464,7 +471,7 @@ class _SerumShelvesView extends StatelessWidget {
   CabinWorkingStatus _shelfStatus(SerumShelfLayout shelf) =>
       group.units.firstWhereOrNull((u) => u.id == shelf.id)?.workingStatus ?? CabinWorkingStatus.working;
 
-  Widget _shelfRow(BuildContext context, SerumShelfLayout shelf, Map<int, MedicineAssignment> byCellId) {
+  Widget _shelfRow(BuildContext context, SerumShelfLayout shelf, Map<int, List<MedicineAssignment>> byCellId) {
     if (shelf.trays.isEmpty) {
       return Container(
         alignment: Alignment.center,
@@ -499,7 +506,8 @@ class _SerumShelvesView extends StatelessWidget {
             flex: tray.size.areaSize,
             child: _SerumTrayCell(
               stepNo: i + 1,
-              assignment: tray.id == null ? null : byCellId[tray.id],
+              isOpenShelf: tray.size.isOpenShelf,
+              assignments: tray.id == null ? const [] : (byCellId[tray.id] ?? const []),
               isSelected:
                   (tray.id != null && selectedCellIds.contains(tray.id)) ||
                   (shelf.id != null && selectedShelfIds.contains(shelf.id)),
@@ -515,8 +523,9 @@ class _SerumShelvesView extends StatelessWidget {
 class _SerumTrayCell extends StatelessWidget {
   const _SerumTrayCell({
     required this.stepNo,
-    required this.assignment,
+    required this.assignments,
     required this.isSelected,
+    this.isOpenShelf = false,
     this.status = CabinWorkingStatus.working,
     this.onTap,
   });
@@ -524,14 +533,25 @@ class _SerumTrayCell extends StatelessWidget {
   /// Rafın arıza/bakım durumu — normal gözlerle aynı renk diliyle gösterilir.
   final CabinWorkingStatus status;
   final int stepNo;
-  final MedicineAssignment? assignment;
+
+  /// Avadanlığın atamaları — normal avadanlıkta en fazla bir, Açık Raf'ta
+  /// birden çok ilaç.
+  final List<MedicineAssignment> assignments;
+  final bool isOpenShelf;
   final bool isSelected;
   final VoidCallback? onTap;
 
+  /// Hücrede gösterilecek metin: tek ilaçta adı, Açık Raf'ta birden çoksa sayı.
+  String _label(BuildContext context) {
+    final named = assignments.where((a) => a.medicine != null).toList();
+    if (named.isEmpty) return context.l10n.drawerStatus_empty;
+    if (named.length == 1) return named.single.medicine!.name.toString();
+    return context.l10n.cabinOperation_openShelfMedicineCount(named.length);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final medicine = assignment?.medicine;
-    final isEmpty = medicine == null;
+    final isEmpty = !assignments.any((a) => a.medicine != null);
 
     // Normal gözlerle aynı renk mantığı: seçili > arızalı/bakımda > dolu > boş.
     final isFaulty = status != CabinWorkingStatus.working;
@@ -567,7 +587,10 @@ class _SerumTrayCell extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('A-$stepNo', style: MedTextStyles.monoSm(color: textColor)),
+                Text(
+                  isOpenShelf ? context.l10n.cabinDesign_serum_traySizeOpenShelfLabel : 'A-$stepNo',
+                  style: MedTextStyles.monoSm(color: textColor),
+                ),
                 if (isSelected)
                   Icon(PhosphorIcons.checkCircle(), size: 14, color: textColor)
                 else if (isFaulty)
@@ -575,7 +598,7 @@ class _SerumTrayCell extends StatelessWidget {
               ],
             ),
             Text(
-              medicine == null ? context.l10n.drawerStatus_empty : medicine.name.toString(),
+              _label(context),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: MedTextStyles.monoSm(color: textColor).copyWith(fontWeight: FontWeight.bold),

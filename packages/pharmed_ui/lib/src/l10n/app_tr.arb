@@ -8299,6 +8299,16 @@
   "@cabinOperation_serumShelfNoTrays": {
     "description": "Shown inside a serum cabinet shelf in the cabin visual when no trays have been configured for it in cabin design"
   },
+  "cabinOperation_openShelfTitle": "Açık Raf · Raf {shelfNo}",
+  "@cabinOperation_openShelfTitle": {"description": "Title of the dialog listing the medicines on a serum open shelf", "placeholders": {"shelfNo": {"type": "int"}}},
+  "cabinOperation_openShelfMedicineCount": "{count} ilaç",
+  "@cabinOperation_openShelfMedicineCount": {"description": "Short label inside a serum open shelf in the cabin visual: number of medicines assigned to the shelf", "placeholders": {"count": {"type": "int"}}},
+  "cabinOperation_openShelfEmpty": "Bu rafa henüz ilaç atanmamış.",
+  "@cabinOperation_openShelfEmpty": {"description": "Shown in the open shelf dialog when the shelf has no medicine assignments"},
+  "cabinOperation_openShelfAddMedicine": "İlaç Ekle",
+  "@cabinOperation_openShelfAddMedicine": {"description": "Button in the open shelf dialog (drug assignment) that starts assigning a new medicine to the open shelf"},
+  "cabinOperation_openShelfDeleteNotSupported": "Bu açık rafta başka ilaçlar da var; tek bir ilacın ataması şu an silinemiyor.",
+  "@cabinOperation_openShelfDeleteNotSupported": {"description": "Error shown when deleting one medicine's assignment on an open shelf that holds other medicines (backend single delete not confirmed)"},
   "assignment_idle_kicker": "KABİN YAPILANDIRMA",
   "assignment_idle_title": "İlaç Atama",
   "assignment_idle_description": "Soldaki kabinden bir göze dokunun; o göze ilaç listesinden seçim yapıp minimum, kritik ve maksimum miktarları girin. Dolu bir göze dokunarak mevcut atamayı düzenleyebilirsiniz.",

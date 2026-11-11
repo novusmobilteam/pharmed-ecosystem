@@ -18,6 +18,7 @@ export 'selection/patient_selection/view/patient_selection_panel.dart';
 export 'selection/cabin_selection_content_shell.dart';
 export 'cabin_operation_selection_layout.dart';
 export 'selection/medicine_assignment_card.dart';
+export 'selection/open_shelf_dialog.dart';
 
 /// Execution
 export 'execution/cabin_execution_top_strip.dart';
