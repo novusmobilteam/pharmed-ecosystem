@@ -48,6 +48,43 @@ final class NewCabinDraft extends CabinDesignSelection {
       );
 }
 
+/// Mevcut kabinin bilgilerini düzenleme formu açık (yeni kabin formuyla aynı
+/// ekran, mevcut bilgilerle dolu). Kayıt bekleyen değişikliklere aktarılıp
+/// seçili kabinin kayıt akışıyla (donanım doğrulaması dahil) yapılır.
+///
+/// Değiştirilemeyenler: master kabinin adresi (her zaman A) ve ek kabinlerin
+/// COM portu (master ile aynı hat).
+final class EditCabinForm extends CabinDesignSelection {
+  const EditCabinForm({
+    required this.cabinId,
+    required this.isMaster,
+    required this.name,
+    required this.type,
+    required this.addressChar,
+    required this.comPortLabel,
+  });
+
+  final int cabinId;
+  final bool isMaster;
+  final String name;
+  final CabinType? type;
+
+  /// Büyük harf ('A'..'P').
+  final String? addressChar;
+  final String? comPortLabel;
+
+  bool get isComplete => name.trim().isNotEmpty && type != null && addressChar != null && comPortLabel != null;
+
+  EditCabinForm copyWith({String? name, CabinType? type, String? addressChar, String? comPortLabel}) => EditCabinForm(
+    cabinId: cabinId,
+    isMaster: isMaster,
+    name: name ?? this.name,
+    type: type ?? this.type,
+    addressChar: addressChar ?? this.addressChar,
+    comPortLabel: comPortLabel ?? this.comPortLabel,
+  );
+}
+
 /// Kamera formu açık: [cameraId] null ise yeni kamera, değilse düzenleme.
 final class CameraSelection extends CabinDesignSelection {
   const CameraSelection({this.cameraId, this.previousCabinId, this.initialCabinId});
@@ -73,6 +110,7 @@ class CabinPendingChanges {
     this.name,
     this.comPort,
     this.addressChar,
+    this.type,
     this.returnSlotId,
     this.returnValue,
     this.scanGroups,
@@ -90,6 +128,10 @@ class CabinPendingChanges {
 
   /// Yalnızca slave kabin.
   final String? addressChar;
+
+  /// Yalnızca slave kabin: kabin tipi (dolap / buzdolabı / …). Tip tarama
+  /// sonucunu belirlediği için bağlantı değişikliği gibi donanımla doğrulanır.
+  final CabinType? type;
 
   /// İade çekmecesi değişikliği: hangi slot, açık mı kapalı mı.
   final int? returnSlotId;
@@ -109,7 +151,7 @@ class CabinPendingChanges {
   final List<int>? slotOrder;
 
   bool get hasNameChange => name != null;
-  bool get hasConnectionChange => comPort != null || addressChar != null;
+  bool get hasConnectionChange => comPort != null || addressChar != null || type != null;
   bool get hasReturnChange => returnSlotId != null && returnValue != null;
   bool get hasDesignChange => scanGroups != null;
   bool get hasSerumLayoutChange => serumSlotId != null && serumShelves != null;
@@ -125,6 +167,7 @@ class CabinPendingChanges {
   CabinPendingChanges withName(String? v) => _copy(name: () => v);
   CabinPendingChanges withComPort(ComPort? v) => _copy(comPort: () => v);
   CabinPendingChanges withAddressChar(String? v) => _copy(addressChar: () => v);
+  CabinPendingChanges withType(CabinType? v) => _copy(type: () => v);
   CabinPendingChanges withReturn(int slotId, bool value) => _copy(returnSlotId: () => slotId, returnValue: () => value);
   CabinPendingChanges withScanGroups(List<DrawerGroup>? v) => _copy(scanGroups: () => v);
   CabinPendingChanges withSlotOrder(List<int>? v) => _copy(slotOrder: () => v);
@@ -137,6 +180,7 @@ class CabinPendingChanges {
     String? Function()? name,
     ComPort? Function()? comPort,
     String? Function()? addressChar,
+    CabinType? Function()? type,
     int? Function()? returnSlotId,
     bool? Function()? returnValue,
     List<DrawerGroup>? Function()? scanGroups,
@@ -147,6 +191,7 @@ class CabinPendingChanges {
     name: name != null ? name() : this.name,
     comPort: comPort != null ? comPort() : this.comPort,
     addressChar: addressChar != null ? addressChar() : this.addressChar,
+    type: type != null ? type() : this.type,
     returnSlotId: returnSlotId != null ? returnSlotId() : this.returnSlotId,
     returnValue: returnValue != null ? returnValue() : this.returnValue,
     scanGroups: scanGroups != null ? scanGroups() : this.scanGroups,

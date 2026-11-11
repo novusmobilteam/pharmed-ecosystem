@@ -19,7 +19,9 @@ class CabinSettingsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (group?.isSerum != true) _BasicSettingsPanel(notifier: notifier, cabin: cabin),
+          // Serum seçiliyken de gösterilir: serum kabininin tek çekmecesi serum
+          // olduğu için aksi halde kabin bilgileri hiç görünmüyordu (#170).
+          _BasicSettingsPanel(notifier: notifier, cabin: cabin),
           switch (group) {
             null => Text(context.l10n.cabinDesign_noSelectionHint, style: MedTextStyles.bodySm(color: MedColors.text4)),
             // Serum paneli kendi Expanded + scroll'unu yönetir.

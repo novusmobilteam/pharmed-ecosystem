@@ -71,35 +71,88 @@ class _BasicSettingsPanel extends StatelessWidget {
           Text(context.l10n.cabinDesign_replace_noChangeInfo, style: MedTextStyles.bodySm(color: MedColors.text3)),
         ],
         const SizedBox(height: MedSpacing.lg),
-        MedTextInputField(
-          onChanged: notifier.updatePendingName,
-          initialValue: cabin.name,
-          label: context.l10n.cabinDesign_basicSettings_nameLabel,
-        ),
-        const SizedBox(height: MedSpacing.sm),
-        if (isMaster)
-          MedDropdownInputField(
-            onChanged: (value) {
-              if (value != null) notifier.updatePendingComPort(value);
-            },
-            initialValue: notifier.effectiveComPortLabel,
-            label: context.l10n.cabinDesign_basicSettings_comPortLabel,
-            options: SerialPort.availablePorts,
-            labelBuilder: (port) => port,
-          )
-        else
-          MedDropdownInputField(
-            onChanged: (address) {
-              if (address != null) notifier.updatePendingAddressChar(address);
-            },
-            initialValue: notifier.effectiveAddressChar,
-            label: context.l10n.cabinDesign_newCabin_addressLabel,
-            options: notifier.availableAddressCharsForEdit,
-            labelBuilder: (address) => address,
-          ),
+        _CabinInfoSummary(notifier: notifier, cabin: cabin),
         const SizedBox(height: MedSpacing.sm),
         _CabinCameraRow(notifier: notifier, cabin: cabin),
         const SizedBox(height: MedSpacing.xl),
+      ],
+    );
+  }
+}
+
+/// Kabinin kayıtlı bilgileri (ad, tip, adres, COM port) — salt okunur.
+/// Değişiklik "Düzenle" ile yeni kabin formuyla aynı ekranda yapılır.
+class _CabinInfoSummary extends StatelessWidget {
+  const _CabinInfoSummary({required this.notifier, required this.cabin});
+
+  final CabinDesignNotifier notifier;
+  final Cabin cabin;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isMaster = cabin.type == CabinType.master;
+    final masterPort = notifier.stationCabins.firstWhereOrNull((c) => c.type == CabinType.master)?.comPort?.label;
+    final port = isMaster ? cabin.comPort?.label : (masterPort ?? cabin.comPort?.label);
+    final canEdit = notifier.canStartEditCabin;
+
+    final editButton = MedButton(
+      label: l10n.cabinDesign_basicSettings_editButton,
+      prefixIcon: Icon(PhosphorIcons.pencilSimple()),
+      size: MedButtonSize.sm,
+      variant: MedButtonVariant.secondary,
+      onPressed: canEdit ? notifier.startEditCabin : null,
+    );
+
+    return Container(
+      padding: MedSpacing.insetMd,
+      decoration: BoxDecoration(
+        color: MedColors.surface2,
+        border: Border.all(color: MedColors.border2),
+        borderRadius: MedRadius.smAll,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Wrap(
+              spacing: MedSpacing.xl2,
+              runSpacing: MedSpacing.sm,
+              children: [
+                _InfoItem(label: l10n.cabinDesign_basicSettings_nameLabel, value: cabin.name ?? '—'),
+                _InfoItem(label: l10n.cabinDesign_newCabin_typeLabel, value: cabin.type?.label ?? '—'),
+                _InfoItem(
+                  label: l10n.cabinDesign_newCabin_addressLabel,
+                  value: isMaster ? 'A' : (cabin.no?.trim().toUpperCase() ?? '—'),
+                ),
+                _InfoItem(label: l10n.cabinDesign_basicSettings_comPortLabel, value: port ?? '—'),
+              ],
+            ),
+          ),
+          if (canEdit || !notifier.pending.hasAny)
+            editButton
+          else
+            Tooltip(message: l10n.cabinDesign_editCabin_pendingChangesHint, child: editButton),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoItem extends StatelessWidget {
+  const _InfoItem({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(label, style: MedTextStyles.bodySm(color: MedColors.text3)),
+        const SizedBox(height: 2),
+        Text(value, style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600)),
       ],
     );
   }

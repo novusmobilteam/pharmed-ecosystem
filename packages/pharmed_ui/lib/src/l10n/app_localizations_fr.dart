@@ -7157,6 +7157,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_basicSettings_activateButton => 'Activer';
 
   @override
+  String get cabinDesign_basicSettings_editButton => 'Modifier';
+
+  @override
+  String get cabinDesign_editCabin_title => 'Modifier l\'Armoire';
+
+  @override
+  String get cabinDesign_editCabin_addressLockedHint => 'L\'adresse de l\'armoire principale est toujours A et ne peut pas être modifiée.';
+
+  @override
+  String get cabinDesign_editCabin_comPortLockedHint => 'Les armoires supplémentaires partagent la ligne (port COM) de l\'armoire principale ; il ne peut pas être modifié.';
+
+  @override
+  String get cabinDesign_editCabin_verifyInfo => 'Si l\'adresse, le port COM ou le type change, l\'armoire est analysée sur la nouvelle connexion avant l\'enregistrement.';
+
+  @override
+  String get cabinDesign_editCabin_pendingChangesHint => 'Enregistrez ou annulez les modifications en attente avant de modifier.';
+
+  @override
   String get cabinSelection_screenTitle => 'Sélectionner une Armoire';
 
   @override

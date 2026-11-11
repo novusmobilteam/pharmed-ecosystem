@@ -8230,6 +8230,30 @@
   "@cabinDesign_basicSettings_activateButton": {
     "description": "Button in cabin design basic settings that sets the selected non-master cabin's status back to active, shown instead of the deactivate button when the cabin is already passive"
   },
+  "cabinDesign_basicSettings_editButton": "Düzenle",
+  "@cabinDesign_basicSettings_editButton": {
+    "description": "Button in the selected cabin's info summary that opens the cabin edit form (same form as new cabin creation)"
+  },
+  "cabinDesign_editCabin_title": "Kabini Düzenle",
+  "@cabinDesign_editCabin_title": {
+    "description": "Title of the cabin edit form opened from the selected cabin's info summary"
+  },
+  "cabinDesign_editCabin_addressLockedHint": "Ana kabinin adresi her zaman A'dır, değiştirilemez.",
+  "@cabinDesign_editCabin_addressLockedHint": {
+    "description": "Hint under the read-only address field in the cabin edit form when editing the master cabin"
+  },
+  "cabinDesign_editCabin_comPortLockedHint": "Ek kabinler ana kabinle aynı hattı (COM port) kullanır, değiştirilemez.",
+  "@cabinDesign_editCabin_comPortLockedHint": {
+    "description": "Hint under the read-only COM port field in the cabin edit form when editing a non-master cabin"
+  },
+  "cabinDesign_editCabin_verifyInfo": "Adres, COM port ya da tip değişirse kabin kaydetmeden önce yeni bağlantıda taranarak doğrulanır.",
+  "@cabinDesign_editCabin_verifyInfo": {
+    "description": "Info text in the cabin edit form explaining that connection/type changes are verified by a hardware scan before saving"
+  },
+  "cabinDesign_editCabin_pendingChangesHint": "Düzenlemeden önce bekleyen değişiklikleri kaydedin ya da iptal edin.",
+  "@cabinDesign_editCabin_pendingChangesHint": {
+    "description": "Tooltip on the disabled edit button when the selected cabin has other unsaved changes"
+  },
   "cabinSelection_screenTitle": "Kabin Seçin",
   "@cabinSelection_screenTitle": {
     "description": "Title of the cabin selection screen shown before entering any cabin-scoped operation (refill, census, intake, etc.) in a multi-cabin (master-type) station"

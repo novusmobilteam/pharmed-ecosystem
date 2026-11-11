@@ -6990,6 +6990,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_basicSettings_activateButton => 'Activate';
 
   @override
+  String get cabinDesign_basicSettings_editButton => 'Edit';
+
+  @override
+  String get cabinDesign_editCabin_title => 'Edit Cabinet';
+
+  @override
+  String get cabinDesign_editCabin_addressLockedHint => 'The main cabinet\'s address is always A and cannot be changed.';
+
+  @override
+  String get cabinDesign_editCabin_comPortLockedHint => 'Additional cabinets share the main cabinet\'s line (COM port); it cannot be changed.';
+
+  @override
+  String get cabinDesign_editCabin_verifyInfo => 'If the address, COM port or type changes, the cabinet is scanned on the new connection before saving.';
+
+  @override
+  String get cabinDesign_editCabin_pendingChangesHint => 'Save or discard pending changes before editing.';
+
+  @override
   String get cabinSelection_screenTitle => 'Select Cabinet';
 
   @override
