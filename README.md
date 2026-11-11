@@ -17,6 +17,7 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 - [GitHub Actions](#github-actions)
 - [Log paneli](#log-paneli)
 - [Cihazdaki loglar](#cihazdaki-loglar)
+- [Donanım dokümanları](#donanım-dokümanları)
 - [Geliştirme akışı](#geliştirme-akışı)
 
 ## Parçalar
@@ -230,6 +231,12 @@ Klasöre uygulamada **Ayarlar → Debug → Uygulama logları → Klasörü aç*
 Log politikası: işlem yapan istekler (POST/PUT/DELETE), hatalı istekler, 5 sn'yi aşan yanıtlar, uygulama kuralı redleri ve yakalanmamış hatalar yazılır. Başarılı okuma istekleri yazılmaz; son 100 adım bellekte tutulur ve bir hata yazıldığında kaydın altına "önceki adımlar" olarak eklenir. Ayrıntı: `packages/pharmed_data/lib/src/network/network_log_interceptor.dart`.
 
 INFO/WARN/ERROR kayıtları diskte bir kuyruğa (`<veri kökü>/log-outbox`) da yazılır ve arka planda `POST /api/FrontendLog/batch` ile backend'e gönderilir (`apps/pharmed-client/lib/core/logging/shipping/`). Gönderim oturumdaki Bearer token ile yapılır; backend kullanıcı ve istasyonu token'dan alır, bu yüzden giriş yapılmamışken kayıtlar kuyrukta bekler. Backend'in kabul ettiği/yinelenen saydığı kayıtlar kuyruktan silinir, reddettikleri tekrar gönderilmez. `LOG_UPLOAD_ENABLED=false` ile kapatılabilir.
+
+## Donanım dokümanları
+
+| Doküman | İçerik |
+| --- | --- |
+| [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Kabin kartları (yönetim, çekmece, kübik) RS485 komutları, checksum, cevap kodları, çoklu kabin kuralları |
 
 ## Geliştirme akışı
 
