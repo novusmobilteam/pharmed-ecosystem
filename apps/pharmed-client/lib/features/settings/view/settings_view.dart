@@ -5,6 +5,8 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../core/dev_identity/dev_device_identity.dart';
+import '../../../core/dev_identity/dev_device_identity_button.dart';
 import '../../../core/logging/app_logging.dart';
 import '../../change_password/change_password.dart';
 import '../../fingerprint_enrollment/fingerprint_enrollment.dart';

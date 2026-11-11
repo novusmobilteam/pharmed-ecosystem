@@ -3,11 +3,13 @@
 // prod + gerçek donanımda hiçbir şey çizmez. Diğer sürümlerde sol alt köşede
 // küçük, tıklamayı engellemeyen bir etiket gösterir:
 //   DEV · PC — sahte cihaz    (HARDWARE=mock)
+//   DEV · PC — Mobil kabin    (HARDWARE=mock + test cihazı seçili)
 //   DEV · KABİN               (HARDWARE=real)
 // Teknik bir derleme etiketidir (Flutter'ın debug şeridi gibi); yerelleştirilmez.
 
 import 'package:flutter/material.dart';
 
+import '../core/dev_identity/dev_device_identity.dart';
 import '../core/flavor/app_flavor.dart';
 import '../core/hardware/hardware_mode.dart';
 
@@ -22,7 +24,10 @@ class BuildVariantBadge extends StatelessWidget {
     if (flavor.isProd && !mockHw) return null;
     final name = flavor.flavor.name.toUpperCase();
     if (flavor.isMock) return '$name · sahte veri';
-    return mockHw ? '$name · PC — sahte cihaz' : '$name · KABİN';
+    if (!mockHw) return '$name · KABİN';
+    // [SWREQ-CORE-005] Seçili test cihazı da görünsün.
+    final device = DevDeviceIdentity.active;
+    return device == null ? '$name · PC — sahte cihaz' : '$name · PC — ${device.name}';
   }
 
   @override

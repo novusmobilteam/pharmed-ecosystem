@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../../core/dev_identity/dev_device_identity_button.dart';
 import '../../fingerprint_login/fingerprint_login.dart';
 import '../../settings/notifier/settings_notifier.dart';
 import '../notifier/auth_notifier.dart';
@@ -16,20 +17,27 @@ class LoginScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: MedColors.bg,
-      body: Center(
-        child: LoginModal(
-          isLoading: isLoading,
-          onLogin: (email, password, onError) async {
-            await ref.read(authNotifierProvider.notifier).login(email: email, password: password, onError: onError);
-          },
-          onLoginWithBadge: (cardData, onError) async {
-            await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
-          },
-          currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
-          onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
-          // [SWREQ-FP-103] Başarılı girişte yönlendirme auth durumuna göre router'da yapılır.
-          footer: const FingerprintLoginPanel(),
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: LoginModal(
+              isLoading: isLoading,
+              onLogin: (email, password, onError) async {
+                await ref.read(authNotifierProvider.notifier).login(email: email, password: password, onError: onError);
+              },
+              onLoginWithBadge: (cardData, onError) async {
+                await ref.read(authNotifierProvider.notifier).loginWithBadge(cardData: cardData, onError: onError);
+              },
+              currentLanguage: ref.watch(settingsNotifierProvider.select((s) => s.language)),
+              onLanguageChanged: (lang) => ref.read(settingsNotifierProvider.notifier).setLanguage(lang),
+              // [SWREQ-FP-103] Başarılı girişte yönlendirme auth durumuna göre router'da yapılır.
+              footer: const FingerprintLoginPanel(),
+            ),
+          ),
+          // [SWREQ-CORE-005] Bilgisayar test sürümünde test cihazı seçimi.
+          // Diğer sürümlerde DevDeviceIdentityButton hiçbir şey çizmez.
+          const Positioned(top: MedSpacing.xl, right: MedSpacing.xl, child: DevDeviceIdentityButton()),
+        ],
       ),
     );
   }

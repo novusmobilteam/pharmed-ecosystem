@@ -11,6 +11,7 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 - [İlk kurulum](#ilk-kurulum)
 - [Flavor'lar](#flavorlar)
 - [Test sürümleri: bilgisayar ve kabin](#test-sürümleri-bilgisayar-ve-kabin)
+- [Bilgisayarda birden çok kabin (test cihazı)](#bilgisayarda-birden-çok-kabin-test-cihazı)
 - [Windows'ta çalıştırma ve derleme](#windowsta-çalıştırma-ve-derleme)
 - [macOS'ta çalıştırma ve derleme](#macosta-çalıştırma-ve-derleme)
 - [Derleme ayarları (`--dart-define`)](#derleme-ayarları---dart-define)
@@ -108,6 +109,24 @@ Testçilere iki client paketi gider; ikisi de gerçek API'ye (`dev`) bağlanır,
 - Loglarda ve log panelinde sürüm `dev-pc` / `dev-kabin` olarak görünür (gönderimdeki `device.flavor`).
 - Kabin sürümünde tek bir cihaz eksikse yalnızca onu sahtelemek için `FINGERPRINT_MOCK=true` / `PRINTER_MOCK=true` kullanılabilir.
 
+## Bilgisayarda birden çok kabin (test cihazı)
+
+Backend istasyonu cihaz kimliğiyle eşleştirir ve bir kimliğe tek kabin kurulur. Bilgisayar sürümünde (`HARDWARE=mock`, `prod` dışı) aynı makinede birden çok kabin denemek için **test cihazı** kullanılır:
+
+- Giriş ekranının sağ üstündeki **Test cihazı** düğmesi (ya da Ayarlar › Debug) ile cihaz eklenir ve seçilir. Seçimden sonra uygulama kapanır; yeniden açıldığında seçilen cihaz olarak başlar.
+- Her test cihazının kendi kimliği (`PCTEST-…`, ya da eklerken elle girilen) ve **kendi yerel verisi** vardır (kurulum durumu, kabin cache'i, oturum…). Yeni cihaza ilk girişte kabin kurulum sihirbazı açılır.
+- **Bu bilgisayar** seçeneği eski davranıştır: gerçek cihaz kimliği ve mevcut kurulum.
+- Sol alt köşedeki etiket aktif cihazı gösterir: **DEV · PC — Mobil kabin**.
+- Kabin sürümünde (`HARDWARE=real`) ve `prod`'da düğme görünmez, kimlik her zaman donanımdan okunur; sahadaki kabinin tipi buradan değiştirilemez.
+- Veriler: `<veri kökü>/dev-devices/` (`registry.json` + cihaz başına `hive/` klasörü). Veri kökü Windows'ta `%LOCALAPPDATA%\PharMed`, macOS'ta `~/Library/Application Support/PharMed`.
+
+IDE'de cihazı sabitlemek için `PHARMED_DEVICE_ID` (ve isteğe bağlı `PHARMED_DEVICE_NAME`) verilir; bu durumda ekrandan değiştirilemez:
+
+```bash
+flutter run --flavor dev -t apps/pharmed-client/lib/main_dev.dart \
+  --dart-define=PHARMED_DEVICE_ID=PCTEST-MOBIL-0001 --dart-define=PHARMED_DEVICE_NAME="Mobil kabin"
+```
+
 ## Windows'ta çalıştırma ve derleme
 
 Kiosklar ve yönetim bilgisayarları Windows'tadır; sahaya giden sürüm Windows build'idir.
@@ -170,6 +189,7 @@ Hepsi derleme zamanında verilir: `flutter run|build … --dart-define=AD=değer
 | Ayar | Varsayılan | Ne yapar |
 | --- | --- | --- |
 | `HARDWARE` | `prod`'da `real`, diğerlerinde `mock` | Cihaz servisleri: `mock` = sahte (bilgisayarda test), `real` = gerçek kabin donanımı |
+| `PHARMED_DEVICE_ID`, `PHARMED_DEVICE_NAME` | — | Test cihazı kimliğini sabitler (yalnızca `HARDWARE=mock` ve `prod` dışı; bkz. [test cihazı](#bilgisayarda-birden-çok-kabin-test-cihazı)) |
 | `FINGERPRINT_MOCK` | `false` | Okuyucusuz makinede sahte parmak izi okuyucu |
 | `FINGERPRINT_VENDOR` | `auto` | `secugen` / `suprema` ile tek üreticiye sabitler |
 | `SECUGEN_DLL_PATH`, `SECUGEN_LIVENESS`, `SECUGEN_SMART_CAPTURE`, `SECUGEN_AREA_QUALITY`, `SECUGEN_FAKE_LEVEL` | — / `true` / `true` / `50` / `0` | SecuGen ayarları |
