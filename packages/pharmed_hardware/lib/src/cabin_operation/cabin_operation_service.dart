@@ -575,6 +575,7 @@ class CabinOperationService implements ICabinOperationService {
     }
 
     final command = CommandBuilder.buildManagementCommand(addressIndex: managerAddress, row: rowToSelect);
+    final responses = <String>[];
 
     for (int attempt = 0; attempt < 3; attempt++) {
       try {
@@ -590,12 +591,40 @@ class CabinOperationService implements ICabinOperationService {
           }
           return true;
         }
+        responses.add(response?.trim() ?? '(cevap yok)');
       } catch (e) {
+        responses.add('hata: $e');
         debugPrint('⚠️ Satır seçme denemesi ${attempt + 1} başarısız: $e');
       }
+      // Kart başka bir satırda (ör. sensör satırı 49/50) kalmışsa yeni seçimi
+      // reddedebilir: seçimi bırakıp (00) tekrar dene (#178).
+      if (rowToSelect != 0 && attempt == 0) await _releaseRow(managerAddress);
       await Future.delayed(const Duration(milliseconds: 100));
     }
+
+    MedLogger.warn(
+      unit: 'CabinOps',
+      swreq: 'SWREQ-CABIN-OP-003',
+      message: 'Yönetim kartında satır seçilemedi',
+      context: {
+        'adres': ManagementCard(addressIndex: managerAddress).addressChar,
+        'satir': rowToSelect,
+        'cevaplar': responses,
+      },
+    );
     return false;
+  }
+
+  /// Kartın satır seçimini bırakır (00). Cevap beklenir ama sonucu önemsenmez —
+  /// yalnızca sonraki seçimin önünü açmak için.
+  Future<void> _releaseRow(int managerAddress) async {
+    try {
+      await _serialService.sendAndReceive(
+        CommandBuilder.buildManagementCommand(addressIndex: managerAddress, row: 0),
+        timeout: const Duration(milliseconds: 500),
+      );
+    } catch (_) {}
+    _managersWithSelection.remove(managerAddress);
   }
 
   /// [exceptManager] dışındaki, satırı seçili kalmış kartların seçimini bırakır.
@@ -649,6 +678,9 @@ class CabinOperationService implements ICabinOperationService {
         context: {'error': e.toString()},
       );
       return null;
+    } finally {
+      // Sensör satırı (49) seçili kalmasın — kart sonraki satır seçimini reddedebiliyor (#178).
+      await _releaseRow(manager.addressIndex);
     }
   }
 
@@ -674,6 +706,9 @@ class CabinOperationService implements ICabinOperationService {
         context: {'error': e.toString()},
       );
       return null;
+    } finally {
+      // Sensör satırı (50) seçili kalmasın (#178).
+      await _releaseRow(manager.addressIndex);
     }
   }
 
