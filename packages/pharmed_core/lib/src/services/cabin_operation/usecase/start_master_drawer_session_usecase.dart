@@ -91,7 +91,7 @@ class StartMasterDrawerSessionUseCase {
 
     final ManagementCard manager;
     try {
-      manager = await _scanManager(targetPort: portName);
+      manager = await _scanManager(targetPort: portName, cabinNo: assignment.cabin?.no);
     } on CabinConnectionException catch (e) {
       yield DrawerFailed(
         failure: e.failure == CabinConnectionFailure.managerNotFound
