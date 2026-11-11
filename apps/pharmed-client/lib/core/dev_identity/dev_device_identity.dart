@@ -151,7 +151,7 @@ abstract final class DevDeviceIdentity {
     final DevDeviceProfile? profile;
     if (_defineDeviceId.isNotEmpty) {
       profile = DevDeviceProfile(
-        id: 'define-${_slug(_defineDeviceId)}',
+        id: _idForDeviceId(_defineDeviceId),
         name: _defineDeviceName.isNotEmpty ? _defineDeviceName : _defineDeviceId,
         deviceId: _defineDeviceId,
         createdAt: DateTime.now(),
@@ -216,7 +216,10 @@ abstract final class DevDeviceIdentity {
       n++;
     }
     final profile = DevDeviceProfile(
-      id: 'pc-$n',
+      // Elle girilen kimlikte klasör kimlikten türetilir: aynı kimlikle
+      // PHARMED_DEVICE_ID ile çalıştırılmış verinin (kurulum, kabin cache'i)
+      // ekrandan seçildiğinde de bulunması için.
+      id: customId.isNotEmpty ? _idForDeviceId(customId) : 'pc-$n',
       name: name.trim().isEmpty ? 'Test cihazı $n' : name.trim(),
       deviceId: customId.isNotEmpty ? customId : _generateDeviceId(),
       createdAt: DateTime.now(),
@@ -258,6 +261,9 @@ abstract final class DevDeviceIdentity {
     String hex(int len) => List.generate(len, (_) => r.nextInt(16).toRadixString(16)).join().toUpperCase();
     return 'PCTEST-${hex(8)}-${hex(4)}-${hex(4)}';
   }
+
+  /// Kimliği bilinen cihazın klasör adı (dart-define ve elle girilen ortak).
+  static String _idForDeviceId(String deviceId) => 'define-${_slug(deviceId)}';
 
   static String _slug(String value) {
     final s = value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');

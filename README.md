@@ -120,7 +120,7 @@ Backend istasyonu cihaz kimliğiyle eşleştirir ve bir kimliğe tek kabin kurul
 - Kabin sürümünde (`HARDWARE=real`) ve `prod`'da düğme görünmez, kimlik her zaman donanımdan okunur; sahadaki kabinin tipi buradan değiştirilemez.
 - Veriler: `<veri kökü>/dev-devices/` (`registry.json` + cihaz başına `hive/` klasörü). Veri kökü Windows'ta `%LOCALAPPDATA%\PharMed`, macOS'ta `~/Library/Application Support/PharMed`.
 
-IDE'de cihazı sabitlemek için `PHARMED_DEVICE_ID` (ve isteğe bağlı `PHARMED_DEVICE_NAME`) verilir; bu durumda ekrandan değiştirilemez:
+IDE'de cihazı sabitlemek için `PHARMED_DEVICE_ID` (ve isteğe bağlı `PHARMED_DEVICE_NAME`) verilir; bu durumda ekrandan değiştirilemez. Aynı kimlik sonra ekrandan (kimlik alanına yazılarak) eklenirse aynı yerel veriyi kullanır, yani komutsuz da o cihaz olarak açılabilir:
 
 ```bash
 flutter run --flavor dev -t apps/pharmed-client/lib/main_dev.dart \
