@@ -88,7 +88,55 @@ class DashboardRepositoryImpl implements IDashboardRepository {
   @override
   Future<Result<List<MenuItem>>> getMenuItems({bool forceRefresh = true, int? userId}) async {
     final result = await _dataSource.getMenus(userId: userId);
-    return result.when(ok: (dtos) => Result.ok(_menuMapper.toTreeList(dtos ?? [])), error: Result.error);
+    final List<MenuDTO> menus;
+    switch (result) {
+      case Ok(value: final dtos):
+        menus = dtos ?? [];
+      case Error(error: final error):
+        return Result.error(error);
+    }
+    final complete = userId == null ? menus : await _withMissingParents(menus);
+    return Result.ok(_menuMapper.toTreeList(complete));
+  }
+
+  /// [SWREQ-DATA-DASH-007] Kullanıcı menüsünde eksik üst menüleri tamamlar.
+  ///
+  /// `/Menu/user/{id}` yalnızca kullanıcının yetkili olduğu menüleri döndürür;
+  /// alt menüye yetkisi olup grup (üst) menüsüne ayrıca yetki verilmemiş
+  /// kullanıcıda üst menü yanıtta yoktur. Ağaç kurulurken üstü bulunamayan
+  /// alt menü köke düştüğü için navbar'da gruplar yerine alt menüler
+  /// görünüyordu. Eksik üst menüler (ve onların üstleri) tüm menü listesinden
+  /// eklenir. Üst menüler yalnızca gruplama içindir, sayfa açmaz; kullanıcının
+  /// erişebildiği sayfalar değişmez.
+  ///
+  /// Tüm liste alınamazsa kullanıcı listesi olduğu gibi döner (eski davranış).
+  Future<List<MenuDTO>> _withMissingParents(List<MenuDTO> userMenus) async {
+    Set<int> missingParentIds(List<MenuDTO> menus) {
+      final ids = menus.map((m) => m.id).nonNulls.toSet();
+      return menus
+          .map((m) => m.parentId)
+          .nonNulls
+          .where((parentId) => parentId != 0 && !ids.contains(parentId))
+          .toSet();
+    }
+
+    if (missingParentIds(userMenus).isEmpty) return userMenus;
+
+    final allResult = await _dataSource.getMenus();
+    final allMenus = allResult.when(ok: (dtos) => dtos ?? <MenuDTO>[], error: (_) => <MenuDTO>[]);
+    if (allMenus.isEmpty) return userMenus;
+
+    final byId = {for (final m in allMenus) if (m.id != null) m.id!: m};
+    final completed = [...userMenus];
+    var missing = missingParentIds(completed);
+    // Her turda bir üst seviye eklenir; derinlik kadar döner. Döngüye karşı sınırlı.
+    for (var depth = 0; missing.isNotEmpty && depth < 10; depth++) {
+      final found = missing.map((id) => byId[id]).nonNulls.toList();
+      if (found.isEmpty) break;
+      completed.addAll(found);
+      missing = missingParentIds(completed);
+    }
+    return completed;
   }
 
   @override
