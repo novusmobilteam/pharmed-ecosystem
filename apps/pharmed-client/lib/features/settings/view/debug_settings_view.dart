@@ -66,6 +66,14 @@ class _DebugSettingsViewState extends ConsumerState<DebugSettingsView> {
                 ),
               ),
 
+              // ── Test cihazı (yalnızca bilgisayar test sürümü) ──
+              if (DevDeviceIdentity.isAvailable)
+                const _SettingRow(
+                  label: 'Test cihazı',
+                  description: 'Bu bilgisayarda başka bir kabin olarak çalışmak için cihaz değiştir',
+                  trailing: DevDeviceIdentityButton(),
+                ),
+
               // ── Donanım testleri ────────────────────────────
               _SettingRow(
                 label: 'Parmak izi okuyucu',

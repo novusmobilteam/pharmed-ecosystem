@@ -19,7 +19,7 @@ class DashboardRemoteDataSource extends BaseRemoteDataSource {
   }
 
   Future<Result<List<CabinStockDTO>?>> getCriticalStocks({bool isClient = false}) async {
-    Map<String, dynamic>? query = isClient ? {"mac": DeviceInfo.getMacAddress()} : null;
+    Map<String, dynamic>? query = isClient ? {"mac": await DeviceInfo.getMacAddress()} : null;
     final path = isClient ? "clientCriticalStock" : "criticalStock";
 
     return await fetchRequest<List<CabinStockDTO>>(
