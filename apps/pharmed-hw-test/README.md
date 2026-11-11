@@ -6,9 +6,9 @@ Protokol: [`docs/hardware/rs485-protokol.md`](../../docs/hardware/rs485-protokol
 
 ## Kullanım
 
-1. **Giriş:** Kullanıcı kendi hesabıyla giriş yapar (ek şifre yok). Çekmece tanımları ve istasyon/kabin bilgisi servisten çekildiği için giriş gerekir.
-2. **Bağlantı:** Test edilecek istasyon seçilir (kabinler ve yönetim kartı adresleri listelenir), COM porta bağlanılır.
-3. **Hat taraması:** a–p adreslerine `:Y?00c;` gönderilir. Cevap veren yönetim kartları istasyondaki kabin tanımlarıyla karşılaştırılır (cevap vermeyen kabin / tanımsız kart), ısı/nem ve akü okunur. Satır 00 seçimi de bıraktığı için tarama hatta açık seçim bırakmaz.
+1. **Giriş:** Kullanıcı kendi hesabıyla giriş yapar (ek şifre yok). Çekmece tanımları servisten çekildiği için giriş gerekir.
+2. **Bağlantı:** COM porta bağlanılır. Uygulama istasyondan bağımsızdır.
+3. **Hat taraması:** a–p adreslerine `:Y?00c;` gönderilir. Cevap veren yönetim kartları (kabinler) listelenir, ısı/nem ve akü okunur. Satır 00 seçimi de bıraktığı için tarama hatta açık seçim bırakmaz.
 4. **Kart taraması:** Seçilen yönetim kartında satır 01–26 taranır (client'taki `discoverControlCards`). Her kart için ham tip cevabı, tip numarasıyla eşleşen **tüm** servis tanımları ve göz sayısı gösterilir; birden fazla tanım eşleşirse uyarı verilir. "Kübik gözleri yokla" ile `Z M` komutu sıra 00–04 × port 1–4 için gönderilir ve cevap veren gözler tabloda görünür (16/20 gözlü kübik ayrımı).
 5. **Çekmece testi:** Standart çekmece aç / durum (h0–h9), kübik kapak aç / durum (ac/kp), serum kapağı aç / durum. Çoklu kabinde açma sonrası "Yalnız hedef açıldı" / "Başka kabin de açıldı" gözlemi rapora işlenir; "Tüm kabinlerde seçimi bırak" ile hattaki seçimler sıfırlanır.
 6. **Konsol:** `Y` / `T` / `Z` komutları alanlardan checksum'ıyla üretilir ya da elle yazılır.

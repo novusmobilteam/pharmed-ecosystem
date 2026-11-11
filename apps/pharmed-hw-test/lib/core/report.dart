@@ -43,7 +43,6 @@ class TestReport extends ChangeNotifier {
   /// Raporu `Belgeler\PharMed-HwTest\` altına yazar ve dosya yolunu döner.
   Future<String> export({
     required String? user,
-    required String? station,
     required String? port,
     required List<TrafficEntry> traffic,
   }) async {
@@ -62,7 +61,6 @@ class TestReport extends ChangeNotifier {
       ..writeln('Uygulama   : ${AppEnv.version} (${AppEnv.instance.flavor})')
       ..writeln('Bilgisayar : ${Platform.localHostname}')
       ..writeln('Kullanıcı  : ${user ?? '-'}')
-      ..writeln('İstasyon   : ${station ?? '-'}')
       ..writeln('COM port   : ${port ?? '-'}')
       ..writeln()
       ..writeln('── Test adımları (${_steps.length}) ──');
