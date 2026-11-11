@@ -33,6 +33,12 @@ class CabinOperationService implements ICabinOperationService {
   ManagementCard? _cachedManager;
   Future<ManagementCard?>? _inFlightScan;
 
+  /// Bu bağlantıda satır seçimi bırakılmamış yönetim kartı adresleri.
+  /// `T`/`Z` komutları adres taşımadığından, satırı seçili kalan HER kart komutu
+  /// kendi kontrol kartına iletir (bkz. docs/hardware/rs485-protokol.md). Başka bir
+  /// kartta satır seçmeden önce bunların seçimi `00` ile bırakılır.
+  final Set<int> _managersWithSelection = {};
+
   // ── Sabitler ──────────────────────────────────────────────────────────────
 
   /// Serum kartını slave moda alan satır adresi.
@@ -120,6 +126,8 @@ class CabinOperationService implements ICabinOperationService {
       _cachedManager = null;
 
       await _serialService.connectToPort(port);
+      _managersWithSelection.clear();
+      await _releaseAllSelections();
       final found = await scanManagementCard();
 
       if (found != null) {
@@ -308,6 +316,10 @@ class CabinOperationService implements ICabinOperationService {
         await Future.delayed(const Duration(milliseconds: 100));
       }
     }
+
+    // Tarama son seçili satırı (ör. 26) açık bırakmasın — aksi halde sonraki T
+    // komutları bu kabinin kartına da gider.
+    await _selectRow(manager.addressIndex, 0);
 
     debugPrint('📊 Toplam ${foundCards.length} kontrol kartı bulundu.');
     return foundCards;
@@ -557,6 +569,10 @@ class CabinOperationService implements ICabinOperationService {
   ///
   /// Returns: true → seçim başarılı, false → yanıt yok veya hata.
   Future<bool> _selectRow(int managerAddress, int rowToSelect) async {
+    if (rowToSelect != 0) {
+      await _releaseOtherSelections(exceptManager: managerAddress);
+    }
+
     final command = CommandBuilder.buildManagementCommand(addressIndex: managerAddress, row: rowToSelect);
 
     for (int attempt = 0; attempt < 3; attempt++) {
@@ -565,13 +581,52 @@ class CabinOperationService implements ICabinOperationService {
           command,
           timeout: const Duration(milliseconds: 800), // 500 → 800
         );
-        if (response != null && response.contains('ok')) return true;
+        if (response != null && response.contains('ok')) {
+          if (rowToSelect == 0) {
+            _managersWithSelection.remove(managerAddress);
+          } else {
+            _managersWithSelection.add(managerAddress);
+          }
+          return true;
+        }
       } catch (e) {
         debugPrint('⚠️ Satır seçme denemesi ${attempt + 1} başarısız: $e');
       }
       await Future.delayed(const Duration(milliseconds: 100));
     }
     return false;
+  }
+
+  /// [exceptManager] dışındaki, satırı seçili kalmış kartların seçimini bırakır.
+  Future<void> _releaseOtherSelections({required int exceptManager}) async {
+    final others = _managersWithSelection.where((a) => a != exceptManager).toList();
+    for (final address in others) {
+      final released = await _selectRow(address, 0);
+      if (!released) {
+        // Cevap yoksa kart hatta olmayabilir; tekrar tekrar denememek için listeden çıkar.
+        _managersWithSelection.remove(address);
+        MedLogger.warn(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-CABIN-OP-003',
+          message: 'Yönetim kartında satır seçimi bırakılamadı',
+          context: {'adres': address, 'hedefAdres': exceptManager},
+        );
+      }
+    }
+  }
+
+  /// Bağlantı açıldığında tüm adreslerde (a-p) seçimi bırakır. Önceki bir oturumdan
+  /// (uygulama yeniden başlamış olabilir) seçili kalan kabin kartlarını temizler.
+  /// Hatta olmayan adresler cevap vermez; protokoldeki azami cevap süresi (250 ms) kadar beklenir.
+  Future<void> _releaseAllSelections() async {
+    for (int address = 1; address <= 16; address++) {
+      try {
+        await _serialService.sendAndReceive(
+          CommandBuilder.buildManagementCommand(addressIndex: address, row: 0),
+          timeout: const Duration(milliseconds: 250),
+        );
+      } catch (_) {}
+    }
   }
 
   /// Yönetim kartından akü voltajı okur (row 49).
