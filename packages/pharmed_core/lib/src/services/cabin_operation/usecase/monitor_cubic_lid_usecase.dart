@@ -25,7 +25,11 @@ class MonitorCubicLidUseCase {
   Stream<CubicLidStatus> call({required MedicineAssignment cellAssignment}) async* {
     final ManagementCard manager;
     try {
-      manager = await _scanManager(targetPort: cellAssignment.cabin?.comPort?.name, cabinNo: cellAssignment.cabin?.no);
+      manager = await _scanManager(
+        targetPort: cellAssignment.cabin?.comPort?.name,
+        cabinNo: cellAssignment.cabin?.no,
+        cabinId: cellAssignment.cabin?.id ?? cellAssignment.drawerUnit?.drawerSlot?.cabinId,
+      );
     } catch (e) {
       MedLogger.warn(
         unit: 'MonitorCubicLid',

@@ -424,7 +424,7 @@ final getCabinThresholdsUseCaseProvider = Provider<GetCabinThresholdsUseCase>(
 );
 
 final scanManagerUseCaseProvider = Provider<ScanManagerUseCase>(
-  (ref) => ScanManagerUseCase(ref.read(cabinOperationServiceProvider)),
+  (ref) => ScanManagerUseCase(ref.read(cabinOperationServiceProvider), ref.read(cabinRepositoryProvider)),
 );
 
 final streamCabinSensorsUseCaseProvider = Provider<StreamCabinSensorsUseCase>(
