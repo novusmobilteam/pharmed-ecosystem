@@ -25,7 +25,6 @@ class _ReportPageState extends ConsumerState<ReportPage> {
           .read(testReportProvider)
           .export(
             user: session.user?.fullName,
-            station: session.station?.title,
             port: session.port,
             traffic: ref.read(trafficLogProvider).entries,
           );

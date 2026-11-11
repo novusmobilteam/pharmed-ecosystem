@@ -38,7 +38,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: const Text('PharMed Donanım Testi'),
         actions: [
           _InfoChip(icon: Icons.person, text: session.user?.fullName ?? '-'),
-          _InfoChip(icon: Icons.apartment, text: session.station?.title ?? 'İstasyon seçilmedi'),
           _InfoChip(
             icon: connected ? Icons.link : Icons.link_off,
             text: connected ? (session.port ?? 'Bağlı') : 'Bağlı değil',

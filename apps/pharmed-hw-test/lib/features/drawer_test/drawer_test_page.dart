@@ -170,12 +170,10 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
     });
   }
 
-  /// İstasyondaki tüm kabinlerde (yoksa a–p) satır seçimini bırakır.
+  /// a–p tüm adreslerde satır seçimini bırakır.
   Future<void> _releaseAll() async {
-    final cabins = ref.read(sessionProvider).cabins;
-    final addresses = cabins.map((c) => ManagementCard.indexFromAddressChar(c.no)).whereType<int>().toSet().toList()..sort();
-    final targets = addresses.isEmpty ? List.generate(16, (i) => i + 1) : addresses;
-    await _run('Seçimleri bırak (${targets.map(addressLabel).join(', ')})', () async {
+    final targets = List.generate(16, (i) => i + 1);
+    await _run('Seçimleri bırak (a–p)', () async {
       final serial = ref.read(serialServiceProvider);
       final lines = <String>[];
       for (final a in targets) {

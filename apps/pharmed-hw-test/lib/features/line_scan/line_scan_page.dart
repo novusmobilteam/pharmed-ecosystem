@@ -7,29 +7,18 @@ import '../../core/report.dart';
 import '../../widgets/common.dart';
 
 class _AddressResult {
-  _AddressResult({required this.address, required this.expectedCabin, required this.response});
+  _AddressResult({required this.address, required this.response});
 
   final int address;
-  final String? expectedCabin;
   final String? response;
   ({double temperature, double humidity})? tempHum;
   double? battery;
 
   bool get responded => response != null && response!.contains('ok');
-
-  StepResult get result {
-    if (expectedCabin != null) return responded ? StepResult.ok : StepResult.fail;
-    return responded ? StepResult.fail : StepResult.info;
-  }
-
-  String get verdict {
-    if (expectedCabin != null) return responded ? 'Kabin cevap veriyor' : 'Kabin cevap vermiyor';
-    return responded ? 'İstasyonda tanımlı olmayan kart!' : '-';
-  }
 }
 
-/// a–p adreslerinin hepsine `:Y?00c;` gönderir: hangi yönetim kartları hatta,
-/// istasyondaki kabin tanımlarıyla uyuşuyor mu, sensör değerleri ne.
+/// a–p adreslerinin hepsine `:Y?00c;` gönderir: hangi yönetim kartları hatta ve
+/// sensör değerleri ne.
 /// Satır 00 aynı zamanda seçimi bıraktığı için tarama hatta açık seçim bırakmaz.
 class LineScanPage extends ConsumerStatefulWidget {
   const LineScanPage({super.key});
@@ -46,7 +35,6 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
   Future<void> _scan() async {
     final serial = ref.read(serialServiceProvider);
     final ops = ref.read(cabinOpsProvider);
-    final cabins = ref.read(sessionProvider).cabins;
     setState(() {
       _busy = true;
       _results = [];
@@ -63,7 +51,7 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
           );
         } catch (_) {}
       }
-      final r = _AddressResult(address: address, expectedCabin: cabinNameForAddress(cabins, address), response: response);
+      final r = _AddressResult(address: address, response: response);
       if (r.responded && _readSensors) {
         final manager = ManagementCard(addressIndex: address);
         r.tempHum = await ops.readTempHumidity(manager: manager);
@@ -80,21 +68,15 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
       if (mounted) setState(() => _results = [...results]);
     }
 
-    final found = results.where((r) => r.responded).map((r) => addressLabel(r.address)).join(', ');
-    final missing = results.where((r) => r.expectedCabin != null && !r.responded).map((r) => '${addressLabel(r.address)} (${r.expectedCabin})');
-    final unexpected = results.where((r) => r.expectedCabin == null && r.responded).map((r) => addressLabel(r.address));
-    final ok = missing.isEmpty && unexpected.isEmpty;
+    final found = results.where((r) => r.responded).toList();
     ref
         .read(testReportProvider)
         .add(
-          'Hat taraması',
-          ok ? StepResult.ok : StepResult.fail,
+          'Hat taraması: ${found.length} yönetim kartı',
+          found.isEmpty ? StepResult.fail : StepResult.ok,
           detail: [
-            'Cevap veren adresler: ${found.isEmpty ? 'yok' : found}',
-            if (missing.isNotEmpty) 'Cevap vermeyen kabinler: ${missing.join(', ')}',
-            if (unexpected.isNotEmpty) 'Tanımsız kart: ${unexpected.join(', ')}',
-            for (final r in results.where((r) => r.responded))
-              '${addressLabel(r.address)}: ${_sensorText(r)}',
+            'Cevap veren adresler: ${found.isEmpty ? 'yok' : found.map((r) => addressLabel(r.address)).join(', ')}',
+            for (final r in found) '${addressLabel(r.address)}: ${_sensorText(r)}',
           ].join('\n'),
         );
     if (mounted) setState(() => _busy = false);
@@ -121,8 +103,8 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Her adrese satır 00 komutu gönderilir. Cevap veren adresler istasyondaki kabin tanımlarıyla '
-                'karşılaştırılır. Satır 00 seçimi de bıraktığı için tarama hatta açık seçim bırakmaz.',
+                'Her adrese satır 00 komutu gönderilir; cevap veren adreslerde yönetim kartı vardır. '
+                'Satır 00 seçimi de bıraktığı için tarama hatta açık seçim bırakmaz.',
               ),
               const SizedBox(height: 12),
               Row(
@@ -149,7 +131,6 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
               dataRowMaxHeight: 40,
               columns: const [
                 DataColumn(label: Text('Adres')),
-                DataColumn(label: Text('İstasyondaki kabin')),
                 DataColumn(label: Text('Ham cevap')),
                 DataColumn(label: Text('Sensörler')),
                 DataColumn(label: Text('Durum')),
@@ -159,10 +140,13 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
                   DataRow(
                     cells: [
                       DataCell(Text(addressLabel(r.address), style: const TextStyle(fontWeight: FontWeight.w600))),
-                      DataCell(Text(r.expectedCabin ?? '-')),
                       DataCell(Text(r.response?.trim() ?? '(cevap yok)', style: const TextStyle(fontFamily: 'Consolas'))),
                       DataCell(Text(r.responded ? _sensorText(r) : '-')),
-                      DataCell(ResultBadge(result: r.result, label: r.verdict)),
+                      DataCell(
+                        r.responded
+                            ? const ResultBadge(result: StepResult.ok, label: 'Kart var')
+                            : const Text('-'),
+                      ),
                     ],
                   ),
               ],

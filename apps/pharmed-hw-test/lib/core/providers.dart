@@ -44,13 +44,6 @@ final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   );
 });
 
-final stationRepositoryProvider = Provider<IStationRepository>((ref) {
-  return StationRepositoryImpl(
-    dataSource: StationRemoteDataSource(apiManager: ref.read(apiManagerProvider)),
-    mapper: StationMapper(),
-  );
-});
-
 final cabinRepositoryProvider = Provider<ICabinRepository>((ref) {
   return CabinRepositoryImpl(
     cabinMapper: CabinMapper(),
@@ -86,23 +79,14 @@ final cabinOpsProvider = Provider<ICabinOperationService>((ref) {
 // ── Oturum ────────────────────────────────────────────────────────
 
 class SessionState {
-  const SessionState({this.user, this.station, this.cabins = const [], this.port});
+  const SessionState({this.user, this.port});
 
   final AppUser? user;
-  final Station? station;
-  final List<Cabin> cabins;
+
+  /// Bağlı COM port; null ise bağlı değil.
   final String? port;
 
   bool get isLoggedIn => user != null;
-
-  SessionState copyWith({AppUser? user, Station? station, List<Cabin>? cabins, String? port, bool clearPort = false}) {
-    return SessionState(
-      user: user ?? this.user,
-      station: station ?? this.station,
-      cabins: cabins ?? this.cabins,
-      port: clearPort ? null : (port ?? this.port),
-    );
-  }
 }
 
 class SessionNotifier extends Notifier<SessionState> {
@@ -111,21 +95,11 @@ class SessionNotifier extends Notifier<SessionState> {
 
   void setUser(AppUser user) => state = SessionState(user: user);
 
-  void setStation(Station station, List<Cabin> cabins) => state = state.copyWith(station: station, cabins: cabins);
-
-  void setPort(String? port) => state = port == null ? state.copyWith(clearPort: true) : state.copyWith(port: port);
+  void setPort(String? port) => state = SessionState(user: state.user, port: port);
 
   void logout() => state = const SessionState();
 }
 
 final sessionProvider = NotifierProvider<SessionNotifier, SessionState>(SessionNotifier.new);
-
-/// Yönetim kartı adres harfi ('a'..'p') için kabin adı, istasyonda varsa.
-String? cabinNameForAddress(List<Cabin> cabins, int addressIndex) {
-  for (final c in cabins) {
-    if (ManagementCard.indexFromAddressChar(c.no) == addressIndex) return c.name ?? 'Kabin';
-  }
-  return null;
-}
 
 String addressLabel(int addressIndex) => ManagementCard(addressIndex: addressIndex).addressChar.toUpperCase();
