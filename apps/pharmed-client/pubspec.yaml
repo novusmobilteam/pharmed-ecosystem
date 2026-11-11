@@ -22,6 +22,8 @@ dependencies:
     path: ../../packages/pharmed_core
   pharmed_data:
     path: ../../packages/pharmed_data
+  pharmed_hardware:
+    path: ../../packages/pharmed_hardware
   pharmed_ui:
     path: ../../packages/pharmed_ui
   pharmed_utils:

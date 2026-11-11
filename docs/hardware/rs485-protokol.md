@@ -1,6 +1,6 @@
 # Kabin kartları RS485 haberleşme protokolü
 
-İlaç bazlı (master) kabin donanımının seri port (RS485, yarı-dupleks) üzerinden konuşma protokolü. Tek kaynak bu dokümandır; kodda karşılığı `packages/pharmed_core/lib/src/utils/command_builder.dart` (komut üretimi) ve `apps/pharmed-client/lib/core/services/cabin_operation/cabin_operation_service.dart` (komut sıralaması) dosyalarıdır.
+İlaç bazlı (master) kabin donanımının seri port (RS485, yarı-dupleks) üzerinden konuşma protokolü. Tek kaynak bu dokümandır; kodda karşılığı `packages/pharmed_core/lib/src/utils/command_builder.dart` (komut üretimi) ve `packages/pharmed_hardware/lib/src/cabin_operation/cabin_operation_service.dart` (komut sıralaması) dosyalarıdır.
 
 > Bu doküman, üreticiden gelen ham protokol notunun (eski `apps/pharmed-manager/docs/protokol.txt`) düzenlenmiş halidir. **"Uygulamada"** ile işaretli bölümler orijinal notta yoktur; kodun bugünkü davranışını ve sahada doğrulanması gereken yorumları anlatır.
 
@@ -134,7 +134,7 @@ Orijinal notta yoktur; kartlarda kullanılan ve kodda karşılığı olan değer
 
 | Değer | Kullanım | Kod |
 | --- | --- | --- |
-| Yönetim kartı satır `26` | Mobil kabinde serum kartını slave moda alır; sonra `T` komutları port + `drawer 00` ile gönderilir. | `CabinOperationService._serumSlaveRow` |
+| Yönetim kartı satır `26` | Mobil kabinde serum kartını slave moda alır; sonra `T` komutları port + `drawer 00` ile gönderilir. | `CabinOperationService._serumSlaveRow` (pharmed_hardware) |
 | Yönetim kartı satır `49` | Seçildiğinde kart akü voltajını `+(...)-` olarak döner. | `CommandBuilder.rowBatteryLevel` |
 | Yönetim kartı satır `50` | Seçildiğinde kart ısı/nemi `+(...)-` olarak döner. | `CommandBuilder.rowTempHumidity` |
 | Kontrol kartı tipi `250` | Serum kartı. | `ControlCard.isSerum`, `DrawerConfig.isSerum` |

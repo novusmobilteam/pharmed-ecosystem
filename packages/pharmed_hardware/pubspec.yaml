@@ -1,0 +1,19 @@
+name: pharmed_hardware
+description: Kabin donanımı (RS485 seri port, yönetim/çekmece/kübik kartları) servisleri — client ve donanım test uygulaması ortak kullanır
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.10.7
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_libserialport: ^0.6.0
+  pharmed_core:
+    path: ../pharmed_core
+  pharmed_ui:
+    path: ../pharmed_ui
+
+resolution: workspace

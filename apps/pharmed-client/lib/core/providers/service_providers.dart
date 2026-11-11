@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_hardware/pharmed_hardware.dart';
 
 import '../cache/app_settings_cache.dart';
 import '../hardware/hardware_mode.dart';
-import '../services/cabin_operation/cabin_operation_service.dart';
-import '../services/cabin_operation/mock_cabin_operation_service.dart';
 import '../services/rfid/mock_rfid_service.dart';
 import '../services/rfid/rfid_service.dart';
-import '../services/serial_communication/mock_serial_communication_service.dart';
-import '../services/serial_communication/serial_communication_service.dart';
 import '../services/tray_lock/mock_tray_lock_service.dart';
 import '../services/tray_lock/tray_lock_service.dart';
 
@@ -26,7 +23,7 @@ final cabinOperationServiceProvider = Provider<ICabinOperationService>((ref) {
     HardwareMode.mock => MockCabinOperationService(),
     HardwareMode.real => CabinOperationService(
       serialService: ref.read(serialServiceProvider),
-      appSettingsCache: ref.read(appSettingsCacheProvider),
+      readSavedComPort: ref.read(appSettingsCacheProvider).getComPort,
     ),
   };
 });
