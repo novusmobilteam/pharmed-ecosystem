@@ -4993,6 +4993,13 @@
     "placeholders": { "index": { "type": "int" } }
   },
   "cabinOperation_serumShelfNoTrays": "No trays defined",
+  "cabinOperation_openShelfTitle": "Open Shelf · Shelf {shelfNo}",
+  "@cabinOperation_openShelfTitle": {"placeholders": {"shelfNo": {"type": "int"}}},
+  "cabinOperation_openShelfMedicineCount": "{count} medicines",
+  "@cabinOperation_openShelfMedicineCount": {"placeholders": {"count": {"type": "int"}}},
+  "cabinOperation_openShelfEmpty": "No medicine has been assigned to this shelf yet.",
+  "cabinOperation_openShelfAddMedicine": "Add Medicine",
+  "cabinOperation_openShelfDeleteNotSupported": "This open shelf holds other medicines too; a single medicine's assignment cannot be deleted for now.",
   "assignment_idle_kicker": "CABINET CONFIGURATION",
   "@assignment_idle_kicker": {},
   "assignment_idle_title": "Drug Assignment",

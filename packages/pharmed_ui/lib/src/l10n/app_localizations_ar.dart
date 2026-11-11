@@ -7026,6 +7026,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cabinOperation_serumShelfNoTrays => 'No trays defined';
 
   @override
+  String cabinOperation_openShelfTitle(int shelfNo) {
+    return 'Open Shelf · Shelf $shelfNo';
+  }
+
+  @override
+  String cabinOperation_openShelfMedicineCount(int count) {
+    return '$count medicines';
+  }
+
+  @override
+  String get cabinOperation_openShelfEmpty => 'No medicine has been assigned to this shelf yet.';
+
+  @override
+  String get cabinOperation_openShelfAddMedicine => 'Add Medicine';
+
+  @override
+  String get cabinOperation_openShelfDeleteNotSupported => 'This open shelf holds other medicines too; a single medicine\'s assignment cannot be deleted for now.';
+
+  @override
   String get assignment_idle_kicker => 'CABINET CONFIGURATION';
 
   @override

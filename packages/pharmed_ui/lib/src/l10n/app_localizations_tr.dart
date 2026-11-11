@@ -6969,6 +6969,25 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinOperation_serumShelfNoTrays => 'Avadanlık tanımlı değil';
 
   @override
+  String cabinOperation_openShelfTitle(int shelfNo) {
+    return 'Açık Raf · Raf $shelfNo';
+  }
+
+  @override
+  String cabinOperation_openShelfMedicineCount(int count) {
+    return '$count ilaç';
+  }
+
+  @override
+  String get cabinOperation_openShelfEmpty => 'Bu rafa henüz ilaç atanmamış.';
+
+  @override
+  String get cabinOperation_openShelfAddMedicine => 'İlaç Ekle';
+
+  @override
+  String get cabinOperation_openShelfDeleteNotSupported => 'Bu açık rafta başka ilaçlar da var; tek bir ilacın ataması şu an silinemiyor.';
+
+  @override
   String get assignment_idle_kicker => 'KABİN YAPILANDIRMA';
 
   @override

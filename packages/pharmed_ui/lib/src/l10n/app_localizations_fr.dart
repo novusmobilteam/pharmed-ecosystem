@@ -7192,6 +7192,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinOperation_serumShelfNoTrays => 'Aucun plateau défini';
 
   @override
+  String cabinOperation_openShelfTitle(int shelfNo) {
+    return 'Étagère ouverte · Étagère $shelfNo';
+  }
+
+  @override
+  String cabinOperation_openShelfMedicineCount(int count) {
+    return '$count médicaments';
+  }
+
+  @override
+  String get cabinOperation_openShelfEmpty => 'Aucun médicament n\'est encore affecté à cette étagère.';
+
+  @override
+  String get cabinOperation_openShelfAddMedicine => 'Ajouter un médicament';
+
+  @override
+  String get cabinOperation_openShelfDeleteNotSupported => 'Cette étagère ouverte contient d\'autres médicaments ; l\'affectation d\'un seul médicament ne peut pas être supprimée pour le moment.';
+
+  @override
   String get assignment_idle_kicker => 'CONFIGURATION DE L\'ARMOIRE';
 
   @override

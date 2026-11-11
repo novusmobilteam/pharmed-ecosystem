@@ -12,6 +12,8 @@ class CabinAssignmentListView extends StatelessWidget {
     this.onToggle,
     this.selectedCellIds = const {},
     this.onToggleCell,
+    this.isAssignmentSelected,
+    this.onToggleAssignment,
     this.onDelete,
     this.onReplace,
     this.cabinLabelOf,
@@ -26,6 +28,11 @@ class CabinAssignmentListView extends StatelessWidget {
   /// [onToggleCell] verilmezse bu satırlar [onToggle] ile raf bazında seçilir.
   final Set<int> selectedCellIds;
   final ValueChanged<int>? onToggleCell;
+
+  /// Verilirse serum satırları ATAMA bazında seçilir (avadanlık yerine).
+  /// Açık Raf'ta aynı avadanlıkta birden çok ilaç olduğu için gereklidir.
+  final bool Function(MedicineAssignment assignment)? isAssignmentSelected;
+  final ValueChanged<MedicineAssignment>? onToggleAssignment;
   final ValueChanged<MedicineAssignment>? onDelete;
   final ValueChanged<MedicineAssignment>? onReplace;
 
@@ -139,11 +146,17 @@ class CabinAssignmentListView extends StatelessWidget {
               double critQty = assignment.criticalQuantity.toDouble();
               double minQty = assignment.minQuantity.toDouble();
               final id = assignment.cabinDrawerId;
-              final bool byCell = serumCellId != null && onToggleCell != null;
-              bool isSelected = byCell
+              final bool byAssignment =
+                  serumCellId != null && isAssignmentSelected != null && onToggleAssignment != null;
+              final bool byCell = !byAssignment && serumCellId != null && onToggleCell != null;
+              bool isSelected = byAssignment
+                  ? isAssignmentSelected!(assignment)
+                  : byCell
                   ? selectedCellIds.contains(serumCellId)
                   : id != null && selectedItemIds.contains(id);
-              final VoidCallback? onTap = byCell
+              final VoidCallback? onTap = byAssignment
+                  ? () => onToggleAssignment!(assignment)
+                  : byCell
                   ? () => onToggleCell!(serumCellId)
                   : (id == null || onToggle == null)
                   ? null

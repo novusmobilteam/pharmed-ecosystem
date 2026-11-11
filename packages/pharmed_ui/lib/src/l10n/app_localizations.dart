@@ -12355,6 +12355,36 @@ abstract class AppLocalizations {
   /// **'No trays defined'**
   String get cabinOperation_serumShelfNoTrays;
 
+  /// No description provided for @cabinOperation_openShelfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shelf · Shelf {shelfNo}'**
+  String cabinOperation_openShelfTitle(int shelfNo);
+
+  /// No description provided for @cabinOperation_openShelfMedicineCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} medicines'**
+  String cabinOperation_openShelfMedicineCount(int count);
+
+  /// No description provided for @cabinOperation_openShelfEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine has been assigned to this shelf yet.'**
+  String get cabinOperation_openShelfEmpty;
+
+  /// No description provided for @cabinOperation_openShelfAddMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Medicine'**
+  String get cabinOperation_openShelfAddMedicine;
+
+  /// No description provided for @cabinOperation_openShelfDeleteNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This open shelf holds other medicines too; a single medicine's assignment cannot be deleted for now.'**
+  String get cabinOperation_openShelfDeleteNotSupported;
+
   /// No description provided for @assignment_idle_kicker.
   ///
   /// In en, this message translates to:

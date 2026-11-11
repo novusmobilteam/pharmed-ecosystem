@@ -43,9 +43,21 @@ class MasterCensusSelectionView extends ConsumerWidget {
             if (id != null) selection.toggleUnit(id);
           },
           selectedCellIds: selection.selectedSerumCellIds,
-          onSerumTrayTap: (_, tray) {
+          onSerumTrayTap: (shelf, tray) {
             final id = tray.id;
-            if (id != null) selection.toggleSerumTray(id);
+            if (id == null) return;
+            if (!tray.size.isOpenShelf) {
+              selection.toggleSerumTray(id);
+              return;
+            }
+            // Açık Raf: raftaki ilaçlar listelenir, her biri ayrı seçilir.
+            showOpenShelfDialog(
+              context: context,
+              shelfNo: shelf.orderNo ?? 0,
+              assignments: AssignmentSelection.serumAssignments(id, selection.assignments),
+              isSelected: selection.isSelected,
+              onToggle: selection.toggleAssignment,
+            );
           },
         ),
       ),
@@ -91,6 +103,8 @@ class MasterCensusSelectionView extends ConsumerWidget {
                 onToggle: isMedicineMode ? selection.toggleUnit : null,
                 selectedCellIds: selection.selectedSerumCellIds,
                 onToggleCell: isMedicineMode ? selection.toggleSerumTray : null,
+                isAssignmentSelected: isMedicineMode ? selection.isSelected : null,
+                onToggleAssignment: isMedicineMode ? selection.toggleAssignment : null,
                 cabinLabelOf: scope.cabins.length > 1 ? scope.cabinNameOf : null,
               ),
         footer: selection.canStart

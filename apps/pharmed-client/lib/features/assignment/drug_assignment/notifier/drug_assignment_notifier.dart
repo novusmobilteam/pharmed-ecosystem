@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../../../core/providers/providers.dart';
 import '../../../dashboard/dashboard.dart';
@@ -135,14 +136,23 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   /// Serum kabininde bir avadanlığa dokunulduğunda çağrılır. [shelf] rafın
   /// DrawerUnit'i, [tray] avadanlık (DrawerCell). Aynı avadanlığa tekrar
   /// dokunulursa Idle'a döner.
-  void onSerumTrayTap(DrawerUnit shelf, SerumTray tray) {
+  ///
+  /// Açık Raf'ta [existing] verilirse o atama düzenlenir, verilmezse rafa yeni
+  /// ilaç eklenir (view, rafın ilaç listesinden seçtirir).
+  void onSerumTrayTap(DrawerUnit shelf, SerumTray tray, {MedicineAssignment? existing}) {
     final current = state;
     if (current is! DrugAssignmentIdle && current is! DrugAssignmentCellSelected) return;
 
     final unitId = shelf.id;
     final cellId = tray.id;
     if (unitId == null || cellId == null) return;
-    final target = AssignmentTarget(unitId: unitId, cellId: cellId);
+    final isOpenShelf = tray.size.isOpenShelf;
+    final target = AssignmentTarget(
+      unitId: unitId,
+      cellId: cellId,
+      isOpenShelf: isOpenShelf,
+      assignmentId: isOpenShelf ? existing?.id : null,
+    );
 
     final groups = _extractGroups(current);
     final assignments = _extractAssignments(current);
@@ -186,6 +196,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final unitId = serumShelfId ?? assignment.cabinDrawerId;
     final selectedGroup = _findGroupForUnit(unitId, current.groups);
     if (unitId == null || selectedGroup == null) return;
+    final isOpenShelf = cellId != null && _isOpenShelfCell(cellId, current.groups);
 
     // Tablodan başka bir kabinin ataması düzenlenince iç yerleşim o kabine geçer.
     scope.view(scope.cabinIdOfSlot(selectedGroup.slot.id) ?? scope.cabinIdOf(assignment));
@@ -195,7 +206,12 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       assignments: current.assignments,
       cabinId: current.cabinId,
       selectedGroup: selectedGroup,
-      target: AssignmentTarget(unitId: unitId, cellId: cellId),
+      target: AssignmentTarget(
+        unitId: unitId,
+        cellId: cellId,
+        isOpenShelf: isOpenShelf,
+        assignmentId: isOpenShelf ? assignment.id : null,
+      ),
       selectedStepNo: null,
     );
   }
@@ -249,6 +265,18 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final current = state;
     if (current is! DrugAssignmentCellSelected) return;
     state = DrugAssignmentIdle(groups: current.groups, assignments: current.assignments, cabinId: current.cabinId);
+  }
+
+  /// [cellId] avadanlığı bir Açık Raf mı (kabin görselindeki serum yerleşiminden).
+  bool _isOpenShelfCell(int cellId, List<DrawerGroup> groups) {
+    for (final group in groups.where((g) => g.isSerum)) {
+      for (final shelf in group.serumShelves ?? const <SerumShelfLayout>[]) {
+        for (final tray in shelf.trays) {
+          if (tray.id == cellId) return tray.size.isOpenShelf;
+        }
+      }
+    }
+    return false;
   }
 
   /// Avadanlığın (DrawerCell) bulunduğu serum rafının DrawerUnit id'si.
@@ -479,6 +507,21 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     // Serumda yalnızca seçili avadanlığın ataması silinir (raf bazlı silme
     // raftaki diğer avadanlık atamalarını da silerdi).
     final cellId = current.target.cellId;
+    // Açık Raf'ta avadanlık bazlı silme raftaki diğer ilaçları da etkileyebilir
+    // — backend davranışı doğrulanana kadar raf tek ilaçlıysa izin verilir.
+    final othersOnShelf = cellId == null
+        ? const <MedicineAssignment>[]
+        : AssignmentSelection.serumAssignments(
+            cellId,
+            current.assignments,
+          ).where((a) => a.id != current.assignment.id).toList();
+    if (current.target.isOpenShelf && othersOnShelf.isNotEmpty) {
+      state = DrugAssignmentError(
+        message: contextlessL10n().cabinOperation_openShelfDeleteNotSupported,
+        previous: current,
+      );
+      return;
+    }
     final result = cellId != null
         ? await _deleteAssignment.serumTray(cellId)
         : await _deleteAssignment.call(current.assignment.cabinDrawerId ?? 0);
