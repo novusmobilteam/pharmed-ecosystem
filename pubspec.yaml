@@ -8,6 +8,7 @@ environment:
 workspace:
   - apps/pharmed-client
   - apps/pharmed-manager
+  - apps/pharmed-hw-test
   - packages/pharmed_core
   - packages/pharmed_data
   - packages/pharmed_hardware

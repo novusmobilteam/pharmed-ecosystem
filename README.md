@@ -26,11 +26,12 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 | --- | --- | --- | --- |
 | `apps/pharmed-client` | Kiosk uygulaması: ilaç alım, iade, dolum, sayım, boşaltma, imha; kabin donanımı (RS485, RFID), parmak izi, fiş yazıcı, kamera kaydı | Flutter, Riverpod | Kabin yanındaki Windows kiosk |
 | `apps/pharmed-manager` | Yönetim paneli: ilaç/kullanıcı/rol/istasyon tanımları, reçete onayı, raporlar | Flutter, Provider/ChangeNotifier | Windows masaüstü |
+| `apps/pharmed-hw-test` | Saha teknisyenleri için donanım test uygulaması: hat taraması (yönetim kartları a–p), kart taraması (tip/tanım eşleşmesi, kübik göz yoklama), çekmece/kübik/serum açma testi, ham komut konsolu, test raporu. Ayrıntı: [`apps/pharmed-hw-test/README.md`](apps/pharmed-hw-test/README.md) | Flutter, Riverpod | Kabin bilgisayarı (Windows) |
 | `apps/pharmed-log-panel` | Kiosk ve sunucu loglarını izleme paneli: sorun grupları, log gezgini, istek izi, teşhis kartı, sunucu hataları | Vite, React, TypeScript | Tarayıcı (statik dosyalar) |
 | `apps/pharmed-widgetbook` | `pharmed_ui` bileşen kataloğu | Flutter, Widgetbook | Tarayıcı / Windows |
 | `packages/pharmed_core` | Domain: entity'ler, use case'ler, `Result<T>`, `AppException` | Dart | client + manager |
 | `packages/pharmed_data` | Veri katmanı: `APIManager`, remote/local datasource'lar, repository'ler, ağ loglama | Dart, Dio, Hive | client + manager |
-| `packages/pharmed_hardware` | Kabin donanımı servisleri: RS485 seri port, yönetim/çekmece/kübik kart komutları (gerçek + mock). Protokol: [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Flutter, flutter_libserialport | client (+ donanım test uygulaması) |
+| `packages/pharmed_hardware` | Kabin donanımı servisleri: RS485 seri port, yönetim/çekmece/kübik kart komutları (gerçek + mock). Protokol: [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Flutter, flutter_libserialport | client + hw-test |
 | `packages/pharmed_ui` | Tasarım sistemi (`MedColors`, `MedTextStyles`…), ortak widget'lar, l10n (TR/EN/FR), `MedLogger` | Flutter | client + manager |
 | `packages/pharmed_utils` | Ortak yardımcılar | Dart | client + manager |
 
@@ -181,24 +182,24 @@ Yeni bir ayar eklendiğinde bu tabloya da eklenir.
 
 ### Windows Build (`.github/workflows/windows-build.yml`)
 
-client ve/veya manager için Windows build'i alır ve zip olarak yayınlar.
+client, manager ve/veya donanım test uygulaması için Windows build'i alır ve zip olarak yayınlar.
 
 **Ne zaman çalışır**
 
 | Tetikleyici | Ne derlenir | Çıktı nereye gider |
 | --- | --- | --- |
-| Elle: Actions → "Windows Build" → Run workflow | Seçilen dal, uygulama (`client` / `manager` / `both`), flavor (`dev` / `prod` / `mock`) ve client için cihaz (`both` / `pc` / `kabin`) | Çalıştırma sayfasının altındaki **Artifacts** (14 gün saklanır) |
-| Release yayınlanınca (`release: published`) | Release etiketinin kodu, **dev** flavor: client `pc` + client `kabin` + manager | Artifacts + release'e zip olarak eklenir |
+| Elle: Actions → "Windows Build" → Run workflow | Seçilen dal, uygulama (`client` / `manager` / `hw-test` / `both` = client + manager / `all` = üçü), flavor (`dev` / `prod` / `mock`) ve client için cihaz (`both` / `pc` / `kabin`) | Çalıştırma sayfasının altındaki **Artifacts** (14 gün saklanır) |
+| Release yayınlanınca (`release: published`) | Release etiketinin kodu, **dev** flavor: client `pc` + client `kabin` + manager + hw-test | Artifacts + release'e zip olarak eklenir |
 
 Aynı dal ve uygulama için yeni bir çalıştırma başlarsa eskisi iptal edilir.
 
 **Adımlar**
 
-1. `plan` (Ubuntu): seçime göre derlenecek paket listesini üretir (client `pc` / `kabin`, manager).
+1. `plan` (Ubuntu): seçime göre derlenecek paket listesini üretir (client `pc` / `kabin`, manager, hw-test).
 2. `build` (Windows, paket başına paralel):
     1. Flutter 3.38.6 kurulur (cache'li).
     2. Kökte `flutter pub get`, ardından `packages/pharmed_data`'da `build_runner`.
-    3. media_kit'in ANGLE ve libmpv arşivleri, eklentinin kendi `CMakeLists.txt`'inden okunan adres ve MD5 ile önceden indirilip cache'lenir (geçici ağ hatalarında tekrar dener).
+    3. (hw-test hariç) media_kit'in ANGLE ve libmpv arşivleri, eklentinin kendi `CMakeLists.txt`'inden okunan adres ve MD5 ile önceden indirilip cache'lenir (geçici ağ hatalarında tekrar dener).
     4. `flutter build windows --release -t lib/main_<flavor>.dart --dart-define=APP_VERSION=<sürüm>`; client'ta ayrıca `--dart-define=HARDWARE=mock|real`. Sürüm: release'te etiket (ör. `v0.4.1`), elle çalıştırmada `<dal>-<kısa commit>`.
     5. Paket klasöründe VC++ runtime DLL'leri (`vcruntime140.dll`, `vcruntime140_1.dll`, `msvcp140.dll`) var mı kontrol edilir; eksikse build kırılır.
     6. `build/windows/x64/runner/Release/` zip'lenir. Ad: `<uygulama>-<YYYYMMDD-HHMM>-<etiket ya da dal-commit>-<flavor>[-pc|-kabin]-windows.zip` (saat Türkiye saati).
