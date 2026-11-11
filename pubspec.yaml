@@ -10,6 +10,7 @@ workspace:
   - apps/pharmed-manager
   - packages/pharmed_core
   - packages/pharmed_data
+  - packages/pharmed_hardware
   - packages/pharmed_ui
   - packages/pharmed_utils
 

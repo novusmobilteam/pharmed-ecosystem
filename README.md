@@ -30,6 +30,7 @@ Hastane ilaç kabini yönetim sistemi. Kabinlerin yanındaki dokunmatik kiosk uy
 | `apps/pharmed-widgetbook` | `pharmed_ui` bileşen kataloğu | Flutter, Widgetbook | Tarayıcı / Windows |
 | `packages/pharmed_core` | Domain: entity'ler, use case'ler, `Result<T>`, `AppException` | Dart | client + manager |
 | `packages/pharmed_data` | Veri katmanı: `APIManager`, remote/local datasource'lar, repository'ler, ağ loglama | Dart, Dio, Hive | client + manager |
+| `packages/pharmed_hardware` | Kabin donanımı servisleri: RS485 seri port, yönetim/çekmece/kübik kart komutları (gerçek + mock). Protokol: [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Flutter, flutter_libserialport | client (+ donanım test uygulaması) |
 | `packages/pharmed_ui` | Tasarım sistemi (`MedColors`, `MedTextStyles`…), ortak widget'lar, l10n (TR/EN/FR), `MedLogger` | Flutter | client + manager |
 | `packages/pharmed_utils` | Ortak yardımcılar | Dart | client + manager |
 

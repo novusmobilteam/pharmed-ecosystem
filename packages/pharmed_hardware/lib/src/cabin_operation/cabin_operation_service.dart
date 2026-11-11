@@ -19,17 +19,18 @@ import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
-import '../../cache/app_settings_cache.dart';
 
 class CabinOperationService implements ICabinOperationService {
+  /// [readSavedComPort]: hedef port verilmediğinde kullanılacak kayıtlı COM portunu
+  /// döner (client'ta uygulama ayarlarından okunur).
   CabinOperationService({
     required ISerialCommunicationService serialService,
-    required AppSettingsCache appSettingsCache,
+    required Future<String?> Function() readSavedComPort,
   }) : _serialService = serialService,
-       _settingsCache = appSettingsCache;
+       _readSavedComPort = readSavedComPort;
 
   final ISerialCommunicationService _serialService;
-  final AppSettingsCache _settingsCache;
+  final Future<String?> Function() _readSavedComPort;
   ManagementCard? _cachedManager;
   Future<ManagementCard?>? _inFlightScan;
 
@@ -98,7 +99,7 @@ class CabinOperationService implements ICabinOperationService {
 
   /// Asıl tarama mantığı — tek seferde bir tane çalışır.
   Future<ManagementCard?> _doScan(String? targetPort) async {
-    final preferredPort = targetPort ?? await _settingsCache.getComPort();
+    final preferredPort = targetPort ?? await _readSavedComPort();
 
     if (preferredPort == null) {
       MedLogger.error(unit: 'CabinOps', swreq: 'SWREQ-CABIN-OP-003', message: 'COM port bilinmiyor — cache boş');
