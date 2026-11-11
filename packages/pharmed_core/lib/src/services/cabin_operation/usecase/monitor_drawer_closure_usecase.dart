@@ -45,7 +45,11 @@ class MonitorDrawerClosureUseCase {
 
     final ManagementCard manager;
     try {
-      manager = await _scanManager(targetPort: assignment.cabin?.comPort?.name, cabinNo: assignment.cabin?.no);
+      manager = await _scanManager(
+        targetPort: assignment.cabin?.comPort?.name,
+        cabinNo: assignment.cabin?.no,
+        cabinId: assignment.cabin?.id ?? assignment.drawerUnit?.drawerSlot?.cabinId,
+      );
     } on CabinConnectionException catch (e) {
       yield DrawerFailed(
         failure: e.failure == CabinConnectionFailure.managerNotFound

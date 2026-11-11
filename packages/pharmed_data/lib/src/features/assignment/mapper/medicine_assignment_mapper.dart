@@ -15,7 +15,10 @@ class MedicineAssignmentMapper {
       criticalQuantity: dto.criticalQuantity ?? 0.0,
       maxQuantity: dto.maxQuantity ?? 0.0,
       // Cabin, Medicine ve DrawerUnit için ilgili mapper'ları kullanıyoruz
-      cabin: const CabinMapper().toEntityOrNull(dto.cabin),
+      // Serum avadanlık atamaları iç içe `cabin` olmadan, yalnız `cabinId` ile
+      // gelir. Kabin kimliği kaybolursa donanım komutu yanlış kabinin yönetim
+      // kartına gider (#168) — en azından id taşınır, adres sonra çözülür.
+      cabin: const CabinMapper().toEntityOrNull(dto.cabin) ?? (dto.cabinId != null ? Cabin(id: dto.cabinId) : null),
       medicine: dto.medicine != null ? const MedicineMapper().toEntity(dto.medicine!) : null,
       drawerUnit: const DrawerUnitMapper().toEntityOrNull(dto.cabinDrawer),
       // Listelerin dönüşümü

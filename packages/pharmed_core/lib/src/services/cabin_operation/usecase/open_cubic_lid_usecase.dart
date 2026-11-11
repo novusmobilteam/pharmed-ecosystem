@@ -39,7 +39,11 @@ class OpenCubicLidUseCase {
   /// Throws [MasterDrawerException] tekrar denemeler tükendiğinde:
   /// `lidDrawerNotOpen` ("ht") veya `lidOpenFailed` (diğer tüm nedenler).
   Future<void> call({required MedicineAssignment cellAssignment}) async {
-    final manager = await _scanManager(targetPort: cellAssignment.cabin?.comPort?.name, cabinNo: cellAssignment.cabin?.no);
+    final manager = await _scanManager(
+      targetPort: cellAssignment.cabin?.comPort?.name,
+      cabinNo: cellAssignment.cabin?.no,
+      cabinId: cellAssignment.cabin?.id ?? cellAssignment.drawerUnit?.drawerSlot?.cabinId,
+    );
     final address = calculateAddressFromAssignment(cellAssignment);
 
     for (var attempt = 0; ; attempt++) {
