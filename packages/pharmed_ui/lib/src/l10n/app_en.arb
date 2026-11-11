@@ -4881,6 +4881,11 @@
   "cabinDesign_serum_traySizeSmallLabel": "Small",
   "cabinDesign_serum_traySizeMediumLabel": "Medium",
   "cabinDesign_serum_traySizeLargeLabel": "Large",
+  "cabinDesign_serum_traySizeOpenShelfLabel": "Open Shelf",
+  "cabinDesign_serum_shelfTypeLabel": "Shelf Type",
+  "cabinDesign_serum_shelfTypeTraysOption": "Tray Shelf",
+  "cabinDesign_serum_shelfTypeOpenOption": "Open Shelf",
+  "cabinDesign_serum_openShelfInfo": "An open shelf has no trays; several different medicines can be assigned to it. The electromagnetic lock and Take-Give are not used.",
   "cabinDesign_serum_trayListItemLabel": "{index}. Tray • {sizeLabel}",
   "@cabinDesign_serum_trayListItemLabel": {
     "placeholders": { "index": { "type": "int" }, "sizeLabel": { "type": "String" } }

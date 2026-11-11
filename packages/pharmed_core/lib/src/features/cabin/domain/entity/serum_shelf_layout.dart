@@ -50,10 +50,27 @@ class SerumShelfLayout {
   bool get isTakeGiveVerified => isLocked && isTakeGiveEnabled;
 
   bool get isLocked => lockType.isLocked;
+
+  /// Raf avadanlıksız "Açık Raf" mı (tek `openShelf` kaydı). Açık rafta
+  /// avadanlık eklenmez, kilit ve Al-Ver kullanılmaz; birden çok ilaç atanabilir.
+  bool get isOpenShelf => trays.any((t) => t.size.isOpenShelf);
   bool get isPersisted => id != null;
   int get usedArea => trays.fold(0, (sum, t) => sum + t.size.areaSize);
   int get remainingArea => totalArea - usedArea;
-  bool canAdd(SerumTraySize size) => remainingArea >= size.areaSize;
+  bool canAdd(SerumTraySize size) => !isOpenShelf && !size.isOpenShelf && remainingArea >= size.areaSize;
+
+  /// Rafı Açık Raf'a çevirir: avadanlıklar kalkar, tüm rafı kaplayan tek
+  /// kayıt eklenir; kilit ve Al-Ver kapanır. Zaten açık rafsa aynen döner.
+  SerumShelfLayout toOpenShelf() => isOpenShelf
+      ? this
+      : copyWith(
+          lockType: SerumShelfLockType.unlocked,
+          isTakeGiveEnabled: false,
+          trays: const [SerumTray(size: SerumTraySize.openShelf)],
+        );
+
+  /// Açık Raf'ı avadanlıklı (boş) rafa çevirir. Zaten avadanlıklıysa aynen döner.
+  SerumShelfLayout toTrayShelf() => isOpenShelf ? copyWith(trays: const []) : this;
 
   SerumShelfLayout copyWith({SerumShelfLockType? lockType, List<SerumTray>? trays, bool? isTakeGiveEnabled}) =>
       SerumShelfLayout(

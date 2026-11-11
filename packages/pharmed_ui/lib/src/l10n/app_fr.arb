@@ -4330,6 +4330,11 @@
   "cabinDesign_serum_traySizeSmallLabel": "Petit",
   "cabinDesign_serum_traySizeMediumLabel": "Moyen",
   "cabinDesign_serum_traySizeLargeLabel": "Grand",
+  "cabinDesign_serum_traySizeOpenShelfLabel": "Étagère ouverte",
+  "cabinDesign_serum_shelfTypeLabel": "Type d'étagère",
+  "cabinDesign_serum_shelfTypeTraysOption": "Étagère à bacs",
+  "cabinDesign_serum_shelfTypeOpenOption": "Étagère ouverte",
+  "cabinDesign_serum_openShelfInfo": "Une étagère ouverte n'a pas de bacs ; plusieurs médicaments différents peuvent y être affectés. La serrure électromagnétique et Prendre-Donner ne sont pas utilisés.",
   "cabinDesign_serum_trayListItemLabel": "{index}. Plateau • {sizeLabel}",
   "@cabinDesign_serum_trayListItemLabel": {
     "placeholders": { "index": { "type": "int" }, "sizeLabel": { "type": "String" } }

@@ -8070,6 +8070,26 @@
 "@cabinDesign_serum_traySizeLargeLabel": {
   "description": "Tray size label — large (4 area units)"
 },
+"cabinDesign_serum_traySizeOpenShelfLabel": "Açık Raf",
+"@cabinDesign_serum_traySizeOpenShelfLabel": {
+  "description": "Shelf/tray size label for an open shelf (no trays; API ToolSizes.OpenShelf = 4)"
+},
+"cabinDesign_serum_shelfTypeLabel": "Raf Tipi",
+"@cabinDesign_serum_shelfTypeLabel": {
+  "description": "Label above the shelf type selector (tray shelf / open shelf) in the serum shelf configuration card"
+},
+"cabinDesign_serum_shelfTypeTraysOption": "Avadanlıklı Raf",
+"@cabinDesign_serum_shelfTypeTraysOption": {
+  "description": "Shelf type option: shelf holding small/medium/large trays"
+},
+"cabinDesign_serum_shelfTypeOpenOption": "Açık Raf",
+"@cabinDesign_serum_shelfTypeOpenOption": {
+  "description": "Shelf type option: open shelf without trays, several medicines can be assigned"
+},
+"cabinDesign_serum_openShelfInfo": "Açık rafta avadanlık bulunmaz; rafa birden fazla farklı ilaç atanabilir. Elektromanyetik kilit ve Al-Ver kullanılmaz.",
+"@cabinDesign_serum_openShelfInfo": {
+  "description": "Info text in the serum shelf card when the shelf type is open shelf"
+},
 "cabinDesign_serum_trayListItemLabel": "{index}. Avadanlık • {sizeLabel}",
 "@cabinDesign_serum_trayListItemLabel": {
   "description": "List row label representing one tray placed on a shelf",
