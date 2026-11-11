@@ -12289,6 +12289,42 @@ abstract class AppLocalizations {
   /// **'Activate'**
   String get cabinDesign_basicSettings_activateButton;
 
+  /// No description provided for @cabinDesign_basicSettings_editButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get cabinDesign_basicSettings_editButton;
+
+  /// No description provided for @cabinDesign_editCabin_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cabinet'**
+  String get cabinDesign_editCabin_title;
+
+  /// No description provided for @cabinDesign_editCabin_addressLockedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The main cabinet\'s address is always A and cannot be changed.'**
+  String get cabinDesign_editCabin_addressLockedHint;
+
+  /// No description provided for @cabinDesign_editCabin_comPortLockedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional cabinets share the main cabinet\'s line (COM port); it cannot be changed.'**
+  String get cabinDesign_editCabin_comPortLockedHint;
+
+  /// No description provided for @cabinDesign_editCabin_verifyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'If the address, COM port or type changes, the cabinet is scanned on the new connection before saving.'**
+  String get cabinDesign_editCabin_verifyInfo;
+
+  /// No description provided for @cabinDesign_editCabin_pendingChangesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or discard pending changes before editing.'**
+  String get cabinDesign_editCabin_pendingChangesHint;
+
   /// No description provided for @cabinSelection_screenTitle.
   ///
   /// In en, this message translates to:

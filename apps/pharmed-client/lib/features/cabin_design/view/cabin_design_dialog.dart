@@ -109,6 +109,7 @@ class _CabinDesignDialogState extends ConsumerState<CabinDesignDialog> {
                         flex: 6,
                         child: switch (selection) {
                           NewCabinDraft draft => _NewCabinPanel(draft: draft, notifier: notifier),
+                          EditCabinForm form => _EditCabinPanel(form: form, notifier: notifier),
                           // Key: başka kameraya/yeni kameraya geçişte form sıfırdan kurulsun.
                           CameraSelection camera => _CameraFormPanel(
                             key: ValueKey('camera-${camera.cameraId ?? 'new'}'),

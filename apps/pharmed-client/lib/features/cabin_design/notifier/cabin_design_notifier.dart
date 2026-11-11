@@ -176,6 +176,11 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   CameraDevice? cameraForCabin(int? cabinId) =>
       cabinId == null ? null : _cameras.firstWhereOrNull((c) => c.cabinIds.contains(cabinId));
 
+  EditCabinForm? get editCabinForm => switch (_selection) {
+    EditCabinForm f => f,
+    _ => null,
+  };
+
   NewCabinDraft? get newCabinDraft => switch (_selection) {
     NewCabinDraft d => d,
     _ => null,
@@ -236,8 +241,6 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     return _pending.returnValue! ? _pending.returnSlotId : null;
   }
 
-  String? get effectiveComPortLabel => _pending.comPort?.label ?? _cabin?.comPort?.label;
-  String? get effectiveAddressChar => _pending.addressChar ?? _cabin?.no?.toUpperCase();
 
   bool get isSaving => isLoading(_saveOp);
   bool get isRescanning => isLoading(_rescanOp);
@@ -245,7 +248,11 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   bool get isTogglingStatus => isLoading(_toggleStatusOp);
 
   bool get canSave =>
-      _selection is SelectedCabin && _pending.hasAny && !isSaving && !isRescanning && !hasReplacementBlockers;
+      (_selection is SelectedCabin || _selection is EditCabinForm) &&
+      _pending.hasAny &&
+      !isSaving &&
+      !isRescanning &&
+      !hasReplacementBlockers;
 
   /// "Tekrar Tara": bağlantı değişikliği varsa yeni bağlantıyla tarar, yoksa
   /// çekmece değişimi (aynı adreste tip değişimi) arar. Bekleyen yer
@@ -351,7 +358,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     if (target == null) return;
 
     // Form açıkken ve hedef zaten bellekteki kabinse yeniden çekmeye gerek yok.
-    if ((current is NewCabinDraft || current is CameraSelection) && _cabin?.id == cabinId) {
+    if ((current is NewCabinDraft || current is CameraSelection || current is EditCabinForm) && _cabin?.id == cabinId) {
       _selection = SelectedCabin(cabinId);
       notifyListeners();
       return;
@@ -443,13 +450,6 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     notifyListeners();
   }
 
-  void updatePendingName(String? value) {
-    final same = value?.trim() == _cabin?.name?.trim();
-    _pending = _pending.withName(same ? null : value);
-    _clearInlineErrors(notify: false);
-    notifyListeners();
-  }
-
   /// Serum kabininde tek rafın yeni hali (kilit / avadanlık ekle-çıkar).
   /// Sonuç kayıtlı hale eşitse bekleyen değişiklik temizlenir.
   void updateSerumShelf(int slotId, SerumShelfLayout shelf) {
@@ -461,36 +461,6 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     ];
     final same = const ListEquality<SerumShelfLayout>().equals(updated, _serumBaseline(slotId));
     _pending = _pending.withSerumLayout(slotId, same ? null : updated);
-    _clearInlineErrors(notify: false);
-    notifyListeners();
-  }
-
-  /// Sadece master kabin. Port değişince önceki tarama sonucu geçersizdir.
-  void updatePendingComPort(String portLabel) {
-    final cabin = _cabin;
-    if (cabin == null || cabin.type != CabinType.master) return;
-
-    final port = ComPortX.fromLabel(portLabel);
-    // Bağlantı değişince yerleşim yeniden taranacağı için bekleyen sıra da geçersiz.
-    _pending = _pending.withComPort(port == cabin.comPort ? null : port).withScanGroups(null).withSlotOrder(null);
-    _swapSourceSlotId = null;
-    _replacements = const [];
-    _scanFoundNoChange = false;
-    _clearInlineErrors(notify: false);
-    notifyListeners();
-  }
-
-  /// Sadece slave kabin. Adres değişince önceki tarama sonucu geçersizdir.
-  void updatePendingAddressChar(String addressChar) {
-    final cabin = _cabin;
-    if (cabin == null || cabin.type == CabinType.master || isRescanning) return;
-
-    final normalized = addressChar.trim().toUpperCase();
-    final same = normalized == cabin.no?.trim().toUpperCase();
-    _pending = _pending.withAddressChar(same ? null : normalized).withScanGroups(null).withSlotOrder(null);
-    _swapSourceSlotId = null;
-    _replacements = const [];
-    _scanFoundNoChange = false;
     _clearInlineErrors(notify: false);
     notifyListeners();
   }
@@ -631,7 +601,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
 
     return _scanCabin.call(
       portName: portName,
-      cabinType: cabin.type ?? CabinType.cabinet,
+      cabinType: _pending.type ?? cabin.type ?? CabinType.cabinet,
       targetAddressIndex: addressIndex,
     );
   }
@@ -739,6 +709,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
         comPort: pending.comPort ?? cabin.comPort,
         no: pending.addressChar ?? cabin.no,
         name: pending.name ?? cabin.name,
+        type: pending.type ?? cabin.type,
       );
       final update = await _updateCabin.call(candidate);
       if (update.isError) return _failSave(_errorOf(update));
@@ -967,6 +938,118 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   }
 
   // ── Yeni kabin ────────────────────────────────────────────────────────────
+
+  // ── Kabin bilgilerini düzenleme (yeni kabin formuyla aynı ekran) ──────────
+
+  /// Ek kabinler master'ın hattını kullanır — formda salt okunur gösterilir.
+  String? get _masterComPortLabel =>
+      _stationCabins.firstWhereOrNull((c) => c.type == CabinType.master)?.comPort?.label;
+
+  /// Başka bekleyen değişiklik varken form açılmaz: formun kaydı tüm bekleyen
+  /// değişiklikleri birlikte yazacağı için kullanıcı önce onları kaydetmeli/iptal etmeli.
+  bool get canStartEditCabin =>
+      _selection is SelectedCabin && _cabin?.id != null && !_pending.hasAny && !isSaving && !isRescanning;
+
+  bool get editCabinHasChanges {
+    final form = editCabinForm;
+    final cabin = _cabin;
+    if (form == null || cabin == null) return false;
+    return form.name.trim() != (cabin.name ?? '').trim() ||
+        form.type != cabin.type ||
+        (!form.isMaster && form.addressChar != cabin.no?.trim().toUpperCase()) ||
+        (form.isMaster && form.comPortLabel != cabin.comPort?.label);
+  }
+
+  bool get canSaveEditCabin {
+    final form = editCabinForm;
+    return form != null && form.isComplete && editCabinHasChanges && !isSaving && !isRescanning;
+  }
+
+  void startEditCabin() {
+    final cabin = _cabin;
+    if (!canStartEditCabin || cabin == null) return;
+    final isMaster = cabin.type == CabinType.master;
+    _swapSourceSlotId = null;
+    _clearInlineErrors(notify: false);
+    _selection = EditCabinForm(
+      cabinId: cabin.id!,
+      isMaster: isMaster,
+      name: cabin.name ?? '',
+      type: cabin.type,
+      addressChar: isMaster ? 'A' : cabin.no?.trim().toUpperCase(),
+      comPortLabel: isMaster ? cabin.comPort?.label : (_masterComPortLabel ?? cabin.comPort?.label),
+    );
+    notifyListeners();
+  }
+
+  void updateEditCabinName(String? value) => _updateEditForm((f) => f.copyWith(name: value ?? ''));
+
+  /// Yalnız ek kabin; master'ın tipi değişmez.
+  void selectEditCabinType(CabinType type) {
+    if (!CabinType.creatableTypes.contains(type)) return;
+    _updateEditForm((f) => f.isMaster ? f : f.copyWith(type: type));
+  }
+
+  /// Yalnız ek kabin; master'ın adresi her zaman A.
+  void selectEditCabinAddress(String addressChar) =>
+      _updateEditForm((f) => f.isMaster ? f : f.copyWith(addressChar: addressChar.trim().toUpperCase()));
+
+  /// Yalnız master; ek kabinler master'ın hattını kullanır.
+  void selectEditCabinComPort(String portLabel) =>
+      _updateEditForm((f) => f.isMaster ? f.copyWith(comPortLabel: portLabel) : f);
+
+  void _updateEditForm(EditCabinForm Function(EditCabinForm) update) {
+    final form = editCabinForm;
+    if (form == null || isSaving) return;
+    _selection = update(form);
+    _clearInlineErrors(notify: false);
+    notifyListeners();
+  }
+
+  void cancelEditCabin() {
+    final form = editCabinForm;
+    if (form == null || isSaving) return;
+    _selection = SelectedCabin(form.cabinId);
+    notifyListeners();
+  }
+
+  /// Formdaki değişiklikleri bekleyen değişikliklere aktarıp seçili kabinin
+  /// kayıt akışını çalıştırır: adres / port / tip değiştiyse kayıttan önce
+  /// yeni bağlantıda tarama ile doğrulanır. Başarıda kabin yeniden yüklenir ve
+  /// kabin görünümüne dönülür; hatada form açık kalır, hata formda gösterilir.
+  Future<void> saveEditCabin() async {
+    final form = editCabinForm;
+    final cabin = _cabin;
+    if (form == null || cabin == null || !canSaveEditCabin) return;
+
+    final name = form.name.trim();
+    final nameChanged = name != (cabin.name ?? '').trim();
+    final typeChanged = !form.isMaster && form.type != cabin.type;
+    final addressChanged = !form.isMaster && form.addressChar != cabin.no?.trim().toUpperCase();
+    final port = form.isMaster && form.comPortLabel != null ? ComPortX.fromLabel(form.comPortLabel!) : null;
+    final portChanged = port != null && port != cabin.comPort;
+
+    _pending = _pending
+        .withName(nameChanged ? name : null)
+        .withType(typeChanged ? form.type : null)
+        .withAddressChar(addressChanged ? form.addressChar : null)
+        .withComPort(portChanged ? port : null);
+    if (_pending.hasConnectionChange) {
+      // Bağlantı/tip değişince eski tarama sonucu ve bekleyen sıra geçersiz.
+      _pending = _pending.withScanGroups(null).withSlotOrder(null);
+      _replacements = const [];
+      _scanFoundNoChange = false;
+    }
+    notifyListeners();
+
+    final ok = await save();
+    if (!ok) {
+      // Form açık kalır; bekleyen bilgi değişiklikleri geri alınır ki kabin
+      // görünümüne dönülünce kaydedilmemiş bir şey görünmesin.
+      _pending = _pending.withName(null).withType(null).withAddressChar(null).withComPort(null);
+      notifyListeners();
+    }
+  }
 
   void startAddCabin() {
     if (isSaving) return;

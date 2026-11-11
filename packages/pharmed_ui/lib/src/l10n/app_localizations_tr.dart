@@ -6934,6 +6934,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_basicSettings_activateButton => 'Etkinleştir';
 
   @override
+  String get cabinDesign_basicSettings_editButton => 'Düzenle';
+
+  @override
+  String get cabinDesign_editCabin_title => 'Kabini Düzenle';
+
+  @override
+  String get cabinDesign_editCabin_addressLockedHint => 'Ana kabinin adresi her zaman A\'dır, değiştirilemez.';
+
+  @override
+  String get cabinDesign_editCabin_comPortLockedHint => 'Ek kabinler ana kabinle aynı hattı (COM port) kullanır, değiştirilemez.';
+
+  @override
+  String get cabinDesign_editCabin_verifyInfo => 'Adres, COM port ya da tip değişirse kabin kaydetmeden önce yeni bağlantıda taranarak doğrulanır.';
+
+  @override
+  String get cabinDesign_editCabin_pendingChangesHint => 'Düzenlemeden önce bekleyen değişiklikleri kaydedin ya da iptal edin.';
+
+  @override
   String get cabinSelection_screenTitle => 'Kabin Seçin';
 
   @override
