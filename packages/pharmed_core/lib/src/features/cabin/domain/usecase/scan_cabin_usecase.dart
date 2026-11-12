@@ -97,9 +97,10 @@ class ScanCabinUseCase {
       }
 
       // ── 5. Eşleştirme ──────────────────────────────────────────
+      final cards = _classifySerumCard(controlCards, managerAddress: manager.addressIndex);
       final List<DrawerGroup> foundGroups = [];
 
-      for (final card in controlCards) {
+      for (final card in cards) {
         final typeNo = card.databaseTypeId;
         //final bool isSerumHardware = typeNo == 250;
 
@@ -169,6 +170,37 @@ class ScanCabinUseCase {
       return Result.error(CustomException(message: e.toString()));
     }
   }
+
+  /// [#195] A dışındaki adreste satır [DeviceConstants.serumSlaveRow]'daki
+  /// `.250` kabinin KENDİ serum kartıdır, çekmece değildir:
+  ///   • Satır 1–25'te başka kart varsa (B) → normal kabin, serum kartı atılır.
+  ///   • Yoksa (C) → bağımsız serum kabini; tek serum çekmecesi döner, kapak
+  ///     sayısı kabin dizaynında sorulur ([isStandaloneSerum]).
+  /// Master (A) ve kabin tipi seçimi bu kararı etkilemez — kart belirler.
+  List<ControlCard> _classifySerumCard(List<ControlCard> cards, {required int managerAddress}) {
+    if (managerAddress == 1) return cards;
+    final serumCard = cards.where((c) => c.isSerum && c.rowAddress == DeviceConstants.serumSlaveRow).firstOrNull;
+    if (serumCard == null) return cards;
+
+    final others = cards.where((c) => !identical(c, serumCard)).toList();
+    final standalone = others.isEmpty;
+    MedLogger.info(
+      unit: 'SW-UNIT-SCAN',
+      swreq: 'SWREQ-SCAN-002',
+      message: standalone
+          ? 'Bağımsız serum kabini: yalnız serum kartı bulundu, kapak sayısı sorulacak'
+          : 'Serum kartına bağlı kabin: serum kartı çekmece sayılmadı',
+      context: {'adres': managerAddress, 'digerSatirlar': others.map((c) => c.rowAddress).toList()},
+    );
+    return standalone ? cards : others;
+  }
+
+  /// [#195] Tarama sonucu bağımsız serum kabini mi (C)? Kabin dizaynı bu
+  /// durumda kapak sayısını (1–[DeviceConstants.maxSerumLids]) sorar.
+  static bool isStandaloneSerum(List<DrawerGroup> groups) =>
+      groups.length == 1 &&
+      groups.single.isSerum &&
+      int.tryParse(groups.single.slot.address ?? '') == DeviceConstants.serumSlaveRow;
 
   Future<List<DrawerConfig>?> _loadDrawerConfigs() async {
     final fresh = await _cabinRepository.getDrawerConfigs(forceRefresh: true);
