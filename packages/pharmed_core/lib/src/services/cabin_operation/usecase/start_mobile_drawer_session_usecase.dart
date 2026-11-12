@@ -18,6 +18,11 @@ class StartMobileDrawerSessionUseCase {
   final ICabinOperationService _cabinOps;
 
   static const _unit = 'MobileDrawerSession';
+
+  /// Açma komutundan sonra çekmecenin çekilmesi için beklenen en uzun süre.
+  /// Aşılırsa oturum [MobileDrawerFailure.openNotConfirmed] ile biter;
+  /// önceden süresiz bekleniyor, ekran "açılıyor"da kalıyordu.
+  static const openConfirmTimeout = Duration(seconds: 60);
   static const _swreq = 'SWREQ-CABIN-OP-003';
 
   /// Hata olayını loglar ve döner — hatalar önceden yalnız ekranda
@@ -61,6 +66,8 @@ class StartMobileDrawerSessionUseCase {
 
     // 3. Status stream
     bool wasOpened = false;
+    bool sawWaitingPull = false;
+    final openWatch = Stopwatch()..start();
 
     try {
       await for (final status in _cabinOps.streamMobileDrawerStatus(manager: manager, port: drawerPort)) {
@@ -76,15 +83,37 @@ class StartMobileDrawerSessionUseCase {
               yield const DrawerClosed();
               return;
             }
+            // Kilit açıldı (h1) ama çekmece çekilmeden geri kilitlendi.
+            if (sawWaitingPull) {
+              yield _failed(
+                MobileDrawerFailure.openNotConfirmed,
+                detail: 'Çekmece çekilmeden kilit kapandı',
+                port: drawerPort,
+                manager: manager,
+              );
+              return;
+            }
 
           case DrawerPhysicalStatus.timeoutError:
             yield _failed(MobileDrawerFailure.statusTimeout, port: drawerPort, manager: manager);
             return;
 
           case DrawerPhysicalStatus.waitingPull:
+            sawWaitingPull = true;
+
           case DrawerPhysicalStatus.halfOpen:
           case DrawerPhysicalStatus.unknown:
             break;
+        }
+
+        if (!wasOpened && openWatch.elapsed > openConfirmTimeout) {
+          yield _failed(
+            MobileDrawerFailure.openNotConfirmed,
+            detail: 'Çekmece ${openConfirmTimeout.inSeconds} sn içinde açılmadı',
+            port: drawerPort,
+            manager: manager,
+          );
+          return;
         }
       }
 

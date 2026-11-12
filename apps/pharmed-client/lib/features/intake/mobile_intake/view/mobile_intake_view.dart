@@ -59,6 +59,17 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
     }
   }
 
+  /// Çekmece açıkken oluşan hata dialogda kalır (Tekrar Dene). Dolumdaki gibi
+  /// yalnız dialog dışındaki hata snackbar ile gösterilip kapatılır. Önceden
+  /// her hata hemen kapatılıyor, açık çekmecenin oturumu durduruluyordu.
+  void _handleError(BuildContext context, MobileIntakeState state, MobileIntakeNotifier notifier) {
+    if (state is! MobileIntakeError) return;
+    final stage = ref.read(mobileDrawerSessionProvider).stage;
+    if (state.shouldKeepDialog(stage)) return;
+    MessageUtils.showErrorSnackbar(context, state.message);
+    notifier.dismissError();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(mobileIntakeNotifierProvider);
@@ -73,13 +84,15 @@ class _MobileIntakeViewState extends ConsumerState<MobileIntakeView> {
     });
     ref.listen<MobileDrawerSessionState>(mobileDrawerSessionProvider, (_, _) {
       _syncDialog(context);
+      // Dialogda gösterilen hata, çekmece kapanınca dialogla birlikte kapanır;
+      // kullanıcı ekranda takılı kalmasın diye snackbar'a düşürülür.
+      _handleError(context, ref.read(mobileIntakeNotifierProvider), notifier);
     });
 
     // Error/Success snackbar
     ref.listen(mobileIntakeNotifierProvider, (_, next) {
       if (next is MobileIntakeError) {
-        MessageUtils.showErrorSnackbar(context, next.message);
-        notifier.dismissError();
+        _handleError(context, next, notifier);
       } else if (next is MobileIntakeFatalError) {
         MessageUtils.showErrorSnackbar(context, next.failure.message(context));
         notifier.dismissError();

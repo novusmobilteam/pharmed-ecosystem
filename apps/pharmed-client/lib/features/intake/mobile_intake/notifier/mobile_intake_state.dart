@@ -243,7 +243,7 @@ final class MobileIntakeReady extends MobileIntakeState {
   /// Reopen, cancel, drawer fail, complete success akışlarında kullanılır.
   /// Reçete, seçim ve sahne KORUNUR.
   MobileIntakeReady get clearedRfidState =>
-      copyWith(baselineCompleted: false, baselineEpcs: const {}, baselineLostEpcs: const {});
+      copyWith(baselineCompleted: false, baselineEpcs: const {}, baselineLostEpcs: const {}, placedEpcs: const {});
 
   MobileIntakeReady copyWith({
     List<PrescriptionItem>? prescriptionItems,
@@ -496,7 +496,8 @@ extension MobileIntakeStateX on MobileIntakeState {
       MobileIntakeClosedEarly() => true,
       MobileIntakeWaitingClose() => true,
       MobileIntakeSaving() => true,
-      MobileIntakeError() => true,
+      // Hata yalnız çekmece açıkken dialogda gösterilir (Tekrar Dene). Çekmece
+      // açılmadan gelen hata (ör. backend kontrolü) snackbar ile gösterilir.
       _ => readyContext != null && (stage is MobileDrawerOpening || stage is MobileDrawerOpened),
     };
   }
