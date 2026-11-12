@@ -9737,4 +9737,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cabinDesign_serum_lidHasAssignmentsError => 'Cette porte a des affectations de médicaments ; supprimez-les avant de la supprimer.';
+
+  @override
+  String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
+    return 'L\'affectation a été supprimée, mais le service a aussi supprimé les affectations de $count autre(s) médicament(s) de l\'étagère ouverte. Un service de suppression unitaire est nécessaire pour les étagères ouvertes ; veuillez en informer votre administrateur système.';
+  }
 }

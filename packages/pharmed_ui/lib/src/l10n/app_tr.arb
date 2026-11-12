@@ -11728,5 +11728,10 @@
 "cabinDesign_serum_lidHasAssignmentsError": "Bu kapakta ilaç ataması var; silmeden önce atamaları kaldırın.",
 "@cabinDesign_serum_lidHasAssignmentsError": {
   "description": "Error when trying to delete a serum lid that still has medicine assignments"
+},
+"cabinOperation_openShelfDeleteRemovedOthersWarning": "Atama silindi, ancak servis açık raftaki diğer {count} ilacın atamasını da sildi. Açık raf için tekil silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.",
+"@cabinOperation_openShelfDeleteRemovedOthersWarning": {
+  "description": "Warning after deleting one open-shelf assignment when the service also deleted the other medicines' assignments on that shelf",
+  "placeholders": { "count": { "type": "int" } }
 }
 }

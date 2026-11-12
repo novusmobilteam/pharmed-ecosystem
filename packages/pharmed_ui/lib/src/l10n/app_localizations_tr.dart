@@ -9438,4 +9438,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cabinDesign_serum_lidHasAssignmentsError => 'Bu kapakta ilaç ataması var; silmeden önce atamaları kaldırın.';
+
+  @override
+  String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
+    return 'Atama silindi, ancak servis açık raftaki diğer $count ilacın atamasını da sildi. Açık raf için tekil silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.';
+  }
 }

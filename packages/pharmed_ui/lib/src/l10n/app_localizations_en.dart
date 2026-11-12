@@ -9525,4 +9525,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cabinDesign_serum_lidHasAssignmentsError => 'This lid has medicine assignments; remove them before deleting it.';
+
+  @override
+  String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
+    return 'The assignment was deleted, but the service also deleted the assignments of $count other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.';
+  }
 }

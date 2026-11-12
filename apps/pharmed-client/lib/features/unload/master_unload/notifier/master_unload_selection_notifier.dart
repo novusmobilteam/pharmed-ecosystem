@@ -205,8 +205,11 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     // kimliği (assignment.id) bekliyorsa bu, başka bir atamanın silinmesine
     // yol açar — doğrulanmalı.
     final serumCellId = assignment.cabinDrawerDetailId;
+    final othersOnShelf = serumCellId == null
+        ? const <MedicineAssignment>[]
+        : AssignmentSelection.serumAssignments(serumCellId, _assignments).where((a) => a.id != assignment.id).toList();
     final result = serumCellId != null
-        ? await _deleteSerumAssignment(assignment, serumCellId)
+        ? await _deleteSerumAssignment(assignment, serumCellId, othersOnShelf: othersOnShelf)
         : await _deleteAssignment.call(key.$2);
 
     _pendingKeys.remove(key);
@@ -214,6 +217,19 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
       ok: (_) async {
         onSuccess?.call();
         await _fetchAssignments();
+        // [#207] Açık raf: servis yalnız bu atamayı mı sildi?
+        final remaining = _assignments.map((a) => a.id).toSet();
+        final missing = othersOnShelf.where((a) => !remaining.contains(a.id)).length;
+        if (missing > 0) {
+          MedLogger.ruleRejected(
+            unit: 'MasterUnload',
+            swreq: 'SWREQ-CLI-MUNLOAD-002',
+            rule: 'OPEN_SHELF_DELETE_REMOVED_OTHERS',
+            message: 'Açık raf silme diğer ilaçların atamalarını da sildi',
+            context: {'silinenDiger': missing, 'digerIdler': othersOnShelf.map((a) => a.id).toList()},
+          );
+          onFailed?.call(contextlessL10n().cabinOperation_openShelfDeleteRemovedOthersWarning(missing));
+        }
       },
       error: (e) async {
         notifyListeners();
@@ -222,20 +238,17 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     );
   }
 
-  /// Serum ataması avadanlık kimliğiyle silinir. Açık Raf'ta aynı avadanlıkta
-  /// başka ilaç da varsa avadanlık bazlı silme hepsini etkileyebileceği için
-  /// (backend davranışı doğrulanana kadar) reddedilir.
-  Future<Result<void>> _deleteSerumAssignment(MedicineAssignment assignment, int cellId) async {
-    final others = AssignmentSelection.serumAssignments(cellId, _assignments).where((a) => a.id != assignment.id);
-    if (others.isNotEmpty) {
-      return Result.error(
-        BusinessRuleException(
-          message: contextlessL10n().cabinOperation_openShelfDeleteNotSupported,
-          ruleCode: 'OPEN_SHELF_SINGLE_DELETE',
-        ),
-      );
-    }
-    return _deleteAssignment.serumTray(cellId);
+  /// Serum ataması avadanlık kimliğiyle silinir. [#207] Açık Raf'ta aynı
+  /// avadanlıkta başka ilaç da varsa avadanlık bazlı silme hepsini sileceği
+  /// için atama normal göz ataması gibi (göz/raf kimliğiyle) silinir; sonuç
+  /// [deleteAssignment]'ta diğer atamalar kaybolmuş mu diye doğrulanır.
+  Future<Result<void>> _deleteSerumAssignment(
+    MedicineAssignment assignment,
+    int cellId, {
+    required List<MedicineAssignment> othersOnShelf,
+  }) {
+    if (othersOnShelf.isEmpty) return _deleteAssignment.serumTray(cellId);
+    return _deleteAssignment.call(assignment.cabinDrawerId ?? 0);
   }
 
   /// Atamanın ilacını değiştirir (muadil ya da tüm ilaç listesinden).
