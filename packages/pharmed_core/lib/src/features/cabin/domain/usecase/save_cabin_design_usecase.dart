@@ -16,7 +16,14 @@ class SaveCabinDesignUseCase {
     required bool isUpdate,
   }) async {
     // Adres sıralaması
-    final sorted = [...scanResults]..sort((a, b) => (a.address ?? '').compareTo(b.address ?? ''));
+    // Aynı adresteki kayıtlar (bağımsız serum kabininin kapakları, satır 26)
+    // kendi sıralarını korumalı: kapak no = orderNumber = port (#193).
+    // List.sort kararlı değildir — eşit adreste orderNumber'a bakılır.
+    final sorted = [...scanResults]
+      ..sort((a, b) {
+        final byAddress = (a.address ?? '').compareTo(b.address ?? '');
+        return byAddress != 0 ? byAddress : (a.orderNumber ?? 0).compareTo(b.orderNumber ?? 0);
+      });
 
     if (scanResults.isEmpty) {
       return Result.error(ServiceException(message: contextlessL10n().cabinCore_designDataNotFound, statusCode: 404));

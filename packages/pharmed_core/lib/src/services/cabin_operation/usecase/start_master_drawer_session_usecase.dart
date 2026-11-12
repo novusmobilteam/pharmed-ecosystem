@@ -113,7 +113,7 @@ class StartMasterDrawerSessionUseCase {
 
     try {
       if (isSerum) {
-        await _cabinOps.openMasterSerumDrawer(manager: manager, row: address.row);
+        await _cabinOps.openMasterSerumDrawer(manager: manager, row: address.row, port: address.port);
       } else if (isKubik) {
         final monitorAddress = DrawerAddress.cubicMaster(address.row);
         await _cabinOps.openMasterDrawer(
@@ -139,7 +139,7 @@ class StartMasterDrawerSessionUseCase {
 
     final Stream<DrawerPhysicalStatus> sensorStream;
     if (isSerum) {
-      sensorStream = _cabinOps.streamMasterSerumDrawerStatus(manager: manager, row: address.row);
+      sensorStream = _cabinOps.streamMasterSerumDrawerStatus(manager: manager, row: address.row, port: address.port);
     } else if (isKubik) {
       final monitorAddress = DrawerAddress.cubicMaster(address.row);
       sensorStream = _cabinOps.streamMasterDrawerStatus(

@@ -283,32 +283,42 @@ abstract interface class ICabinOperationService {
   ///   Mobil kabin serum kartından farklı olarak bu çekmece
   ///   kontrol kartı üzerinden adreslenir (port=1, drawer=0).
   ///
-  /// DONANIM: Kontrol kartı, port=1, drawer=0 sabit.
+  /// DONANIM: Kontrol kartı, drawer=0 sabit. Master içindeki serum gözü
+  /// port 1'dedir; bağımsız serum kabininde kapak N → port N (#193).
   ///
   /// PROTOKOL:
   ///   1. Satırı seç
-  ///   2. TX: :TO100{chk};  (port=1, drawer=00)
+  ///   2. TX: :TO{port}00{chk};
   ///   RX: 'ok' veya 'h3' içeriyorsa → başarılı
   ///
   /// [row]: Serum çekmecesinin bağlı olduğu satır adresi.
-  Future<void> openMasterSerumDrawer({required ManagementCard manager, required int row});
+  /// [port]: Kapak portu (1–7). Varsayılan [DeviceConstants.masterLockPort].
+  Future<void> openMasterSerumDrawer({
+    required ManagementCard manager,
+    required int row,
+    int port = DeviceConstants.masterLockPort,
+  });
 
   /// Master kabin serum çekmece durumunu izleyen stream.
   ///
   /// AMAÇ: Master kabindeki serum çekmecesinin açık/kapalı
   /// durumunu realtime izlemek.
   ///
-  /// DONANIM: Kontrol kartı, port=1, drawer=0.
+  /// DONANIM: Kontrol kartı, drawer=0; [port] açma ile aynı kapak portu.
   ///
   /// PROTOKOL:
-  ///   Her döngüde satır seç + :TS100{chk}; gönder
+  ///   Her döngüde satır seç + :TS{port}00{chk}; gönder
   ///   RX parse:
   ///     'h3' → [DrawerPhysicalStatus.fullyOpen]
   ///     'h4' → [DrawerPhysicalStatus.locked]
   ///     'h1' → [DrawerPhysicalStatus.waitingPull]
   ///
   /// ⚠️ Stream SONLANMAZ — caller tarafında iptal edilmelidir.
-  Stream<DrawerPhysicalStatus> streamMasterSerumDrawerStatus({required ManagementCard manager, required int row});
+  Stream<DrawerPhysicalStatus> streamMasterSerumDrawerStatus({
+    required ManagementCard manager,
+    required int row,
+    int port = DeviceConstants.masterLockPort,
+  });
 
   // ════════════════════════════════════════════════════════════════
   // GENEL KOMUT GÖNDERİMİ
