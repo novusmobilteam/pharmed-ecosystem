@@ -53,7 +53,8 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
   Future<void> start({required int drawerPort, required int slotId}) async {
     await _sub?.cancel();
     _releaseAuthPauseIfHeld();
-    _releaseSensorPauseIfHeld();
+    // Sensör duraklatması bırakılmaz: aşağıda yeniden alınıyor. Bırak-al art
+    // arda yapılınca resume()'un başlattığı stream pause()'dan sonra açılıyordu.
 
     _lastDrawerPort = drawerPort;
     _lastSlotId = slotId;

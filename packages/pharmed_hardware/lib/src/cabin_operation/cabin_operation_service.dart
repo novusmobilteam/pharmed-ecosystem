@@ -411,7 +411,7 @@ class CabinOperationService implements ICabinOperationService {
       try {
         // Her döngüde slave mod seçimi (RS485 bus durumu değişmiş olabilir).
         // Seçim + durum sorgusu tek işlem: arada sensör okuması seçimi bozmasın.
-        final (isSelected, response) = await _lineTransaction(() async {
+        final (isSelected, response) = await _lineTransaction<(bool, String?)>(() async {
           final selected = await _selectRow(manager.addressIndex, _serumSlaveRow);
           if (!selected) return (false, null);
           return (true, await _serialService.sendAndReceive(statusCommand));

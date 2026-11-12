@@ -73,6 +73,8 @@ class CabinSensorNotifier extends Notifier<CabinSensorState> {
     if (_pauseCount > 0) return;
 
     await _sub?.cancel();
+    // await sırasında pause() gelmiş olabilir — duraklatılmışken stream açma.
+    if (_pauseCount > 0) return;
 
     try {
       _sub = _streamSensors().listen(
