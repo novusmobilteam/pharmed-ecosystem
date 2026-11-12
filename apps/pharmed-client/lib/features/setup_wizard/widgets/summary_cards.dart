@@ -233,7 +233,7 @@ class _MobileCabinPreview extends StatelessWidget {
             decoration: BoxDecoration(color: const Color(0xFFBCCAD8), borderRadius: BorderRadius.circular(3)),
           ),
           const SizedBox(height: 4),
-          for (int i = 0; i < layout.drawerCount.clamp(0, 4); i++) ...[
+          for (int i = 0; i < layout.drawerCount.clamp(0, MobileSlotVisual.totalDrawers); i++) ...[
             Row(
               children: [
                 Expanded(

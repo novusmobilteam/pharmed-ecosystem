@@ -5032,7 +5032,7 @@
   "@wizard_rfidPortFieldLabel": {
     "description": "Field label for the RFID reader's port number"
   },
-  "wizard_drawerCountRangeHint": "1–8 çekmece",
+  "wizard_drawerCountRangeHint": "1–5 çekmece",
   "@wizard_drawerCountRangeHint": {
     "description": "Hint text next to the drawer-count stepper in the setup wizard"
   },

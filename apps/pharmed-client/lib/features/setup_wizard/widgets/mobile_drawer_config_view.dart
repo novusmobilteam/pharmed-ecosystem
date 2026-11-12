@@ -25,7 +25,7 @@ class MobileDrawerConfigView extends ConsumerWidget {
               MedCounter(
                 value: layout.drawerCount,
                 min: 1,
-                max: 8,
+                max: MobileSlotVisual.totalDrawers,
                 onDecrement: () => notifier.updateDrawerCount(layout.drawerCount - 1),
                 onIncrement: () => notifier.updateDrawerCount(layout.drawerCount + 1),
               ),

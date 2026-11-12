@@ -54,12 +54,12 @@ final class MobileSlotVisual extends DrawerSlotVisual {
 
   /// Fiziksel çekmece numarası (1..5) → kontrol kartı port numarası.
   ///
-  /// Yeni kart revizyonunda kablolama bir kaydı: çekmece N artık port N-1'e
-  /// bağlı, çekmece 1 ise port 5'e sarıyor. Donanımda birebir ölçülerek
-  /// doğrulandı (kapanış-bekleme akışıyla, 5 çekmece tek tek test edildi).
+  /// Çekmece N → port N. Kart rev.2'deki kablolama kayması (çekmece N → port
+  /// N-1, çekmece 1 → port 5) kartta düzeltildi; uygulamadaki ters kaydırma
+  /// kaldırıldı. Kaydırma kalırsa 2. çekmece seçilince 1. çekmece açılıyordu.
   ///
-  /// [SWREQ-CLI-CABIN-OP-005] Kart rev.2 çekmece→port haritası.
-  static const Map<int, int> _drawerToPort = {1: 5, 2: 1, 3: 2, 4: 3, 5: 4};
+  /// [SWREQ-CLI-CABIN-OP-005] Mobil kart çekmece→port haritası.
+  static const Map<int, int> _drawerToPort = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5};
 
   /// Verilen [slot]'un fiziksel kontrol kartı portunu döner (1-tabanlı).
   ///

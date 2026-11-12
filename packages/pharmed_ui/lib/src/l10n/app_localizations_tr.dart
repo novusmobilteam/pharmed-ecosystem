@@ -4019,7 +4019,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get wizard_rfidPortFieldLabel => 'RFID Port';
 
   @override
-  String get wizard_drawerCountRangeHint => '1–8 çekmece';
+  String get wizard_drawerCountRangeHint => '1–5 çekmece';
 
   @override
   String get wizard_sameConfigToggleLabel => 'Tüm çekmeceler aynı yapıda';
