@@ -18,4 +18,10 @@ class DeleteMedicineAssignmentUseCase {
   Future<Result<void>> serumTray(int cabinDrawerDetailId) {
     return _repository.deleteSerumTrayAssignment(cabinDrawerDetailId);
   }
+
+  /// [#215] Yalnızca verilen atamayı (kendi kimliğiyle) siler — açık rafta
+  /// birden fazla ilaç varken diğerlerine dokunmadan.
+  Future<Result<void>> byId(int assignmentId) {
+    return _repository.deleteMedicineAssignmentById(assignmentId);
+  }
 }
