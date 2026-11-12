@@ -106,6 +106,9 @@ abstract class IMasterDrawerSession implements Listenable {
 //   • Hiç çekilmeden onaylanırsa açma iptal edilir (c) → 03 → LidClosed.
 //   • 01/02 süre içinde gelmezse LidFailed(trayUnlockFailed); art arda okuma
 //     hatasında LidFailed(traySensorLost) — izleme sürer, okuma gelirse devam.
+//   • [#219] Kilitler NORMALDE SERBESTTİR: kapak açıkken k + o ile enerjilenen
+//     kartlar; kapak/çekmece kapanınca, oturum hata ile bitince, stop/start/
+//     dispose'da x ile serbest bırakılır (_releaseTrayLocks). Saha akışı #217.
 //
 // Sınıf: Class B
 class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession {
@@ -169,6 +172,9 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   StreamSubscription<TrayLockStatus>? _traySub;
   Timer? _trayUnlockTimer;
   SerumTrayAddress? _lastTrayAddress;
+
+  /// [#219] Bu oturumda `k` ile enerjilenen kilit kartları — bitişte `x`.
+  final Set<int> _energizedTrayDevices = {};
   TrayLockStatus? _lastTrayStatus;
 
   /// Bu avadanlık için açık (01/02) en az bir kez görüldü mü (kenar tespiti).
@@ -424,6 +430,8 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     _lastWatchKeypad = watchKeypad;
 
     _setStage(const MasterDrawerOpeningLid());
+    // `k` hata alsa bile gönderilmiş olabilir — bitişte serbest bırakılacaklara ekle.
+    _energizedTrayDevices.add(address.deviceId);
     try {
       // Otomatik tekrar denemeler use case içinde — buraya sadece son hata düşer.
       await _openSerumTrayUseCase(address: address);
@@ -595,6 +603,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
           _cancelLidWatch();
           _cancelTrayWatch();
           _cancelKeypadWatch();
+          unawaited(_releaseTrayLocks(reason: 'drawerClosed'));
           final wasExpected = _stage is MasterDrawerWaitingForClose;
           if (!wasExpected && _lastCloseCompletes) {
             MedLogger.info(
@@ -614,6 +623,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
         case DrawerFailed(:final failure, :final detail):
           _cancelLidWatch();
           _cancelTrayWatch();
+          unawaited(_releaseTrayLocks(reason: 'drawerFailed'));
           _setStage(MasterDrawerFailed(failure: failure as MasterDrawerFailure, detail: detail));
           _sensorSub?.cancel();
           _sensorSub = null;
@@ -631,6 +641,34 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
     await _sensorSub?.cancel();
     _sessionSub = null;
     _sensorSub = null;
+    await _releaseTrayLocks(reason: 'cancel');
+  }
+
+  /// [#219] Bu oturumda enerjilenen kilit kartlarını serbest bırakır (`x`).
+  /// Kilitler normalde serbesttir; yalnız kapak açıkken enerjili kalırlar.
+  /// Hata (ör. avadanlık hâlâ çekili → noo2) akışı durdurmaz, loglanır.
+  Future<void> _releaseTrayLocks({required String reason}) async {
+    if (_energizedTrayDevices.isEmpty) return;
+    final devices = _energizedTrayDevices.toList();
+    _energizedTrayDevices.clear();
+    for (final deviceId in devices) {
+      try {
+        await _trayLock.unlockAll(deviceId: deviceId);
+        MedLogger.info(
+          unit: 'MasterDrawerSession',
+          swreq: 'SWREQ-HW-TRAY-002',
+          message: 'Avadanlık kilitleri serbest bırakıldı',
+          context: {'deviceId': deviceId, 'reason': reason},
+        );
+      } catch (e) {
+        MedLogger.warn(
+          unit: 'MasterDrawerSession',
+          swreq: 'SWREQ-HW-TRAY-002',
+          message: 'Avadanlık kilitleri serbest bırakılamadı',
+          context: {'deviceId': deviceId, 'reason': reason, 'error': e.toString()},
+        );
+      }
+    }
   }
 
   void _onEvent(DrawerSessionEvent event) {
@@ -649,6 +687,9 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
 
     if (event is DrawerOpened) {
       _startPassiveCloseWatch();
+    }
+    if (event is DrawerClosed || event is DrawerFailed) {
+      unawaited(_releaseTrayLocks(reason: event is DrawerClosed ? 'drawerClosed' : 'drawerFailed'));
     }
   }
 
