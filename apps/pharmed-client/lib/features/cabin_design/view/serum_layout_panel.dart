@@ -572,18 +572,33 @@ class _ActionChip extends StatelessWidget {
   }
 }
 
-/// [#199] Bağımsız serum kabini: seçili kapağın adı, kapak sayısı ve
-/// "Kapak Ekle" (en fazla 4). Kapak kaldırma desteklenmiyor.
+/// [#199/#203] Bağımsız serum kabini: seçili kapağın adı, kapak sayısı ve
+/// "Kapağı Sil". Kapak ekleme sol paneldedir. Son kapak silinirse kabin de
+/// silinir — ayrıca onay istenir.
 class _SerumLidsBar extends StatelessWidget {
   const _SerumLidsBar({required this.group, required this.notifier});
 
   final DrawerGroup group;
   final CabinDesignNotifier notifier;
 
+  void _confirmRemove(BuildContext context) {
+    final l10n = context.l10n;
+    final last = notifier.isLastSerumLid;
+    MessageUtils.showConfirmDialog(
+      context: context,
+      action: ConfirmAction.delete,
+      customMessage: last
+          ? l10n.cabinDesign_serum_removeLastLidConfirm(notifier.cabin?.name ?? '—')
+          : l10n.cabinDesign_serum_removeLidConfirm(group.name),
+      confirmButtonText: l10n.common_deleteTooltip,
+      onConfirm: () => notifier.removeSerumLid(group.slot),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final error = notifier.addSerumLidError;
+    final error = notifier.serumLidError;
     return Container(
       padding: MedSpacing.insetMd,
       decoration: BoxDecoration(
@@ -604,14 +619,15 @@ class _SerumLidsBar extends StatelessWidget {
               ),
               const SizedBox(width: MedSpacing.md),
               MedButton(
-                label: l10n.cabinDesign_serum_addLidButton,
-                prefixIcon: Icon(PhosphorIcons.plus()),
-                isLoading: notifier.isAddingSerumLid,
-                onPressed: notifier.canAddSerumLid ? notifier.addSerumLid : null,
+                label: l10n.cabinDesign_serum_removeLidButton,
+                prefixIcon: Icon(PhosphorIcons.trash()),
+                size: MedButtonSize.sm,
+                variant: MedButtonVariant.danger,
+                isLoading: notifier.isRemovingSerumLid,
+                onPressed: notifier.canRemoveSerumLid && group.slot.id != null ? () => _confirmRemove(context) : null,
               ),
             ],
           ),
-          Text(l10n.cabinDesign_serum_lidRemoveHint, style: MedTextStyles.bodySm(color: MedColors.text3)),
           if (error != null) Text(error, style: MedTextStyles.bodySm(color: MedColors.red)),
         ],
       ),

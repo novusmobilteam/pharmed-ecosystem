@@ -39,6 +39,7 @@ export 'domain/usecase/get_serum_slots_usecase.dart';
 export 'domain/usecase/handle_sensor_status_usecase.dart';
 export 'domain/usecase/save_cabin_design_usecase.dart';
 export 'domain/usecase/add_serum_lids_usecase.dart';
+export 'domain/usecase/remove_serum_lid_usecase.dart';
 export 'domain/usecase/save_mobile_cabin_design_usecase.dart';
 export 'domain/usecase/save_serum_layout_usecase.dart';
 export 'domain/usecase/scan_cabin_usecase.dart';

@@ -21,6 +21,17 @@ abstract final class SerumLids {
   /// Gruplardaki kapak sayısı.
   static int countIn(List<DrawerGroup> groups) => groups.where((g) => isLid(g.slot)).length;
 
+  /// Boştaki kapak numaraları (küçükten büyüğe). Ortadaki bir kapak
+  /// silindiyse (#203) kalan kapakların numarası = portu değişmez; yeni kapak
+  /// boşalan en küçük numarayı alır.
+  static List<int> freeLidNumbers(Iterable<DrawerSlot> lids) {
+    final used = lids.map((s) => s.orderNumber).whereType<int>().toSet();
+    return [
+      for (var lid = 1; lid <= DeviceConstants.maxSerumLids; lid++)
+        if (!used.contains(lid)) lid,
+    ];
+  }
+
   /// Taramadan gelen tek serum çekmecesini [lidCount] kapağa çoğaltır.
   /// Her kapak aynı tanımı (DrawerConfig) ve göz şablonunu taşır.
   static List<DrawerGroup> expand(DrawerGroup serum, int lidCount) {

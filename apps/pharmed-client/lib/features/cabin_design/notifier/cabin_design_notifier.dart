@@ -24,6 +24,7 @@ final cabinDesignNotifierProvider = ChangeNotifierProvider.autoDispose<CabinDesi
     createCabin: ref.read(createCabinUseCaseProvider),
     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
     addSerumLids: ref.read(addSerumLidsUseCaseProvider),
+    removeSerumLid: ref.read(removeSerumLidUseCaseProvider),
     getSerumLayout: ref.read(getSerumLayoutUseCaseProvider),
     saveSerumLayout: ref.read(saveSerumLayoutUseCaseProvider),
     updateCabin: ref.read(updateCabinUseCaseProvider),
@@ -43,6 +44,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     required CreateCabinUseCase createCabin,
     required SaveCabinDesignUseCase saveCabinDesign,
     required AddSerumLidsUseCase addSerumLids,
+    required RemoveSerumLidUseCase removeSerumLid,
     required GetSerumLayoutUseCase getSerumLayout,
     required SaveSerumLayoutUseCase saveSerumLayout,
     required UpdateCabinUseCase updateCabin,
@@ -58,6 +60,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
        _createCabin = createCabin,
        _saveCabinDesign = saveCabinDesign,
        _addSerumLids = addSerumLids,
+       _removeSerumLid = removeSerumLid,
        _getSerumLayout = getSerumLayout,
        _saveSerumLayout = saveSerumLayout,
        _updateCabin = updateCabin,
@@ -72,6 +75,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
   final AddSerumLidsUseCase _addSerumLids;
+  final RemoveSerumLidUseCase _removeSerumLid;
   final GetSerumLayoutUseCase _getSerumLayout;
   final SaveSerumLayoutUseCase _saveSerumLayout;
   final UpdateCabinUseCase _updateCabin;
@@ -98,6 +102,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   /// Serum raf yerleşiminin okunması — sadece serum panelinde loading/hata.
   static const _serumLoadOp = OperationKey.custom('cabin-design-serum-load');
   static const _addSerumLidOp = OperationKey.custom('cabin-design-add-serum-lid');
+  static const _removeSerumLidOp = OperationKey.custom('cabin-design-remove-serum-lid');
 
   /// Seçili kabin paneline satır içi gösterilen hatalar.
   static const _inlineErrorOps = [_saveOp, _rescanOp, _toggleStatusOp];
@@ -281,14 +286,22 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   int get serumLidCount => SerumLids.countIn(_groups);
 
   bool get isAddingSerumLid => isLoading(_addSerumLidOp);
-  String? get addSerumLidError => isFailed(_addSerumLidOp) ? message(_addSerumLidOp) : null;
+  bool get isRemovingSerumLid => isLoading(_removeSerumLidOp);
+
+  /// Kapak ekleme/silme hatası (serum panelinde gösterilir).
+  String? get serumLidError => isFailed(_addSerumLidOp)
+      ? message(_addSerumLidOp)
+      : (isFailed(_removeSerumLidOp) ? message(_removeSerumLidOp) : null);
+
+  bool get _serumLidIdle => !_pending.hasAny && !isSaving && !isAddingSerumLid && !isRemovingSerumLid;
 
   bool get canAddSerumLid =>
-      isStandaloneSerumCabin &&
-      serumLidCount < DeviceConstants.maxSerumLids &&
-      !_pending.hasAny &&
-      !isSaving &&
-      !isAddingSerumLid;
+      isStandaloneSerumCabin && serumLidCount < DeviceConstants.maxSerumLids && _serumLidIdle;
+
+  bool get canRemoveSerumLid => isStandaloneSerumCabin && _serumLidIdle;
+
+  /// Silinecek kapak kabinin son kapağı mı (silinirse kabin de silinir)?
+  bool get isLastSerumLid => serumLidCount == 1;
 
   /// Kayıtlı bağımsız serum kabinine bir kapak ekler (POST CabinDesign/bulk).
   /// Kapak kaldırma desteklenmiyor (backend'de silme servisi yok).
@@ -298,6 +311,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     final lids = [for (final g in _groups) if (SerumLids.isLid(g.slot)) g.slot]
       ..sort((a, b) => (a.orderNumber ?? 0).compareTo(b.orderNumber ?? 0));
 
+    clearOperation(_removeSerumLidOp);
     setLoading(_addSerumLidOp);
     final result = await _addSerumLids.call(cabinId: cabin!.id!, lids: lids, newCount: lids.length + 1);
     if (result.isError) {
@@ -307,6 +321,54 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     _markPersisted();
     await _loadCabin(cabin, fullScreen: false);
     setSuccess(_addSerumLidOp);
+  }
+
+  /// [#203] Kapağı siler (DELETE /CabinDesign/delete/{id}). Kapakta ilaç
+  /// ataması varsa reddedilir. Son kapaksa kabin de silinir — UI önce
+  /// [isLastSerumLid] ile ayrıca onay alır.
+  Future<void> removeSerumLid(DrawerSlot lid) async {
+    final cabin = _cabin;
+    if (cabin?.id == null || lid.id == null || !canRemoveSerumLid) return;
+
+    clearOperation(_addSerumLidOp);
+    setLoading(_removeSerumLidOp);
+    final assignments = await _getMedicineAssignments.call(cabin!.id!);
+    if (assignments.isError) {
+      setFailed(_removeSerumLidOp, message: _errorOf(assignments).userMessage);
+      return;
+    }
+    final result = await _removeSerumLid.call(
+      cabin: cabin,
+      lid: lid,
+      lidCount: serumLidCount,
+      assignments: assignments.data!,
+    );
+    final outcome = result.data;
+    if (outcome == null) {
+      setFailed(_removeSerumLidOp, message: _errorOf(result).userMessage);
+      return;
+    }
+    _markPersisted();
+
+    if (outcome == SerumLidRemoval.lidRemoved) {
+      await _loadCabin(cabin, fullScreen: false);
+      setSuccess(_removeSerumLidOp);
+      return;
+    }
+
+    // Kabin de silindi — listeden çıkar, ilk kabine geç.
+    _stationCabins = [for (final c in _stationCabins) if (c.id != cabin.id) c];
+    _cabin = null;
+    _groups = const [];
+    _serumLayouts.clear();
+    setSuccess(_removeSerumLidOp);
+    final next = _stationCabins.firstOrNull;
+    if (next != null) {
+      await _loadCabin(next, fullScreen: true);
+    } else {
+      _selection = null;
+      notifyListeners();
+    }
   }
 
   void selectNewCabinSerumLidCount(int count) => _updateDraft((d) => d.copyWith(serumLidCount: count));

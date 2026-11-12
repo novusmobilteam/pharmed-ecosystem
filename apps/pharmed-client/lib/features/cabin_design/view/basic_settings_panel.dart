@@ -96,11 +96,14 @@ class _CabinInfoSummary extends StatelessWidget {
     final port = isMaster ? cabin.comPort?.label : (masterPort ?? cabin.comPort?.label);
     final canEdit = notifier.canStartEditCabin;
 
-    final editButton = MedButton(
-      label: l10n.cabinDesign_basicSettings_editButton,
-      prefixIcon: Icon(PhosphorIcons.pencilSimple()),
-      size: MedButtonSize.sm,
-      variant: MedButtonVariant.secondary,
+    // [#203] Kart sıkışmasın diye ikon buton; metin tooltip'te.
+    final pendingBlocks = !canEdit && notifier.pending.hasAny;
+    final editButton = MedRectangleIconButton(
+      iconData: PhosphorIcons.pencilSimple(),
+      tooltip: pendingBlocks
+          ? l10n.cabinDesign_editCabin_pendingChangesHint
+          : l10n.cabinDesign_basicSettings_editButton,
+      iconColor: MedColors.blue,
       onPressed: canEdit ? notifier.startEditCabin : null,
     );
 
@@ -128,10 +131,8 @@ class _CabinInfoSummary extends StatelessWidget {
               ],
             ),
           ),
-          if (canEdit || !notifier.pending.hasAny)
-            editButton
-          else
-            Tooltip(message: l10n.cabinDesign_editCabin_pendingChangesHint, child: editButton),
+          const SizedBox(width: MedSpacing.md),
+          editButton,
         ],
       ),
     );

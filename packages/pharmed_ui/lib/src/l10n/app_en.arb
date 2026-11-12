@@ -6807,5 +6807,14 @@
   "@cabinDesign_serum_lidLimitError": {
     "placeholders": { "max": { "type": "int" } }
   },
-  "cabinDesign_serum_lidRemoveHint": "Removing lids isn't supported yet; an added lid is permanent."
+  "cabinDesign_serum_removeLidButton": "Delete Lid",
+  "cabinDesign_serum_removeLidConfirm": "Delete {lidName}? The lid's shelf and tray layout will be deleted too.",
+  "@cabinDesign_serum_removeLidConfirm": {
+    "placeholders": { "lidName": { "type": "String" } }
+  },
+  "cabinDesign_serum_removeLastLidConfirm": "This is the cabinet's last lid. Deleting it will also delete the \"{cabinName}\" cabinet. Do you confirm?",
+  "@cabinDesign_serum_removeLastLidConfirm": {
+    "placeholders": { "cabinName": { "type": "String" } }
+  },
+  "cabinDesign_serum_lidHasAssignmentsError": "This lid has medicine assignments; remove them before deleting it."
 }

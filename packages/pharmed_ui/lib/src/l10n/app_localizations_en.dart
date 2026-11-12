@@ -9511,5 +9511,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_lidRemoveHint => 'Removing lids isn\'t supported yet; an added lid is permanent.';
+  String get cabinDesign_serum_removeLidButton => 'Delete Lid';
+
+  @override
+  String cabinDesign_serum_removeLidConfirm(String lidName) {
+    return 'Delete $lidName? The lid\'s shelf and tray layout will be deleted too.';
+  }
+
+  @override
+  String cabinDesign_serum_removeLastLidConfirm(String cabinName) {
+    return 'This is the cabinet\'s last lid. Deleting it will also delete the "$cabinName" cabinet. Do you confirm?';
+  }
+
+  @override
+  String get cabinDesign_serum_lidHasAssignmentsError => 'This lid has medicine assignments; remove them before deleting it.';
 }
