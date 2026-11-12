@@ -5,7 +5,7 @@ import 'package:pharmed_data/pharmed_data.dart';
 
 import 'providers.dart';
 
-final userRepositoryProvider = Provider<IUserReader>((ref) {
+final Provider<IUserReader> userRepositoryProvider = Provider<IUserReader>((ref) {
   return UserRepositoryImpl(dataSource: ref.read(userRemoteDataSourceProvider), mapper: ref.read(userMapperProvider));
 });
 
