@@ -8,6 +8,7 @@ import '../../core/providers.dart';
 import '../../core/report.dart';
 import '../../widgets/address_picker.dart';
 import '../../widgets/common.dart';
+import 'tray_lock_section.dart';
 
 // Serum kabini (tip 250) kapak keşfi — issue #183.
 //
@@ -409,6 +410,7 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
         _probeSection(idle),
         _openSection(connected, idle),
         _lidTestSection(idle),
+        TrayLockSection(address: _address, row: _row, idle: idle && _lidBusy == null),
       ],
     );
   }
