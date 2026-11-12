@@ -84,6 +84,18 @@ class ScanCabinUseCase {
         return Result.error(CustomException(message: contextlessL10n().cabinCore_noCardsFound));
       }
 
+      // Bir yönetim kartında birden fazla serum (250) kartı beklenmez — genelde
+      // başka bir kabinde açık kalan satır seçiminin işaretidir (#189).
+      final serumRows = controlCards.where((c) => c.isSerum).map((c) => c.rowAddress).toList();
+      if (serumRows.length > 1) {
+        MedLogger.warn(
+          unit: 'SW-UNIT-SCAN',
+          swreq: 'SWREQ-SCAN-002',
+          message: 'Birden fazla serum kartı bulundu — başka kabinde satır seçimi açık kalmış olabilir',
+          context: {'adres': manager.addressIndex, 'satirlar': serumRows},
+        );
+      }
+
       // ── 5. Eşleştirme ──────────────────────────────────────────
       final List<DrawerGroup> foundGroups = [];
 
