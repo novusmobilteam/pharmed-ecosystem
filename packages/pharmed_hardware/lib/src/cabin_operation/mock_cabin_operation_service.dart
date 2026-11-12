@@ -7,7 +7,9 @@
 //
 // SİMÜLASYON DAVRANIŞI:
 //   scanManagementCard        : 500ms sonra adres 1'de kart bulur
-//   discoverControlCards      : 1s sonra 4 kart döner (kübik, 5'li, 3'lü, serum)
+//   discoverControlCards      : 1s sonra 4 kart döner (kübik, 5'li, 3'lü, serum);
+//                               A dışındaki adreste beklenen tip Serum Kabini ise
+//                               yalnız satır 26'da `.250` (bağımsız serum kabini, #201)
 //   getMobileDrawerStatus      : fullyOpen döner, triggerManualClose ile locked
 //   openMobileDrawer          : 500ms gecikme, başarılı
 //   streamMobileDrawerStatus  : 2s fullyOpen → triggerManualClose ile locked
@@ -94,9 +96,16 @@ class MockCabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<List<ControlCard>> discoverControlCards(ManagementCard manager) async {
-    debugPrint('MOCK: Kontrol kartları taranıyor...');
+  Future<List<ControlCard>> discoverControlCards(ManagementCard manager, {CabinType? expectedType}) async {
+    debugPrint('MOCK: Kontrol kartları taranıyor... (adres: ${manager.addressChar}, beklenen tip: $expectedType)');
     await Future.delayed(const Duration(seconds: 1));
+
+    // [#201] Ek serum kabini: sahadaki gibi yalnız serum kartı (satır 26) —
+    // tarama bağımsız serum kabini sonucu döner, kapak sayısı sorulur.
+    if (manager.addressIndex != 1 && expectedType == CabinType.serum) {
+      debugPrint('MOCK: Bağımsız serum kabini — yalnız satır ${DeviceConstants.serumSlaveRow} .250');
+      return [ControlCard(rowAddress: DeviceConstants.serumSlaveRow, rawTypeResponse: '.250,')];
+    }
 
     return [
       ControlCard(rowAddress: 2, rawTypeResponse: '.01,'), // Kübik

@@ -277,7 +277,7 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<List<ControlCard>> discoverControlCards(ManagementCard manager) async {
+  Future<List<ControlCard>> discoverControlCards(ManagementCard manager, {CabinType? expectedType}) async {
     final List<ControlCard> foundCards = [];
     debugPrint('🔍 Kontrol kartları taranıyor (Yönetici: ${manager.addressChar})...');
 

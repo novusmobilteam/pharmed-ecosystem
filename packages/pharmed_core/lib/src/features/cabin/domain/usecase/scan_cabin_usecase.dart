@@ -78,7 +78,7 @@ class ScanCabinUseCase {
       // ── 4. Kontrol Kartları ────────────────────────────────────
       onStatusChanged?.call(ScanStatus.scanningCards);
 
-      final controlCards = await _cabinOperationService.discoverControlCards(manager);
+      final controlCards = await _cabinOperationService.discoverControlCards(manager, expectedType: cabinType);
       if (controlCards.isEmpty) {
         onStatusChanged?.call(ScanStatus.noCardsFound);
         return Result.error(CustomException(message: contextlessL10n().cabinCore_noCardsFound));
