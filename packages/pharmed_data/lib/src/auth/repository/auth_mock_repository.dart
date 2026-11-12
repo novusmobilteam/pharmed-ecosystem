@@ -86,6 +86,11 @@ class AuthMockRepository implements IAuthRepository {
   @override
   Future<String?> getStoredToken() async => null;
 
+  /// Mock token'lar hiç süresi dolmadığı için refresh desteklenmez.
+  @override
+  Future<Result<String>> refreshSession() async =>
+      const Result.error(ServiceException(message: 'Mock flavor: session refresh not supported', statusCode: 501));
+
   /// Mock flavor'da da servis yok gibi davranır (use case zaten buraya gelmeden 501 döner).
   @override
   Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request) async {

@@ -167,4 +167,9 @@ class _BackgroundTokenProvider implements AuthTokenProvider {
 
   @override
   void onUnauthorized() {}
+
+  /// Refresh ana oturumla paylaşılır (single-flight); yalnızca başarısız
+  /// refresh sonrası logout yutulur.
+  @override
+  Future<bool> refreshAccessToken() => _inner.refreshAccessToken();
 }

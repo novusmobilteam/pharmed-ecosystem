@@ -2,13 +2,17 @@
 //
 // [SWREQ-DATA-AUTH-003]
 // Login akışı:
-//   1. AuthRemoteDataSource.login()    → raw token
-//   2. cache.saveToken(token)
+//   1. AuthRemoteDataSource.login()    → access + refresh token
+//   2. cache.saveToken / saveRefreshToken
 //   3. UserDataSource.getCurrentUser() → UserDTO
 //      (token artık Hive'da, interceptor onu okur)
 //   4. AppUser'a map et
 //   5. cache.saveUser(appUser)
 //   6. AuthToken döndür
+//
+// Oturum yenileme [SWREQ-DATA-AUTH-005]:
+//   refreshSession() → cache'teki refresh token ile /Login/session/refresh,
+//   yeni token çifti cache'e + TokenHolder'a yazılır.
 //
 // UserDataSource bağımlılığı constructor'dan inject edilir.
 // Bu çapraz-bağımlılık değil — auth akışının zorunlu ikinci adımı.
@@ -44,11 +48,16 @@ class AuthRepositoryImpl implements IAuthRepository {
   }) async {
     try {
       // 1. Token al
-      final token = await _remote.login(email: email, password: password, macAddress: macAddress, stationId: stationId);
+      final tokens = await _remote.login(
+        email: email,
+        password: password,
+        macAddress: macAddress,
+        stationId: stationId,
+      );
+      final token = tokens.accessToken;
 
       // 2. Token'ı cache'e yaz — interceptor bir sonraki istekte bunu okur
-      await _cache.saveToken(token);
-      _tokenHolder.setToken(token);
+      await _saveTokens(tokens);
 
       // 3. Kullanıcı bilgisini çek
       final userResult = await _user.getCurrentUser();
@@ -98,11 +107,11 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<Result<AuthToken>> loginWithBadge({required String cardData, String? macAddress}) async {
     try {
       // 1. Token al
-      final token = await _remote.loginWithBadge(cardData: cardData, macAddress: macAddress);
+      final tokens = await _remote.loginWithBadge(cardData: cardData, macAddress: macAddress);
+      final token = tokens.accessToken;
 
       // 2. Token'ı cache'e yaz — interceptor bir sonraki istekte bunu okur
-      await _cache.saveToken(token);
-      _tokenHolder.setToken(token);
+      await _saveTokens(tokens);
 
       // 3. Kullanıcı bilgisini çek
       final userResult = await _user.getCurrentUser();
@@ -149,8 +158,8 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request) async {
     print(request.toString());
     try {
-      final token = await _remote.loginWithFingerprint(const FingerprintMapper().toLoginDto(request));
-      return await _completeLogin(token);
+      final tokens = await _remote.loginWithFingerprint(const FingerprintMapper().toLoginDto(request));
+      return await _completeLogin(tokens);
     } on DioException catch (e) {
       return Result.error(ServiceException(message: _parseDioError(e), statusCode: e.response?.statusCode ?? 0));
     } catch (e) {
@@ -159,9 +168,9 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   /// Token alındıktan sonraki ortak adımlar (bkz. dosya başındaki akış 2–6).
-  Future<Result<AuthToken>> _completeLogin(String token) async {
-    await _cache.saveToken(token);
-    _tokenHolder.setToken(token);
+  Future<Result<AuthToken>> _completeLogin(AuthSessionTokens tokens) async {
+    final token = tokens.accessToken;
+    await _saveTokens(tokens);
 
     final userResult = await _user.getCurrentUser();
     if (userResult.isError) {
@@ -191,6 +200,62 @@ class AuthRepositoryImpl implements IAuthRepository {
     await _cache.saveUser(appUser);
     return Result.ok(AuthToken(accessToken: token, user: appUser));
   }
+
+  /// Access + refresh token'ı cache'e ve TokenHolder'a yazar.
+  /// Login yanıtında refresh token yoksa eskisi silinir (başka kullanıcıya ait olabilir).
+  Future<void> _saveTokens(AuthSessionTokens tokens) async {
+    await _cache.saveToken(tokens.accessToken);
+    await _cache.saveRefreshToken(tokens.refreshToken);
+    _tokenHolder.setToken(tokens.accessToken);
+  }
+
+  @override
+  Future<Result<String>> refreshSession() async {
+    try {
+      final refreshToken = await _cache.readRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        MedLogger.warn(unit: _unit, swreq: _swreqRefresh, message: 'Oturum yenilenemedi: saklı refresh token yok');
+        return const Result.error(ServiceException(message: 'No refresh token stored', statusCode: 401));
+      }
+
+      final tokens = await _remote.refreshSession(refreshToken: refreshToken);
+
+      // İstek sürerken logout olduysa (cache temizlendi / başka kullanıcı girdi)
+      // yeni token'ı YAZMA — kapanmış oturumu geri diriltme.
+      final current = await _cache.readRefreshToken();
+      if (current != refreshToken) {
+        MedLogger.warn(
+          unit: _unit,
+          swreq: _swreqRefresh,
+          message: 'Oturum yenileme sonucu atıldı: oturum bu sırada değişti',
+        );
+        return const Result.error(ServiceException(message: 'Session changed during refresh', statusCode: 401));
+      }
+
+      await _cache.saveToken(tokens.accessToken);
+      // Sunucu yeni refresh token dönmezse mevcut olan geçerli kalır.
+      if (tokens.refreshToken != null) await _cache.saveRefreshToken(tokens.refreshToken);
+      _tokenHolder.setToken(tokens.accessToken);
+
+      MedLogger.info(unit: _unit, swreq: _swreqRefresh, message: 'Oturum yenilendi (access token)');
+      return Result.ok(tokens.accessToken);
+    } on DioException catch (e) {
+      final status = e.response?.statusCode ?? 0;
+      MedLogger.warn(
+        unit: _unit,
+        swreq: _swreqRefresh,
+        message: 'Oturum yenileme isteği başarısız',
+        context: {'statusCode': status, 'error': _parseDioError(e)},
+      );
+      return Result.error(ServiceException(message: _parseDioError(e), statusCode: status));
+    } catch (e, st) {
+      MedLogger.error(unit: _unit, swreq: _swreqRefresh, message: 'Oturum yenileme hatası', error: e, stackTrace: st);
+      return Result.error(ServiceException(message: e.toString(), statusCode: 0));
+    }
+  }
+
+  static const _unit = 'SW-UNIT-DATA';
+  static const _swreqRefresh = 'SWREQ-DATA-AUTH-005';
 
   @override
   Future<Result<void>> logout() async {

@@ -67,3 +67,8 @@ final loginWithFingerprintUseCaseProvider = Provider<LoginWithFingerprintUseCase
 final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
   return LogoutUseCase(ref.read(authRepositoryProvider));
 });
+
+/// [SWREQ-CORE-AUTH-005] TokenHolder'ın refresh handler'ı (network_providers).
+final refreshSessionUseCaseProvider = Provider<RefreshSessionUseCase>((ref) {
+  return RefreshSessionUseCase(ref.read(authRepositoryProvider));
+});
