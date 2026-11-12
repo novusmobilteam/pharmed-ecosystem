@@ -12418,7 +12418,7 @@ abstract class AppLocalizations {
   /// No description provided for @cabinOperation_openShelfDeleteNotSupported.
   ///
   /// In en, this message translates to:
-  /// **'This open shelf holds other medicines too; a single medicine's assignment cannot be deleted for now.'**
+  /// **'This open shelf holds other medicines too; a single medicine\'s assignment cannot be deleted for now.'**
   String get cabinOperation_openShelfDeleteNotSupported;
 
   /// No description provided for @assignment_idle_kicker.

@@ -6816,7 +6816,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_serum_shelfTypeOpenOption => 'Open Shelf';
 
   @override
-  String get cabinDesign_serum_openShelfInfo => 'An open shelf has no trays; several different medicines can be assigned to it. The electromagnetic lock and Take-Give are not used.';
+  String get cabinDesign_serum_openShelfInfo =>
+      'An open shelf has no trays; several different medicines can be assigned to it. The electromagnetic lock and Take-Give are not used.';
 
   @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
@@ -7011,16 +7012,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cabinDesign_editCabin_title => 'Edit Cabinet';
 
   @override
-  String get cabinDesign_editCabin_addressLockedHint => 'The main cabinet\'s address is always A and cannot be changed.';
+  String get cabinDesign_editCabin_addressLockedHint =>
+      'The main cabinet\'s address is always A and cannot be changed.';
 
   @override
-  String get cabinDesign_editCabin_comPortLockedHint => 'Additional cabinets share the main cabinet\'s line (COM port); it cannot be changed.';
+  String get cabinDesign_editCabin_comPortLockedHint =>
+      'Additional cabinets share the main cabinet\'s line (COM port); it cannot be changed.';
 
   @override
-  String get cabinDesign_editCabin_verifyInfo => 'If the address, COM port or type changes, the cabinet is scanned on the new connection before saving.';
+  String get cabinDesign_editCabin_verifyInfo =>
+      'If the address, COM port or type changes, the cabinet is scanned on the new connection before saving.';
 
   @override
-  String get cabinDesign_editCabin_pendingChangesHint => 'Save or discard pending changes before editing.';
+  String get cabinDesign_editCabin_pendingChangesHint =>
+      'Save or discard pending changes before editing.';
 
   @override
   String get cabinSelection_screenTitle => 'Select Cabinet';
@@ -7053,13 +7058,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cabinOperation_openShelfEmpty => 'No medicine has been assigned to this shelf yet.';
+  String get cabinOperation_openShelfEmpty =>
+      'No medicine has been assigned to this shelf yet.';
 
   @override
   String get cabinOperation_openShelfAddMedicine => 'Add Medicine';
 
   @override
-  String get cabinOperation_openShelfDeleteNotSupported => 'This open shelf holds other medicines too; a single medicine\'s assignment cannot be deleted for now.';
+  String get cabinOperation_openShelfDeleteNotSupported =>
+      'This open shelf holds other medicines too; a single medicine\'s assignment cannot be deleted for now.';
 
   @override
   String get assignment_idle_kicker => 'CABINET CONFIGURATION';
@@ -7385,16 +7392,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unscannedBarcodes_detail_orderTimeLabel => 'Order Time';
 
   @override
-  String get unscannedBarcodes_detail_prescribedQuantityLabel => 'Prescribed Quantity';
+  String get unscannedBarcodes_detail_prescribedQuantityLabel =>
+      'Prescribed Quantity';
 
   @override
-  String get unscannedBarcodes_detail_appliedQuantityLabel => 'Applied Quantity';
+  String get unscannedBarcodes_detail_appliedQuantityLabel =>
+      'Applied Quantity';
 
   @override
-  String get unscannedBarcodes_detail_applicationDateLabel => 'Application Date';
+  String get unscannedBarcodes_detail_applicationDateLabel =>
+      'Application Date';
 
   @override
-  String get unscannedBarcodes_detail_deleteDescriptionLabel => 'Deletion Reason';
+  String get unscannedBarcodes_detail_deleteDescriptionLabel =>
+      'Deletion Reason';
 
   @override
   String get unscannedBarcodes_detail_orderDescriptionLabel => 'Order Note';

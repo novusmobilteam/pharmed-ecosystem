@@ -6760,7 +6760,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_serum_shelfTypeOpenOption => 'Açık Raf';
 
   @override
-  String get cabinDesign_serum_openShelfInfo => 'Açık rafta avadanlık bulunmaz; rafa birden fazla farklı ilaç atanabilir. Elektromanyetik kilit ve Al-Ver kullanılmaz.';
+  String get cabinDesign_serum_openShelfInfo =>
+      'Açık rafta avadanlık bulunmaz; rafa birden fazla farklı ilaç atanabilir. Elektromanyetik kilit ve Al-Ver kullanılmaz.';
 
   @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
@@ -6955,16 +6956,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinDesign_editCabin_title => 'Kabini Düzenle';
 
   @override
-  String get cabinDesign_editCabin_addressLockedHint => 'Ana kabinin adresi her zaman A\'dır, değiştirilemez.';
+  String get cabinDesign_editCabin_addressLockedHint =>
+      'Ana kabinin adresi her zaman A\'dır, değiştirilemez.';
 
   @override
-  String get cabinDesign_editCabin_comPortLockedHint => 'Ek kabinler ana kabinle aynı hattı (COM port) kullanır, değiştirilemez.';
+  String get cabinDesign_editCabin_comPortLockedHint =>
+      'Ek kabinler ana kabinle aynı hattı (COM port) kullanır, değiştirilemez.';
 
   @override
-  String get cabinDesign_editCabin_verifyInfo => 'Adres, COM port ya da tip değişirse kabin kaydetmeden önce yeni bağlantıda taranarak doğrulanır.';
+  String get cabinDesign_editCabin_verifyInfo =>
+      'Adres, COM port ya da tip değişirse kabin kaydetmeden önce yeni bağlantıda taranarak doğrulanır.';
 
   @override
-  String get cabinDesign_editCabin_pendingChangesHint => 'Düzenlemeden önce bekleyen değişiklikleri kaydedin ya da iptal edin.';
+  String get cabinDesign_editCabin_pendingChangesHint =>
+      'Düzenlemeden önce bekleyen değişiklikleri kaydedin ya da iptal edin.';
 
   @override
   String get cabinSelection_screenTitle => 'Kabin Seçin';
@@ -7003,7 +7008,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinOperation_openShelfAddMedicine => 'İlaç Ekle';
 
   @override
-  String get cabinOperation_openShelfDeleteNotSupported => 'Bu açık rafta başka ilaçlar da var; tek bir ilacın ataması şu an silinemiyor.';
+  String get cabinOperation_openShelfDeleteNotSupported =>
+      'Bu açık rafta başka ilaçlar da var; tek bir ilacın ataması şu an silinemiyor.';
 
   @override
   String get assignment_idle_kicker => 'KABİN YAPILANDIRMA';
@@ -7326,19 +7332,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unscannedBarcodes_detail_orderTimeLabel => 'Order Saati';
 
   @override
-  String get unscannedBarcodes_detail_prescribedQuantityLabel => 'Order Edilen Miktar';
+  String get unscannedBarcodes_detail_prescribedQuantityLabel =>
+      'Order Edilen Miktar';
 
   @override
-  String get unscannedBarcodes_detail_appliedQuantityLabel => 'Uygulanan Miktar';
+  String get unscannedBarcodes_detail_appliedQuantityLabel =>
+      'Uygulanan Miktar';
 
   @override
   String get unscannedBarcodes_detail_applicationDateLabel => 'Uygulama Tarihi';
 
   @override
-  String get unscannedBarcodes_detail_deleteDescriptionLabel => 'Silme Açıklaması';
+  String get unscannedBarcodes_detail_deleteDescriptionLabel =>
+      'Silme Açıklaması';
 
   @override
-  String get unscannedBarcodes_detail_orderDescriptionLabel => 'Order Açıklaması';
+  String get unscannedBarcodes_detail_orderDescriptionLabel =>
+      'Order Açıklaması';
 
   @override
   String dashboard_expiringAlertTooltip(int count) {

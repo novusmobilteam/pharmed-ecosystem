@@ -6979,7 +6979,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_serum_shelfTypeOpenOption => 'Étagère ouverte';
 
   @override
-  String get cabinDesign_serum_openShelfInfo => 'Une étagère ouverte n\'a pas de bacs ; plusieurs médicaments différents peuvent y être affectés. La serrure électromagnétique et Prendre-Donner ne sont pas utilisés.';
+  String get cabinDesign_serum_openShelfInfo =>
+      'Une étagère ouverte n\'a pas de bacs ; plusieurs médicaments différents peuvent y être affectés. La serrure électromagnétique et Prendre-Donner ne sont pas utilisés.';
 
   @override
   String cabinDesign_serum_trayListItemLabel(int index, String sizeLabel) {
@@ -7178,16 +7179,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cabinDesign_editCabin_title => 'Modifier l\'Armoire';
 
   @override
-  String get cabinDesign_editCabin_addressLockedHint => 'L\'adresse de l\'armoire principale est toujours A et ne peut pas être modifiée.';
+  String get cabinDesign_editCabin_addressLockedHint =>
+      'L\'adresse de l\'armoire principale est toujours A et ne peut pas être modifiée.';
 
   @override
-  String get cabinDesign_editCabin_comPortLockedHint => 'Les armoires supplémentaires partagent la ligne (port COM) de l\'armoire principale ; il ne peut pas être modifié.';
+  String get cabinDesign_editCabin_comPortLockedHint =>
+      'Les armoires supplémentaires partagent la ligne (port COM) de l\'armoire principale ; il ne peut pas être modifié.';
 
   @override
-  String get cabinDesign_editCabin_verifyInfo => 'Si l\'adresse, le port COM ou le type change, l\'armoire est analysée sur la nouvelle connexion avant l\'enregistrement.';
+  String get cabinDesign_editCabin_verifyInfo =>
+      'Si l\'adresse, le port COM ou le type change, l\'armoire est analysée sur la nouvelle connexion avant l\'enregistrement.';
 
   @override
-  String get cabinDesign_editCabin_pendingChangesHint => 'Enregistrez ou annulez les modifications en attente avant de modifier.';
+  String get cabinDesign_editCabin_pendingChangesHint =>
+      'Enregistrez ou annulez les modifications en attente avant de modifier.';
 
   @override
   String get cabinSelection_screenTitle => 'Sélectionner une Armoire';
@@ -7220,13 +7225,15 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get cabinOperation_openShelfEmpty => 'Aucun médicament n\'est encore affecté à cette étagère.';
+  String get cabinOperation_openShelfEmpty =>
+      'Aucun médicament n\'est encore affecté à cette étagère.';
 
   @override
   String get cabinOperation_openShelfAddMedicine => 'Ajouter un médicament';
 
   @override
-  String get cabinOperation_openShelfDeleteNotSupported => 'Cette étagère ouverte contient d\'autres médicaments ; l\'affectation d\'un seul médicament ne peut pas être supprimée pour le moment.';
+  String get cabinOperation_openShelfDeleteNotSupported =>
+      'Cette étagère ouverte contient d\'autres médicaments ; l\'affectation d\'un seul médicament ne peut pas être supprimée pour le moment.';
 
   @override
   String get assignment_idle_kicker => 'CONFIGURATION DE L\'ARMOIRE';
@@ -7556,19 +7563,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unscannedBarcodes_detail_orderTimeLabel => 'Heure de l\'ordre';
 
   @override
-  String get unscannedBarcodes_detail_prescribedQuantityLabel => 'Quantité prescrite';
+  String get unscannedBarcodes_detail_prescribedQuantityLabel =>
+      'Quantité prescrite';
 
   @override
-  String get unscannedBarcodes_detail_appliedQuantityLabel => 'Quantité administrée';
+  String get unscannedBarcodes_detail_appliedQuantityLabel =>
+      'Quantité administrée';
 
   @override
-  String get unscannedBarcodes_detail_applicationDateLabel => 'Date d\'administration';
+  String get unscannedBarcodes_detail_applicationDateLabel =>
+      'Date d\'administration';
 
   @override
-  String get unscannedBarcodes_detail_deleteDescriptionLabel => 'Motif de suppression';
+  String get unscannedBarcodes_detail_deleteDescriptionLabel =>
+      'Motif de suppression';
 
   @override
-  String get unscannedBarcodes_detail_orderDescriptionLabel => 'Note de l\'ordre';
+  String get unscannedBarcodes_detail_orderDescriptionLabel =>
+      'Note de l\'ordre';
 
   @override
   String dashboard_expiringAlertTooltip(int count) {
