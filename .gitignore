@@ -13,3 +13,5 @@ melos_bootstrap.sh
 # FVM Version Cache
 .fvm/
 builds
+.DS_Store
+apps/pharmed-log-panel/tsconfig.tsbuildinfo
