@@ -325,6 +325,14 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       return;
     }
 
+    // Kontrol geçti → dialog dolumdaki gibi HEMEN açılır ("Çekmece açılıyor").
+    // Önceden CheckInProgress'te kalıyor, dialog ancak çekmece çekilip RFID
+    // bağlandıktan sonra açılıyordu; çekmece çekilmezse hiç açılmıyordu.
+    // Önceki işlemden kalan RFID kümeleri burada sıfırlanır.
+    _resetExpectedMap();
+    _closedDuringSaving = false;
+    state = MobileIntakeDrawerOpening(ready: current.clearedRfidState);
+
     await _drawer.open(slots: current.slots, slot: current.selectedSlot);
   }
 
@@ -592,6 +600,7 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
       final cleaned = switch (current) {
         MobileIntakeReady r => r.clearedRfidState.copyWith(selectedItemIds: const {}),
         MobileIntakeCheckInProgress(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
+        MobileIntakeDrawerOpening(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
         MobileIntakeSaving(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
         MobileIntakeWaitingClose(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
         MobileIntakeClosedEarly(:final ready) => ready.clearedRfidState.copyWith(selectedItemIds: const {}),
@@ -690,8 +699,10 @@ class MobileIntakeNotifier extends Notifier<MobileIntakeState> {
     _resetExpectedMap();
 
     // previousState'ten gerçek Ready'yi çıkar — wrapper/NoPatient olabilir.
+    // RFID kümeleri temizlenir: eski baseline/alınanlar aynı hastanın bir
+    // sonraki alımına taşınıp "Tamamla"yı erken açıyordu.
     final ready = current.readyContext;
-    state = ready ?? previous;
+    state = ready?.clearedRfidState ?? previous;
   }
 
   Future<void> dismissSuccess() async {

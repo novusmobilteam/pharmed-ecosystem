@@ -907,6 +907,8 @@ class CabinOperationService implements ICabinOperationService {
     if (response.contains('h3')) return DrawerPhysicalStatus.fullyOpen;
     if (response.contains('h4')) return DrawerPhysicalStatus.locked;
     if (response.contains('h0')) return DrawerPhysicalStatus.locked;
+    // Kilit açık, çekmece henüz çekilmedi. Kullanım: çekilmeden geri kilitlenme tespiti.
+    if (response.contains('h1')) return DrawerPhysicalStatus.waitingPull;
     return DrawerPhysicalStatus.unknown;
   }
 
