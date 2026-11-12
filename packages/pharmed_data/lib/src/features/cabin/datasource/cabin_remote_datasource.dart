@@ -103,11 +103,11 @@ class CabinRemoteDataSource extends BaseRemoteDataSource {
     return postBulkRequest(path: '/CabinDesign/bulk', body: dtos.map((d) => d.toJson()).toList(), parser: null);
   }
 
-  /// [#203] Tek bir çekmece kaydını (DrawerSlot / CabinDesign) siler —
+  /// [#203/#205] Tek bir çekmece kaydını (DrawerSlot / CabinDesign) siler —
   /// bağımsız serum kabininde kapak silme.
   Future<Result<void>> deleteDrawerSlot(int id) {
     return deleteRequest<void>(
-      path: '/CabinDesign/delete/$id',
+      path: '/CabinDesign/$id',
       parser: BaseRemoteDataSource.voidParser(),
       successLog: 'Çekmece kaydı silindi',
     );

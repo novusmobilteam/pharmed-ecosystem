@@ -323,7 +323,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     setSuccess(_addSerumLidOp);
   }
 
-  /// [#203] Kapağı siler (DELETE /CabinDesign/delete/{id}). Kapakta ilaç
+  /// [#203] Kapağı siler (DELETE /CabinDesign/{id}). Kapakta ilaç
   /// ataması varsa reddedilir. Son kapaksa kabin de silinir — UI önce
   /// [isLastSerumLid] ile ayrıca onay alır.
   Future<void> removeSerumLid(DrawerSlot lid) async {
