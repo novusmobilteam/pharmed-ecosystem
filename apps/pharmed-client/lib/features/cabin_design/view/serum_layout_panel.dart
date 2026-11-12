@@ -67,6 +67,10 @@ class _SerumManualLayoutPanel extends StatelessWidget {
                 ],
               ),
             ),
+            if (notifier.isStandaloneSerumCabin) ...[
+              const SizedBox(height: MedSpacing.md),
+              _SerumLidsBar(group: group, notifier: notifier),
+            ],
             if (errorText != null) ...[
               const SizedBox(height: MedSpacing.md),
               Row(
@@ -563,6 +567,53 @@ class _ActionChip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// [#199] Bağımsız serum kabini: seçili kapağın adı, kapak sayısı ve
+/// "Kapak Ekle" (en fazla 4). Kapak kaldırma desteklenmiyor.
+class _SerumLidsBar extends StatelessWidget {
+  const _SerumLidsBar({required this.group, required this.notifier});
+
+  final DrawerGroup group;
+  final CabinDesignNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final error = notifier.addSerumLidError;
+    return Container(
+      padding: MedSpacing.insetMd,
+      decoration: BoxDecoration(
+        color: MedColors.surface,
+        border: Border.all(color: MedColors.border),
+        borderRadius: MedRadius.mdAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: MedSpacing.sm,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(group.name, style: MedTextStyles.titleSm())),
+              Text(
+                '${l10n.cabinDesign_serum_lidCountLabel}: ${notifier.serumLidCount}/${DeviceConstants.maxSerumLids}',
+                style: MedTextStyles.bodySm(color: MedColors.text2),
+              ),
+              const SizedBox(width: MedSpacing.md),
+              MedButton(
+                label: l10n.cabinDesign_serum_addLidButton,
+                prefixIcon: Icon(PhosphorIcons.plus()),
+                isLoading: notifier.isAddingSerumLid,
+                onPressed: notifier.canAddSerumLid ? notifier.addSerumLid : null,
+              ),
+            ],
+          ),
+          Text(l10n.cabinDesign_serum_lidRemoveHint, style: MedTextStyles.bodySm(color: MedColors.text3)),
+          if (error != null) Text(error, style: MedTextStyles.bodySm(color: MedColors.red)),
+        ],
       ),
     );
   }

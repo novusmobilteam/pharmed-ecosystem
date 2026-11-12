@@ -164,6 +164,11 @@ final saveMobileCabinDesignUseCaseProvider = Provider((ref) {
   );
 });
 
+/// [#199] Bağımsız serum kabinine kapak ekleme.
+final addSerumLidsUseCaseProvider = Provider<AddSerumLidsUseCase>((ref) {
+  return AddSerumLidsUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
 final getSerumLayoutUseCaseProvider = Provider((ref) {
   return GetSerumLayoutUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
 });

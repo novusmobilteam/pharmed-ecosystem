@@ -9702,4 +9702,26 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get refillList_print_currentColumn => 'Actuel';
+
+  @override
+  String get cabinDesign_serum_lidCountLabel => 'Nombre de portes';
+
+  @override
+  String get cabinDesign_serum_lidCountHint => 'Il s\'agit d\'une armoire à sérum autonome. Le nombre de portes ne peut pas être lu depuis la carte ; sélectionnez le nombre de portes de l\'armoire et poursuivez l\'enregistrement.';
+
+  @override
+  String cabinDesign_serum_lidLabel(int lidNo) {
+    return 'Porte sérum $lidNo';
+  }
+
+  @override
+  String get cabinDesign_serum_addLidButton => 'Ajouter une porte';
+
+  @override
+  String cabinDesign_serum_lidLimitError(int max) {
+    return 'Une armoire à sérum peut avoir au maximum $max portes.';
+  }
+
+  @override
+  String get cabinDesign_serum_lidRemoveHint => 'La suppression de portes n\'est pas encore prise en charge ; une porte ajoutée est définitive.';
 }

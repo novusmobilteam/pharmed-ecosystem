@@ -6795,5 +6795,17 @@
   "refillList_print_noDetails": "This list has no medicines to print",
   "refillList_print_stationLabel": "Station",
   "refillList_print_fillingColumn": "Refill",
-  "refillList_print_currentColumn": "Current"
+  "refillList_print_currentColumn": "Current",
+  "cabinDesign_serum_lidCountLabel": "Number of lids",
+  "cabinDesign_serum_lidCountHint": "This is a standalone serum cabinet. The number of lids can't be read from the card; select how many lids the cabinet has and continue saving.",
+  "cabinDesign_serum_lidLabel": "Serum Lid {lidNo}",
+  "@cabinDesign_serum_lidLabel": {
+    "placeholders": { "lidNo": { "type": "int" } }
+  },
+  "cabinDesign_serum_addLidButton": "Add Lid",
+  "cabinDesign_serum_lidLimitError": "A serum cabinet can have at most {max} lids.",
+  "@cabinDesign_serum_lidLimitError": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "cabinDesign_serum_lidRemoveHint": "Removing lids isn't supported yet; an added lid is permanent."
 }
