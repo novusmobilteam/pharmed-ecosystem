@@ -164,6 +164,11 @@ final saveMobileCabinDesignUseCaseProvider = Provider((ref) {
   );
 });
 
+/// [#203] Bağımsız serum kabininden kapak silme (son kapakta kabin de silinir).
+final removeSerumLidUseCaseProvider = Provider<RemoveSerumLidUseCase>((ref) {
+  return RemoveSerumLidUseCase(cabinRepository: ref.read(cabinRepositoryProvider));
+});
+
 /// [#199] Bağımsız serum kabinine kapak ekleme.
 final addSerumLidsUseCaseProvider = Provider<AddSerumLidsUseCase>((ref) {
   return AddSerumLidsUseCase(cabinRepository: ref.read(cabinRepositoryProvider));

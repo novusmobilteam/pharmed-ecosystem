@@ -9424,5 +9424,18 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_lidRemoveHint => 'Kapak kaldırma şu an desteklenmiyor; eklenen kapak kalıcıdır.';
+  String get cabinDesign_serum_removeLidButton => 'Kapağı Sil';
+
+  @override
+  String cabinDesign_serum_removeLidConfirm(String lidName) {
+    return '$lidName silinsin mi? Kapağın raf ve avadanlık yerleşimi de silinir.';
+  }
+
+  @override
+  String cabinDesign_serum_removeLastLidConfirm(String cabinName) {
+    return 'Bu, kabinin son kapağı. Silinirse "$cabinName" kabini de silinecek. Onaylıyor musunuz?';
+  }
+
+  @override
+  String get cabinDesign_serum_lidHasAssignmentsError => 'Bu kapakta ilaç ataması var; silmeden önce atamaları kaldırın.';
 }

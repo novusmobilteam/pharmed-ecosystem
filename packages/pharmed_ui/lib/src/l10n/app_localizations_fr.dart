@@ -9723,5 +9723,18 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get cabinDesign_serum_lidRemoveHint => 'La suppression de portes n\'est pas encore prise en charge ; une porte ajoutée est définitive.';
+  String get cabinDesign_serum_removeLidButton => 'Supprimer la porte';
+
+  @override
+  String cabinDesign_serum_removeLidConfirm(String lidName) {
+    return 'Supprimer $lidName ? La disposition des étagères et plateaux de la porte sera également supprimée.';
+  }
+
+  @override
+  String cabinDesign_serum_removeLastLidConfirm(String cabinName) {
+    return 'C\'est la dernière porte de l\'armoire. La supprimer supprimera aussi l\'armoire « $cabinName ». Confirmez-vous ?';
+  }
+
+  @override
+  String get cabinDesign_serum_lidHasAssignmentsError => 'Cette porte a des affectations de médicaments ; supprimez-les avant de la supprimer.';
 }

@@ -60,6 +60,17 @@ class _StationSidebar extends StatelessWidget {
             child: Column(
               spacing: MedSpacing.sm,
               children: [
+                // [#203] Seçili kabin bağımsız serum kabiniyse kapak ekleme.
+                if (selectedCabinId != null && notifier.isStandaloneSerumCabin)
+                  MedButton(
+                    fullWidth: true,
+                    label:
+                        '${context.l10n.cabinDesign_serum_addLidButton} '
+                        '(${notifier.serumLidCount}/${DeviceConstants.maxSerumLids})',
+                    prefixIcon: Icon(PhosphorIcons.plus()),
+                    isLoading: notifier.isAddingSerumLid,
+                    onPressed: notifier.canAddSerumLid ? notifier.addSerumLid : null,
+                  ),
                 MedButton(
                   fullWidth: true,
                   label: context.l10n.cabinDesign_cabinList_addCabinButton,

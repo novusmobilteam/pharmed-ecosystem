@@ -33,7 +33,13 @@ class SaveCabinDesignUseCase {
       final (i, slot) = entry;
       // Taramadan gelen slot'ta bayrak null → false. Çekmece değişimi kaydı
       // değişmeyen iade çekmecesinin bayrağını taşır; ezilmemeli.
-      return slot.copyWith(cabinId: cabinId, orderNumber: i + 1, isReturnDrawerHere: slot.isReturnDrawerHere ?? false);
+      // Serum kapağında orderNumber kapak no = port'tur (#193, #203); sıra
+      // numarasıyla yeniden numaralanmaz (silinmiş kapak boşluğu korunur).
+      return slot.copyWith(
+        cabinId: cabinId,
+        orderNumber: SerumLids.isLid(slot) ? slot.orderNumber : i + 1,
+        isReturnDrawerHere: slot.isReturnDrawerHere ?? false,
+      );
     }).toList();
 
     final result = isUpdate

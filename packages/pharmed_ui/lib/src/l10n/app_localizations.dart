@@ -16500,11 +16500,30 @@ abstract class AppLocalizations {
   /// **'A serum cabinet can have at most {max} lids.'**
   String cabinDesign_serum_lidLimitError(int max);
 
-  /// No description provided for @cabinDesign_serum_lidRemoveHint.
+
+  /// No description provided for @cabinDesign_serum_removeLidButton.
   ///
   /// In en, this message translates to:
-  /// **'Removing lids isn\'t supported yet; an added lid is permanent.'**
-  String get cabinDesign_serum_lidRemoveHint;
+  /// **'Delete Lid'**
+  String get cabinDesign_serum_removeLidButton;
+
+  /// No description provided for @cabinDesign_serum_removeLidConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {lidName}? The lid\'s shelf and tray layout will be deleted too.'**
+  String cabinDesign_serum_removeLidConfirm(String lidName);
+
+  /// No description provided for @cabinDesign_serum_removeLastLidConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the cabinet\'s last lid. Deleting it will also delete the "{cabinName}" cabinet. Do you confirm?'**
+  String cabinDesign_serum_removeLastLidConfirm(String cabinName);
+
+  /// No description provided for @cabinDesign_serum_lidHasAssignmentsError.
+  ///
+  /// In en, this message translates to:
+  /// **'This lid has medicine assignments; remove them before deleting it.'**
+  String get cabinDesign_serum_lidHasAssignmentsError;
 }
 
 class _AppLocalizationsDelegate

@@ -36,8 +36,10 @@ class AddSerumLidsUseCase {
       );
     }
 
+    // Boşalan en küçük kapak numaraları kullanılır (#203) — kapak no = port.
+    final free = SerumLids.freeLidNumbers(lids).take(newCount - current);
     final slots = [
-      for (var lid = current + 1; lid <= newCount; lid++)
+      for (final lid in free)
         DrawerSlot(
           drawerConfigId: template.drawerConfigId,
           cabinId: cabinId,

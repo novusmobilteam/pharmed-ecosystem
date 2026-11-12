@@ -11711,8 +11711,22 @@
   "description": "Error when trying to add more lids than a serum cabinet supports",
   "placeholders": { "max": { "type": "int" } }
 },
-"cabinDesign_serum_lidRemoveHint": "Kapak kaldırma şu an desteklenmiyor; eklenen kapak kalıcıdır.",
-"@cabinDesign_serum_lidRemoveHint": {
-  "description": "Hint under the add-lid button: lids can't be removed yet"
+"cabinDesign_serum_removeLidButton": "Kapağı Sil",
+"@cabinDesign_serum_removeLidButton": {
+  "description": "Button that deletes the selected lid of a standalone serum cabinet"
+},
+"cabinDesign_serum_removeLidConfirm": "{lidName} silinsin mi? Kapağın raf ve avadanlık yerleşimi de silinir.",
+"@cabinDesign_serum_removeLidConfirm": {
+  "description": "Confirmation message before deleting a serum cabinet lid",
+  "placeholders": { "lidName": { "type": "String" } }
+},
+"cabinDesign_serum_removeLastLidConfirm": "Bu, kabinin son kapağı. Silinirse \"{cabinName}\" kabini de silinecek. Onaylıyor musunuz?",
+"@cabinDesign_serum_removeLastLidConfirm": {
+  "description": "Confirmation when deleting the last lid of a serum cabinet, which deletes the cabinet too",
+  "placeholders": { "cabinName": { "type": "String" } }
+},
+"cabinDesign_serum_lidHasAssignmentsError": "Bu kapakta ilaç ataması var; silmeden önce atamaları kaldırın.",
+"@cabinDesign_serum_lidHasAssignmentsError": {
+  "description": "Error when trying to delete a serum lid that still has medicine assignments"
 }
 }

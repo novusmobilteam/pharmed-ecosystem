@@ -223,6 +223,26 @@ class CabinRepositoryImpl implements ICabinRepository {
   }
 
   @override
+  Future<Result<void>> deleteDrawerSlot(DrawerSlot slot) async {
+    final id = slot.id;
+    if (id == null) return const Result.error(UnexpectedException());
+    final result = await _remote.deleteDrawerSlot(id);
+    return result.when(
+      ok: (_) async {
+        final cabinId = slot.cabinId;
+        if (cabinId != null) {
+          await _local.clearSlots(cabinId);
+          _slotsCache.remove(cabinId);
+        }
+        await _local.clearUnits(id);
+        _unitsCache.remove(id);
+        return const Result.ok(null);
+      },
+      error: Result.error,
+    );
+  }
+
+  @override
   Future<Result<void>> createDrawerSlots(List<DrawerSlot> slots) async {
     final result = await _remote.createDrawerSlots(_drawerSlotMapper.toDtoList(slots));
     return result.when(
