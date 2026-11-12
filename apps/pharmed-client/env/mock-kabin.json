@@ -1,0 +1,7 @@
+{
+    "HARDWARE": "mock",
+    "FINGERPRINT_MOCK": "true",
+    "PRINTER_MOCK": "true",
+    "PHARMED_DEVICE_ID": "PCTEST-MOCK-0001",
+    "PHARMED_DEVICE_NAME": "Mock kabin"
+}
