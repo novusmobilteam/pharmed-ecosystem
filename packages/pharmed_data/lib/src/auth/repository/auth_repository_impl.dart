@@ -11,7 +11,7 @@
 //   6. AuthToken döndür
 //
 // Oturum yenileme [SWREQ-DATA-AUTH-005]:
-//   refreshSession() → cache'teki refresh token ile /Login/session/refresh,
+//   refreshSession() → cache'teki refresh token ile /Login/refresh,
 //   yeni token çifti cache'e + TokenHolder'a yazılır.
 //
 // UserDataSource bağımlılığı constructor'dan inject edilir.

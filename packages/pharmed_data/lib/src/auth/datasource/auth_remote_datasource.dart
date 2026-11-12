@@ -36,7 +36,7 @@ abstract interface class IAuthRemoteDataSource {
   Future<AuthSessionTokens> loginWithBadge({required String cardData, String? macAddress});
   Future<AuthSessionTokens> loginWithFingerprint(FingerprintLoginRequestDTO request);
 
-  /// [SWREQ-DATA-AUTH-005] POST /Login/session/refresh — yeni token çifti.
+  /// [SWREQ-DATA-AUTH-005] POST /Login/refresh — yeni token çifti.
   /// Refresh token geçersiz/süresi dolmuşsa sunucu 4xx döner (DioException).
   Future<AuthSessionTokens> refreshSession({required String refreshToken});
 }
@@ -92,7 +92,7 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
   @override
   Future<AuthSessionTokens> refreshSession({required String refreshToken}) async {
     final response = await _dio.post<Map<String, dynamic>>(
-      '/Login/session/refresh',
+      '/Login/refresh',
       data: {'refreshToken': refreshToken},
     );
 
