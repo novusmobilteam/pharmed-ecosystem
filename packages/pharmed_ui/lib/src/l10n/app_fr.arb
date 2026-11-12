@@ -2572,7 +2572,7 @@
   "@wizard_rfidIpAddressLabel": {},
   "wizard_rfidPortFieldLabel": "Port RFID",
   "@wizard_rfidPortFieldLabel": {},
-  "wizard_drawerCountRangeHint": "1 à 8 tiroirs",
+  "wizard_drawerCountRangeHint": "1 à 5 tiroirs",
   "@wizard_drawerCountRangeHint": {},
   "wizard_sameConfigToggleLabel": "Tous les tiroirs ont la même structure",
   "@wizard_sameConfigToggleLabel": {},

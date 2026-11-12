@@ -4159,7 +4159,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wizard_rfidPortFieldLabel => 'Port RFID';
 
   @override
-  String get wizard_drawerCountRangeHint => '1 à 8 tiroirs';
+  String get wizard_drawerCountRangeHint => '1 à 5 tiroirs';
 
   @override
   String get wizard_sameConfigToggleLabel =>

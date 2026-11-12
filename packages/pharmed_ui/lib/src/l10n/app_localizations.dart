@@ -7208,7 +7208,7 @@ abstract class AppLocalizations {
   /// No description provided for @wizard_drawerCountRangeHint.
   ///
   /// In en, this message translates to:
-  /// **'1–8 drawers'**
+  /// **'1–5 drawers'**
   String get wizard_drawerCountRangeHint;
 
   /// No description provided for @wizard_sameConfigToggleLabel.

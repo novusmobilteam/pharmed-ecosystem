@@ -2813,7 +2813,7 @@
   "@wizard_rfidIpAddressLabel": {},
   "wizard_rfidPortFieldLabel": "RFID Port",
   "@wizard_rfidPortFieldLabel": {},
-  "wizard_drawerCountRangeHint": "1–8 drawers",
+  "wizard_drawerCountRangeHint": "1–5 drawers",
   "@wizard_drawerCountRangeHint": {},
   "wizard_sameConfigToggleLabel": "All drawers have the same structure",
   "@wizard_sameConfigToggleLabel": {},
