@@ -613,16 +613,12 @@ class _SerumLidsBar extends StatelessWidget {
           Row(
             children: [
               Expanded(child: Text(group.name, style: MedTextStyles.titleSm())),
-              Text(
-                '${l10n.cabinDesign_serum_lidCountLabel}: ${notifier.serumLidCount}/${DeviceConstants.maxSerumLids}',
-                style: MedTextStyles.bodySm(color: MedColors.text2),
-              ),
               const SizedBox(width: MedSpacing.md),
               MedButton(
                 label: l10n.cabinDesign_serum_removeLidButton,
                 prefixIcon: Icon(PhosphorIcons.trash()),
                 size: MedButtonSize.sm,
-                variant: MedButtonVariant.danger,
+                variant: MedButtonVariant.error,
                 isLoading: notifier.isRemovingSerumLid,
                 onPressed: notifier.canRemoveSerumLid && group.slot.id != null ? () => _confirmRemove(context) : null,
               ),

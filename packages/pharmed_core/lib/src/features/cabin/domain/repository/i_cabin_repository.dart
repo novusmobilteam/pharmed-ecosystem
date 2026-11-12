@@ -45,7 +45,7 @@ abstract interface class ICabinRepository {
   Future<Result<void>> updateMobileDrawerSlots(List<MobileDrawerRequestDTO> drawers);
   Future<Result<void>> updateDrawerSlots(List<DrawerSlot> slots);
 
-  /// [#203] Tek çekmece kaydını siler (DELETE /CabinDesign/delete/{id}).
+  /// [#203] Tek çekmece kaydını siler (DELETE /CabinDesign/{id}).
   Future<Result<void>> deleteDrawerSlot(DrawerSlot slot);
 
   /// Sadece serum tanımlanabilen yuvaları getirir. Gerçek zamanlı — cache'lenmez.

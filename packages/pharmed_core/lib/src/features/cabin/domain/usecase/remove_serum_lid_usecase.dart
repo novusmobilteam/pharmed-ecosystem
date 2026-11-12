@@ -6,7 +6,7 @@
 //   • Kapak 1'e kadar tek tek silinebilir. Son kapak silinirse kabin de
 //     silinir — UI bunu ayrıca onaylatır ([SerumLidRemoval.cabinRemoved]).
 //   • Kalan kapakların numarası (= port) değişmez.
-// Servis: DELETE /CabinDesign/delete/{id}; son kapakta ardından kabin silme.
+// Servis: DELETE /CabinDesign/{id}; son kapakta ardından kabin silme.
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
