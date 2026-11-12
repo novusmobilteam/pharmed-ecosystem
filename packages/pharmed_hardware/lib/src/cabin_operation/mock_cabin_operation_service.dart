@@ -204,8 +204,12 @@ class MockCabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<void> openMasterSerumDrawer({required ManagementCard manager, required int row}) async {
-    debugPrint('MOCK: Master serum çekmecesi açılıyor (row:$row)...');
+  Future<void> openMasterSerumDrawer({
+    required ManagementCard manager,
+    required int row,
+    int port = DeviceConstants.masterLockPort,
+  }) async {
+    debugPrint('MOCK: Master serum çekmecesi açılıyor (row:$row, port:$port)...');
     await Future.delayed(const Duration(milliseconds: 500));
     debugPrint('MOCK: ✅ Master serum çekmecesi AÇILDI 🔓');
   }
@@ -214,6 +218,7 @@ class MockCabinOperationService implements ICabinOperationService {
   Stream<DrawerPhysicalStatus> streamMasterSerumDrawerStatus({
     required ManagementCard manager,
     required int row,
+    int port = DeviceConstants.masterLockPort,
   }) async* {
     // Kapak zaten açıksa (kapanış izleme stream'i) açılış yeniden simüle
     // edilmez — aksi halde ilk `locked` beklenmedik kapanış sayılır.

@@ -520,9 +520,14 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<void> openMasterSerumDrawer({required ManagementCard manager, required int row}) async {
-    // Master kabin serum çekmecesi: port=1, drawer=0 sabit
-    final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: 1, drawer: 0);
+  Future<void> openMasterSerumDrawer({
+    required ManagementCard manager,
+    required int row,
+    int port = DeviceConstants.masterLockPort,
+  }) async {
+    // Serum: drawer=0 sabit. Master içindeki serum gözü port 1, bağımsız serum
+    // kabininde kapak N → port N (#193).
+    final command = CommandBuilder.buildDrawerCommand(action: DeviceAction.open, port: port, drawer: 0);
 
     final response = await sendRawCommand(manager: manager, targetRow: row, commandPayload: command);
 
@@ -539,9 +544,10 @@ class CabinOperationService implements ICabinOperationService {
   Stream<DrawerPhysicalStatus> streamMasterSerumDrawerStatus({
     required ManagementCard manager,
     required int row,
+    int port = DeviceConstants.masterLockPort,
   }) async* {
-    // Master serum: port=1, drawer=0 sabit
-    final statusCommand = CommandBuilder.buildDrawerCommand(action: DeviceAction.status, port: 1, drawer: 0);
+    // Serum: drawer=0 sabit; port açma ile aynı kapak portu (#193).
+    final statusCommand = CommandBuilder.buildDrawerCommand(action: DeviceAction.status, port: port, drawer: 0);
 
     while (true) {
       try {

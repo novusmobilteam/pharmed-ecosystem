@@ -5,6 +5,14 @@ class DeviceConstants {
   /// Standart ve Kübik ana kilitleri fiziksel olarak genelde Port 1'dedir.
   static const int masterLockPort = 1;
 
+  /// Serum kartının yönetim kartındaki satırı. Bağımsız serum kabininde
+  /// (A dışındaki adres) kart burada `.250` döner; kapaklar port ile açılır.
+  static const int serumSlaveRow = 26;
+
+  /// Bağımsız serum kabinine takılabilecek en fazla kapak sayısı.
+  /// Kapak N → port N, göz 00 (#183 saha testi).
+  static const int maxSerumLids = 4;
+
   // --- Cevap Kodları ---
   static const String responseOk = "ok";
   static const String responseError = "no";

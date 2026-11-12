@@ -35,6 +35,18 @@ class DrawerAddress {
 /// hiç kullanılmaz — sabit 0, tam açılış; orderless/free alımda ileride
 /// kullanılacak — kullanıcı miktar girer, sistem kümülatif stoktan göz
 /// hesaplar).
+/// [#193] Serum çekmecesinin kapak portu.
+///
+/// Bağımsız serum kabininde kart satır [DeviceConstants.serumSlaveRow]'dadır ve
+/// her kapak ayrı bir çekmece kaydıdır: kapak no = çekmecenin [orderNumber]'ı,
+/// port = kapak no (1–[DeviceConstants.maxSerumLids]). Master içindeki serum
+/// gözü (başka bir satırda) her zaman [DeviceConstants.masterLockPort]'tadır.
+int serumLidPort({required int row, int? orderNumber}) {
+  if (row != DeviceConstants.serumSlaveRow) return DeviceConstants.masterLockPort;
+  final lid = orderNumber ?? DeviceConstants.masterLockPort;
+  return (lid >= 1 && lid <= DeviceConstants.maxSerumLids) ? lid : DeviceConstants.masterLockPort;
+}
+
 DrawerAddress calculateAddressFromAssignment(
   MedicineAssignment item, {
   double requestedQuantity = 0,
@@ -50,7 +62,8 @@ DrawerAddress calculateAddressFromAssignment(
   // port sanılırsa birim doz port ters çevirmesiyle 0'a düşüp geçersiz
   // adres üretir (Raf 2/3).
   if (config?.isSerum ?? false) {
-    return DrawerAddress(row: int.tryParse(rowStr) ?? 0, port: 1, index: 1);
+    final row = int.tryParse(rowStr) ?? 0;
+    return DrawerAddress(row: row, port: serumLidPort(row: row, orderNumber: slot?.orderNumber), index: 1);
   }
 
   final isKubik = config?.drawerType?.isKubik ?? false;
