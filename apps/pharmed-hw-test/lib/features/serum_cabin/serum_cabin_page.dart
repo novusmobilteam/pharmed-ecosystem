@@ -18,6 +18,8 @@ import '../../widgets/common.dart';
 //   2. Kapak keşfi (güvenli)  : M / V / S komutları — AÇMA KOMUTU GÖNDERMEZ
 //   3. Aç + eşleştir          : seçilen adres açılır, teknisyen hangi kapağın
 //                               açıldığını işaretler → adres → kapak tablosu
+//   4. Kapak testi (#197)     : client'ın kullandığı `openMasterSerumDrawer(port)`
+//                               ile kapak 1–N sırayla açılır, teknisyen onaylar
 
 /// Kapak adresi: `T` komutundaki port (1–8) ve göz/kademe (00–16) alanı.
 @immutable
@@ -124,6 +126,12 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
   bool _polling = false;
   _LidAddress? _awaitingObservation;
   final Map<_LidAddress, String> _mapping = {};
+
+  // 4. Kapak testi — client komutuyla
+  int _lidCount = DeviceConstants.maxSerumLids;
+  int? _lidBusy;
+  final Map<int, String> _lidResult = {};
+  final Map<int, bool> _lidConfirmed = {};
 
   ManagementCard get _manager => ManagementCard(addressIndex: _address);
   int? get _row => int.tryParse(_rowCtrl.text.trim());
@@ -344,6 +352,50 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
     showMessage(context, 'Eşleşme tablosu rapora eklendi.');
   }
 
+  // ── 4. Kapak testi (client komutuyla) ─────────────────────────
+
+  /// Client'taki serum açma yolu: `openMasterSerumDrawer(row, port: kapak)`.
+  Future<void> _openLid(int lid) async {
+    final row = _row;
+    if (row == null) return showMessage(context, 'Önce satır girin.', error: true);
+    _stopWatch();
+    setState(() {
+      _lidBusy = lid;
+      _lidResult.remove(lid);
+      _lidConfirmed.remove(lid);
+    });
+    String result;
+    try {
+      await ref.read(cabinOpsProvider).openMasterSerumDrawer(manager: _manager, row: row, port: lid);
+      result = 'Açma komutu kabul edildi';
+    } catch (e) {
+      result = 'HATA: $e';
+    }
+    await _release();
+    ref
+        .read(testReportProvider)
+        .add(
+          'Serum kapak $lid aç — client komutu ($_where, port $lid)',
+          result.startsWith('HATA') ? StepResult.fail : StepResult.info,
+          detail: result,
+        );
+    if (!mounted) return;
+    setState(() {
+      _lidBusy = null;
+      _lidResult[lid] = result;
+    });
+  }
+
+  void _confirmLid(int lid, bool opened) {
+    ref
+        .read(testReportProvider)
+        .add(
+          'Gözlem: kapak $lid ${opened ? 'açıldı' : 'AÇILMADI'} ($_where)',
+          opened ? StepResult.ok : StepResult.fail,
+        );
+    setState(() => _lidConfirmed[lid] = opened);
+  }
+
   // ── UI ────────────────────────────────────────────────────────
 
   @override
@@ -356,6 +408,7 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
         _findSection(connected, idle),
         _probeSection(idle),
         _openSection(connected, idle),
+        _lidTestSection(idle),
       ],
     );
   }
@@ -568,6 +621,65 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
               label: const Text('Tabloyu rapora ekle'),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _lidTestSection(bool idle) {
+    return SectionCard(
+      title: '4. Kapak testi (client komutuyla)',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Client\'ın serum kapağı açarken kullandığı komutla (kapak N → port N · göz 00) kapaklar tek tek '
+            'açılır. Her kapaktan sonra kapağın açılıp açılmadığını onaylayın.',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Text('Kapak sayısı:'),
+              const SizedBox(width: 12),
+              DropdownButton<int>(
+                value: _lidCount,
+                items: [
+                  for (var n = 1; n <= DeviceConstants.maxSerumLids; n++)
+                    DropdownMenuItem(value: n, child: Text('$n')),
+                ],
+                onChanged: idle ? (v) => setState(() => _lidCount = v ?? _lidCount) : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (var lid = 1; lid <= _lidCount; lid++)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizedBox(width: 150, child: Text('Kapak $lid (port $lid)')),
+                  BusyButton(
+                    label: 'Aç',
+                    icon: Icons.lock_open,
+                    busy: _lidBusy == lid,
+                    onPressed: idle && _lidBusy == null && _row != null ? () => _openLid(lid) : null,
+                  ),
+                  if (_lidResult[lid] != null) Text(_lidResult[lid]!),
+                  if (_lidResult[lid] != null && _lidConfirmed[lid] == null) ...[
+                    ActionChip(label: const Text('Açıldı'), onPressed: () => _confirmLid(lid, true)),
+                    ActionChip(label: const Text('Açılmadı'), onPressed: () => _confirmLid(lid, false)),
+                  ],
+                  if (_lidConfirmed[lid] != null)
+                    ResultBadge(
+                      result: _lidConfirmed[lid]! ? StepResult.ok : StepResult.fail,
+                      label: _lidConfirmed[lid]! ? 'açıldı' : 'açılmadı',
+                    ),
+                ],
+              ),
+            ),
         ],
       ),
     );

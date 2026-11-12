@@ -41,6 +41,19 @@ class _CardScanPageState extends ConsumerState<CardScanPage> {
   bool _busy = false;
   List<_CardRow> _rows = [];
   String? _error;
+  String? _classification;
+
+  /// Client taramasıyla aynı kural (#195): A dışındaki adreste satır 26'daki
+  /// `.250` kabinin kendi serum kartıdır, çekmece sayılmaz.
+  static String _classify(List<ControlCard> cards, int address) {
+    if (cards.isEmpty) return '-';
+    if (address == 1) return 'Master kabin';
+    final serum = cards.where((c) => c.isSerum && c.rowAddress == DeviceConstants.serumSlaveRow).firstOrNull;
+    if (serum == null) return 'Ek kabin (serum kartı yok)';
+    return cards.length == 1
+        ? 'Bağımsız serum kabini — kapak sayısı karttan okunamaz, kabin dizaynında sorulur'
+        : 'Serum kartına bağlı kabin — satır 26 kabin kartıdır, çekmece sayılmaz';
+  }
 
   Future<void> _scan() async {
     setState(() {
@@ -80,12 +93,13 @@ class _CardScanPageState extends ConsumerState<CardScanPage> {
         .add(
           'Kart taraması (${addressLabel(_address)}): ${rows.length} kart',
           cards.isEmpty || problems > 0 ? StepResult.fail : StepResult.ok,
-          detail: rows.map(_describe).join('\n'),
+          detail: ['Sınıf: ${_classify(cards, _address)}', ...rows.map(_describe)].join('\n'),
         );
     if (!mounted) return;
     setState(() {
       _rows = rows;
       _busy = false;
+      _classification = _classify(cards, _address);
       if (cards.isEmpty) _error = 'Bu adreste kontrol kartı bulunamadı.';
     });
   }
@@ -175,6 +189,10 @@ class _CardScanPageState extends ConsumerState<CardScanPage> {
                   BusyButton(label: 'Kartları tara', busy: _busy, onPressed: connected ? _scan : null),
                 ],
               ),
+              if (_classification != null && _rows.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text('Sınıf: $_classification', style: const TextStyle(fontWeight: FontWeight.w600)),
+              ],
               if (_error != null) ...[
                 const SizedBox(height: 8),
                 Text(_error!, style: const TextStyle(color: Colors.red)),
