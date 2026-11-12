@@ -9403,4 +9403,26 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refillList_print_currentColumn => 'Mevcut';
+
+  @override
+  String get cabinDesign_serum_lidCountLabel => 'Kapak sayısı';
+
+  @override
+  String get cabinDesign_serum_lidCountHint => 'Bu kabin bağımsız bir serum kabini. Kapak sayısı karttan okunamaz; kabindeki kapak sayısını seçip kaydetmeye devam edin.';
+
+  @override
+  String cabinDesign_serum_lidLabel(int lidNo) {
+    return 'Serum Kapağı $lidNo';
+  }
+
+  @override
+  String get cabinDesign_serum_addLidButton => 'Kapak Ekle';
+
+  @override
+  String cabinDesign_serum_lidLimitError(int max) {
+    return 'Bir serum kabinine en fazla $max kapak eklenebilir.';
+  }
+
+  @override
+  String get cabinDesign_serum_lidRemoveHint => 'Kapak kaldırma şu an desteklenmiyor; eklenen kapak kalıcıdır.';
 }

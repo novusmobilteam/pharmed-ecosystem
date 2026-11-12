@@ -5724,5 +5724,17 @@
   "refillList_print_noDetails": "Cette liste ne contient aucun médicament à imprimer",
   "refillList_print_stationLabel": "Station",
   "refillList_print_fillingColumn": "Remplissage",
-  "refillList_print_currentColumn": "Actuel"
+  "refillList_print_currentColumn": "Actuel",
+  "cabinDesign_serum_lidCountLabel": "Nombre de portes",
+  "cabinDesign_serum_lidCountHint": "Il s'agit d'une armoire à sérum autonome. Le nombre de portes ne peut pas être lu depuis la carte ; sélectionnez le nombre de portes de l'armoire et poursuivez l'enregistrement.",
+  "cabinDesign_serum_lidLabel": "Porte sérum {lidNo}",
+  "@cabinDesign_serum_lidLabel": {
+    "placeholders": { "lidNo": { "type": "int" } }
+  },
+  "cabinDesign_serum_addLidButton": "Ajouter une porte",
+  "cabinDesign_serum_lidLimitError": "Une armoire à sérum peut avoir au maximum {max} portes.",
+  "@cabinDesign_serum_lidLimitError": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "cabinDesign_serum_lidRemoveHint": "La suppression de portes n'est pas encore prise en charge ; une porte ajoutée est définitive."
 }

@@ -16469,6 +16469,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current'**
   String get refillList_print_currentColumn;
+
+  /// No description provided for @cabinDesign_serum_lidCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of lids'**
+  String get cabinDesign_serum_lidCountLabel;
+
+  /// No description provided for @cabinDesign_serum_lidCountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a standalone serum cabinet. The number of lids can\'t be read from the card; select how many lids the cabinet has and continue saving.'**
+  String get cabinDesign_serum_lidCountHint;
+
+  /// No description provided for @cabinDesign_serum_lidLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serum Lid {lidNo}'**
+  String cabinDesign_serum_lidLabel(int lidNo);
+
+  /// No description provided for @cabinDesign_serum_addLidButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Lid'**
+  String get cabinDesign_serum_addLidButton;
+
+  /// No description provided for @cabinDesign_serum_lidLimitError.
+  ///
+  /// In en, this message translates to:
+  /// **'A serum cabinet can have at most {max} lids.'**
+  String cabinDesign_serum_lidLimitError(int max);
+
+  /// No description provided for @cabinDesign_serum_lidRemoveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Removing lids isn\'t supported yet; an added lid is permanent.'**
+  String get cabinDesign_serum_lidRemoveHint;
 }
 
 class _AppLocalizationsDelegate

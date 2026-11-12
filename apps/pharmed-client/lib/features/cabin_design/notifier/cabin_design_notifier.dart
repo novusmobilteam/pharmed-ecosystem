@@ -23,6 +23,7 @@ final cabinDesignNotifierProvider = ChangeNotifierProvider.autoDispose<CabinDesi
     scanCabin: ref.read(scanCabinUseCaseProvider),
     createCabin: ref.read(createCabinUseCaseProvider),
     saveCabinDesign: ref.read(saveCabinDesignUseCaseProvider),
+    addSerumLids: ref.read(addSerumLidsUseCaseProvider),
     getSerumLayout: ref.read(getSerumLayoutUseCaseProvider),
     saveSerumLayout: ref.read(saveSerumLayoutUseCaseProvider),
     updateCabin: ref.read(updateCabinUseCaseProvider),
@@ -41,6 +42,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     required ScanCabinUseCase scanCabin,
     required CreateCabinUseCase createCabin,
     required SaveCabinDesignUseCase saveCabinDesign,
+    required AddSerumLidsUseCase addSerumLids,
     required GetSerumLayoutUseCase getSerumLayout,
     required SaveSerumLayoutUseCase saveSerumLayout,
     required UpdateCabinUseCase updateCabin,
@@ -55,6 +57,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
        _scanCabin = scanCabin,
        _createCabin = createCabin,
        _saveCabinDesign = saveCabinDesign,
+       _addSerumLids = addSerumLids,
        _getSerumLayout = getSerumLayout,
        _saveSerumLayout = saveSerumLayout,
        _updateCabin = updateCabin,
@@ -68,6 +71,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   final ScanCabinUseCase _scanCabin;
   final CreateCabinUseCase _createCabin;
   final SaveCabinDesignUseCase _saveCabinDesign;
+  final AddSerumLidsUseCase _addSerumLids;
   final GetSerumLayoutUseCase _getSerumLayout;
   final SaveSerumLayoutUseCase _saveSerumLayout;
   final UpdateCabinUseCase _updateCabin;
@@ -93,6 +97,7 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
 
   /// Serum raf yerleşiminin okunması — sadece serum panelinde loading/hata.
   static const _serumLoadOp = OperationKey.custom('cabin-design-serum-load');
+  static const _addSerumLidOp = OperationKey.custom('cabin-design-add-serum-lid');
 
   /// Seçili kabin paneline satır içi gösterilen hatalar.
   static const _inlineErrorOps = [_saveOp, _rescanOp, _toggleStatusOp];
@@ -267,6 +272,44 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
   String? get newCabinError => isFailed(_createCabinOp) ? message(_createCabinOp) : null;
 
   bool get canSaveNewCabin => (newCabinDraft?.isComplete ?? false) && !(newCabinDraft?.isSaving ?? true);
+
+  // ── Bağımsız serum kabini kapakları (#199) ─────────────────────────────
+
+  /// Seçili kabin bağımsız serum kabini mi (tüm çekmeceler satır 26 kapağı)?
+  bool get isStandaloneSerumCabin => _groups.isNotEmpty && _groups.every((g) => SerumLids.isLid(g.slot));
+
+  int get serumLidCount => SerumLids.countIn(_groups);
+
+  bool get isAddingSerumLid => isLoading(_addSerumLidOp);
+  String? get addSerumLidError => isFailed(_addSerumLidOp) ? message(_addSerumLidOp) : null;
+
+  bool get canAddSerumLid =>
+      isStandaloneSerumCabin &&
+      serumLidCount < DeviceConstants.maxSerumLids &&
+      !_pending.hasAny &&
+      !isSaving &&
+      !isAddingSerumLid;
+
+  /// Kayıtlı bağımsız serum kabinine bir kapak ekler (POST CabinDesign/bulk).
+  /// Kapak kaldırma desteklenmiyor (backend'de silme servisi yok).
+  Future<void> addSerumLid() async {
+    final cabin = _cabin;
+    if (cabin?.id == null || !canAddSerumLid) return;
+    final lids = [for (final g in _groups) if (SerumLids.isLid(g.slot)) g.slot]
+      ..sort((a, b) => (a.orderNumber ?? 0).compareTo(b.orderNumber ?? 0));
+
+    setLoading(_addSerumLidOp);
+    final result = await _addSerumLids.call(cabinId: cabin!.id!, lids: lids, newCount: lids.length + 1);
+    if (result.isError) {
+      setFailed(_addSerumLidOp, message: _errorOf(result).userMessage);
+      return;
+    }
+    _markPersisted();
+    await _loadCabin(cabin, fullScreen: false);
+    setSuccess(_addSerumLidOp);
+  }
+
+  void selectNewCabinSerumLidCount(int count) => _updateDraft((d) => d.copyWith(serumLidCount: count));
 
   /// Master hariç B-P arası. Düzenlenen kabinin kendi adresi listede kalır.
   List<String> get availableAddressCharsForEdit => _freeAddressChars(exceptCabinId: _cabin?.id);
@@ -599,11 +642,23 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
       return Future.value(const Result.error(UnexpectedException()));
     }
 
-    return _scanCabin.call(
-      portName: portName,
-      cabinType: _pending.type ?? cabin.type ?? CabinType.cabinet,
-      targetAddressIndex: addressIndex,
-    );
+    return _scanCabin
+        .call(
+          portName: portName,
+          cabinType: _pending.type ?? cabin.type ?? CabinType.cabinet,
+          targetAddressIndex: addressIndex,
+        )
+        .then(_withSerumLids);
+  }
+
+  /// [#199] Tarama bağımsız serum kabini döndürdüyse (tek serum çekmecesi)
+  /// mevcut kapak sayısına çoğaltılır — kapak sayısı karttan okunamaz,
+  /// kayıtlı tasarımla karşılaştırma ve kayıt kapak bazında yapılır.
+  Result<List<DrawerGroup>> _withSerumLids(Result<List<DrawerGroup>> scan) {
+    final groups = scan.data;
+    if (groups == null || !ScanCabinUseCase.isStandaloneSerum(groups)) return scan;
+    final lidCount = SerumLids.countIn(_groups);
+    return Result.ok(SerumLids.expand(groups.single, lidCount == 0 ? 1 : lidCount));
   }
 
   /// active <-> passive. Başarılıysa istasyon yeniden çekilir (sol liste
@@ -1076,7 +1131,8 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
 
   void updateNewCabinName(String? value) => _updateDraft((d) => d.copyWith(name: value ?? ''));
   void selectNewCabinType(CabinType type) => _updateDraft((d) => d.copyWith(type: type));
-  void selectNewCabinAddress(String addressChar) => _updateDraft((d) => d.copyWith(addressChar: addressChar));
+  void selectNewCabinAddress(String addressChar) =>
+      _updateDraft((d) => d.copyWith(addressChar: addressChar, clearSerum: addressChar != d.addressChar));
 
   void _updateDraft(NewCabinDraft Function(NewCabinDraft) update) {
     final draft = newCabinDraft;
@@ -1101,10 +1157,33 @@ class CabinDesignNotifier extends ChangeNotifier with ApiRequestMixin {
     setLoading(_createCabinOp);
 
     // ── 1-2: adres doğrulama + çekmece taraması ───────────────────────
-    _setDraftStep(NewCabinSaveStep.verifyingAddress);
-    final scan = await _scanCabin.call(portName: portName, cabinType: draft.type!, targetAddressIndex: addressIndex);
-    if (scan.isError) return _failCreate(_errorOf(scan)); // hiçbir şey oluşmadı — formda kal
-    final drawerGroups = scan.data!;
+    // [#199] Bağımsız serum kabininde kapak sayısı seçildiyse bekleyen tarama
+    // kullanılır (kart aynı); her kapak ayrı çekmece olarak kaydedilir.
+    final List<DrawerGroup> drawerGroups;
+    final pendingSerum = draft.pendingSerumScan;
+    if (pendingSerum != null) {
+      drawerGroups = SerumLids.expand(pendingSerum, draft.serumLidCount ?? 1);
+    } else {
+      _setDraftStep(NewCabinSaveStep.verifyingAddress);
+      final scan = await _scanCabin.call(portName: portName, cabinType: draft.type!, targetAddressIndex: addressIndex);
+      if (scan.isError) return _failCreate(_errorOf(scan)); // hiçbir şey oluşmadı — formda kal
+      if (ScanCabinUseCase.isStandaloneSerum(scan.data!)) {
+        // Kapak sayısı karttan okunamaz — kullanıcı seçene kadar formda bekle.
+        MedLogger.info(
+          unit: _unit,
+          swreq: _swreq,
+          message: 'Bağımsız serum kabini bulundu, kapak sayısı bekleniyor',
+          context: {'adres': draft.addressChar},
+        );
+        _selection = (newCabinDraft ?? draft).copyWith(
+          saveStep: NewCabinSaveStep.idle,
+          pendingSerumScan: scan.data!.single,
+        );
+        setSuccess(_createCabinOp);
+        return;
+      }
+      drawerGroups = scan.data!;
+    }
 
     // ── 3: kabini oluştur ─────────────────────────────────────────────
     _setDraftStep(NewCabinSaveStep.creatingCabin);

@@ -34,7 +34,12 @@ class DrawerGroup {
   };
 
   String get name {
-    if (isSerum) return contextlessL10n().enumCore_cabinTypeSerum;
+    if (isSerum) {
+      // Bağımsız serum kabininin kapakları "Serum Kapağı N" (#199).
+      final lid = SerumLids.lidNo(slot);
+      if (lid != null) return contextlessL10n().cabinDesign_serum_lidLabel(lid);
+      return contextlessL10n().enumCore_cabinTypeSerum;
+    }
     return isKubik ? contextlessL10n().cabin_kubikDrawerName : contextlessL10n().cabin_unitDoseDrawerName;
   }
 

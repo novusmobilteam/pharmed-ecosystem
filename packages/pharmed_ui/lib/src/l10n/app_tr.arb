@@ -11688,5 +11688,31 @@
   "refillList_print_currentColumn": "Mevcut",
   "@refillList_print_currentColumn": {
     "description": "Current stock column of the refill list printout"
-  }
+  },
+"cabinDesign_serum_lidCountLabel": "Kapak sayısı",
+"@cabinDesign_serum_lidCountLabel": {
+  "description": "Label of the lid count selector for a standalone serum cabinet"
+},
+"cabinDesign_serum_lidCountHint": "Bu kabin bağımsız bir serum kabini. Kapak sayısı karttan okunamaz; kabindeki kapak sayısını seçip kaydetmeye devam edin.",
+"@cabinDesign_serum_lidCountHint": {
+  "description": "Hint shown when the scanned cabinet is a standalone serum cabinet and the user must choose its lid count"
+},
+"cabinDesign_serum_lidLabel": "Serum Kapağı {lidNo}",
+"@cabinDesign_serum_lidLabel": {
+  "description": "Name of a lid (drawer) of a standalone serum cabinet",
+  "placeholders": { "lidNo": { "type": "int" } }
+},
+"cabinDesign_serum_addLidButton": "Kapak Ekle",
+"@cabinDesign_serum_addLidButton": {
+  "description": "Button that adds one more lid to a standalone serum cabinet"
+},
+"cabinDesign_serum_lidLimitError": "Bir serum kabinine en fazla {max} kapak eklenebilir.",
+"@cabinDesign_serum_lidLimitError": {
+  "description": "Error when trying to add more lids than a serum cabinet supports",
+  "placeholders": { "max": { "type": "int" } }
+},
+"cabinDesign_serum_lidRemoveHint": "Kapak kaldırma şu an desteklenmiyor; eklenen kapak kalıcıdır.",
+"@cabinDesign_serum_lidRemoveHint": {
+  "description": "Hint under the add-lid button: lids can't be removed yet"
+}
 }

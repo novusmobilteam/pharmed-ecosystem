@@ -9491,4 +9491,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get refillList_print_currentColumn => 'Current';
+
+  @override
+  String get cabinDesign_serum_lidCountLabel => 'Number of lids';
+
+  @override
+  String get cabinDesign_serum_lidCountHint => 'This is a standalone serum cabinet. The number of lids can\'t be read from the card; select how many lids the cabinet has and continue saving.';
+
+  @override
+  String cabinDesign_serum_lidLabel(int lidNo) {
+    return 'Serum Lid $lidNo';
+  }
+
+  @override
+  String get cabinDesign_serum_addLidButton => 'Add Lid';
+
+  @override
+  String cabinDesign_serum_lidLimitError(int max) {
+    return 'A serum cabinet can have at most $max lids.';
+  }
+
+  @override
+  String get cabinDesign_serum_lidRemoveHint => 'Removing lids isn\'t supported yet; an added lid is permanent.';
 }

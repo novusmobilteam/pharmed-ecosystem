@@ -60,6 +60,38 @@ class _NewCabinPanel extends StatelessWidget {
                   ),
               ],
             ),
+          if (draft.needsSerumLidCount) ...[
+            // [#199] Bağımsız serum kabini: kapak sayısı karttan okunamaz.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 14, color: MedColors.blue),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    context.l10n.cabinDesign_serum_lidCountHint,
+                    style: MedTextStyles.bodySm(color: MedColors.text2),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              context.l10n.cabinDesign_serum_lidCountLabel,
+              style: MedTextStyles.bodySm(color: MedColors.text2, weight: FontWeight.w600),
+            ),
+            Wrap(
+              spacing: 6.0,
+              runSpacing: 6.0,
+              children: [
+                for (var n = 1; n <= DeviceConstants.maxSerumLids; n++)
+                  _CabinAddressContainer(
+                    address: '$n',
+                    isSelected: n == draft.serumLidCount,
+                    onTap: draft.isSaving ? null : () => notifier.selectNewCabinSerumLidCount(n),
+                  ),
+              ],
+            ),
+          ],
           if (errorText != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

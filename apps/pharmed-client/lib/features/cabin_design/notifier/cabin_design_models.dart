@@ -26,6 +26,8 @@ final class NewCabinDraft extends CabinDesignSelection {
     this.type,
     this.addressChar,
     this.saveStep = NewCabinSaveStep.idle,
+    this.pendingSerumScan,
+    this.serumLidCount,
   });
 
   /// İptal edilirse geri dönülecek kabin.
@@ -35,17 +37,37 @@ final class NewCabinDraft extends CabinDesignSelection {
   final String? addressChar;
   final NewCabinSaveStep saveStep;
 
-  bool get isSaving => saveStep != NewCabinSaveStep.idle;
-  bool get isComplete => name.trim().isNotEmpty && type != null && addressChar != null;
+  /// [#199] Tarama bağımsız serum kabini buldu (tek serum çekmecesi); kapak
+  /// sayısı seçilene kadar kayıt burada bekler. Kart değişmediği için ikinci
+  /// "Kaydet"te yeniden taranmaz.
+  final DrawerGroup? pendingSerumScan;
 
-  NewCabinDraft copyWith({String? name, CabinType? type, String? addressChar, NewCabinSaveStep? saveStep}) =>
-      NewCabinDraft(
-        previousCabinId: previousCabinId,
-        name: name ?? this.name,
-        type: type ?? this.type,
-        addressChar: addressChar ?? this.addressChar,
-        saveStep: saveStep ?? this.saveStep,
-      );
+  /// Kullanıcının seçtiği kapak sayısı (1–4).
+  final int? serumLidCount;
+
+  bool get needsSerumLidCount => pendingSerumScan != null;
+  bool get isSaving => saveStep != NewCabinSaveStep.idle;
+  bool get isComplete =>
+      name.trim().isNotEmpty && type != null && addressChar != null && (!needsSerumLidCount || serumLidCount != null);
+
+  /// [clearSerum]: adres değişince bekleyen serum taraması geçersizdir.
+  NewCabinDraft copyWith({
+    String? name,
+    CabinType? type,
+    String? addressChar,
+    NewCabinSaveStep? saveStep,
+    DrawerGroup? pendingSerumScan,
+    int? serumLidCount,
+    bool clearSerum = false,
+  }) => NewCabinDraft(
+    previousCabinId: previousCabinId,
+    name: name ?? this.name,
+    type: type ?? this.type,
+    addressChar: addressChar ?? this.addressChar,
+    saveStep: saveStep ?? this.saveStep,
+    pendingSerumScan: clearSerum ? null : (pendingSerumScan ?? this.pendingSerumScan),
+    serumLidCount: clearSerum ? null : (serumLidCount ?? this.serumLidCount),
+  );
 }
 
 /// Mevcut kabinin bilgilerini düzenleme formu açık (yeni kabin formuyla aynı
