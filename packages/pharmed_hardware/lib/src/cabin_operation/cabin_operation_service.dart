@@ -281,6 +281,14 @@ class CabinOperationService implements ICabinOperationService {
     final List<ControlCard> foundCards = [];
     debugPrint('🔍 Kontrol kartları taranıyor (Yönetici: ${manager.addressChar})...');
 
+    // [#189] T komutları adres taşımaz: başka bir kabinin kartında satır seçili
+    // kalmışsa (ör. B'deki serum kartı satır 26'da) o kart da cevap verir ve
+    // boş satırlar ".250" ile dolar. Önceki oturumdan / başka uygulamadan kalan
+    // seçimler bu bağlantıda bilinmediği için taramadan önce hattaki TÜM
+    // yönetim kartlarında seçim bırakılır.
+    await _releaseAllSelections();
+    _managersWithSelection.clear();
+
     for (int row = 1; row <= 26; row++) {
       // Satır seçimi — 2 deneme (donanım gecikmesi toleransı)
       bool isRowSelected = false;
