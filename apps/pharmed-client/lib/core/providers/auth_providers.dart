@@ -36,7 +36,7 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSource(dio: ref.read(plainDioProvider));
 });
 
-final authRepositoryProvider = Provider<IAuthRepository>((ref) {
+final Provider<IAuthRepository> authRepositoryProvider = Provider<IAuthRepository>((ref) {
   return AuthRepositoryImpl(
     remoteDataSource: ref.read(authRemoteDataSourceProvider),
     cacheDataSource: ref.read(authCacheProvider),
@@ -69,6 +69,6 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
 });
 
 /// [SWREQ-CORE-AUTH-005] TokenHolder'ın refresh handler'ı (network_providers).
-final refreshSessionUseCaseProvider = Provider<RefreshSessionUseCase>((ref) {
+final Provider<RefreshSessionUseCase> refreshSessionUseCaseProvider = Provider<RefreshSessionUseCase>((ref) {
   return RefreshSessionUseCase(ref.read(authRepositoryProvider));
 });

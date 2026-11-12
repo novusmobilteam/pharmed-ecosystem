@@ -23,13 +23,13 @@ final authCacheProvider = Provider<AuthCacheDataSource>((ref) {
 // TokenInterceptor buradan sync okur.
 // Circular dependency yok: APIManager → TokenHolder (tek yön).
 
-final tokenHolderProvider = Provider<TokenHolder>((ref) {
+final Provider<TokenHolder> tokenHolderProvider = Provider<TokenHolder>((ref) {
   return TokenHolder();
 });
 
 // ── APIManager ────────────────────────────────────────────────────
 
-final apiManagerProvider = Provider<APIManager>((ref) {
+final Provider<APIManager> apiManagerProvider = Provider<APIManager>((ref) {
   final config = FlavorConfig.instance;
   final tokenHolder = ref.read(tokenHolderProvider);
 
