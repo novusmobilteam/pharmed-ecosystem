@@ -16524,6 +16524,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This lid has medicine assignments; remove them before deleting it.'**
   String get cabinDesign_serum_lidHasAssignmentsError;
+
+  /// No description provided for @cabinOperation_openShelfDeleteRemovedOthersWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.'**
+  String cabinOperation_openShelfDeleteRemovedOthersWarning(int count);
 }
 
 class _AppLocalizationsDelegate

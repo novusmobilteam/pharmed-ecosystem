@@ -6816,5 +6816,9 @@
   "@cabinDesign_serum_removeLastLidConfirm": {
     "placeholders": { "cabinName": { "type": "String" } }
   },
-  "cabinDesign_serum_lidHasAssignmentsError": "This lid has medicine assignments; remove them before deleting it."
+  "cabinDesign_serum_lidHasAssignmentsError": "This lid has medicine assignments; remove them before deleting it.",
+  "cabinOperation_openShelfDeleteRemovedOthersWarning": "The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.",
+  "@cabinOperation_openShelfDeleteRemovedOthersWarning": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

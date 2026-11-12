@@ -507,29 +507,61 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     // Serumda yalnızca seçili avadanlığın ataması silinir (raf bazlı silme
     // raftaki diğer avadanlık atamalarını da silerdi).
     final cellId = current.target.cellId;
-    // Açık Raf'ta avadanlık bazlı silme raftaki diğer ilaçları da etkileyebilir
-    // — backend davranışı doğrulanana kadar raf tek ilaçlıysa izin verilir.
+    // [#207] Açık Raf'ta birden fazla ilaç varsa avadanlık bazlı silme hepsini
+    // siler; atama normal göz ataması gibi (göz/raf kimliğiyle) silinir.
+    // Servisin yalnız bu atamayı silip silmediği sonradan doğrulanır.
     final othersOnShelf = cellId == null
         ? const <MedicineAssignment>[]
         : AssignmentSelection.serumAssignments(
             cellId,
             current.assignments,
           ).where((a) => a.id != current.assignment.id).toList();
-    if (current.target.isOpenShelf && othersOnShelf.isNotEmpty) {
-      state = DrugAssignmentError(
-        message: contextlessL10n().cabinOperation_openShelfDeleteNotSupported,
-        previous: current,
-      );
-      return;
-    }
-    final result = cellId != null
+    final openShelfShared = current.target.isOpenShelf && othersOnShelf.isNotEmpty;
+    final result = cellId != null && !openShelfShared
         ? await _deleteAssignment.serumTray(cellId)
         : await _deleteAssignment.call(current.assignment.cabinDrawerId ?? 0);
 
-    result.when(
-      ok: (_) => _refreshAndReturnToIdle(cabinId: current.cabinId, groups: current.groups),
-      error: (e) => state = DrugAssignmentError(message: e.message, previous: current),
-    );
+    if (result.isError) {
+      final e = result.when(ok: (_) => const UnexpectedException(), error: (e) => e);
+      if (openShelfShared) {
+        MedLogger.warn(
+          unit: 'SW-UNIT-ASSIGNMENT',
+          swreq: 'SWREQ-CLI-ASSIGN-OPEN-SHELF',
+          message: 'Açık raf tekil atama silme servisten reddedildi',
+          context: {'assignmentId': current.assignment.id, 'cabinDrawerId': current.assignment.cabinDrawerId},
+        );
+      }
+      state = DrugAssignmentError(message: e.message, previous: current);
+      return;
+    }
+
+    final next = await _loadIdle();
+    final removedOthers = openShelfShared ? _missingAfterDelete(othersOnShelf, next) : 0;
+    if (removedOthers > 0 && next is DrugAssignmentIdle) {
+      state = DrugAssignmentError(
+        message: contextlessL10n().cabinOperation_openShelfDeleteRemovedOthersWarning(removedOthers),
+        previous: next,
+      );
+      return;
+    }
+    state = next;
+  }
+
+  /// [#207] Silmeden sonra açık raftaki diğer atamalardan kaç tanesi kayboldu?
+  /// > 0 → servis tekil silme yapmıyor; backend'den yeni servis gerekir.
+  int _missingAfterDelete(List<MedicineAssignment> others, DrugAssignmentUiState next) {
+    final remaining = _extractAssignments(next).map((a) => a.id).toSet();
+    final missing = others.where((a) => !remaining.contains(a.id)).length;
+    if (missing > 0) {
+      MedLogger.ruleRejected(
+        unit: 'SW-UNIT-ASSIGNMENT',
+        swreq: 'SWREQ-CLI-ASSIGN-OPEN-SHELF',
+        rule: 'OPEN_SHELF_DELETE_REMOVED_OTHERS',
+        message: 'Açık raf silme diğer ilaçların atamalarını da sildi',
+        context: {'silinenDiger': missing, 'digerIdler': others.map((a) => a.id).toList()},
+      );
+    }
+    return missing;
   }
 
   /// Kayıt/silme sonrası atamaları yeniler ve Idle'a (tabloya) döner —
