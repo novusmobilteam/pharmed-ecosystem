@@ -108,6 +108,7 @@ Testçilere iki client paketi gider; ikisi de gerçek API'ye (`dev`) bağlanır,
 - Uygulamanın sol alt köşesinde sürüm etiketi görünür: **DEV · PC — sahte cihaz** ya da **DEV · KABİN**. `prod` + gerçek cihazda etiket yoktur.
 - Loglarda ve log panelinde sürüm `dev-pc` / `dev-kabin` olarak görünür (gönderimdeki `device.flavor`).
 - Bilgisayar sürümünde mobil işlemlerde (dolum, alım, sayım, boşaltma) **İşlemi tamamla** kayıttan sonra sahte çekmeceyi de kapatır; fiziksel kapanış beklenmez.
+- Bilgisayar sürümünde kabin taraması master (A) için kübik + birim doz + serum kartları döner. A dışındaki bir adrese tipi **Serum Kabini** olan kabin eklenirse tarama sahadaki gibi yalnızca satır 26'daki serum kartını bulur (bağımsız serum kabini). Kapak sayısı seçimi ve **Kapak Ekle** cihazsız test edilebilir.
 - Kabin sürümünde tek bir cihaz eksikse yalnızca onu sahtelemek için `FINGERPRINT_MOCK=true` / `PRINTER_MOCK=true` kullanılabilir.
 
 ## Bilgisayarda birden çok kabin (test cihazı)

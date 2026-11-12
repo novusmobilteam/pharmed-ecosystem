@@ -112,7 +112,11 @@ abstract interface class ICabinOperationService {
   ///
   /// BAĞIMLILIK: [scanManagementCard] veya [getOrScanManager] ile
   ///   [ManagementCard] edinilmiş olmalıdır.
-  Future<List<ControlCard>> discoverControlCards(ManagementCard manager);
+  ///
+  /// [expectedType]: Taranan kabinin tanımlı tipi. Gerçek servis YOK SAYAR —
+  ///   kabin yapısını kart belirler (#195). Yalnızca mock servis cihazsız test
+  ///   senaryosu seçmek için kullanır (#201).
+  Future<List<ControlCard>> discoverControlCards(ManagementCard manager, {CabinType? expectedType});
 
   // ════════════════════════════════════════════════════════════════
   // MOBİL KABİN — ÇEKMECE OPERASYONLARI
