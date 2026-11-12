@@ -21,6 +21,7 @@ class AuthNotifier extends ChangeNotifier {
   final AuthConfig _config;
   final LoginUseCase _loginUseCase;
   final LogoutUseCase _logoutUseCase;
+  final RefreshSessionUseCase _refreshSessionUseCase;
   final AuthCacheDataSource _cache;
   final TokenHolder _tokenHolder;
 
@@ -28,15 +29,19 @@ class AuthNotifier extends ChangeNotifier {
     required AuthConfig config,
     required LoginUseCase loginUseCase,
     required LogoutUseCase logoutUseCase,
+    required RefreshSessionUseCase refreshSessionUseCase,
     required AuthCacheDataSource cache,
     required TokenHolder tokenHolder,
   }) : _config = config,
        _loginUseCase = loginUseCase,
        _logoutUseCase = logoutUseCase,
+       _refreshSessionUseCase = refreshSessionUseCase,
        _cache = cache,
        _tokenHolder = tokenHolder {
     _restoreSession();
     _tokenHolder.setOnUnauthorized(onUnauthorized);
+    // [SWREQ-DATA-AUTH-005] 401 → önce refresh token ile oturumu yenile.
+    _tokenHolder.setRefreshHandler(() async => (await _refreshSessionUseCase()).isSuccess);
   }
 
   AuthState _state = const AuthLoggedOut();

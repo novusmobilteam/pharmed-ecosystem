@@ -53,10 +53,13 @@ class AuthProviders {
 
     Provider<LogoutUseCase>(create: (ctx) => LogoutUseCase(ctx.read<IAuthRepository>())),
 
+    Provider<RefreshSessionUseCase>(create: (ctx) => RefreshSessionUseCase(ctx.read<IAuthRepository>())),
+
     ChangeNotifierProvider<AuthNotifier>(
       create: (ctx) => AuthNotifier(
         loginUseCase: ctx.read<LoginUseCase>(),
         logoutUseCase: ctx.read<LogoutUseCase>(),
+        refreshSessionUseCase: ctx.read<RefreshSessionUseCase>(),
         cache: ctx.read<AuthCacheDataSource>(),
         tokenHolder: ctx.read<TokenHolder>(),
         config: AuthConfig(inactivityTimeoutMinutes: 60),

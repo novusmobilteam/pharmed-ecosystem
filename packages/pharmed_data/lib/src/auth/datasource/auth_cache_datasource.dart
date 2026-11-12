@@ -1,6 +1,6 @@
 // [SWREQ-DATA-AUTH-002]
-// Token ve AppUser bilgisini Hive'da saklar.
-// İki ayrı box — token box String, user box Map.
+// Access/refresh token ve AppUser bilgisini Hive'da saklar.
+// İki ayrı box — token box String (access + refresh ayrı key), user box Map.
 // Hive TypeAdapter yazmak yerine Map<String,dynamic> olarak serileştiriyoruz:
 // auth verisi basit ve versiyon yönetimi gerekmez.
 // Sınıf: Class B
@@ -12,6 +12,10 @@ import 'package:pharmed_core/pharmed_core.dart';
 abstract interface class IAuthCacheDataSource {
   Future<void> saveToken(String token);
   Future<String?> readToken();
+
+  /// [SWREQ-DATA-AUTH-005] null → refresh token silinir.
+  Future<void> saveRefreshToken(String? refreshToken);
+  Future<String?> readRefreshToken();
   Future<void> saveUser(AppUser user);
   Future<AppUser?> readUser();
   Future<void> clear();
@@ -22,6 +26,7 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
   String get _tokenBoxName => '${boxPrefix}auth_token';
   String get _userBoxName => '${boxPrefix}auth_user';
   static const _tokenKey = 'access_token';
+  static const _refreshTokenKey = 'refresh_token';
   static const _userKey = 'current_user';
 
   AuthCacheDataSource({this.boxPrefix = ''});
@@ -36,6 +41,22 @@ class AuthCacheDataSource implements IAuthCacheDataSource {
   Future<String?> readToken() async {
     final box = await Hive.openBox<String>(_tokenBoxName);
     return box.get(_tokenKey);
+  }
+
+  @override
+  Future<void> saveRefreshToken(String? refreshToken) async {
+    final box = await Hive.openBox<String>(_tokenBoxName);
+    if (refreshToken == null || refreshToken.isEmpty) {
+      await box.delete(_refreshTokenKey);
+    } else {
+      await box.put(_refreshTokenKey, refreshToken);
+    }
+  }
+
+  @override
+  Future<String?> readRefreshToken() async {
+    final box = await Hive.openBox<String>(_tokenBoxName);
+    return box.get(_refreshTokenKey);
   }
 
   @override

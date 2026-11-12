@@ -33,7 +33,8 @@ class APIManager {
        ) {
     // NetworkLogInterceptor en sonda: token eklenmiş, nihai isteği loglar.
     _dio.interceptors.addAll([
-      TokenInterceptor(tokenProvider: tokenProvider),
+      // [SWREQ-DATA-AUTH-005] 401 → refresh → aynı Dio ile tek tekrar deneme.
+      TokenInterceptor(tokenProvider: tokenProvider, retryDio: _dio),
       // [SWREQ-CORE-007] Sunucu saati (Date başlığı) → ServerClock.
       ServerClockInterceptor(),
       ...?extraInterceptors,

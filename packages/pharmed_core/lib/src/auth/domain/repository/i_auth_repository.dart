@@ -19,6 +19,13 @@ abstract interface class IAuthRepository {
   /// token ve kullanıcı login() ile aynı şekilde önbelleğe yazılır.
   Future<Result<AuthToken>> loginWithFingerprint(FingerprintLoginRequest request);
 
+  /// [SWREQ-CORE-AUTH-005] Saklı refresh token ile oturumu yeniler
+  /// (POST /Login/refresh). Başarılıysa yeni access/refresh token
+  /// cache'e ve TokenHolder'a yazılır, yeni access token döner.
+  /// Refresh token yoksa veya sunucu reddederse error döner — çağıran
+  /// (TokenInterceptor) oturumu kapatır.
+  Future<Result<String>> refreshSession();
+
   /// Cache'i temizler.
   Future<Result<void>> logout();
 

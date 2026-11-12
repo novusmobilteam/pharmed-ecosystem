@@ -13,7 +13,13 @@ import 'traffic_log.dart';
 
 // ── Ağ ve giriş ───────────────────────────────────────────────────
 
-final tokenHolderProvider = Provider<TokenHolder>((ref) => TokenHolder());
+final tokenHolderProvider = Provider<TokenHolder>((ref) {
+  final holder = TokenHolder();
+  // [SWREQ-DATA-AUTH-005] 401 → refresh token ile oturumu yenile, isteği tekrar dene.
+  // Lazy: authRepository yalnızca refresh anında okunur.
+  holder.setRefreshHandler(() async => (await ref.read(authRepositoryProvider).refreshSession()).isSuccess);
+  return holder;
+});
 
 final apiManagerProvider = Provider<APIManager>((ref) {
   return APIManager(

@@ -6,6 +6,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_client/core/flavor/app_flavor.dart';
+import 'package:pharmed_client/core/providers/auth_providers.dart';
 import 'package:pharmed_client/features/auth/notifier/auth_notifier.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 
@@ -35,6 +36,14 @@ final apiManagerProvider = Provider<APIManager>((ref) {
   // 401 callback'ini AuthNotifier'a bağla
   tokenHolder.setOnUnauthorized(() {
     ref.read(authNotifierProvider.notifier).onUnauthorized();
+  });
+
+  // [SWREQ-DATA-AUTH-005] 401 → önce refresh token ile oturumu yenile.
+  // Lazy okunur: authRepository → userRepository → apiManager döngüsü
+  // yalnızca çağrı anında (apiManager hazırken) çözülür.
+  tokenHolder.setRefreshHandler(() async {
+    final result = await ref.read(refreshSessionUseCaseProvider).call();
+    return result.isSuccess;
   });
 
   return APIManager(
