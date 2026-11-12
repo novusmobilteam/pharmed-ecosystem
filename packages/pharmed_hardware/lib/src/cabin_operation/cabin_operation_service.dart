@@ -15,6 +15,8 @@
 //
 // Sınıf: Class B
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -39,6 +41,18 @@ class CabinOperationService implements ICabinOperationService {
   /// kendi kontrol kartına iletir (bkz. docs/hardware/rs485-protokol.md). Başka bir
   /// kartta satır seçmeden önce bunların seçimi `00` ile bırakılır.
   final Set<int> _managersWithSelection = {};
+
+  /// Hat işlemlerini (satır seç + komut) sıraya koyan kuyruğun sonu.
+  ///
+  /// Seri servis tek bir komutu kilitler, ama "satır seç → komut gönder" ikilisini
+  /// kilitlemez. Sensör okuması (Ya49/Ya50 + Ya00) ile mobil çekmece komutları
+  /// (Ya26 + T) arasına girince satır seçimi bozuluyor, açma komutu boşa gidiyor
+  /// ve yanıtlar karışabiliyordu. Bkz. [_lineTransaction].
+  Future<void> _lineTail = Future<void>.value();
+
+  /// Akü okumasında ham yanıt periyodik loglanır (her N okumada bir).
+  static const int _batteryRawLogEvery = 30;
+  int _batteryReadCount = 0;
 
   // ── Sabitler ──────────────────────────────────────────────────────────────
 
@@ -335,7 +349,10 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<void> openMobileDrawer({required ManagementCard manager, required int port}) async {
+  Future<void> openMobileDrawer({required ManagementCard manager, required int port}) =>
+      _lineTransaction(() => _openMobileDrawer(manager: manager, port: port));
+
+  Future<void> _openMobileDrawer({required ManagementCard manager, required int port}) async {
     final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
     if (!isSelected) {
       throw SerialPortException(message: contextlessL10n().hw_cabinOps_serumSlaveModeError);
@@ -361,7 +378,10 @@ class CabinOperationService implements ICabinOperationService {
   }
 
   @override
-  Future<DrawerPhysicalStatus> getMobileDrawerStatus({required ManagementCard manager, required int port}) async {
+  Future<DrawerPhysicalStatus> getMobileDrawerStatus({required ManagementCard manager, required int port}) =>
+      _lineTransaction(() => _getMobileDrawerStatus(manager: manager, port: port));
+
+  Future<DrawerPhysicalStatus> _getMobileDrawerStatus({required ManagementCard manager, required int port}) async {
     final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
     if (!isSelected) return DrawerPhysicalStatus.unknown;
 
@@ -389,8 +409,13 @@ class CabinOperationService implements ICabinOperationService {
 
     while (true) {
       try {
-        // Her döngüde slave mod seçimi (RS485 bus durumu değişmiş olabilir)
-        final isSelected = await _selectRow(manager.addressIndex, _serumSlaveRow);
+        // Her döngüde slave mod seçimi (RS485 bus durumu değişmiş olabilir).
+        // Seçim + durum sorgusu tek işlem: arada sensör okuması seçimi bozmasın.
+        final (isSelected, response) = await _lineTransaction<(bool, String?)>(() async {
+          final selected = await _selectRow(manager.addressIndex, _serumSlaveRow);
+          if (!selected) return (false, null);
+          return (true, await _serialService.sendAndReceive(statusCommand));
+        });
 
         MedLogger.info(
           unit: 'CabinOps',
@@ -405,7 +430,6 @@ class CabinOperationService implements ICabinOperationService {
           continue;
         }
 
-        final response = await _serialService.sendAndReceive(statusCommand);
         MedLogger.info(
           unit: 'CabinOps',
           swreq: 'SWREQ-CABIN-OP-003',
@@ -566,16 +590,28 @@ class CabinOperationService implements ICabinOperationService {
     required ManagementCard manager,
     required int targetRow,
     required String commandPayload,
-  }) async {
+  }) => _lineTransaction(() async {
     final isSelected = await _selectRow(manager.addressIndex, targetRow);
     if (!isSelected) return null;
 
     return await _serialService.sendAndReceive(commandPayload);
-  }
+  });
 
   // ════════════════════════════════════════════════════════════════
   // PRIVATE — YARDIMCILAR
   // ════════════════════════════════════════════════════════════════
+
+  /// [body]'yi hattı kullanan diğer işlemlerle sırayla (iç içe girmeden) çalıştırır.
+  ///
+  /// YENİDEN GİRİLEMEZ: [body] içinden [_lineTransaction] ile sarılmış başka
+  /// bir public metot çağrılmamalıdır (kilitlenir). İç yardımcılar
+  /// ([_selectRow], [_releaseRow]) sarılmamıştır, serbestçe çağrılabilir.
+  Future<T> _lineTransaction<T>(Future<T> Function() body) {
+    final previous = _lineTail;
+    final done = Completer<void>();
+    _lineTail = done.future;
+    return previous.then((_) => body()).whenComplete(done.complete);
+  }
 
   /// Yönetim kartı üzerinden belirtilen satırı seçer.
   ///
@@ -675,15 +711,39 @@ class CabinOperationService implements ICabinOperationService {
 
   /// Yönetim kartından akü voltajı okur (row 49).
   @override
-  Future<double?> readBatteryVoltage({required ManagementCard manager}) async {
+  Future<double?> readBatteryVoltage({required ManagementCard manager}) => _lineTransaction(() async {
     final command = CommandBuilder.buildManagementCommand(
       addressIndex: manager.addressIndex,
       row: CommandBuilder.rowBatteryLevel,
     );
 
     try {
+      await _releaseLeftoverSelection(manager.addressIndex);
       final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 1000));
-      return CabinSensorParser.parseBattery(response);
+      final volts = CabinSensorParser.parseBattery(response);
+      _batteryReadCount++;
+      if (volts == null) {
+        MedLogger.warn(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-HW-SENSOR-001',
+          message: 'Akü yanıtı çözülemedi',
+          context: {'adres': manager.addressChar, 'cmd': command, 'response': response},
+        );
+      } else if (_batteryReadCount == 1 || _batteryReadCount % _batteryRawLogEvery == 0) {
+        // Sahada yanlış akü yüzdesinin kaynağını görmek için ham yanıt.
+        MedLogger.info(
+          unit: 'CabinOps',
+          swreq: 'SWREQ-HW-SENSOR-001',
+          message: 'Akü ham okuma',
+          context: {
+            'adres': manager.addressChar,
+            'response': response,
+            'volt': volts,
+            'yuzde': BatteryLevelConverter.toPercent(volts).toStringAsFixed(0),
+          },
+        );
+      }
+      return volts;
     } catch (e) {
       MedLogger.warn(
         unit: 'CabinOps',
@@ -696,34 +756,54 @@ class CabinOperationService implements ICabinOperationService {
       // Sensör satırı (49) seçili kalmasın — kart sonraki satır seçimini reddedebiliyor (#178).
       await _releaseRow(manager.addressIndex);
     }
-  }
+  });
 
   /// Yönetim kartından ısı/nem okur (row 50).
   ///
   /// Bu satır [_selectRow] KULLANMAZ — komutun kendisi veriyi döner ve
   /// yanıtta 'ok' bulunmaz, bu yüzden _selectRow burada çalışmaz.
   @override
-  Future<({double temperature, double humidity})?> readTempHumidity({required ManagementCard manager}) async {
-    final command = CommandBuilder.buildManagementCommand(
-      addressIndex: manager.addressIndex,
-      row: CommandBuilder.rowTempHumidity,
-    );
+  Future<({double temperature, double humidity})?> readTempHumidity({required ManagementCard manager}) =>
+      _lineTransaction(() async {
+        final command = CommandBuilder.buildManagementCommand(
+          addressIndex: manager.addressIndex,
+          row: CommandBuilder.rowTempHumidity,
+        );
 
-    try {
-      final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 1000));
-      return CabinSensorParser.parseTempHumidity(response);
-    } catch (e) {
-      MedLogger.warn(
-        unit: 'CabinOps',
-        swreq: 'SWREQ-HW-SENSOR-001',
-        message: 'Isı/nem okunamadı',
-        context: {'error': e.toString()},
-      );
-      return null;
-    } finally {
-      // Sensör satırı (50) seçili kalmasın (#178).
-      await _releaseRow(manager.addressIndex);
-    }
+        try {
+          await _releaseLeftoverSelection(manager.addressIndex);
+          final response = await _serialService.sendAndReceive(command, timeout: const Duration(milliseconds: 1000));
+          final result = CabinSensorParser.parseTempHumidity(response);
+          if (result == null) {
+            MedLogger.warn(
+              unit: 'CabinOps',
+              swreq: 'SWREQ-HW-SENSOR-001',
+              message: 'Isı/nem yanıtı çözülemedi',
+              context: {'adres': manager.addressChar, 'cmd': command, 'response': response},
+            );
+          }
+          return result;
+        } catch (e) {
+          MedLogger.warn(
+            unit: 'CabinOps',
+            swreq: 'SWREQ-HW-SENSOR-001',
+            message: 'Isı/nem okunamadı',
+            context: {'error': e.toString()},
+          );
+          return null;
+        } finally {
+          // Sensör satırı (50) seçili kalmasın (#178).
+          await _releaseRow(manager.addressIndex);
+        }
+      });
+
+  /// Sensör satırı seçilmeden önce, kartta başka bir satır (ör. mobil çekmece
+  /// sonrası slave satırı 26) seçili kaldıysa bırakır. Seçili satır varken kart
+  /// sensör satırını reddedebiliyor ya da yanıt o satırdaki karttan gelebiliyor.
+  Future<void> _releaseLeftoverSelection(int managerAddress) async {
+    if (_managersWithSelection.isEmpty) return;
+    await _releaseOtherSelections(exceptManager: managerAddress);
+    if (_managersWithSelection.contains(managerAddress)) await _releaseRow(managerAddress);
   }
 
   /// Isı, nem ve akü değerlerini periyodik yayınlar.

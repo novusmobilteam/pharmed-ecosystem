@@ -44,6 +44,7 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
     ref.onDispose(() {
       _sub?.cancel();
       _releaseAuthPauseIfHeld();
+      _releaseSensorPauseIfHeld();
     });
     return const MobileDrawerSessionState.initial();
   }
@@ -52,10 +53,15 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
   Future<void> start({required int drawerPort, required int slotId}) async {
     await _sub?.cancel();
     _releaseAuthPauseIfHeld();
-    _releaseSensorPauseIfHeld();
+    // Sensör duraklatması bırakılmaz: aşağıda yeniden alınıyor. Bırak-al art
+    // arda yapılınca resume()'un başlattığı stream pause()'dan sonra açılıyordu.
 
     _lastDrawerPort = drawerPort;
     _lastSlotId = slotId;
+
+    // Sensör okuması açma komutundan ÖNCE durdurulur: aynı RS485 hattında
+    // sensör satırı (49/50) seçimi, slave satırı (26) seçimini bozuyordu.
+    _acquireSensorPause();
 
     _sub = _startSession
         .call(drawerPort: drawerPort)
@@ -99,6 +105,8 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
     _lastDrawerPort = null;
     _lastSlotId = null;
     _releaseAuthPauseIfHeld();
+    // Çekmece açıkken durdurulursa sensör sonsuza dek duraklatılmış kalıyordu.
+    _releaseSensorPauseIfHeld();
     state = const MobileDrawerSessionState.initial();
   }
 
@@ -159,8 +167,11 @@ class MobileDrawerSessionNotifier extends Notifier<MobileDrawerSessionState> {
       _acquireSensorPause();
     } else if (wasOpen && !isOpen) {
       _releaseAuthPauseIfHeld();
-      _releaseSensorPauseIfHeld();
     }
+
+    // Açık değilse (kapandı / hata) sensör okuması devam eder. Açılmadan gelen
+    // hata (ör. yönetim kartı yok) da start()'ta alınan duraklatmayı bırakır.
+    if (!isOpen) _releaseSensorPauseIfHeld();
   }
 
   bool _isPhysicallyOpen(MobileDrawerStage s) => s is MobileDrawerOpening || s is MobileDrawerOpened;
