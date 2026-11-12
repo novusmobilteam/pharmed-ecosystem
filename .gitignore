@@ -12,3 +12,4 @@ melos_bootstrap.sh
 
 # FVM Version Cache
 .fvm/
+builds
