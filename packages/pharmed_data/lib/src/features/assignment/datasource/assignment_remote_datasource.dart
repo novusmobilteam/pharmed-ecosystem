@@ -55,6 +55,16 @@ class AssignmentRemoteDataSource extends BaseRemoteDataSource {
     );
   }
 
+  /// [#215] Tek bir atamayı kendi kimliğiyle siler (PUT /{id} ile aynı kaynak).
+  /// Açık rafta birden fazla ilaç varken yalnız seçilen ilacın ataması için.
+  Future<Result<void>> deleteMedicineAssignmentById(int assignmentId) {
+    return deleteRequest<void>(
+      path: '$_medicineBase/$assignmentId',
+      parser: BaseRemoteDataSource.voidParser(),
+      successLog: 'Atama silindi (id)',
+    );
+  }
+
   /// Serum kabininde tek bir avadanlığın (DrawerCell) atamasını siler.
   Future<Result<void>> deleteSerumTrayAssignment(int cabinDrawerDetailId) {
     return deleteRequest<void>(

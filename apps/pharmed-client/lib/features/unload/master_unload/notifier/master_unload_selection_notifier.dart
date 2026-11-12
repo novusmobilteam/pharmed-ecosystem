@@ -238,17 +238,18 @@ class MasterUnloadSelectionNotifier extends ChangeNotifier with ApiRequestMixin 
     );
   }
 
-  /// Serum ataması avadanlık kimliğiyle silinir. [#207] Açık Raf'ta aynı
+  /// Serum ataması avadanlık kimliğiyle silinir. [#207/#215] Açık Raf'ta aynı
   /// avadanlıkta başka ilaç da varsa avadanlık bazlı silme hepsini sileceği
-  /// için atama normal göz ataması gibi (göz/raf kimliğiyle) silinir; sonuç
-  /// [deleteAssignment]'ta diğer atamalar kaybolmuş mu diye doğrulanır.
+  /// için atama kendi kimliğiyle (DELETE /CabinDrawrQuantity/{id}) silinir;
+  /// sonuç [deleteAssignment]'ta diğer atamalar kaybolmuş mu diye doğrulanır.
   Future<Result<void>> _deleteSerumAssignment(
     MedicineAssignment assignment,
     int cellId, {
     required List<MedicineAssignment> othersOnShelf,
   }) {
-    if (othersOnShelf.isEmpty) return _deleteAssignment.serumTray(cellId);
-    return _deleteAssignment.call(assignment.cabinDrawerId ?? 0);
+    final assignmentId = assignment.id;
+    if (othersOnShelf.isEmpty || assignmentId == null) return _deleteAssignment.serumTray(cellId);
+    return _deleteAssignment.byId(assignmentId);
   }
 
   /// Atamanın ilacını değiştirir (muadil ya da tüm ilaç listesinden).

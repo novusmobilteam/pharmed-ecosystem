@@ -507,9 +507,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     // Serumda yalnızca seçili avadanlığın ataması silinir (raf bazlı silme
     // raftaki diğer avadanlık atamalarını da silerdi).
     final cellId = current.target.cellId;
-    // [#207] Açık Raf'ta birden fazla ilaç varsa avadanlık bazlı silme hepsini
-    // siler; atama normal göz ataması gibi (göz/raf kimliğiyle) silinir.
-    // Servisin yalnız bu atamayı silip silmediği sonradan doğrulanır.
+    // [#207/#215] Açık Raf'ta birden fazla ilaç varsa avadanlık bazlı silme
+    // hepsini siler; atama kendi kimliğiyle (DELETE /CabinDrawrQuantity/{id})
+    // silinir. Servisin yalnız bu atamayı silip silmediği sonradan doğrulanır.
     final othersOnShelf = cellId == null
         ? const <MedicineAssignment>[]
         : AssignmentSelection.serumAssignments(
@@ -517,7 +517,10 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
             current.assignments,
           ).where((a) => a.id != current.assignment.id).toList();
     final openShelfShared = current.target.isOpenShelf && othersOnShelf.isNotEmpty;
-    final result = cellId != null && !openShelfShared
+    final assignmentId = current.assignment.id;
+    final result = openShelfShared && assignmentId != null
+        ? await _deleteAssignment.byId(assignmentId)
+        : cellId != null
         ? await _deleteAssignment.serumTray(cellId)
         : await _deleteAssignment.call(current.assignment.cabinDrawerId ?? 0);
 
