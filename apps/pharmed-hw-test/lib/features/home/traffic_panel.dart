@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/providers.dart';
 import '../../core/traffic_log.dart';
+import '../../widgets/common.dart';
 
 /// Seri hattaki son komutlar (TX) ve cevaplar (RX).
 class TrafficPanel extends ConsumerWidget {
@@ -14,11 +16,11 @@ class TrafficPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final log = ref.watch(trafficLogProvider);
     final entries = log.entries.reversed.toList();
-    final mono = const TextStyle(fontFamily: 'Consolas', fontSize: 12.5);
+    final mono = monoStyle(fontSize: 12.5);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        color: MedColors.surface2,
+        border: const Border(top: BorderSide(color: MedColors.border)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,16 +64,16 @@ class _TrafficRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 1),
       child: Row(
         children: [
-          SizedBox(width: 100, child: Text(formatTime(entry.time), style: style.copyWith(color: Colors.grey.shade600))),
+          SizedBox(width: 100, child: Text(formatTime(entry.time), style: style.copyWith(color: MedColors.text3))),
           SizedBox(width: 130, child: Text('TX ${entry.command}', style: style)),
           Expanded(
             child: Text(
               'RX ${entry.responseText}',
-              style: style.copyWith(color: failed ? Colors.red.shade700 : Colors.green.shade800),
+              style: style.copyWith(color: failed ? TestStatus.failed.color : TestStatus.passed.color),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          Text('${entry.elapsed.inMilliseconds} ms', style: style.copyWith(color: Colors.grey.shade600)),
+          Text('${entry.elapsed.inMilliseconds} ms', style: style.copyWith(color: MedColors.text3)),
         ],
       ),
     );

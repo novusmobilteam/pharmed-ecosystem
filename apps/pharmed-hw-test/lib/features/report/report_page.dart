@@ -58,7 +58,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
               const SizedBox(height: 6),
               Text(
                 _lastPath ?? 'Rapor Belgeler\\PharMed-HwTest klasörüne kaydedilir; seri hat trafiği de rapora eklenir.',
-                style: const TextStyle(color: Colors.black54),
+                style: hintStyle(),
               ),
             ],
           ),
@@ -70,7 +70,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
               title: Text(s.title),
               subtitle: s.detail == null || s.detail!.isEmpty
                   ? null
-                  : Text(s.detail!, style: const TextStyle(fontFamily: 'Consolas', fontSize: 12.5)),
+                  : Text(s.detail!, style: monoStyle(fontSize: 12.5)),
               trailing: Text(formatTime(s.time)),
             ),
           ),

@@ -218,7 +218,7 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
               const Text('Yönetim kartı:'),
               AddressPicker(value: _address, onChanged: (v) => setState(() => _address = v)),
               NumberField(label: 'Satır (1–26)', controller: _row),
-              if (!connected) const Text('Önce COM porta bağlanın.', style: TextStyle(color: Colors.red)),
+              if (!connected) const NotConnectedHint(),
             ],
           ),
         ),
@@ -233,7 +233,7 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
               NumberField(label: 'Göz (0–16, 20)', controller: _step),
               BusyButton(label: 'Aç', icon: Icons.lock_open, busy: _busy, onPressed: enabled ? _openDrawer : null),
               OutlinedButton(onPressed: enabled ? _drawerStatus : null, child: const Text('Durum oku')),
-              const Text('Kübik çekmecenin ana kilidi de buradan açılır.', style: TextStyle(color: Colors.black54)),
+              Text('Kübik çekmecenin ana kilidi de buradan açılır.', style: hintStyle()),
             ],
           ),
         ),
@@ -248,7 +248,7 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
               NumberField(label: 'Sıra (0–4)', controller: _cubicIndex),
               BusyButton(label: 'Kapağı aç', icon: Icons.lock_open, busy: _busy, onPressed: enabled ? _openCubic : null),
               OutlinedButton(onPressed: enabled ? _cubicStatus : null, child: const Text('Durum oku')),
-              const Text('Çekmece açık değilse kart "ht" döner.', style: TextStyle(color: Colors.black54)),
+              Text('Çekmece açık değilse kart "ht" döner.', style: hintStyle()),
             ],
           ),
         ),
@@ -284,12 +284,12 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
                   ),
                   FilledButton.tonalIcon(
                     onPressed: _lastAction == null ? null : () => _observe(true),
-                    icon: const Icon(Icons.check_circle, color: Colors.green),
+                    icon: Icon(TestStatus.passed.icon, color: TestStatus.passed.color),
                     label: const Text('Yalnız hedef açıldı'),
                   ),
                   FilledButton.tonalIcon(
                     onPressed: _lastAction == null ? null : () => _observe(false),
-                    icon: const Icon(Icons.error, color: Colors.red),
+                    icon: Icon(TestStatus.failed.icon, color: TestStatus.failed.color),
                     label: const Text('Başka kabin de açıldı'),
                   ),
                 ],
@@ -300,7 +300,7 @@ class _DrawerTestPageState extends ConsumerState<DrawerTestPage> {
         if (_lastAction != null)
           SectionCard(
             title: 'Son işlem',
-            child: Text('$_lastAction\n$_lastResult', style: const TextStyle(fontFamily: 'Consolas')),
+            child: Text('$_lastAction\n$_lastResult', style: monoStyle()),
           ),
       ],
     );

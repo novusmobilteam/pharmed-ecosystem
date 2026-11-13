@@ -115,7 +115,7 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
                   const Text('Isı/nem ve akü oku'),
                   if (!connected) ...[
                     const SizedBox(width: 16),
-                    const Text('Önce COM porta bağlanın.', style: TextStyle(color: Colors.red)),
+                    const NotConnectedHint(),
                   ],
                 ],
               ),
@@ -140,7 +140,7 @@ class _LineScanPageState extends ConsumerState<LineScanPage> {
                   DataRow(
                     cells: [
                       DataCell(Text(addressLabel(r.address), style: const TextStyle(fontWeight: FontWeight.w600))),
-                      DataCell(Text(r.response?.trim() ?? '(cevap yok)', style: const TextStyle(fontFamily: 'Consolas'))),
+                      DataCell(Text(r.response?.trim() ?? '(cevap yok)', style: monoStyle())),
                       DataCell(Text(r.responded ? _sensorText(r) : '-')),
                       DataCell(
                         r.responded

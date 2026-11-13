@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/providers.dart';
 import '../../core/report.dart';
@@ -195,7 +196,7 @@ class _CardScanPageState extends ConsumerState<CardScanPage> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: 8),
-                Text(_error!, style: const TextStyle(color: Colors.red)),
+                ErrorText(_error!),
               ],
             ],
           ),
@@ -218,7 +219,7 @@ class _CardTile extends StatelessWidget {
     final ok = row.matches.length == 1;
     final type = ok ? row.typeOf(row.matches.first) : null;
     final isKubik = row.matches.any((c) => row.typeOf(c)?.isKubik ?? false);
-    final mono = const TextStyle(fontFamily: 'Consolas');
+    final mono = monoStyle();
     return SectionCard(
       title: 'Satır ${row.card.rowAddress.toString().padLeft(2, '0')} — ${type?.name ?? (row.card.isSerum ? 'Serum kartı' : 'Tip ${row.card.databaseTypeId}')}',
       trailing: ResultBadge(
@@ -236,9 +237,9 @@ class _CardTile extends StatelessWidget {
               '${row.typeOf(c)?.compartmentCount ?? '?'} göz${(row.typeOf(c)?.isKubik ?? false) ? ', kübik' : ''}',
             ),
           if (row.matches.length > 1)
-            const Text(
+            Text(
               'Aynı tip numarasına birden fazla tanım bağlı: client ilk tanımı seçer, çekmece yanlış tipte görünebilir.',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: TestStatus.failed.color),
             ),
           const SizedBox(height: 10),
           Row(
@@ -262,7 +263,7 @@ class _CardTile extends StatelessWidget {
             const SizedBox(height: 8),
             Table(
               defaultColumnWidth: const FixedColumnWidth(90),
-              border: TableBorder.all(color: Colors.grey.shade300),
+              border: TableBorder.all(color: MedColors.border),
               children: [
                 TableRow(
                   children: [
@@ -279,7 +280,7 @@ class _CardTile extends StatelessWidget {
                           padding: const EdgeInsets.all(4),
                           color: cell == null
                               ? null
-                              : (cell.contains('ok') ? Colors.green.shade50 : Colors.red.shade50),
+                              : (cell.contains('ok') ? TestStatus.passed.colors.background : TestStatus.failed.colors.background),
                           child: Text(cell ?? '…', style: mono),
                         ),
                     ],

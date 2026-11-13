@@ -215,7 +215,7 @@ class _MobileCabinPageState extends ConsumerState<MobileCabinPage> {
                     busy: _sequenceRunning,
                     onPressed: enabled ? _runSequence : null,
                   ),
-                  if (!connected) const Text('Önce COM porta bağlanın.', style: TextStyle(color: Colors.red)),
+                  if (!connected) const NotConnectedHint(),
                 ],
               ),
             ],
@@ -246,12 +246,12 @@ class _MobileCabinPageState extends ConsumerState<MobileCabinPage> {
             children: [
               FilledButton.tonalIcon(
                 onPressed: _lastAction == null ? null : () => _observe(true),
-                icon: const Icon(Icons.check_circle, color: Colors.green),
+                icon: Icon(TestStatus.passed.icon, color: TestStatus.passed.color),
                 label: const Text('Yalnız hedef çekmece açıldı'),
               ),
               FilledButton.tonalIcon(
                 onPressed: _lastAction == null ? null : () => _observe(false),
-                icon: const Icon(Icons.error, color: Colors.red),
+                icon: Icon(TestStatus.failed.icon, color: TestStatus.failed.color),
                 label: const Text('Başka çekmece/kabin de açıldı'),
               ),
               OutlinedButton.icon(
@@ -291,7 +291,7 @@ class _PortTile extends StatelessWidget {
     final raw = state.raw;
     final open = raw != null && (raw.contains('h3') || raw.contains('h6'));
     final locked = raw != null && (raw.contains('h0') || raw.contains('h4') || raw.contains('h5'));
-    final color = open ? Colors.orange.shade700 : (locked ? Colors.green.shade700 : Colors.grey.shade600);
+    final color = open ? TestStatus.warning.color : (locked ? TestStatus.passed.color : TestStatus.pending.color);
     return SizedBox(
       width: 250,
       child: Card(
@@ -310,7 +310,7 @@ class _PortTile extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(_interpret(raw), style: TextStyle(color: color, fontWeight: FontWeight.w600)),
-              Text('ham: ${raw?.trim() ?? '-'}', style: const TextStyle(fontFamily: 'Consolas', fontSize: 12)),
+              Text('ham: ${raw?.trim() ?? '-'}', style: monoStyle()),
               if (state.note != null)
                 Text(state.note!, style: const TextStyle(fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 8),

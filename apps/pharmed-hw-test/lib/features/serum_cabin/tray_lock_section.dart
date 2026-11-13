@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/providers.dart';
 import '../../core/report.dart';
@@ -44,36 +45,35 @@ class TrayLockSection extends ConsumerStatefulWidget {
 
 // ── Kart yanıtının okunur hali ──────────────────────────────────────
 
-enum _Tone { ok, warn, info, idle, error }
-
 /// Bir kart yanıtının ekranda gösterilecek hali.
 class _Reading {
   const _Reading(this.tone, this.title, [this.note]);
 
-  final _Tone tone;
+  /// Renk ve ikon tonu (pharmed_ui ortak durum renkleri).
+  final MedTone tone;
   final String title;
   final String? note;
 
   static _Reading of(TrayLockResponse r, {int? port}) {
     final p = port == null ? '' : 'Port $port: ';
     return switch (r) {
-      TrayLockOk() => const _Reading(_Tone.ok, 'Komut kabul edildi (okkk)'),
+      TrayLockOk() => const _Reading(MedTone.success, 'Komut kabul edildi (okkk)'),
       TrayLockStatusResponse(:final status) => switch (status) {
         TrayLockStatus.unlocked => _Reading(
-          _Tone.warn,
+          MedTone.warning,
           '${p}kart kilidi AÇTI, avadanlık henüz çekilmedi (s:01)',
           'Avadanlık fiziksel olarak serbest değilse kilit kartın komutuna uymuyor demektir.',
         ),
-        TrayLockStatus.pulled => _Reading(_Tone.info, '${p}avadanlık ÇEKİLDİ (s:02)'),
+        TrayLockStatus.pulled => _Reading(MedTone.info, '${p}avadanlık ÇEKİLDİ (s:02)'),
         TrayLockStatus.idle => _Reading(
-          _Tone.idle,
+          MedTone.neutral,
           '${p}kart boşta — bu portta açma işlemi yok (s:03)',
           's:03 kilidin fiziksel durumunu göstermez. k / x sonrası kart her zaman boşta döner; '
               'kilitlerin enerjili mi serbest mi olduğu için "Kart geneli" satırına bakın.',
         ),
       },
-      TrayLockKeypadResponse(:final value) => _Reading(_Tone.info, '${p}Al-Ver tuş değeri: $value'),
-      TrayLockErrorResponse(:final failure) => _Reading(_Tone.error, '$p${_failureText(failure)}'),
+      TrayLockKeypadResponse(:final value) => _Reading(MedTone.info, '${p}Al-Ver tuş değeri: $value'),
+      TrayLockErrorResponse(:final failure) => _Reading(MedTone.error, '$p${_failureText(failure)}'),
     };
   }
 
@@ -88,20 +88,14 @@ class _Reading {
     TrayLockFailure.protocolError => 'Tanınmayan yanıt',
   };
 
-  Color get color => switch (tone) {
-    _Tone.ok => Colors.green.shade700,
-    _Tone.warn => Colors.orange.shade800,
-    _Tone.info => Colors.blue.shade700,
-    _Tone.idle => Colors.blueGrey.shade600,
-    _Tone.error => Colors.red.shade700,
-  };
+  Color get color => MedSemanticColors.of(tone).foreground;
 
   IconData get icon => switch (tone) {
-    _Tone.ok => Icons.check_circle,
-    _Tone.warn => Icons.lock_open,
-    _Tone.info => Icons.info,
-    _Tone.idle => Icons.radio_button_unchecked,
-    _Tone.error => Icons.error,
+    MedTone.success => Icons.check_circle,
+    MedTone.warning => Icons.lock_open,
+    MedTone.info => Icons.info,
+    MedTone.neutral => Icons.radio_button_unchecked,
+    MedTone.error => Icons.error,
   };
 }
 
@@ -139,11 +133,11 @@ class _ReadingTile extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600, color: c),
                 ),
                 if (reading.note != null)
-                  Text(reading.note!, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+                  Text(reading.note!, style: TextStyle(fontSize: 12, color: MedColors.text2)),
                 if (raw != null)
                   Text(
                     'Ham: $raw',
-                    style: TextStyle(fontFamily: 'Consolas', fontSize: 11, color: Colors.grey.shade600),
+                    style: monoStyle(fontSize: 11, color: MedColors.text3),
                   ),
               ],
             ),
@@ -586,9 +580,9 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
             label: 'Kart geneli',
             reading: _Reading(
               switch (_cardMode) {
-                'k' => _Tone.warn,
-                'x' => _Tone.ok,
-                _ => _Tone.idle,
+                'k' => MedTone.warning,
+                'x' => MedTone.success,
+                _ => MedTone.neutral,
               },
               _cardModeText(),
               'Kartın `s` cevabı bunu göstermez; son başarılı k / x komutundan izlenir.',
@@ -687,18 +681,10 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
                     width: 24,
                     child: _flowCurrent == s && _flowRunning
                         ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                        : Icon(
-                            _flow[s] == null
-                                ? Icons.radio_button_unchecked
-                                : (_flow[s]!.$1 == StepResult.ok ? Icons.check_circle : Icons.cancel),
-                            size: 16,
-                            color: _flow[s] == null
-                                ? Colors.grey
-                                : (_flow[s]!.$1 == StepResult.ok ? Colors.green : Colors.red),
-                          ),
+                        : StatusIcon(status: _flow[s]?.$1.status ?? TestStatus.pending, size: 16),
                   ),
                   SizedBox(width: 300, child: Text(s.label)),
-                  Expanded(child: Text(_flow[s]?.$2 ?? '', style: TextStyle(color: Colors.grey.shade800))),
+                  Expanded(child: Text(_flow[s]?.$2 ?? '', style: TextStyle(color: MedColors.text2))),
                 ],
               ),
             ),
