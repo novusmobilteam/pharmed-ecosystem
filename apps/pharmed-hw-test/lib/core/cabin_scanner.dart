@@ -101,6 +101,12 @@ class CabinScanner {
             typeNo: card.databaseTypeId,
             rawResponse: raw,
             problem: problem,
+            config: config == null ? null : (config.drawerType != null || type == null ? config : config.copyWith(drawerType: type)),
+            // Client taramasıyla aynı: birim dozda N göz (compartmentNo 1..N).
+            // Kübik kapak adresleri taramada bilinmez; test sırasında yoklanır.
+            cells: type == null || type.isKubik
+                ? const []
+                : [for (var i = 0; i < (type.compartmentCount ?? 0); i++) DrawerUnit(compartmentNo: i + 1)],
           ),
         );
       }

@@ -5,12 +5,14 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/cabin_session.dart';
 import '../../core/cabin_type.dart';
+import '../../core/drawer_flow.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
 import '../../core/scenarios.dart';
 import '../../core/serum_definition.dart';
 import '../../core/serum_hardware.dart';
 import '../../widgets/common.dart';
+import '../../widgets/drawer_flow_panel.dart';
 
 /// Kabin tanımından üretilen test senaryoları. Her senaryonun sonucu ayrı
 /// görünür; "Sıradaki testi çalıştır" sonucu olmayan ilk senaryoyu başlatır.
@@ -34,6 +36,12 @@ class _TestsPageState extends ConsumerState<TestsPage> {
 
   /// Rehberli tur: senaryolar sırayla, kendiliğinden çalıştırılır.
   bool _tour = false;
+
+  /// Çalışan çekmece akışı (kübik / birim doz).
+  DrawerFlow? _drawerFlow;
+
+  /// Kübik senaryoda seçilen tek kapak (null → tüm kapaklar).
+  final Map<String, int?> _lidChoice = {};
 
   ScenarioResultsNotifier get _results => ref.read(scenarioResultsProvider.notifier);
 
@@ -70,6 +78,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
   void _stopTour({String reason = 'durduruldu'}) {
     if (!_tour) return;
     _report.add('Rehberli test turu $reason', StepResult.info);
+    _drawerFlow?.cancel();
     setState(() {
       _tour = false;
       _cancel = true;
@@ -103,18 +112,9 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     final title = '[${s.group}] ${s.title}';
     try {
       switch (s.kind) {
-        case ScenarioKind.cubicMainLock:
-          final address = DrawerAddress.cubicMaster(s.row);
-          await ref
-              .read(cabinOpsProvider)
-              .openMasterDrawer(
-                manager: ManagementCard(addressIndex: s.addressIndex),
-                row: address.row,
-                port: address.port,
-                drawer: address.index,
-              );
-          await _hw.release(s.addressIndex);
-          _awaitObservation(s, 'Açma komutu kabul edildi');
+        case ScenarioKind.cubicDrawer:
+        case ScenarioKind.unitDoseDrawer:
+          await _runDrawerFlow(s, title);
         case ScenarioKind.mobileDrawer:
           await ref
               .read(cabinOpsProvider)
@@ -222,8 +222,77 @@ class _TestsPageState extends ConsumerState<TestsPage> {
       setState(() {
         _busy = null;
         _liveStep = null;
+        _drawerFlow = null;
       });
     }
+  }
+
+  static String _two(int v) => v.toString().padLeft(2, '0');
+
+  /// Tanımdaki gözlerin adresleri — client'ın atama üzerinden yaptığı hesapla.
+  List<FlowCell> _cellsFor(TestScenario s, [List<String>? notes]) {
+    final unit = s.unit;
+    if (unit == null || unit.config == null) return const [];
+    final cubic = s.kind == ScenarioKind.cubicDrawer;
+    final sorted = [...unit.cells]
+      ..sort((a, b) {
+        final byOrder = (a.orderNo ?? 0).compareTo(b.orderNo ?? 0);
+        return cubic && byOrder != 0 ? byOrder : (a.compartmentNo ?? 0).compareTo(b.compartmentNo ?? 0);
+      });
+    final out = <FlowCell>[];
+    for (var i = 0; i < sorted.length; i++) {
+      final c = sorted[i];
+      try {
+        final a = clientAddress(row: s.row, config: unit.config, cell: c);
+        out.add(
+          FlowCell(
+            label: cubic
+                ? 'Kapak ${i + 1} (port ${a.port} · sıra ${_two(a.index)})'
+                : 'Göz ${c.compartmentNo ?? i + 1} (port ${a.port} · adım ${a.index})',
+            address: a,
+          ),
+        );
+      } catch (e) {
+        notes?.add('${cubic ? 'Kapak' : 'Göz'} ${i + 1}: adres hesaplanamadı ($e)');
+      }
+    }
+    return out;
+  }
+
+  Future<void> _runDrawerFlow(TestScenario s, String title) async {
+    final runner = DrawerFlowRunner(ops: ref.read(cabinOpsProvider), serial: ref.read(serialServiceProvider));
+    final flow = DrawerFlow(title: s.title);
+    setState(() => _drawerFlow = flow);
+    final notes = <String>[];
+    var cells = _cellsFor(s, notes);
+    final TestStatus status;
+    if (s.kind == ScenarioKind.cubicDrawer) {
+      if (cells.isEmpty) {
+        if (mounted) setState(() => _liveStep = 'Kapaklar karttan yoklanıyor (port 1–4 × sıra 00–04)…');
+        cells = await runner.probeCubicLids(s.addressIndex, s.row);
+        notes.add('Kapaklar karttan yoklandı: ${cells.length} kapak cevap verdi');
+        if (mounted) setState(() => _liveStep = null);
+      }
+      final choice = _lidChoice[s.id];
+      if (choice != null && choice < cells.length) cells = [cells[choice]];
+      if (cells.isEmpty) notes.add('Test edilecek kapak yok; yalnız çekmece açılıp kapatıldı');
+      status = await runner.runCubic(flow, address: s.addressIndex, row: s.row, lids: cells);
+    } else {
+      status = await runner.runUnitDose(flow, address: s.addressIndex, row: s.row, cells: cells);
+    }
+
+    final failedStep = flow.steps.where((x) => x.status == TestStatus.failed).firstOrNull;
+    final summary = [
+      ...notes,
+      if (flow.outcomes.isNotEmpty) flow.outcomes.join('; '),
+      if (flow.outcomes.isEmpty && failedStep != null) '${failedStep.label}: ${failedStep.detail ?? ''}',
+    ].join(' · ');
+    final lines = [
+      for (final x in flow.steps)
+        '${x.status.label.toUpperCase()}  ${x.group != null ? '${x.group} — ' : ''}${x.label}: ${x.detail ?? ''}',
+    ].join('\n');
+    _finish(s, title, status, summary.isEmpty ? status.label : summary, reportDetail: lines);
+    if (mounted) setState(() => _drawerFlow = null);
   }
 
   void _awaitObservation(TestScenario s, String note) {
@@ -315,7 +384,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
                 Text(
                   cabinType == HwCabinType.patientBased
                       ? 'Tanımda mobil çekmece yok. Çekmeceleri Mobil kabin sayfasından port bazlı test edin.'
-                      : 'Tanımda otomatik test edilebilir birim yok (kübik çekmece, serum kapağı ya da kilitli raf).',
+                      : 'Tanımda test edilebilir birim yok.',
                 )
               else ...[
                 ClipRRect(
@@ -364,6 +433,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
                     liveStep: _liveStep,
                     awaiting: _awaiting != null,
                     tour: _tour,
+                    flow: _drawerFlow,
                     onObserve: (opened) {
                       final current = scenarios.where((s) => s.id == _awaiting).firstOrNull;
                       if (current != null) _observe(current, opened);
@@ -378,8 +448,9 @@ class _TestsPageState extends ConsumerState<TestsPage> {
               Text(
                 cabinType == HwCabinType.patientBased
                     ? 'Mobil çekmeceler client tanımından gelir. Taramada çekmece sayısı okunamaz.'
-                    : 'Birim doz gözleri ve kübik kapaklar Master çekmece sayfasından test edilir. Serum raflarını '
-                          'Serum sayfasında tanımladıkça kilit testleri buraya eklenir.',
+                    : 'Çekmece testleri client akışıyla adım adım ilerler; her adımda sensör durumu görünür, '
+                          'olmayan adımı "… olmadı" ile bildirin. Serum raflarını Serum sayfasında tanımladıkça '
+                          'kilit testleri buraya eklenir.',
                 style: hintStyle(fontSize: 12),
               ),
             ],
@@ -402,6 +473,9 @@ class _TestsPageState extends ConsumerState<TestsPage> {
                     onObserve: (opened) => _observe(s, opened),
                     onSkip: _busy == null && (!_tour || _awaiting == s.id) ? () => _skip(s) : null,
                     onStop: s.kind == ScenarioKind.trayFlow && _busy == s.id ? () => setState(() => _cancel = true) : null,
+                    options: s.kind == ScenarioKind.cubicDrawer ? _cellsFor(s).map((c) => c.label).toList() : null,
+                    selectedOption: _lidChoice[s.id],
+                    onOption: idle ? (v) => setState(() => _lidChoice[s.id] = v) : null,
                   ),
               ],
             ),
@@ -423,7 +497,15 @@ class _ScenarioRow extends StatelessWidget {
     required this.onObserve,
     required this.onSkip,
     required this.onStop,
+    this.options,
+    this.selectedOption,
+    this.onOption,
   });
+
+  /// Kübik senaryoda kapak seçimi (null: seçim yok / kapaklar yoklanacak).
+  final List<String>? options;
+  final int? selectedOption;
+  final ValueChanged<int?>? onOption;
 
   final TestScenario scenario;
   final ScenarioResult? result;
@@ -454,6 +536,17 @@ class _ScenarioRow extends StatelessWidget {
               children: [
                 Text(scenario.title, style: MedTextStyles.bodyMd(color: MedColors.text, weight: FontWeight.w600)),
                 Text(scenario.location, style: monoStyle(fontSize: 11, color: MedColors.text3)),
+                if (options != null && options!.isNotEmpty)
+                  DropdownButton<int?>(
+                    value: selectedOption != null && selectedOption! < options!.length ? selectedOption : null,
+                    isDense: true,
+                    items: [
+                      const DropdownMenuItem<int?>(value: null, child: Text('Tüm kapaklar')),
+                      for (var i = 0; i < options!.length; i++)
+                        DropdownMenuItem<int?>(value: i, child: Text(options![i])),
+                    ],
+                    onChanged: onOption,
+                  ),
                 if (detail != null) Text(detail, style: TextStyle(color: status.color, fontSize: 12.5)),
                 if (awaiting) ...[
                   const SizedBox(height: MedSpacing.sm),
@@ -505,9 +598,11 @@ class _CurrentPanel extends StatelessWidget {
     required this.liveStep,
     required this.awaiting,
     required this.tour,
+    required this.flow,
     required this.onObserve,
   });
 
+  final DrawerFlow? flow;
   final TestScenario? scenario;
   final bool running;
   final String? liveStep;
@@ -556,7 +651,9 @@ class _CurrentPanel extends StatelessWidget {
                 ),
               ],
             ),
-          ] else if (running)
+          ] else if (flow != null)
+            DrawerFlowPanel(flow: flow!)
+          else if (running)
             Row(
               children: [
                 const StatusIcon(status: TestStatus.running),
