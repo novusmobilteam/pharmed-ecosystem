@@ -1,11 +1,12 @@
+// ignore_for_file: implementation_imports
 // [SWTEST-FP-001..009] Parmak izi okuyucu katmanı — cihaz gerektirmeyen testler.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pharmed_client/core/hardware/fingerprint/biomini/biomini_bindings.dart';
-import 'package:pharmed_client/core/hardware/fingerprint/biomini/biomini_worker.dart';
+import 'package:pharmed_hardware/src/fingerprint/biomini/biomini_bindings.dart';
+import 'package:pharmed_hardware/src/fingerprint/biomini/biomini_worker.dart';
 import 'package:pharmed_client/core/hardware/fingerprint/fingerprint.dart';
-import 'package:pharmed_client/core/hardware/fingerprint/secugen/secugen_bindings.dart';
-import 'package:pharmed_client/core/hardware/fingerprint/secugen/secugen_worker.dart';
+import 'package:pharmed_hardware/src/fingerprint/secugen/secugen_bindings.dart';
+import 'package:pharmed_hardware/src/fingerprint/secugen/secugen_worker.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
 FingerprintFailureReason? _reasonOf<T>(Result<T> r) =>

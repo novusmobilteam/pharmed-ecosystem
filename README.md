@@ -152,7 +152,7 @@ Dikkat edilecekler:
 - **Video bileşeni (media_kit):** CMake aşamasında ANGLE ve libmpv arşivleri GitHub'dan indirilir. İlk build internet ister; arşivler `build/windows/x64/*.7z` altında kalır ve sonraki build'lerde tekrar indirilmez.
 - **Kamera kaydı (client):** `ffmpeg.exe`, exe'nin yanındaki `ffmpeg\` klasöründe aranır; yoksa `PATH`'teki `ffmpeg` kullanılır. CI build'i ffmpeg'i paketlemez, kurulumda ayrıca konur. Geliştirmede `--dart-define=FFMPEG_PATH=C:\...\ffmpeg.exe` verilebilir.
 - **Cihazlar (client):** `dev` build varsayılan olarak sahte cihazlarla çalışır; kabinde `--dart-define=HARDWARE=real` verin (bkz. [Test sürümleri](#test-sürümleri-bilgisayar-ve-kabin)).
-- **Parmak izi (client):** SecuGen / Suprema BioMini SDK DLL'leri gerekir. Okuyucusuz makinede `--dart-define=FINGERPRINT_MOCK=true`.
+- **Parmak izi (client, hw-test):** SecuGen / Suprema BioMini SDK DLL'leri gerekir. DLL'ler `packages/pharmed_hardware/third_party/` altındadır; client ve hw-test'in Windows CMake'i build sırasında exe'nin yanına kopyalar. Sürücü kodu (parmak izi okuyucu, ESC/POS fiş yazıcı) `pharmed_hardware` paketindedir. Okuyucusuz makinede `--dart-define=FINGERPRINT_MOCK=true`.
 - **Fiş yazıcı (client):** Yazıcısız makinede `--dart-define=PRINTER_MOCK=true` — fişler PNG olarak kaydedilir.
 
 ## macOS'ta çalıştırma ve derleme
