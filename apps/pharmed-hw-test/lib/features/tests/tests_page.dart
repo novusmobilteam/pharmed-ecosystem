@@ -113,11 +113,11 @@ class _TestsPageState extends ConsumerState<TestsPage> {
               if (status == TestStatus.running) {
                 if (mounted) setState(() => _liveStep = step.label);
               } else {
-                steps.add('${status == TestStatus.passed ? '✓' : '✗'} ${step.label}: $detail');
+                steps.add('${status == TestStatus.passed ? 'OK  ' : 'HATA'} ${step.label}: $detail');
               }
             },
           );
-          final failedStep = steps.where((l) => l.startsWith('✗')).firstOrNull;
+          final failedStep = steps.where((l) => l.startsWith('HATA')).firstOrNull;
           _finish(
             s,
             title,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
@@ -21,7 +23,7 @@ class ReportPage extends ConsumerStatefulWidget {
 }
 
 class _ReportPageState extends ConsumerState<ReportPage> {
-  String? _lastPath;
+  ReportFiles? _last;
   bool _busy = false;
 
   List<ReportScenario> _scenarios() {
@@ -52,23 +54,41 @@ class _ReportPageState extends ConsumerState<ReportPage> {
     final serum = ref.read(serumDefinitionsProvider).values.toList()
       ..sort((a, b) => a.addressIndex.compareTo(b.addressIndex));
     try {
-      final path = await ref
+      final files = await ref
           .read(testReportProvider)
           .export(
             user: session.user?.fullName,
             port: session.port,
             cabinType: session.cabinType?.label,
             traffic: ref.read(trafficLogProvider).entries,
-            cabinLines: active == null ? const [] : ['Kaynak: ${active.source.label}', ...active.describe()],
+            cabin: active,
             serumLines: [for (final t in serum) ...t.describe()],
             scenarios: _scenarios(),
           );
-      setState(() => _lastPath = path);
-      if (mounted) showMessage(context, 'Rapor kaydedildi: $path');
+      setState(() => _last = files);
+      if (mounted) {
+        showMessage(
+          context,
+          files.pdf != null ? 'Rapor kaydedildi (PDF ve metin).' : 'Metin rapor kaydedildi; PDF oluşturulamadı.',
+          error: files.pdf == null,
+        );
+      }
     } catch (e) {
       if (mounted) showMessage(context, 'Rapor kaydedilemedi: $e', error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _openFolder(String folder) async {
+    try {
+      if (Platform.isWindows) {
+        await Process.run('explorer', [folder]);
+      } else if (Platform.isMacOS) {
+        await Process.run('open', [folder]);
+      }
+    } catch (e) {
+      if (mounted) showMessage(context, 'Klasör açılamadı: $e', error: true);
     }
   }
 
@@ -112,14 +132,33 @@ class _ReportPageState extends ConsumerState<ReportPage> {
                 ],
               ),
               const SizedBox(height: MedSpacing.lg),
-              BusyButton(label: 'Raporu dosyaya kaydet', icon: Icons.save_alt, busy: _busy, onPressed: _export),
-              const SizedBox(height: MedSpacing.sm),
-              Text(
-                _lastPath ??
-                    'Rapor Belgeler\\PharMed-HwTest klasörüne kaydedilir: kabin ve serum tanımı, senaryo sonuçları, '
-                        'zaman sıralı adımlar ve hat trafiği. Hatalı adımların altına o adımın ham trafiği eklenir.',
-                style: hintStyle(),
+              Wrap(
+                spacing: MedSpacing.lg,
+                runSpacing: MedSpacing.md,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  BusyButton(label: 'Raporu kaydet (PDF + metin)', icon: Icons.save_alt, busy: _busy, onPressed: _export),
+                  if (_last != null)
+                    OutlinedButton.icon(
+                      onPressed: () => _openFolder(_last!.folder),
+                      icon: const Icon(Icons.folder_open),
+                      label: const Text('Klasörü aç'),
+                    ),
+                ],
               ),
+              const SizedBox(height: MedSpacing.sm),
+              if (_last == null)
+                Text(
+                  'Rapor Belgeler\\PharMed-HwTest klasörüne iki dosya olarak kaydedilir. PDF (markasız): bilgiler, '
+                  'kabin, senaryo sonuçları, hatalı adımlar ve ham trafikleri, imza alanı. Metin: ayrıca tüm adımlar '
+                  've hat trafiğinin tamamı.',
+                  style: hintStyle(),
+                )
+              else ...[
+                if (_last!.pdf != null) Text('PDF: ${_last!.pdf}', style: monoStyle(fontSize: 11)),
+                if (_last!.pdfError != null) ErrorText('PDF oluşturulamadı: ${_last!.pdfError}'),
+                Text('Metin: ${_last!.text}', style: monoStyle(fontSize: 11)),
+              ],
             ],
           ),
         ),
