@@ -58,6 +58,20 @@ class RfidService implements IRfidService {
   Socket? _socket;
   StreamSubscription<List<int>>? _socketSub;
 
+  /// Bağlantı sırasında tespit edilen bağlı anten maskesi (bit0 = Ant1 …
+  /// bit3 = Ant4). null → henüz tespit edilmedi / bağlı değil; 0 → hiç anten
+  /// yok. Arayüze eklenmedi (manager'ın kendi uygulaması var); saha test
+  /// uygulaması bu sınıf üzerinden okur.
+  int? _connectedAntennaMask;
+
+  int? get connectedAntennaMask => _connectedAntennaMask;
+
+  /// Bağlı anten numaraları (1–4), küçükten büyüğe. Tespit edilmediyse boş.
+  List<int> get connectedAntennas => [
+    for (var bit = 0; bit < 4; bit++)
+      if ((_connectedAntennaMask ?? 0) & (1 << bit) != 0) bit + 1,
+  ];
+
   /// Socket'ten gelen ham byte'ları biriktiren buffer.
   final BytesBuilder _rxBuffer = BytesBuilder(copy: false);
 
@@ -104,8 +118,9 @@ class RfidService implements IRfidService {
       // Çalışma antenlerini ayarla. Bağlı port belirsizse adaptive kullanılır.
       final antResult = await _setWorkingAntennaAdaptive(_antennaMask4); // ← 4 anten için _antennaMask4
       antResult.when(
-        ok: (mask) {},
+        ok: (mask) => _connectedAntennaMask = mask,
         error: (e) {
+          _connectedAntennaMask = 0;
           MedLogger.warn(
             unit: 'RfidService',
             swreq: 'SWREQ-CLI-RFID-001',
@@ -145,6 +160,7 @@ class RfidService implements IRfidService {
 
     _rxBuffer.clear();
     _pendingCommandCompleter = null;
+    _connectedAntennaMask = null;
 
     // Okuyucunun TCP stack'ini temizlemesi için kısa bekleme.
     await Future.delayed(const Duration(milliseconds: 300));
@@ -307,6 +323,18 @@ class RfidService implements IRfidService {
       },
       error: (e) => Result.error(e),
     );
+  }
+
+  /// Bağlı antenleri yeniden tespit eder ve yalnızca onları etkinleştirir
+  /// (bağlantıdaki adaptive akışın aynısı). Answer Mode'da, envanter
+  /// çalışmıyorken çağrılmalı. Dönen değer bağlı anten maskesidir.
+  Future<Result<int>> detectAntennas() async {
+    if (_socket == null) {
+      return Result.error(ServiceException(message: contextlessL10n().hw_rfid_notConnectedError, statusCode: 503));
+    }
+    final result = await _setWorkingAntennaAdaptive(_antennaMask4);
+    _connectedAntennaMask = result.when(ok: (mask) => mask, error: (_) => 0);
+    return result;
   }
 
   Future<Result<void>> _setWorkingAntenna(int mask) async {

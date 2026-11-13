@@ -148,6 +148,9 @@ class ClientCacheReader {
               addressIndex: address,
               kind: CabinKind.mobile,
               name: cabin.name,
+              rfidEnabled: cabin.isRfidEnabled ?? false,
+              rfidHost: cabin.rfidIp,
+              rfidPort: int.tryParse(cabin.rfidPort ?? ''),
               units: [
                 for (final d in drawers)
                   CabinUnit(
@@ -200,7 +203,17 @@ class ClientCacheReader {
         }
         units.sort((a, b) => a.row != b.row ? a.row.compareTo(b.row) : (a.lidNo ?? 0).compareTo(b.lidNo ?? 0));
         final (kind, visible) = CabinRules.classify(addressIndex: address, units: units);
-        infos.add(CabinInfo(addressIndex: address, kind: kind, units: visible, name: cabin.name));
+        infos.add(
+          CabinInfo(
+            addressIndex: address,
+            kind: kind,
+            units: visible,
+            name: cabin.name,
+            rfidEnabled: cabin.isRfidEnabled ?? false,
+            rfidHost: cabin.rfidIp,
+            rfidPort: int.tryParse(cabin.rfidPort ?? ''),
+          ),
+        );
       }
       infos.sort((a, b) => a.addressIndex.compareTo(b.addressIndex));
 
