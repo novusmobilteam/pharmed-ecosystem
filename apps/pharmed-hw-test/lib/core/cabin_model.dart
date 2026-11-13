@@ -61,6 +61,7 @@ class CabinUnit {
     this.lidNo,
     this.port,
     this.problem,
+    this.slotId,
   });
 
   /// Kart satırı (01–26). Serum kabini kapakları ve mobil çekmeceler satır 26'dadır.
@@ -87,6 +88,10 @@ class CabinUnit {
 
   /// Tanım eşleşmesinde sorun (ör. tip numarası hiçbir tanımla eşleşmedi).
   final String? problem;
+
+  /// Client tanımındaki çekmece kaydı (DrawerSlot.id). Serum raf yerleşimi
+  /// servisten bu numarayla (salt okunur) çekilir. Taramada null.
+  final int? slotId;
 
   String get rowLabel => row.toString().padLeft(2, '0');
 
@@ -191,13 +196,14 @@ abstract final class CabinRules {
 
   /// Serum birimi: kabin kartı satırı (26) + A dışı adres → kapak; aksi halde
   /// master içindeki tek serum bölmesi.
-  static CabinUnit serumUnit({required int row, int? lidNo, String? rawResponse}) => CabinUnit(
+  static CabinUnit serumUnit({required int row, int? lidNo, String? rawResponse, int? slotId}) => CabinUnit(
     row: row,
     kind: UnitKind.serum,
     name: lidNo != null ? 'Serum kapağı $lidNo' : 'Serum bölmesi',
     typeNo: serumTypeNo,
     lidNo: lidNo,
     rawResponse: rawResponse,
+    slotId: slotId,
   );
 
   static bool _isCabinSerumCard(CabinUnit u) => u.kind == UnitKind.serum && u.row == DeviceConstants.serumSlaveRow;

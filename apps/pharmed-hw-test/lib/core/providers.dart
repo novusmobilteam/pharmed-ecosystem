@@ -9,6 +9,7 @@ import 'package:pharmed_hardware/pharmed_hardware.dart';
 
 import 'cabin_session.dart';
 import 'cabin_type.dart';
+import 'serum_definition.dart';
 import 'env.dart';
 import 'report.dart';
 import 'traffic_log.dart';
@@ -125,6 +126,7 @@ Future<void> signOut(WidgetRef ref) async {
   if (serial.isConnected) await serial.disconnect();
   ref.read(tokenHolderProvider).setToken(null);
   ref.invalidate(cabinSessionProvider);
+  ref.invalidate(serumDefinitionsProvider);
   ref.read(sessionProvider.notifier).logout();
 }
 

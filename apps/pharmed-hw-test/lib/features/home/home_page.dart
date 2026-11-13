@@ -5,6 +5,7 @@ import '../../core/cabin_session.dart';
 import '../../core/cabin_type.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
+import '../../core/serum_definition.dart';
 import '../../widgets/common.dart';
 import '../cabin/cabin_page.dart';
 import '../card_scan/card_scan_page.dart';
@@ -15,6 +16,7 @@ import '../line_scan/line_scan_page.dart';
 import '../mobile_cabin/mobile_cabin_page.dart';
 import '../report/report_page.dart';
 import '../rfid/rfid_page.dart';
+import '../serum/serum_page.dart';
 import '../serum_cabin/serum_cabin_page.dart';
 import 'traffic_panel.dart';
 
@@ -34,7 +36,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _cardScan = (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage());
   static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
   static const _mobileCabin = (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage());
-  static const _serumCabin = (icon: Icons.water_drop, label: 'Serum kabini', page: SerumCabinPage());
+  static const _serum = (icon: Icons.water_drop, label: 'Serum', page: SerumPage());
+  static const _serumDiscovery = (icon: Icons.manage_search, label: 'Serum keşfi', page: SerumCabinPage());
   static const _rfid = (icon: Icons.sensors, label: 'RFID', page: RfidPage());
   static const _console = (icon: Icons.terminal, label: 'Konsol', page: ConsolePage());
   static const _report = (icon: Icons.description, label: 'Rapor', page: ReportPage());
@@ -47,7 +50,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       _lineScan,
       _cardScan,
       _masterDrawer,
-      _serumCabin,
+      _serum,
+      _serumDiscovery,
       _rfid,
       _console,
       _report,
@@ -59,6 +63,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     ref.read(testReportProvider).add('Kabin tipi değiştirildi', StepResult.info);
     // Tarama sonucu kabin tipine göre yorumlandığı için sıfırlanır.
     ref.invalidate(cabinSessionProvider);
+    ref.invalidate(serumDefinitionsProvider);
     ref.read(sessionProvider.notifier).setCabinType(null);
   }
 
@@ -98,13 +103,23 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: Row(
         children: [
-          NavigationRail(
-            selectedIndex: index,
-            labelType: NavigationRailLabelType.all,
-            onDestinationSelected: (i) => setState(() => _index = i),
-            destinations: [
-              for (final p in pages) NavigationRailDestination(icon: Icon(p.icon), label: Text(p.label)),
-            ],
+          // Sabit 720 px pencerede menü taşmasın diye rail kaydırılabilir.
+          LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: NavigationRail(
+                    selectedIndex: index,
+                    labelType: NavigationRailLabelType.all,
+                    onDestinationSelected: (i) => setState(() => _index = i),
+                    destinations: [
+                      for (final p in pages) NavigationRailDestination(icon: Icon(p.icon), label: Text(p.label)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           const VerticalDivider(width: 1),
           Expanded(

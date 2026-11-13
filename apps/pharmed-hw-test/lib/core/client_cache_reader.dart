@@ -171,7 +171,7 @@ class ClientCacheReader {
           final type = config?.drawerType ?? typeById[config?.drawerTypeId];
           if (config?.isSerum ?? false) {
             final isLid = address != 1 && row == DeviceConstants.serumSlaveRow;
-            units.add(CabinRules.serumUnit(row: row, lidNo: isLid ? slot.orderNumber : null));
+            units.add(CabinRules.serumUnit(row: row, lidNo: isLid ? slot.orderNumber : null, slotId: slot.id));
           } else {
             units.add(
               CabinUnit(
