@@ -8,18 +8,15 @@ import '../../core/report.dart';
 import '../../core/scenarios.dart';
 import '../../core/serum_definition.dart';
 import '../../widgets/common.dart';
+import '../advanced/advanced_page.dart';
 import '../cabin/cabin_page.dart';
-import '../card_scan/card_scan_page.dart';
 import '../connection/connection_page.dart';
-import '../console/console_page.dart';
 import '../drawer_test/drawer_test_page.dart';
-import '../line_scan/line_scan_page.dart';
 import '../mobile_cabin/mobile_cabin_page.dart';
 import '../report/report_page.dart';
 import '../rfid/rfid_page.dart';
 import '../serum/serum_page.dart';
 import '../tests/tests_page.dart';
-import '../serum_cabin/serum_cabin_page.dart';
 import 'traffic_panel.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -35,14 +32,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _connection = (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage());
   static const _cabin = (icon: Icons.dns_outlined, label: 'Kabin', page: CabinPage());
   static const _tests = (icon: Icons.checklist, label: 'Testler', page: TestsPage());
-  static const _lineScan = (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage());
-  static const _cardScan = (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage());
   static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
   static const _mobileCabin = (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage());
   static const _serum = (icon: Icons.water_drop, label: 'Serum', page: SerumPage());
-  static const _serumDiscovery = (icon: Icons.manage_search, label: 'Serum keşfi', page: SerumCabinPage());
   static const _rfid = (icon: Icons.sensors, label: 'RFID', page: RfidPage());
-  static const _console = (icon: Icons.terminal, label: 'Konsol', page: ConsolePage());
+  static const _advanced = (icon: Icons.build_outlined, label: 'Gelişmiş araçlar', page: AdvancedPage());
   static const _report = (icon: Icons.description, label: 'Rapor', page: ReportPage());
 
   /// Menü kabin tipine göre: her tipte yalnızca o kabinle ilgili testler görünür.
@@ -51,16 +45,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       _connection,
       _cabin,
       _tests,
-      _lineScan,
-      _cardScan,
       _masterDrawer,
       _serum,
-      _serumDiscovery,
       _rfid,
-      _console,
+      _advanced,
       _report,
     ],
-    HwCabinType.patientBased => const [_connection, _cabin, _tests, _lineScan, _mobileCabin, _rfid, _console, _report],
+    HwCabinType.patientBased => const [_connection, _cabin, _tests, _mobileCabin, _rfid, _advanced, _report],
   };
 
   void _changeCabinType() {
@@ -131,7 +122,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               children: [
                 Expanded(child: IndexedStack(index: index, children: [for (final p in pages) p.page])),
-                if (pages[index] != _console) const SizedBox(height: 220, child: TrafficPanel()),
+                // Gelişmiş araçlar trafik panelini sekmeye göre kendisi gösterir.
+                if (pages[index] != _advanced) const SizedBox(height: 220, child: TrafficPanel()),
               ],
             ),
           ),

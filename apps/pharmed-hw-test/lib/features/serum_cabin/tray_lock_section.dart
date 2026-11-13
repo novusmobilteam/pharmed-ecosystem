@@ -23,9 +23,9 @@ import '../../widgets/common.dart';
 // son kart geneli komutu (k/x) ayrıca gösterilir ve `o` sonrası teknisyen
 // fiziksel sonucu işaretler.
 //
-// OLMASI GEREKEN AKIŞ: kilitler normalde serbest (x); serum kapağı açılınca
-// tümü enerjilenir (k), yalnız hedef avadanlık açılır (o); avadanlık yerine
-// itilip kapak kapanınca yeniden serbest (x).
+// OLMASI GEREKEN AKIŞ (x → kapak aç → k → o → çek/it → kapak kapan → x) raf
+// tanımıyla birlikte Serum sayfasında test edilir (core/serum_hardware.dart).
+// Bu bölüm yalnızca elle / ham komutlar içindir (Gelişmiş araçlar).
 
 class TrayLockSection extends ConsumerStatefulWidget {
   const TrayLockSection({super.key, required this.address, required this.row, required this.idle});
@@ -148,23 +148,6 @@ class _ReadingTile extends StatelessWidget {
   }
 }
 
-// ── Akış adımları ───────────────────────────────────────────────────
-
-enum _FlowStep { releaseAll, openLid, waitLidOpen, lockAll, openTray, waitTrayReturn, waitLidClose, releaseAtEnd }
-
-extension on _FlowStep {
-  String get label => switch (this) {
-    _FlowStep.releaseAll => 'Başlangıç: tüm kilitler serbest (x)',
-    _FlowStep.openLid => 'Serum kapağını aç',
-    _FlowStep.waitLidOpen => 'Kapağın açıldığını bekle',
-    _FlowStep.lockAll => 'Tüm kilitleri enerjile (k)',
-    _FlowStep.openTray => 'Hedef avadanlığı aç (o)',
-    _FlowStep.waitTrayReturn => 'Avadanlığın çekilip yerine itilmesini bekle',
-    _FlowStep.waitLidClose => 'Kapağın kapanmasını bekle',
-    _FlowStep.releaseAtEnd => 'Bitiş: tüm kilitler serbest (x)',
-  };
-}
-
 /// `o` sonrası teknisyenin fiziksel gözlemi.
 const _observations = [
   ('Yalnız hedef serbest (doğru)', true),
@@ -176,7 +159,6 @@ const _observations = [
 class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   final _deviceCtrl = TextEditingController(text: '1');
   int _port = 1;
-  int _lid = 1;
 
   bool _busy = false;
 
@@ -203,12 +185,6 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   _Reading? _liveReading;
   int? _liveKeypad;
 
-  // Akış testi
-  bool _flowRunning = false;
-  bool _flowCancel = false;
-  final Map<_FlowStep, (StepResult, String)> _flow = {};
-  _FlowStep? _flowCurrent;
-
   int? get _deviceId {
     final v = int.tryParse(_deviceCtrl.text.trim());
     return v != null && v >= TrayLockProtocol.minDeviceId && v <= TrayLockProtocol.maxDeviceId ? v : null;
@@ -219,7 +195,6 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   @override
   void dispose() {
     _watch?.cancel();
-    _flowCancel = true;
     _deviceCtrl.dispose();
     super.dispose();
   }
@@ -372,183 +347,22 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     setState(() {});
   }
 
-  // ── Serum kapağı (T protokolü, port = kapak no) ────────────────
-
-  Future<bool> _selectRow(int row) async {
-    try {
-      final r = await _serial.sendAndReceive(
-        CommandBuilder.buildManagementCommand(addressIndex: widget.address, row: row),
-        timeout: const Duration(milliseconds: 800),
-      );
-      return r != null && r.contains('ok');
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// Kapağın ham durumu (`h3`, `h6` …) ya da null.
-  Future<String?> _lidStatus(int row, int lid) async {
-    if (!await _selectRow(row)) return null;
-    try {
-      final raw = await _serial.sendAndReceive(
-        CommandBuilder.buildDrawerCommand(action: DeviceAction.status, port: lid, drawer: 0),
-        timeout: const Duration(milliseconds: 400),
-      );
-      return raw == null ? null : RegExp(r'\.([^,]*),').firstMatch(raw)?.group(1);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  static bool _lidIsOpen(String? s) => s == 'h1' || s == 'h2' || s == 'h3' || s == 'h6';
-  static bool _lidIsClosed(String? s) => s == 'h0' || s == 'h4' || s == 'h5';
-
-  // ── Akış testi ─────────────────────────────────────────────────
-
-  void _mark(_FlowStep step, StepResult result, String detail) {
-    ref.read(testReportProvider).add('Kilit akışı — ${step.label}', result, detail: detail);
-    if (mounted) setState(() => _flow[step] = (result, detail));
-  }
-
-  /// [condition] sağlanana kadar [interval] aralıkla dener. Süre dolarsa ya da
-  /// iptal edilirse false.
-  Future<bool> _waitUntil(Future<bool> Function() condition, Duration timeout, {Duration? interval}) async {
-    final end = DateTime.now().add(timeout);
-    while (DateTime.now().isBefore(end)) {
-      if (_flowCancel || !mounted) return false;
-      if (await condition()) return true;
-      await Future<void>.delayed(interval ?? const Duration(milliseconds: 500));
-    }
-    return false;
-  }
-
-  Future<void> _runFlow() async {
-    final row = widget.row;
-    final deviceId = _deviceId;
-    if (row == null || deviceId == null) {
-      return showMessage(context, 'Satır (bölüm 1) ve kart ID gerekli.', error: true);
-    }
-    final lid = _lid;
-    final port = _port;
-    _watch?.cancel();
-    setState(() {
-      _watch = null;
-      _flowRunning = true;
-      _flowCancel = false;
-      _flow.clear();
-      _liveReading = null;
-    });
-    ref
-        .read(testReportProvider)
-        .add(
-          'Kilit akışı başladı',
-          StepResult.info,
-          detail: 'Kapak $lid (satır $row) · kilit kartı $deviceId · avadanlık portu $port',
-        );
-
-    Future<bool> step(_FlowStep s, Future<(bool, String)> Function() body) async {
-      if (_flowCancel || !mounted) return false;
-      setState(() => _flowCurrent = s);
-      final (ok, detail) = await body();
-      _mark(s, ok ? StepResult.ok : StepResult.fail, detail);
-      return ok;
-    }
-
-    Future<(bool, String)> trayCmd(TrayLockAction a, {int? p}) async {
-      final (raw, res) = await _tray(deviceId, a, port: p);
-      return (res is TrayLockOk, '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: p).title}');
-    }
-
-    var ok =
-        await step(_FlowStep.releaseAll, () => trayCmd(TrayLockAction.unlockAll)) &&
-        await step(_FlowStep.openLid, () async {
-          try {
-            await ref
-                .read(cabinOpsProvider)
-                .openMasterSerumDrawer(manager: ManagementCard(addressIndex: widget.address), row: row, port: lid);
-            return (true, 'Kapak $lid için açma komutu kabul edildi');
-          } catch (e) {
-            // [#221] Kapak zaten açıksa kart `.no` döner — durumu sorgula.
-            final status = await _lidStatus(row, lid);
-            if (_lidIsOpen(status)) return (true, 'Kapak $lid zaten açıktı ($status) — açma komutu .no döndü');
-            return (false, 'HATA: $e');
-          }
-        }) &&
-        await step(_FlowStep.waitLidOpen, () async {
-          String? last;
-          final opened = await _waitUntil(() async {
-            last = await _lidStatus(row, lid);
-            return _lidIsOpen(last);
-          }, const Duration(seconds: 15));
-          return (opened, 'Son kapak durumu: ${last ?? '(cevap yok)'}');
-        }) &&
-        await step(_FlowStep.lockAll, () => trayCmd(TrayLockAction.lockAll)) &&
-        await step(_FlowStep.openTray, () => trayCmd(TrayLockAction.open, p: port)) &&
-        await step(_FlowStep.waitTrayReturn, () async {
-          var seenActive = false;
-          var seenPulled = false;
-          var last = '-';
-          final returned = await _waitUntil(() async {
-            final (_, res) = await _tray(deviceId, TrayLockAction.status, port: port);
-            final reading = _Reading.of(res, port: port);
-            last = reading.title;
-            if (mounted) setState(() => _liveReading = reading);
-            if (res case TrayLockStatusResponse(:final status)) {
-              if (status != TrayLockStatus.idle) seenActive = true;
-              if (status == TrayLockStatus.pulled) seenPulled = true;
-              return seenActive && status == TrayLockStatus.idle;
-            }
-            return false;
-          }, const Duration(seconds: 90));
-          final detail = returned
-              ? (seenPulled
-                    ? 'Avadanlık çekildi ve yerine itildi'
-                    : 'Kart boşa döndü ama "çekildi" (s:02) hiç görülmedi')
-              : (seenActive ? 'Avadanlık yerine itilmedi — son: $last' : 'Kart kilidi hiç açmadı — son: $last');
-          return (returned, detail);
-        }) &&
-        await step(_FlowStep.waitLidClose, () async {
-          String? last;
-          final closed = await _waitUntil(() async {
-            last = await _lidStatus(row, lid);
-            return _lidIsClosed(last);
-          }, const Duration(seconds: 90));
-          return (closed, 'Son kapak durumu: ${last ?? '(cevap yok)'}');
-        });
-
-    // Bitişte (başarılı ya da yarıda kalsa da) kilitler serbest bırakılır.
-    _flowCancel = false;
-    final release = await step(_FlowStep.releaseAtEnd, () => trayCmd(TrayLockAction.unlockAll));
-    ok = ok && release;
-    await _selectRow(0);
-
-    ref
-        .read(testReportProvider)
-        .add('Kilit akışı ${ok ? 'tamamlandı' : 'yarıda kaldı'}', ok ? StepResult.ok : StepResult.fail);
-    if (!mounted) return;
-    setState(() {
-      _flowRunning = false;
-      _flowCurrent = null;
-    });
-  }
-
   // ── UI ─────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     final connected = ref.watch(sessionProvider.select((s) => s.port != null));
-    final free = connected && widget.idle && !_busy && !_flowRunning;
+    final free = connected && widget.idle && !_busy;
     final titleStyle = Theme.of(context).textTheme.titleSmall;
 
     return SectionCard(
-      title: '5. Avadanlık kilitleri (elektromanyetik)',
+      title: '5. Avadanlık kilit kartı — elle komut',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Olması gereken: kilitler normalde serbest; kapak açılınca tümü enerjilenir (k), yalnız işlem '
-            'yapılacak avadanlık açılır (o); bitince yeniden serbest (x). Kart ID = rafın kilit kartı, '
-            'port = avadanlığın kart üzerindeki portu (en sağdan 1).',
+            'Arıza teşhisi için ham komutlar. Kart ID = rafın kilit kartı, port = avadanlığın kart üzerindeki '
+            'portu (en sağdan 1). Raf tanımına göre kilit testleri ve akış testi Serum sayfasındadır.',
           ),
           const SizedBox(height: 12),
 
@@ -605,7 +419,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
                 label: const Text('Tüm portları sorgula (1–8)'),
               ),
               OutlinedButton.icon(
-                onPressed: connected && !_flowRunning && _deviceId != null ? _toggleWatch : null,
+                onPressed: connected && _deviceId != null ? _toggleWatch : null,
                 icon: Icon(_watch != null ? Icons.visibility_off : Icons.visibility),
                 label: Text(_watch != null ? 'İzlemeyi durdur' : 'Canlı durum (0,5 sn)'),
               ),
@@ -636,60 +450,6 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
             for (final e in _portTable!.entries)
               _ReadingTile(reading: _Reading.of(e.value.$2, port: e.key), raw: e.value.$1 ?? '(cevap yok)'),
           ],
-
-          // ── Akış testi ─────────────────────────────────────────
-          const Divider(height: 28),
-          Text('Akış testi (olması gereken çalışma prensibi)', style: titleStyle),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              const Text('Serum kapağı:'),
-              DropdownButton<int>(
-                value: _lid,
-                items: [
-                  for (var l = 1; l <= DeviceConstants.maxSerumLids; l++)
-                    DropdownMenuItem(value: l, child: Text('Kapak $l')),
-                ],
-                onChanged: free ? (v) => setState(() => _lid = v ?? _lid) : null,
-              ),
-              Text('Satır: ${widget.row ?? '— (bölüm 1)'}  ·  Kart ${_deviceCtrl.text}  ·  Port $_port'),
-              BusyButton(
-                label: 'Akışı başlat',
-                icon: Icons.play_arrow,
-                busy: _flowRunning,
-                onPressed: free && widget.row != null ? _runFlow : null,
-              ),
-              if (_flowRunning)
-                OutlinedButton.icon(
-                  onPressed: () => setState(() => _flowCancel = true),
-                  icon: const Icon(Icons.stop),
-                  label: const Text('Durdur (kilitler serbest bırakılır)'),
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          for (final s in _FlowStep.values)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 24,
-                    child: _flowCurrent == s && _flowRunning
-                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                        : StatusIcon(status: _flow[s]?.$1.status ?? TestStatus.pending, size: 16),
-                  ),
-                  SizedBox(width: 300, child: Text(s.label)),
-                  Expanded(child: Text(_flow[s]?.$2 ?? '', style: TextStyle(color: MedColors.text2))),
-                ],
-              ),
-            ),
-          if (_flowRunning && _flowCurrent == _FlowStep.waitTrayReturn && _liveReading != null)
-            _ReadingTile(label: 'Canlı', reading: _liveReading!),
         ],
       ),
     );
