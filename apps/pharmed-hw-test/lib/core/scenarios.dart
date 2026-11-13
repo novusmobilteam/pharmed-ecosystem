@@ -23,10 +23,10 @@ import 'test_status.dart';
 enum ScenarioKind {
   cubicDrawer('Kübik çekmece', needsObservation: false),
   unitDoseDrawer('Birim doz çekmece', needsObservation: false),
-  serumLid('Serum kapağı', needsObservation: true),
+  serumLid('Serum kapağı', needsObservation: false),
   lockCard('Raf kilit kartı', needsObservation: false),
   trayFlow('Avadanlık akış testi', needsObservation: false),
-  mobileDrawer('Mobil çekmece', needsObservation: true),
+  mobileDrawer('Mobil çekmece', needsObservation: false),
   tempHumidity('Isı / nem sensörü', needsObservation: false),
   battery('Akü gerilimi', needsObservation: false);
 
@@ -78,7 +78,11 @@ class TestScenario {
   /// Çekmece senaryolarında tanımdaki birim (çekmece tanımı + gözler).
   final CabinUnit? unit;
 
-  bool get isDrawerFlow => kind == ScenarioKind.cubicDrawer || kind == ScenarioKind.unitDoseDrawer;
+  bool get isDrawerFlow =>
+      kind == ScenarioKind.cubicDrawer ||
+      kind == ScenarioKind.unitDoseDrawer ||
+      kind == ScenarioKind.serumLid ||
+      kind == ScenarioKind.mobileDrawer;
 }
 
 class ScenarioResult {
@@ -167,7 +171,7 @@ List<TestScenario> buildScenarios({
             id: ScenarioIds.mobile(a, u.port!),
             kind: ScenarioKind.mobileDrawer,
             group: group,
-            title: '${u.name} — aç',
+            title: '${u.name} — aç, kapat',
             location: 'satır ${_two(DeviceConstants.serumSlaveRow)} · port ${u.port}',
             addressIndex: a,
             row: DeviceConstants.serumSlaveRow,
@@ -219,7 +223,7 @@ List<TestScenario> buildScenarios({
           id: ScenarioIds.serumLid(a, lid.lidNo),
           kind: ScenarioKind.serumLid,
           group: group,
-          title: '$lidName — aç',
+          title: '$lidName — aç, kapat',
           location: 'satır ${_two(lid.row)} · port ${lid.port}',
           addressIndex: a,
           row: lid.row,
