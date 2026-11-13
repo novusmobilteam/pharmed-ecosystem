@@ -64,7 +64,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
 
   TestScenario? _nextScenario() {
     final results = ref.read(scenarioResultsProvider);
-    return _scenarios().where((s) => results[s.id] == null).firstOrNull;
+    return _scenarios().where((s) => !s.kind.manual && results[s.id] == null).firstOrNull;
   }
 
   // ── Rehberli tur ────────────────────────────────────────────────────
@@ -158,6 +158,11 @@ class _TestsPageState extends ConsumerState<TestsPage> {
               );
             }
           }
+        case ScenarioKind.rfidReader:
+        case ScenarioKind.rfidAntennas:
+        case ScenarioKind.rfidTags:
+          // RFID sayfasında yapılır; buradan çalıştırılmaz.
+          _results.clear(s.id);
         case ScenarioKind.lockCard:
           final present = await _hw.trayCardPresent(s.lockCardId!);
           _finish(
@@ -333,7 +338,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     final finished = scenarios.where((s) => results[s.id]?.status.isFinished ?? false).length;
     final passed = scenarios.where((s) => results[s.id]?.status == TestStatus.passed).length;
     final failed = scenarios.where((s) => results[s.id]?.status == TestStatus.failed).length;
-    final next = scenarios.where((s) => results[s.id] == null).firstOrNull;
+    final next = scenarios.where((s) => !s.kind.manual && results[s.id] == null).firstOrNull;
     final idle = connected && _busy == null && _awaiting == null && !_tour;
 
     final groups = <String, List<TestScenario>>{};
@@ -551,6 +556,8 @@ class _ScenarioRow extends StatelessWidget {
           const SizedBox(width: MedSpacing.md),
           if (onStop != null)
             TextButton.icon(onPressed: onStop, icon: const Icon(Icons.stop), label: const Text('Durdur'))
+          else if (scenario.kind.manual)
+            Text('RFID sayfasında', style: hintStyle(fontSize: 12))
           else
             OutlinedButton(
               onPressed: canRun ? onRun : null,

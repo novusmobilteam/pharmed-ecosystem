@@ -126,6 +126,9 @@ class CabinInfo {
     this.name,
     this.needsLidCount = false,
     this.warnings = const [],
+    this.rfidEnabled = false,
+    this.rfidHost,
+    this.rfidPort,
   });
 
   /// Yönetim kartı adresi (1–16 → a–p).
@@ -141,6 +144,11 @@ class CabinInfo {
 
   /// Kabin düzeyindeki uyarılar (ör. eşleşmeyen kart).
   final List<String> warnings;
+
+  /// Client tanımında RFID okuyucu (taramada bilinmez).
+  final bool rfidEnabled;
+  final String? rfidHost;
+  final int? rfidPort;
 
   String get letter => ManagementCard(addressIndex: addressIndex).addressChar.toUpperCase();
 

@@ -28,11 +28,17 @@ enum ScenarioKind {
   trayFlow('Avadanlık akış testi', needsObservation: false),
   mobileDrawer('Mobil çekmece', needsObservation: false),
   tempHumidity('Isı / nem sensörü', needsObservation: false),
-  battery('Akü gerilimi', needsObservation: false);
+  battery('Akü gerilimi', needsObservation: false),
+  rfidReader('RFID okuyucu bağlantısı', needsObservation: false, manual: true),
+  rfidAntennas('RFID antenleri', needsObservation: false, manual: true),
+  rfidTags('RFID etiket okuma', needsObservation: false, manual: true);
 
-  const ScenarioKind(this.label, {required this.needsObservation});
+  const ScenarioKind(this.label, {required this.needsObservation, this.manual = false});
 
   final String label;
+
+  /// Testler'den çalıştırılmaz; ilgili sayfada yapılır, sonucu buraya yazılır.
+  final bool manual;
 
   /// Komut sonrası teknisyenin fiziksel onayı ("Açıldı / Açılmadı") gerekir.
   final bool needsObservation;
@@ -102,6 +108,9 @@ abstract final class ScenarioIds {
   static String trayFlow(int address, int lidNo, int shelf, int trayIndex) => 'trayflow:$address:$lidNo:$shelf:$trayIndex';
   static String mobile(int address, int port) => 'mobile:$address:$port';
   static String tempHumidity(int address) => 'sensor:$address:th';
+  static String rfidReader(int address) => 'rfid:$address:reader';
+  static String rfidAntennas(int address) => 'rfid:$address:antennas';
+  static String rfidTags(int address) => 'rfid:$address:tags';
   static String battery(int address) => 'sensor:$address:bat';
 }
 
@@ -135,8 +144,20 @@ List<TestScenario> buildScenarios({
     final group = cabin.title;
     final a = cabin.addressIndex;
 
-    // Sensörler kabin grubunun sonunda.
+    // Sensörler ve RFID kabin grubunun sonunda.
     void addSensors() {
+      if (cabin.rfidEnabled) {
+        final where = cabin.rfidHost == null ? 'RFID okuyucu' : 'RFID ${cabin.rfidHost}:${cabin.rfidPort ?? '-'}';
+        for (final (kind, id, title) in [
+          (ScenarioKind.rfidReader, ScenarioIds.rfidReader(a), 'RFID okuyucuya bağlan'),
+          (ScenarioKind.rfidAntennas, ScenarioIds.rfidAntennas(a), 'RFID antenleri bağlı mı'),
+          (ScenarioKind.rfidTags, ScenarioIds.rfidTags(a), 'RFID etiketleri anten bazında oku'),
+        ]) {
+          list.add(
+            TestScenario(id: id, kind: kind, group: group, title: title, location: where, addressIndex: a, row: 0),
+          );
+        }
+      }
       list.add(
         TestScenario(
           id: ScenarioIds.tempHumidity(a),
