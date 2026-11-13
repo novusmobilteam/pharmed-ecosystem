@@ -7,6 +7,7 @@
 //   • Serum kapağı              → openMasterSerumDrawer(row, port)
 //   • Raf kilit kartı / avadanlık akışı → TrayLockProtocol (SerumTrayAddress)
 //   • Mobil çekmece             → openMobileDrawer(port)
+//   • Isı / nem, akü            → readTempHumidity (satır 50), readBatteryVoltage (satır 49)
 // Birim doz göz açma ve kübik kapaklar Master çekmece sayfasında kalır.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,9 @@ enum ScenarioKind {
   serumLid('Serum kapağı', needsObservation: true),
   lockCard('Raf kilit kartı', needsObservation: false),
   trayFlow('Avadanlık akış testi', needsObservation: false),
-  mobileDrawer('Mobil çekmece', needsObservation: true);
+  mobileDrawer('Mobil çekmece', needsObservation: true),
+  tempHumidity('Isı / nem sensörü', needsObservation: false),
+  battery('Akü gerilimi', needsObservation: false);
 
   const ScenarioKind(this.label, {required this.needsObservation});
 
@@ -84,6 +87,8 @@ abstract final class ScenarioIds {
   static String lockCard(int address, int lidNo, int shelf) => 'lockcard:$address:$lidNo:$shelf';
   static String trayFlow(int address, int lidNo, int shelf, int trayIndex) => 'trayflow:$address:$lidNo:$shelf:$trayIndex';
   static String mobile(int address, int port) => 'mobile:$address:$port';
+  static String tempHumidity(int address) => 'sensor:$address:th';
+  static String battery(int address) => 'sensor:$address:bat';
 }
 
 class ScenarioResultsNotifier extends Notifier<Map<String, ScenarioResult>> {
@@ -116,6 +121,34 @@ List<TestScenario> buildScenarios({
     final group = cabin.title;
     final a = cabin.addressIndex;
 
+    // Sensörler kabin grubunun sonunda.
+    void addSensors() {
+      list.add(
+        TestScenario(
+          id: ScenarioIds.tempHumidity(a),
+          kind: ScenarioKind.tempHumidity,
+          group: group,
+          title: 'Isı / nem oku',
+          location: 'yönetim kartı ${cabin.letter} · satır 50',
+          addressIndex: a,
+          row: 50,
+        ),
+      );
+      if (cabin.kind == CabinKind.mobile) {
+        list.add(
+          TestScenario(
+            id: ScenarioIds.battery(a),
+            kind: ScenarioKind.battery,
+            group: group,
+            title: 'Akü gerilimi oku',
+            location: 'yönetim kartı ${cabin.letter} · satır 49',
+            addressIndex: a,
+            row: 49,
+          ),
+        );
+      }
+    }
+
     if (cabinType == HwCabinType.patientBased) {
       if (cabin.kind != CabinKind.mobile) continue;
       for (final u in cabin.units.where((u) => u.port != null)) {
@@ -132,6 +165,7 @@ List<TestScenario> buildScenarios({
           ),
         );
       }
+      addSensors();
       continue;
     }
 
@@ -152,9 +186,9 @@ List<TestScenario> buildScenarios({
     }
 
     final target = serum[a];
-    if (target == null) continue;
-    for (final lid in target.lids) {
-      final lidName = target.isCabinet ? 'Serum kapağı ${lid.lidNo}' : 'Serum bölmesi';
+    for (final lid in target?.lids ?? const <SerumLidDef>[]) {
+      final isCabinet = target!.isCabinet;
+      final lidName = isCabinet ? 'Serum kapağı ${lid.lidNo}' : 'Serum bölmesi';
       list.add(
         TestScenario(
           id: ScenarioIds.serumLid(a, lid.lidNo),
@@ -203,6 +237,7 @@ List<TestScenario> buildScenarios({
         }
       }
     }
+    addSensors();
   }
   return list;
 }
