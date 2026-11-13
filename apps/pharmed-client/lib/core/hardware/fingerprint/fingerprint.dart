@@ -1,6 +1,5 @@
-export 'auto_fingerprint_scanner.dart';
-export 'biomini/biomini_settings.dart';
-export 'biomini_fingerprint_scanner.dart';
-export 'mock_fingerprint_scanner.dart';
-export 'secugen/secugen_settings.dart';
-export 'secugen_fingerprint_scanner.dart';
+// Parmak izi okuyucu sürücüleri pharmed_hardware paketine taşındı (donanım
+// test uygulamasıyla ortak). Mevcut importlar bozulmasın diye aynı ad kümesi
+// buradan yeniden dışa aktarılır.
+// ignore_for_file: implementation_imports
+export 'package:pharmed_hardware/src/fingerprint/fingerprint.dart';
