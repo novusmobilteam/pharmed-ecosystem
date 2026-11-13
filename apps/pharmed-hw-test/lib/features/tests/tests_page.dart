@@ -140,6 +140,46 @@ class _TestsPageState extends ConsumerState<TestsPage> {
           } else {
             _awaitObservation(s, 'Kart: ${SerumHardware.lidStatusText(status)}');
           }
+        case ScenarioKind.tempHumidity:
+          final manager = ManagementCard(addressIndex: s.addressIndex);
+          final th = await ref.read(cabinOpsProvider).readTempHumidity(manager: manager);
+          await _hw.release(s.addressIndex);
+          if (th == null) {
+            _finish(s, title, TestStatus.failed, 'Sensör cevap vermedi');
+          } else {
+            final text = '${th.temperature.toStringAsFixed(1)} °C · %${th.humidity.toStringAsFixed(1)} nem';
+            final plausible =
+                th.temperature >= -10 && th.temperature <= 70 && th.humidity >= 0 && th.humidity <= 100;
+            _finish(
+              s,
+              title,
+              plausible ? TestStatus.passed : TestStatus.warning,
+              plausible ? text : '$text — değer beklenen aralıkta değil',
+            );
+          }
+        case ScenarioKind.battery:
+          final manager = ManagementCard(addressIndex: s.addressIndex);
+          final volts = await ref.read(cabinOpsProvider).readBatteryVoltage(manager: manager);
+          await _hw.release(s.addressIndex);
+          if (volts == null) {
+            _finish(s, title, TestStatus.failed, 'Akü değeri okunamadı');
+          } else {
+            // LiFePO4 8S: 21,2–29,6 V (BatteryLevelConverter).
+            final percent = BatteryLevelConverter.toPercent(volts).round();
+            final text = '${volts.toStringAsFixed(2)} V · yaklaşık %$percent';
+            if (volts < 21.2 || volts > 29.6) {
+              _finish(s, title, TestStatus.failed, '$text — akü aralığı dışında (21,2–29,6 V)');
+            } else if (volts <= 24.0) {
+              _finish(s, title, TestStatus.warning, '$text — akü zayıf');
+            } else {
+              _finish(
+                s,
+                title,
+                TestStatus.passed,
+                BatteryLevelConverter.isLikelyCharging(volts) ? '$text — şarj oluyor olabilir' : text,
+              );
+            }
+          }
         case ScenarioKind.lockCard:
           final present = await _hw.trayCardPresent(s.lockCardId!);
           _finish(
