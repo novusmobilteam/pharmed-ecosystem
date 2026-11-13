@@ -29,6 +29,8 @@ class ClientCacheResult {
     this.stationName,
     this.savedAt,
     this.notes = const [],
+    this.cameras = const [],
+    this.printer,
   });
 
   /// Tanımdaki kabinler (bu bilgisayarın istasyonu).
@@ -51,6 +53,12 @@ class ClientCacheResult {
   /// Okuma sırasında atlanan / okunamayan kısımlar.
   final List<String> notes;
 
+  /// Client'ta tanımlı kameralar (şifreler güvenli depoda; okunmaz).
+  final List<CameraDevice> cameras;
+
+  /// Client'ın fiş yazıcı ayarı.
+  final PrinterConfig? printer;
+
   bool get isMobileSetup => deviceMode == 'mobile';
 }
 
@@ -60,6 +68,7 @@ class ClientCacheReader {
   static const _slotBox = 'drawer_slot_cache';
   static const _metaBox = 'cabin_meta_cache';
   static const _unitBox = 'drawer_unit_cache';
+  static const _cameraBox = 'camera_devices';
 
   /// Kopyalar bu önekle açılır; test uygulamasının kendi kutularıyla çakışmaz.
   static const _prefix = 'hwtest_client_';
@@ -103,9 +112,41 @@ class ClientCacheReader {
       final slotBox = await open(_slotBox);
       final metaBox = await open(_metaBox);
       final unitBox = await open(_unitBox);
+      final cameraBox = await open(_cameraBox);
       if (cabinBox == null) return null;
 
       final stationId = _asInt(settings?.get('current_station_id'));
+      final printerTarget = settings?.get('printer_target') as String?;
+      final printer = printerTarget == null || printerTarget.trim().isEmpty
+          ? null
+          : PrinterConfig(
+              connectionType: PrinterConnectionType.values
+                      .where((t) => t.name == settings?.get('printer_connection'))
+                      .firstOrNull ??
+                  PrinterConnectionType.serial,
+              target: printerTarget,
+              baudRate: _asInt(settings?.get('printer_baud')) ?? PrinterConfig.defaultBaudRate,
+            );
+      final cameras = <CameraDevice>[];
+      for (final raw in cameraBox?.values ?? const <Object?>[]) {
+        try {
+          final j = jsonDecode('$raw') as Map<String, Object?>;
+          cameras.add(
+            CameraDevice(
+              id: j['id']! as String,
+              name: j['name']! as String,
+              host: j['host']! as String,
+              username: j['username']! as String,
+              cabinIds: (j['cabinIds'] as List<Object?>? ?? const []).cast<int>().toSet(),
+              rtspPort: (j['rtspPort'] as int?) ?? 554,
+              channel: (j['channel'] as int?) ?? 101,
+              enabled: (j['enabled'] as bool?) ?? true,
+            ),
+          );
+        } catch (e) {
+          notes.add('Kamera tanımı çözülemedi: $e');
+        }
+      }
       final deviceMode = settings?.get('device_mode') as String?;
       final comPort = settings?.get('com_port') as String?;
 
@@ -227,6 +268,8 @@ class ClientCacheReader {
         stationName: cabins.map((c) => c.station?.name).whereType<String>().firstOrNull,
         savedAt: savedAt,
         notes: notes,
+        cameras: cameras,
+        printer: printer,
       );
     } finally {
       for (final box in opened) {

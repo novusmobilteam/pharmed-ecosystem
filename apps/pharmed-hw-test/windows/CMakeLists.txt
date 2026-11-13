@@ -87,6 +87,18 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
+# Parmak izi SDK DLL'leri (pharmed_hardware ile ortak; client ile ayni dosyalar).
+# dart:ffi ile calisma aninda exe'nin yanindan yuklenir.
+set(PHARMED_HW_THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/../../../packages/pharmed_hardware/third_party")
+foreach(FP_DLL biomini/UFScanner.dll secugen/sgfplib.dll secugen/sgfpamx.dll secugen/sgwsqlib.dll)
+  if(EXISTS "${PHARMED_HW_THIRD_PARTY}/${FP_DLL}")
+    install(FILES "${PHARMED_HW_THIRD_PARTY}/${FP_DLL}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+      COMPONENT Runtime)
+  else()
+    message(WARNING "Parmak izi DLL bulunamadi: ${PHARMED_HW_THIRD_PARTY}/${FP_DLL}")
+  endif()
+endforeach()
+
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"

@@ -13,6 +13,7 @@ import '../cabin/cabin_page.dart';
 import '../connection/connection_page.dart';
 import '../drawer_test/drawer_test_page.dart';
 import '../mobile_cabin/mobile_cabin_page.dart';
+import '../peripherals/peripherals_page.dart';
 import '../report/report_page.dart';
 import '../rfid/rfid_page.dart';
 import '../serum/serum_page.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _mobileCabin = (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage());
   static const _serum = (icon: Icons.water_drop, label: 'Serum', page: SerumPage());
   static const _rfid = (icon: Icons.sensors, label: 'RFID', page: RfidPage());
+  static const _peripherals = (icon: Icons.devices_other, label: 'Çevre birimleri', page: PeripheralsPage());
   static const _advanced = (icon: Icons.build_outlined, label: 'Gelişmiş araçlar', page: AdvancedPage());
   static const _report = (icon: Icons.description, label: 'Rapor', page: ReportPage());
 
@@ -48,10 +50,20 @@ class _HomePageState extends ConsumerState<HomePage> {
       _masterDrawer,
       _serum,
       _rfid,
+      _peripherals,
       _advanced,
       _report,
     ],
-    HwCabinType.patientBased => const [_connection, _cabin, _tests, _mobileCabin, _rfid, _advanced, _report],
+    HwCabinType.patientBased => const [
+      _connection,
+      _cabin,
+      _tests,
+      _mobileCabin,
+      _rfid,
+      _peripherals,
+      _advanced,
+      _report,
+    ],
   };
 
   void _changeCabinType() {
