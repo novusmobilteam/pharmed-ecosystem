@@ -29,7 +29,8 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
     setState(() {
       _ports = ports;
       if (_selectedPort != null && !ports.contains(_selectedPort)) _selectedPort = null;
-      _selectedPort ??= ports.isNotEmpty ? ports.first : null;
+      // Bağlı port varsa (ör. kabin tipi değişince sayfa yeniden kuruldu) onu göster.
+      _selectedPort ??= ref.read(sessionProvider).port ?? (ports.isNotEmpty ? ports.first : null);
     });
   }
 
