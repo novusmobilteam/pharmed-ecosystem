@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'core/env.dart';
+import 'features/cabin_type/cabin_type_page.dart';
 import 'features/home/home_page.dart';
 import 'features/login/login_page.dart';
 import 'core/providers.dart';
@@ -30,6 +31,7 @@ class HwTestApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedIn = ref.watch(sessionProvider.select((s) => s.isLoggedIn));
+    final hasCabinType = ref.watch(sessionProvider.select((s) => s.cabinType != null));
     return MaterialApp(
       title: 'PharMed Donanım Testi',
       theme: MedTheme.client(),
@@ -42,7 +44,11 @@ class HwTestApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('tr'), Locale('en'), Locale('fr')],
-      home: loggedIn ? const HomePage() : const LoginPage(),
+      home: !loggedIn
+          ? const LoginPage()
+          : hasCabinType
+          ? const HomePage()
+          : const CabinTypePage(),
     );
   }
 }

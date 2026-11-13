@@ -26,6 +26,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
           .export(
             user: session.user?.fullName,
             port: session.port,
+            cabinType: session.cabinType?.label,
             traffic: ref.read(trafficLogProvider).entries,
           );
       setState(() => _lastPath = path);

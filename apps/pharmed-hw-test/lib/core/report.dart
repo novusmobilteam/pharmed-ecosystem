@@ -44,6 +44,7 @@ class TestReport extends ChangeNotifier {
   Future<String> export({
     required String? user,
     required String? port,
+    required String? cabinType,
     required List<TrafficEntry> traffic,
   }) async {
     final now = DateTime.now();
@@ -62,6 +63,7 @@ class TestReport extends ChangeNotifier {
       ..writeln('Bilgisayar : ${Platform.localHostname}')
       ..writeln('Kullanıcı  : ${user ?? '-'}')
       ..writeln('COM port   : ${port ?? '-'}')
+      ..writeln('Kabin tipi : ${cabinType ?? '-'}')
       ..writeln()
       ..writeln('── Test adımları (${_steps.length}) ──');
     for (final s in _steps) {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/cabin_type.dart';
 import '../../core/providers.dart';
+import '../../core/report.dart';
 import '../card_scan/card_scan_page.dart';
 import '../connection/connection_page.dart';
 import '../console/console_page.dart';
@@ -23,26 +25,56 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   int _index = 0;
 
-  static const _pages = <({IconData icon, String label, Widget page})>[
-    (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage()),
-    (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage()),
-    (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage()),
-    (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage()),
-    (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage()),
-    (icon: Icons.water_drop, label: 'Serum kabini', page: SerumCabinPage()),
-    (icon: Icons.sensors, label: 'RFID', page: RfidPage()),
-    (icon: Icons.terminal, label: 'Konsol', page: ConsolePage()),
-    (icon: Icons.description, label: 'Rapor', page: ReportPage()),
-  ];
+  static const _connection = (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage());
+  static const _lineScan = (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage());
+  static const _cardScan = (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage());
+  static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
+  static const _mobileCabin = (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage());
+  static const _serumCabin = (icon: Icons.water_drop, label: 'Serum kabini', page: SerumCabinPage());
+  static const _rfid = (icon: Icons.sensors, label: 'RFID', page: RfidPage());
+  static const _console = (icon: Icons.terminal, label: 'Konsol', page: ConsolePage());
+  static const _report = (icon: Icons.description, label: 'Rapor', page: ReportPage());
+
+  /// Menü kabin tipine göre: her tipte yalnızca o kabinle ilgili testler görünür.
+  static List<({IconData icon, String label, Widget page})> _pagesFor(HwCabinType type) => switch (type) {
+    HwCabinType.medicineBased => const [
+      _connection,
+      _lineScan,
+      _cardScan,
+      _masterDrawer,
+      _serumCabin,
+      _rfid,
+      _console,
+      _report,
+    ],
+    HwCabinType.patientBased => const [_connection, _lineScan, _mobileCabin, _rfid, _console, _report],
+  };
+
+  void _changeCabinType() {
+    ref.read(testReportProvider).add('Kabin tipi değiştirildi', StepResult.info);
+    ref.read(sessionProvider.notifier).setCabinType(null);
+  }
 
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(sessionProvider);
     final connected = session.port != null;
+    final pages = _pagesFor(session.cabinType ?? HwCabinType.medicineBased);
+    final index = _index < pages.length ? _index : 0;
     return Scaffold(
       appBar: AppBar(
         title: const Text('PharMed Donanım Testi'),
         actions: [
+          if (session.cabinType != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: ActionChip(
+                avatar: const Icon(Icons.swap_horiz, size: 18),
+                label: Text(session.cabinType!.label),
+                tooltip: 'Kabin tipini değiştir',
+                onPressed: _changeCabinType,
+              ),
+            ),
           _InfoChip(icon: Icons.person, text: session.user?.fullName ?? '-'),
           _InfoChip(
             icon: connected ? Icons.link : Icons.link_off,
@@ -52,12 +84,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           IconButton(
             tooltip: 'Çıkış',
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final serial = ref.read(serialServiceProvider);
-              if (serial.isConnected) await serial.disconnect();
-              ref.read(tokenHolderProvider).setToken(null);
-              ref.read(sessionProvider.notifier).logout();
-            },
+            onPressed: () => signOut(ref),
           ),
           const SizedBox(width: 8),
         ],
@@ -65,19 +92,19 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: _index,
+            selectedIndex: index,
             labelType: NavigationRailLabelType.all,
             onDestinationSelected: (i) => setState(() => _index = i),
             destinations: [
-              for (final p in _pages) NavigationRailDestination(icon: Icon(p.icon), label: Text(p.label)),
+              for (final p in pages) NavigationRailDestination(icon: Icon(p.icon), label: Text(p.label)),
             ],
           ),
           const VerticalDivider(width: 1),
           Expanded(
             child: Column(
               children: [
-                Expanded(child: IndexedStack(index: _index, children: [for (final p in _pages) p.page])),
-                if (_pages[_index].label != 'Konsol') const SizedBox(height: 220, child: TrafficPanel()),
+                Expanded(child: IndexedStack(index: index, children: [for (final p in pages) p.page])),
+                if (pages[index] != _console) const SizedBox(height: 220, child: TrafficPanel()),
               ],
             ),
           ),
