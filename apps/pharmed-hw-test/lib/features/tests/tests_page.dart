@@ -60,6 +60,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     snapshot: ref.read(cabinSessionProvider).active,
     serum: ref.read(serumDefinitionsProvider),
     cabinType: ref.read(sessionProvider).cabinType,
+    cameras: ref.read(cabinSessionProvider).cache?.cameras ?? const [],
   );
 
   TestScenario? _nextScenario() {
@@ -161,7 +162,10 @@ class _TestsPageState extends ConsumerState<TestsPage> {
         case ScenarioKind.rfidReader:
         case ScenarioKind.rfidAntennas:
         case ScenarioKind.rfidTags:
-          // RFID sayfasında yapılır; buradan çalıştırılmaz.
+        case ScenarioKind.printer:
+        case ScenarioKind.fingerprint:
+        case ScenarioKind.camera:
+          // İlgili sayfada yapılır; buradan çalıştırılmaz.
           _results.clear(s.id);
         case ScenarioKind.lockCard:
           final present = await _hw.trayCardPresent(s.lockCardId!);
@@ -321,7 +325,8 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     final connected = ref.watch(sessionProvider.select((s) => s.port != null));
     final serum = ref.watch(serumDefinitionsProvider);
     final results = ref.watch(scenarioResultsProvider);
-    final scenarios = buildScenarios(snapshot: active, serum: serum, cabinType: cabinType);
+    final cameras = ref.watch(cabinSessionProvider.select((s) => s.cache?.cameras)) ?? const <CameraDevice>[];
+    final scenarios = buildScenarios(snapshot: active, serum: serum, cabinType: cabinType, cameras: cameras);
 
     if (active == null) {
       return ListView(
@@ -557,7 +562,7 @@ class _ScenarioRow extends StatelessWidget {
           if (onStop != null)
             TextButton.icon(onPressed: onStop, icon: const Icon(Icons.stop), label: const Text('Durdur'))
           else if (scenario.kind.manual)
-            Text('RFID sayfasında', style: hintStyle(fontSize: 12))
+            Text('${scenario.kind.page ?? ''} sayfasında', style: hintStyle(fontSize: 12))
           else
             OutlinedButton(
               onPressed: canRun ? onRun : null,

@@ -33,6 +33,7 @@ class _ReportPageState extends ConsumerState<ReportPage> {
       snapshot: ref.read(cabinSessionProvider).active,
       serum: ref.read(serumDefinitionsProvider),
       cabinType: session.cabinType,
+      cameras: ref.read(cabinSessionProvider).cache?.cameras ?? const [],
     );
     return [
       for (final s in list)

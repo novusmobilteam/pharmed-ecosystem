@@ -29,16 +29,22 @@ enum ScenarioKind {
   mobileDrawer('Mobil çekmece', needsObservation: false),
   tempHumidity('Isı / nem sensörü', needsObservation: false),
   battery('Akü gerilimi', needsObservation: false),
-  rfidReader('RFID okuyucu bağlantısı', needsObservation: false, manual: true),
-  rfidAntennas('RFID antenleri', needsObservation: false, manual: true),
-  rfidTags('RFID etiket okuma', needsObservation: false, manual: true);
+  rfidReader('RFID okuyucu bağlantısı', needsObservation: false, manual: true, page: 'RFID'),
+  rfidAntennas('RFID antenleri', needsObservation: false, manual: true, page: 'RFID'),
+  rfidTags('RFID etiket okuma', needsObservation: false, manual: true, page: 'RFID'),
+  printer('Fiş yazıcı', needsObservation: false, manual: true, page: 'Çevre birimleri'),
+  fingerprint('Parmak izi okuyucu', needsObservation: false, manual: true, page: 'Çevre birimleri'),
+  camera('Kamera', needsObservation: false, manual: true, page: 'Çevre birimleri');
 
-  const ScenarioKind(this.label, {required this.needsObservation, this.manual = false});
+  const ScenarioKind(this.label, {required this.needsObservation, this.manual = false, this.page});
 
   final String label;
 
   /// Testler'den çalıştırılmaz; ilgili sayfada yapılır, sonucu buraya yazılır.
   final bool manual;
+
+  /// Elle yapılan senaryonun sayfası.
+  final String? page;
 
   /// Komut sonrası teknisyenin fiziksel onayı ("Açıldı / Açılmadı") gerekir.
   final bool needsObservation;
@@ -111,6 +117,9 @@ abstract final class ScenarioIds {
   static String rfidReader(int address) => 'rfid:$address:reader';
   static String rfidAntennas(int address) => 'rfid:$address:antennas';
   static String rfidTags(int address) => 'rfid:$address:tags';
+  static const printer = 'periph:printer';
+  static const fingerprint = 'periph:fingerprint';
+  static String camera(String id) => 'periph:camera:$id';
   static String battery(int address) => 'sensor:$address:bat';
 }
 
@@ -133,10 +142,14 @@ final scenarioResultsProvider = NotifierProvider<ScenarioResultsNotifier, Map<St
 String _two(int v) => v.toString().padLeft(2, '0');
 
 /// Aktif tanımdan senaryo listesi (kabin → birim sırasıyla).
+/// Çevre birimleri grubunun başlığı.
+const peripheralsGroup = 'Çevre birimleri';
+
 List<TestScenario> buildScenarios({
   required CabinSnapshot? snapshot,
   required Map<int, SerumTargetDef> serum,
   required HwCabinType? cabinType,
+  List<CameraDevice> cameras = const [],
 }) {
   if (snapshot == null) return const [];
   final list = <TestScenario>[];
@@ -288,6 +301,44 @@ List<TestScenario> buildScenarios({
       }
     }
     addSensors();
+  }
+
+  // Çevre birimleri (kiosk başına): fiş yazıcı, parmak izi, kameralar.
+  list
+    ..add(
+      const TestScenario(
+        id: ScenarioIds.printer,
+        kind: ScenarioKind.printer,
+        group: peripheralsGroup,
+        title: 'Fiş yazıcı — deneme fişi',
+        location: 'seri port / Windows yazıcısı',
+        addressIndex: 0,
+        row: 0,
+      ),
+    )
+    ..add(
+      const TestScenario(
+        id: ScenarioIds.fingerprint,
+        kind: ScenarioKind.fingerprint,
+        group: peripheralsGroup,
+        title: 'Parmak izi okuyucu — bağlantı ve okuma',
+        location: 'USB (SecuGen / Suprema BioMini)',
+        addressIndex: 0,
+        row: 0,
+      ),
+    );
+  for (final c in cameras.where((c) => c.enabled)) {
+    list.add(
+      TestScenario(
+        id: ScenarioIds.camera(c.id),
+        kind: ScenarioKind.camera,
+        group: peripheralsGroup,
+        title: 'Kamera ${c.name} — görüntü ve deneme kaydı',
+        location: 'rtsp://${c.host}:${c.rtspPort} · kanal ${c.channel}',
+        addressIndex: 0,
+        row: 0,
+      ),
+    );
   }
   return list;
 }
