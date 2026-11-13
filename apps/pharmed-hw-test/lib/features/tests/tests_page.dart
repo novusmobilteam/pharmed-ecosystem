@@ -32,6 +32,9 @@ class _TestsPageState extends ConsumerState<TestsPage> {
   String? _liveStep;
   bool _cancel = false;
 
+  /// Rehberli tur: senaryolar sırayla, kendiliğinden çalıştırılır.
+  bool _tour = false;
+
   ScenarioResultsNotifier get _results => ref.read(scenarioResultsProvider.notifier);
 
   TestReport get _report => ref.read(testReportProvider);
@@ -41,7 +44,52 @@ class _TestsPageState extends ConsumerState<TestsPage> {
   @override
   void dispose() {
     _cancel = true;
+    _tour = false;
     super.dispose();
+  }
+
+  List<TestScenario> _scenarios() => buildScenarios(
+    snapshot: ref.read(cabinSessionProvider).active,
+    serum: ref.read(serumDefinitionsProvider),
+    cabinType: ref.read(sessionProvider).cabinType,
+  );
+
+  TestScenario? _nextScenario() {
+    final results = ref.read(scenarioResultsProvider);
+    return _scenarios().where((s) => results[s.id] == null).firstOrNull;
+  }
+
+  // ── Rehberli tur ────────────────────────────────────────────────────
+
+  void _startTour() {
+    _report.add('Rehberli test turu başladı', StepResult.info);
+    setState(() => _tour = true);
+    _continueTour();
+  }
+
+  void _stopTour({String reason = 'durduruldu'}) {
+    if (!_tour) return;
+    _report.add('Rehberli test turu $reason', StepResult.info);
+    setState(() {
+      _tour = false;
+      _cancel = true;
+    });
+  }
+
+  /// Sıradaki senaryoyu başlatır. Onay bekleyen senaryoda durur; onay
+  /// gelince ([_observe] / [_skip]) kaldığı yerden devam eder.
+  Future<void> _continueTour() async {
+    if (!_tour || !mounted || _busy != null || _awaiting != null) return;
+    final next = _nextScenario();
+    if (next == null) {
+      _stopTour(reason: 'tamamlandı');
+      if (mounted) showMessage(context, 'Tüm testler tamamlandı.');
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (!_tour || !mounted) return;
+    await _run(next);
+    if (_awaiting == null) await _continueTour();
   }
 
   Future<void> _run(TestScenario s) async {
@@ -151,6 +199,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
       opened ? 'Açıldı (teknisyen onayı)' : 'Açılmadı (teknisyen gözlemi)',
     );
     setState(() => _awaiting = null);
+    if (_tour) _continueTour();
   }
 
   void _skip(TestScenario s) {
@@ -158,6 +207,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     setState(() {
       if (_awaiting == s.id) _awaiting = null;
     });
+    if (_tour) _continueTour();
   }
 
   void _finish(TestScenario s, String title, TestStatus status, String detail, {String? reportDetail}) {
@@ -198,7 +248,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     final passed = scenarios.where((s) => results[s.id]?.status == TestStatus.passed).length;
     final failed = scenarios.where((s) => results[s.id]?.status == TestStatus.failed).length;
     final next = scenarios.where((s) => results[s.id] == null).firstOrNull;
-    final idle = connected && _busy == null && _awaiting == null;
+    final idle = connected && _busy == null && _awaiting == null && !_tour;
 
     final groups = <String, List<TestScenario>>{};
     for (final s in scenarios) {
@@ -245,16 +295,44 @@ class _TestsPageState extends ConsumerState<TestsPage> {
                   runSpacing: MedSpacing.md,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    BusyButton(
-                      label: next == null ? 'Tüm testler tamamlandı' : 'Sıradaki testi çalıştır',
-                      icon: Icons.play_arrow,
-                      busy: _busy != null,
-                      onPressed: idle && next != null ? () => _run(next) : null,
-                    ),
-                    if (next != null) Text(next.title, style: hintStyle()),
+                    if (_tour)
+                      OutlinedButton.icon(
+                        onPressed: () => _stopTour(),
+                        icon: const Icon(Icons.stop),
+                        label: const Text('Turu durdur'),
+                      )
+                    else ...[
+                      FilledButton.icon(
+                        onPressed: idle && next != null ? _startTour : null,
+                        icon: const Icon(Icons.playlist_play),
+                        label: const Text('Rehberli turu başlat'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: idle && next != null ? () => _run(next) : null,
+                        icon: const Icon(Icons.play_arrow),
+                        label: Text(next == null ? 'Tüm testler tamamlandı' : 'Yalnız sıradakini çalıştır'),
+                      ),
+                    ],
                     if (!connected) const NotConnectedHint(),
                   ],
                 ),
+                if (_tour || _busy != null || _awaiting != null) ...[
+                  const SizedBox(height: MedSpacing.lg),
+                  _CurrentPanel(
+                    scenario: scenarios.where((s) => s.id == (_awaiting ?? _busy)).firstOrNull ?? next,
+                    running: _busy != null,
+                    liveStep: _liveStep,
+                    awaiting: _awaiting != null,
+                    tour: _tour,
+                    onObserve: (opened) {
+                      final current = scenarios.where((s) => s.id == _awaiting).firstOrNull;
+                      if (current != null) _observe(current, opened);
+                    },
+                  ),
+                ] else if (next != null) ...[
+                  const SizedBox(height: MedSpacing.sm),
+                  Text('Sıradaki: ${next.title}', style: hintStyle()),
+                ],
               ],
               const SizedBox(height: MedSpacing.lg),
               Text(
@@ -282,7 +360,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
                     canRun: idle,
                     onRun: () => _run(s),
                     onObserve: (opened) => _observe(s, opened),
-                    onSkip: _busy == null ? () => _skip(s) : null,
+                    onSkip: _busy == null && (!_tour || _awaiting == s.id) ? () => _skip(s) : null,
                     onStop: s.kind == ScenarioKind.trayFlow && _busy == s.id ? () => setState(() => _cancel = true) : null,
                   ),
               ],
@@ -373,6 +451,81 @@ class _ScenarioRow extends StatelessWidget {
             onPressed: onSkip,
             icon: const Icon(Icons.skip_next),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Turda / çalışırken o anki senaryo: ne yapıldığı ve büyük onay düğmeleri.
+class _CurrentPanel extends StatelessWidget {
+  const _CurrentPanel({
+    required this.scenario,
+    required this.running,
+    required this.liveStep,
+    required this.awaiting,
+    required this.tour,
+    required this.onObserve,
+  });
+
+  final TestScenario? scenario;
+  final bool running;
+  final String? liveStep;
+  final bool awaiting;
+  final bool tour;
+  final void Function(bool opened) onObserve;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = scenario;
+    if (s == null) return const SizedBox.shrink();
+    final colors = TestStatus.running.colors;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(MedSpacing.xl),
+      decoration: BoxDecoration(
+        color: colors.background,
+        border: Border.all(color: colors.border(alpha: 0.5)),
+        borderRadius: MedRadius.lgAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(tour ? 'Rehberli tur — şu anki test' : 'Şu anki test', style: hintStyle(fontSize: 12)),
+          const SizedBox(height: MedSpacing.xs),
+          Text(s.title, style: MedTextStyles.titleLg()),
+          Text('${s.group} · ${s.location}', style: monoStyle(fontSize: 11, color: MedColors.text3)),
+          const SizedBox(height: MedSpacing.md),
+          if (awaiting) ...[
+            Text('Kapı / kapak fiziksel olarak açıldı mı?', style: MedTextStyles.bodyLg()),
+            const SizedBox(height: MedSpacing.md),
+            Row(
+              children: [
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: TestStatus.passed.color, minimumSize: const Size(180, 52)),
+                  onPressed: () => onObserve(true),
+                  icon: Icon(TestStatus.passed.icon),
+                  label: const Text('Açıldı'),
+                ),
+                const SizedBox(width: MedSpacing.lg),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: TestStatus.failed.color, minimumSize: const Size(180, 52)),
+                  onPressed: () => onObserve(false),
+                  icon: Icon(TestStatus.failed.icon),
+                  label: const Text('Açılmadı'),
+                ),
+              ],
+            ),
+          ] else if (running)
+            Row(
+              children: [
+                const StatusIcon(status: TestStatus.running),
+                const SizedBox(width: MedSpacing.md),
+                Text(liveStep ?? 'Komut gönderiliyor…'),
+              ],
+            )
+          else
+            Text('Sıradaki teste geçiliyor…', style: hintStyle()),
         ],
       ),
     );
