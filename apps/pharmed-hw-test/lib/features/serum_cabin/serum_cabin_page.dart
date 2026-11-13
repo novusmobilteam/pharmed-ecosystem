@@ -447,7 +447,7 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
                 onPressed: idle ? _findCards : null,
               ),
               NumberField(label: 'Satır', controller: _rowCtrl, width: 90),
-              if (!connected) const Text('Önce COM porta bağlanın.', style: TextStyle(color: Colors.red)),
+              if (!connected) const NotConnectedHint(),
             ],
           ),
           if (cards != null) ...[
@@ -456,7 +456,7 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
               cards.isEmpty
                   ? 'Tip 250 dönen kart bulunamadı.'
                   : 'Serum kartı satırları: ${cards.map((c) => c.rowAddress).join(', ')}',
-              style: TextStyle(fontWeight: FontWeight.w600, color: cards.isEmpty ? Colors.red.shade700 : null),
+              style: TextStyle(fontWeight: FontWeight.w600, color: cards.isEmpty ? TestStatus.failed.color : null),
             ),
           ],
           if (_definitionInfo != null) ...[
@@ -469,7 +469,7 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
   }
 
   Widget _probeSection(bool idle) {
-    const mono = TextStyle(fontFamily: 'Consolas', fontSize: 12);
+    final mono = monoStyle();
     return SectionCard(
       title: '2. Kapak keşfi (açma komutu göndermez)',
       trailing: BusyButton(
@@ -539,10 +539,10 @@ class _SerumCabinPageState extends ConsumerState<SerumCabinPage> {
     final watching = _watchTimer != null;
     final status = _targetStatus;
     final statusColor = status == null
-        ? Colors.grey.shade600
+        ? TestStatus.pending.color
         : _isOpen(status)
-        ? Colors.orange.shade700
-        : Colors.green.shade700;
+        ? TestStatus.warning.color
+        : TestStatus.passed.color;
     return SectionCard(
       title: '3. Kapak aç ve eşleştir',
       child: Column(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../../core/providers.dart';
 import '../../core/report.dart';
@@ -136,9 +137,9 @@ class _ConsolePageState extends ConsumerState<ConsolePage> {
                     Text(
                       built.command ?? built.error ?? '',
                       style: TextStyle(
-                        fontFamily: 'Consolas',
+                        fontFamily: MedFonts.mono,
                         fontSize: 18,
-                        color: built.command == null ? Colors.red : null,
+                        color: built.command == null ? TestStatus.failed.color : null,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -150,16 +151,16 @@ class _ConsolePageState extends ConsumerState<ConsolePage> {
                     ),
                     if (!connected) ...[
                       const SizedBox(width: 12),
-                      const Text('Önce COM porta bağlanın.', style: TextStyle(color: Colors.red)),
+                      const NotConnectedHint(),
                     ],
                   ],
                 ),
                 if (_kind == _Kind.drawer || _kind == _Kind.cubic)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       'T/Z komutları adres taşımaz: önce Y ile hedef kartta satırı seçin, sonra komutu gönderin.',
-                      style: TextStyle(color: Colors.black54),
+                      style: hintStyle(),
                     ),
                   ),
               ],

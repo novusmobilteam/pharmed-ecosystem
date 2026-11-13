@@ -84,15 +84,18 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
                 OutlinedButton.icon(onPressed: _disconnect, icon: const Icon(Icons.link_off), label: const Text('Bağlantıyı kes')),
               Text(
                 connected ? '$port bağlı' : 'Bağlı değil',
-                style: TextStyle(color: connected ? Colors.green.shade700 : Colors.red.shade700, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: connected ? TestStatus.passed.color : TestStatus.failed.color,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
         ),
-        const Text(
+        Text(
           'Bağlandıktan sonra "Hat taraması" ile hattaki yönetim kartlarını (kabinleri) bulun. '
           'RFID okuyucu ağ üzerinden bağlanır; COM port gerekmez.',
-          style: TextStyle(color: Colors.black54),
+          style: hintStyle(),
         ),
       ],
     );

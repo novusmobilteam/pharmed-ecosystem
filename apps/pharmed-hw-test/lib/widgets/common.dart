@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 
 import '../core/report.dart';
+import '../core/test_status.dart';
+import 'status.dart';
+
+export '../core/test_status.dart';
+export 'status.dart';
 
 /// Başlık + içerik kartı.
 class SectionCard extends StatelessWidget {
@@ -34,7 +40,7 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-/// Sonuç rozeti (yeşil / kırmızı / gri).
+/// Test adımı sonucunun rozeti. Görünüm ortak [StatusBadge] ile aynıdır.
 class ResultBadge extends StatelessWidget {
   const ResultBadge({super.key, required this.result, required this.label});
 
@@ -42,22 +48,34 @@ class ResultBadge extends StatelessWidget {
   final String label;
 
   @override
+  Widget build(BuildContext context) => StatusBadge(status: result.status, label: label);
+}
+
+/// COM port bağlı değilken gösterilen tek tip uyarı.
+class NotConnectedHint extends StatelessWidget {
+  const NotConnectedHint({super.key});
+
+  @override
   Widget build(BuildContext context) {
-    final color = switch (result) {
-      StepResult.ok => Colors.green.shade700,
-      StepResult.fail => Colors.red.shade700,
-      StepResult.info => Colors.blueGrey.shade600,
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12)),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.link_off, size: 16, color: TestStatus.failed.color),
+        const SizedBox(width: MedSpacing.xs),
+        Text('Önce COM porta bağlanın.', style: TextStyle(color: TestStatus.failed.color)),
+      ],
     );
   }
+}
+
+/// Hata metni (servis / tarama hatası).
+class ErrorText extends StatelessWidget {
+  const ErrorText(this.message, {super.key});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Text(message, style: TextStyle(color: TestStatus.failed.color));
 }
 
 /// Sayı girişi (satır, port, göz).
@@ -83,7 +101,7 @@ class NumberField extends StatelessWidget {
 
 void showMessage(BuildContext context, String message, {bool error = false}) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message), backgroundColor: error ? Colors.red.shade700 : null),
+    SnackBar(content: Text(message), backgroundColor: error ? MedColors.red : null),
   );
 }
 

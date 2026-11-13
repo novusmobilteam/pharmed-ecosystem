@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/cabin_type.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
+import '../../widgets/common.dart';
 import '../card_scan/card_scan_page.dart';
 import '../connection/connection_page.dart';
 import '../console/console_page.dart';
@@ -79,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           _InfoChip(
             icon: connected ? Icons.link : Icons.link_off,
             text: connected ? (session.port ?? 'Bağlı') : 'Bağlı değil',
-            color: connected ? Colors.green.shade700 : Colors.red.shade700,
+            color: connected ? TestStatus.passed.color : TestStatus.failed.color,
           ),
           IconButton(
             tooltip: 'Çıkış',

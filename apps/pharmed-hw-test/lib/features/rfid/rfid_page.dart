@@ -194,7 +194,7 @@ class _RfidPageState extends ConsumerState<RfidPage> {
   Widget build(BuildContext context) {
     final running = _sub != null;
     final tags = _tags.values.toList()..sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
-    final mono = const TextStyle(fontFamily: 'Consolas');
+    final mono = monoStyle();
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -229,7 +229,7 @@ class _RfidPageState extends ConsumerState<RfidPage> {
                   Text(
                     _connected ? 'Bağlı' : 'Bağlı değil',
                     style: TextStyle(
-                      color: _connected ? Colors.green.shade700 : Colors.red.shade700,
+                      color: _connected ? TestStatus.passed.color : TestStatus.failed.color,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -245,7 +245,7 @@ class _RfidPageState extends ConsumerState<RfidPage> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: 8),
-                Text(_error!, style: const TextStyle(color: Colors.red)),
+                ErrorText(_error!),
               ],
             ],
           ),

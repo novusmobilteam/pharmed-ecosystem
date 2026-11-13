@@ -6,9 +6,19 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import 'env.dart';
+import 'test_status.dart';
 import 'traffic_log.dart';
 
 enum StepResult { ok, fail, info }
+
+extension StepResultStatus on StepResult {
+  /// Ortak durum modelindeki karşılığı (rozet / ikon / renk için).
+  TestStatus get status => switch (this) {
+    StepResult.ok => TestStatus.passed,
+    StepResult.fail => TestStatus.failed,
+    StepResult.info => TestStatus.info,
+  };
+}
 
 class TestStep {
   TestStep({required this.title, required this.result, this.detail}) : time = DateTime.now();
