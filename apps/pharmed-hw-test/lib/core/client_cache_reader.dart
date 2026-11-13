@@ -59,6 +59,7 @@ class ClientCacheReader {
   static const _cabinBox = 'cabin_cache';
   static const _slotBox = 'drawer_slot_cache';
   static const _metaBox = 'cabin_meta_cache';
+  static const _unitBox = 'drawer_unit_cache';
 
   /// Kopyalar bu önekle açılır; test uygulamasının kendi kutularıyla çakışmaz.
   static const _prefix = 'hwtest_client_';
@@ -101,6 +102,7 @@ class ClientCacheReader {
       final cabinBox = await open(_cabinBox);
       final slotBox = await open(_slotBox);
       final metaBox = await open(_metaBox);
+      final unitBox = await open(_unitBox);
       if (cabinBox == null) return null;
 
       final stationId = _asInt(settings?.get('current_station_id'));
@@ -169,6 +171,14 @@ class ClientCacheReader {
           if (row == null) continue;
           final config = slot.drawerConfig ?? configById[slot.drawerConfigId];
           final type = config?.drawerType ?? typeById[config?.drawerTypeId];
+          final resolvedConfig = config == null || config.drawerType != null || type == null
+              ? config
+              : config.copyWith(drawerType: type);
+          final cells = slot.id == null
+              ? const <DrawerUnit>[]
+              : (_decodeList(unitBox?.get('units_${slot.id}'), DrawerUnitDTO.fromJson, notes, 'satır $row gözleri')
+                    .map(const DrawerUnitMapper().toEntity)
+                    .toList());
           if (config?.isSerum ?? false) {
             final isLid = address != 1 && row == DeviceConstants.serumSlaveRow;
             units.add(CabinRules.serumUnit(row: row, lidNo: isLid ? slot.orderNumber : null, slotId: slot.id));
@@ -181,6 +191,9 @@ class ClientCacheReader {
                 compartmentCount: type?.compartmentCount,
                 typeNo: config?.deviceTypeNo,
                 problem: config == null ? 'Çekmece tanımı bulunamadı' : null,
+                slotId: slot.id,
+                config: resolvedConfig,
+                cells: cells,
               ),
             );
           }

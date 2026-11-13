@@ -3,12 +3,14 @@
 // rapor aynı sonuç kaydını kullanır.
 //
 // Yalnızca komutu client ile birebir aynı olan senaryolar üretilir:
-//   • Kübik çekmece ana kilidi  → openMasterDrawer(DrawerAddress.cubicMaster)
+//   • Kübik çekmece             → ana kilit (DrawerAddress.cubicMaster) → çekme →
+//                                 kapaklar (openMasterCubicDrawer) → kapanış
+//   • Birim doz çekmece         → her göz: calculateAddressFromAssignment ile aç →
+//                                 çekme → kapanış (core/drawer_flow.dart)
 //   • Serum kapağı              → openMasterSerumDrawer(row, port)
 //   • Raf kilit kartı / avadanlık akışı → TrayLockProtocol (SerumTrayAddress)
 //   • Mobil çekmece             → openMobileDrawer(port)
 //   • Isı / nem, akü            → readTempHumidity (satır 50), readBatteryVoltage (satır 49)
-// Birim doz göz açma ve kübik kapaklar Master çekmece sayfasında kalır.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
@@ -19,7 +21,8 @@ import 'serum_definition.dart';
 import 'test_status.dart';
 
 enum ScenarioKind {
-  cubicMainLock('Kübik çekmece ana kilidi', needsObservation: true),
+  cubicDrawer('Kübik çekmece', needsObservation: false),
+  unitDoseDrawer('Birim doz çekmece', needsObservation: false),
   serumLid('Serum kapağı', needsObservation: true),
   lockCard('Raf kilit kartı', needsObservation: false),
   trayFlow('Avadanlık akış testi', needsObservation: false),
@@ -48,6 +51,7 @@ class TestScenario {
     this.lidPort,
     this.lockCardId,
     this.trayPort,
+    this.unit,
   });
 
   final String id;
@@ -70,6 +74,11 @@ class TestScenario {
   final int? lidPort;
   final int? lockCardId;
   final int? trayPort;
+
+  /// Çekmece senaryolarında tanımdaki birim (çekmece tanımı + gözler).
+  final CabinUnit? unit;
+
+  bool get isDrawerFlow => kind == ScenarioKind.cubicDrawer || kind == ScenarioKind.unitDoseDrawer;
 }
 
 class ScenarioResult {
@@ -83,6 +92,7 @@ class ScenarioResult {
 /// Senaryo kimlikleri — serum ekranı ve test listesi aynı kimliği kullanır.
 abstract final class ScenarioIds {
   static String cubic(int address, int row) => 'cubic:$address:$row';
+  static String unitDose(int address, int row) => 'unitdose:$address:$row';
   static String serumLid(int address, int lidNo) => 'serumlid:$address:$lidNo';
   static String lockCard(int address, int lidNo, int shelf) => 'lockcard:$address:$lidNo:$shelf';
   static String trayFlow(int address, int lidNo, int shelf, int trayIndex) => 'trayflow:$address:$lidNo:$shelf:$trayIndex';
@@ -169,20 +179,35 @@ List<TestScenario> buildScenarios({
       continue;
     }
 
-    for (final u in cabin.units.where((u) => u.kind == UnitKind.kubik)) {
-      final address = DrawerAddress.cubicMaster(u.row);
-      list.add(
-        TestScenario(
-          id: ScenarioIds.cubic(a, u.row),
-          kind: ScenarioKind.cubicMainLock,
-          group: group,
-          title: '${u.name} — ana kilidi aç',
-          location: 'satır ${u.rowLabel} · port ${address.port} · göz ${_two(address.index)}',
-          addressIndex: a,
-          row: u.row,
-          port: address.port,
-        ),
-      );
+    for (final u in cabin.units) {
+      if (u.kind == UnitKind.kubik) {
+        final lidCount = u.cells.isNotEmpty && u.config != null ? '${u.cells.length} kapak' : 'kapaklar karttan yoklanır';
+        list.add(
+          TestScenario(
+            id: ScenarioIds.cubic(a, u.row),
+            kind: ScenarioKind.cubicDrawer,
+            group: group,
+            title: '${u.name} — çekmece ve kapaklar',
+            location: 'satır ${u.rowLabel} · $lidCount',
+            addressIndex: a,
+            row: u.row,
+            unit: u,
+          ),
+        );
+      } else if (u.kind == UnitKind.unitDose && u.config != null && u.cells.isNotEmpty) {
+        list.add(
+          TestScenario(
+            id: ScenarioIds.unitDose(a, u.row),
+            kind: ScenarioKind.unitDoseDrawer,
+            group: group,
+            title: '${u.name} — gözler',
+            location: 'satır ${u.rowLabel} · ${u.cells.length} göz',
+            addressIndex: a,
+            row: u.row,
+            unit: u,
+          ),
+        );
+      }
     }
 
     final target = serum[a];

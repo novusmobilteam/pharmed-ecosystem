@@ -62,6 +62,8 @@ class CabinUnit {
     this.port,
     this.problem,
     this.slotId,
+    this.config,
+    this.cells = const [],
   });
 
   /// Kart satırı (01–26). Serum kabini kapakları ve mobil çekmeceler satır 26'dadır.
@@ -92,6 +94,16 @@ class CabinUnit {
   /// Client tanımındaki çekmece kaydı (DrawerSlot.id). Serum raf yerleşimi
   /// servisten bu numarayla (salt okunur) çekilir. Taramada null.
   final int? slotId;
+
+  /// Çekmece tanımı (adım sayısı, çarpan, tip). Açma adresi client'taki
+  /// `calculateAddressFromAssignment` ile bundan hesaplanır.
+  final DrawerConfig? config;
+
+  /// Gözler (DrawerUnit). Client tanımında backend kayıtları (kübikte kapak
+  /// adresi: port = compartmentNo, sıra = orderNo); taramada birim doz için
+  /// client taramasıyla aynı şekilde üretilir, kübikte boştur (kapaklar
+  /// test sırasında karttan yoklanır).
+  final List<DrawerUnit> cells;
 
   String get rowLabel => row.toString().padLeft(2, '0');
 
