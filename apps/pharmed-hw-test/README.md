@@ -40,3 +40,4 @@ CI: Actions → "Windows Build" → uygulama `hw-test` (ya da `all`). Release'te
 
 - Mock donanım yoktur; uygulama her zaman gerçek seri port kullanır. macOS'ta port listesi boş görünebilir.
 - Arayüz yalnız Türkçedir (saha aracı).
+- Pencere sabit boyutludur (1280×720), ekranın ortasında açılır. Boyutlandırma, büyütme ve tam ekran yoktur; yalnızca küçült ve kapat vardır (Windows ve macOS).

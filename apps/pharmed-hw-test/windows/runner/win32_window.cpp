@@ -1,5 +1,7 @@
 #include "win32_window.h"
 
+#include <algorithm>
+
 #include <dwmapi.h>
 #include <flutter_windows.h>
 
@@ -134,14 +136,36 @@ bool Win32Window::Create(const std::wstring& title,
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / 96.0;
 
+  // Saha test aracı sabit boyutlu çalışır: kenardan boyutlandırma
+  // (WS_THICKFRAME) ve büyüt düğmesi (WS_MAXIMIZEBOX) yok; yalnızca küçült ve
+  // kapat kalır. Büyüt düğmesi olmadığı için başlığa çift tıklama ve Win+Yukarı
+  // da pencereyi büyütmez.
+  const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+
   HWND window = CreateWindow(
-      window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
+      window_class, title.c_str(), style,
       Scale(origin.x, scale_factor), Scale(origin.y, scale_factor),
       Scale(size.width, scale_factor), Scale(size.height, scale_factor),
       nullptr, nullptr, GetModuleHandle(nullptr), this);
 
   if (!window) {
     return false;
+  }
+
+  // Pencereyi bulunduğu monitörün çalışma alanında (görev çubuğu hariç)
+  // ortala. Pencere çalışma alanından büyükse sol üst köşeye yaslanır.
+  MONITORINFO monitor_info{sizeof(MONITORINFO)};
+  RECT window_rect;
+  if (GetMonitorInfo(MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST),
+                     &monitor_info) &&
+      GetWindowRect(window, &window_rect)) {
+    const RECT& work = monitor_info.rcWork;
+    const LONG width = window_rect.right - window_rect.left;
+    const LONG height = window_rect.bottom - window_rect.top;
+    const LONG x = work.left + (std::max)(0L, ((work.right - work.left) - width) / 2);
+    const LONG y = work.top + (std::max)(0L, ((work.bottom - work.top) - height) / 2);
+    SetWindowPos(window, nullptr, x, y, 0, 0,
+                 SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
   }
 
   UpdateTheme(window);
