@@ -3,6 +3,8 @@
 //   KÜBİK:  ana kilidi aç → çekmece çekilsin (h3) → [her kapak: kapağı aç →
 //           kapak açıldı (ac) → kapak kapandı (kp)] → çekmece kapandı (h0/h4/h5)
 //   BİRİM DOZ: [her göz: gözü aç → çekmece çekildi (h3/h2) → çekmece kapandı]
+//   SERUM KAPAĞI: kapağı aç → açık (h3/h2, 10 sn) → kapandı (kilitli)
+//   MOBİL ÇEKMECE: aç (satır 26 slave) → tam açık (h3, 60 sn) → kapandı (kilitli)
 //
 // Adresler client'taki `calculateAddressFromAssignment` ile hesaplanır (göz
 // kaydı + çekmece tanımı → port/göz; birim dozdaki port ters çevirmesi dahil).
@@ -406,6 +408,85 @@ class DrawerFlowRunner {
           '${cell.label}: açılış ${_word(pulled)}, kapanış ${_word(closed)}',
         );
       }
+      return flow.overall;
+    } finally {
+      await _release(address);
+    }
+  }
+
+  /// Serum kapağı / bölmesi: client'ın standart çekmece kuralı (h3 ya da h2).
+  Future<TestStatus> runSerumLid(DrawerFlow flow, {required int address, required int row, required int port}) async {
+    final manager = ManagementCard(addressIndex: address);
+    try {
+      final open = flow._add('Serum kapağını aç');
+      if (await flow._command(open, () async {
+            await ops.openMasterSerumDrawer(manager: manager, row: row, port: port);
+            return 'Komut kabul edildi (satır ${row.toString().padLeft(2, '0')} · port $port)';
+          }) !=
+          TestStatus.passed) {
+        return flow.overall;
+      }
+      final opened = flow._add('Kapak açıldı mı — açık (h3/h2) bekleniyor', failLabel: 'Kapak açılmadı');
+      await flow._wait<DrawerPhysicalStatus>(
+        opened,
+        ops.streamMasterSerumDrawerStatus(manager: manager, row: row, port: port),
+        onEvent: (s) => s == DrawerPhysicalStatus.fullyOpen || s == DrawerPhysicalStatus.halfOpen,
+        describe: drawerStatusText,
+        isLost: (s) => s == DrawerPhysicalStatus.timeoutError,
+        timeout: _openTimeout,
+        timeoutText: 'Kapak 10 sn içinde açılmadı',
+      );
+      final wasCancelled = flow.cancelled;
+      if (wasCancelled) flow._cancelled = false;
+      final close = flow._add('Kapağı kapatın — kilitli bekleniyor', failLabel: 'Kapak kapanmadı');
+      await flow._wait<DrawerPhysicalStatus>(
+        close,
+        ops.streamMasterSerumDrawerStatus(manager: manager, row: row, port: port),
+        onEvent: (s) => s == DrawerPhysicalStatus.locked,
+        describe: drawerStatusText,
+        isLost: (s) => s == DrawerPhysicalStatus.timeoutError,
+      );
+      if (wasCancelled) flow._cancelled = true;
+      return flow.overall;
+    } finally {
+      await _release(address);
+    }
+  }
+
+  /// Mobil çekmece: client'ın StartMobileDrawerSessionUseCase kuralı
+  /// (tam açık 60 sn içinde, sonra kilitli).
+  Future<TestStatus> runMobileDrawer(DrawerFlow flow, {required int address, required int port}) async {
+    final manager = ManagementCard(addressIndex: address);
+    try {
+      final open = flow._add('Çekmeceyi aç');
+      if (await flow._command(open, () async {
+            await ops.openMobileDrawer(manager: manager, port: port);
+            return 'Komut kabul edildi (satır 26 · port $port)';
+          }) !=
+          TestStatus.passed) {
+        return flow.overall;
+      }
+      final opened = flow._add('Çekmeceyi çekin — tam açık (h3) bekleniyor', failLabel: 'Çekmece açılmadı');
+      await flow._wait<DrawerPhysicalStatus>(
+        opened,
+        ops.streamMobileDrawerStatus(manager: manager, port: port),
+        onEvent: (s) => s == DrawerPhysicalStatus.fullyOpen,
+        describe: drawerStatusText,
+        isLost: (s) => s == DrawerPhysicalStatus.timeoutError,
+        timeout: const Duration(seconds: 60),
+        timeoutText: 'Çekmece 60 sn içinde açılmadı',
+      );
+      final wasCancelled = flow.cancelled;
+      if (wasCancelled) flow._cancelled = false;
+      final close = flow._add('Çekmeceyi kapatın — kilitli bekleniyor', failLabel: 'Çekmece kapanmadı');
+      await flow._wait<DrawerPhysicalStatus>(
+        close,
+        ops.streamMobileDrawerStatus(manager: manager, port: port),
+        onEvent: (s) => s == DrawerPhysicalStatus.locked,
+        describe: drawerStatusText,
+        isLost: (s) => s == DrawerPhysicalStatus.timeoutError,
+      );
+      if (wasCancelled) flow._cancelled = true;
       return flow.overall;
     } finally {
       await _release(address);

@@ -116,30 +116,8 @@ class _TestsPageState extends ConsumerState<TestsPage> {
         case ScenarioKind.unitDoseDrawer:
           await _runDrawerFlow(s, title);
         case ScenarioKind.mobileDrawer:
-          await ref
-              .read(cabinOpsProvider)
-              .openMobileDrawer(manager: ManagementCard(addressIndex: s.addressIndex), port: s.port!);
-          await _hw.release(s.addressIndex);
-          _awaitObservation(s, 'Açma komutu kabul edildi');
         case ScenarioKind.serumLid:
-          String? error;
-          try {
-            await _hw.openLid(s.addressIndex, s.row, s.lidPort!);
-          } catch (e) {
-            error = '$e';
-          }
-          String? status;
-          for (var i = 0; i < 3; i++) {
-            await Future<void>.delayed(const Duration(milliseconds: 500));
-            status = await _hw.lidStatus(s.addressIndex, s.row, s.lidPort!);
-            if (SerumHardware.lidIsOpen(status)) break;
-          }
-          await _hw.release(s.addressIndex);
-          if (error != null && !SerumHardware.lidIsOpen(status)) {
-            _finish(s, title, TestStatus.failed, 'Açılamadı: $error');
-          } else {
-            _awaitObservation(s, 'Kart: ${SerumHardware.lidStatusText(status)}');
-          }
+          await _runDrawerFlow(s, title);
         case ScenarioKind.tempHumidity:
           final manager = ManagementCard(addressIndex: s.addressIndex);
           final th = await ref.read(cabinOpsProvider).readTempHumidity(manager: manager);
@@ -266,7 +244,11 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     final notes = <String>[];
     var cells = _cellsFor(s, notes);
     final TestStatus status;
-    if (s.kind == ScenarioKind.cubicDrawer) {
+    if (s.kind == ScenarioKind.serumLid) {
+      status = await runner.runSerumLid(flow, address: s.addressIndex, row: s.row, port: s.lidPort!);
+    } else if (s.kind == ScenarioKind.mobileDrawer) {
+      status = await runner.runMobileDrawer(flow, address: s.addressIndex, port: s.port!);
+    } else if (s.kind == ScenarioKind.cubicDrawer) {
       if (cells.isEmpty) {
         if (mounted) setState(() => _liveStep = 'Kapaklar karttan yoklanıyor (port 1–4 × sıra 00–04)…');
         cells = await runner.probeCubicLids(s.addressIndex, s.row);
@@ -293,11 +275,6 @@ class _TestsPageState extends ConsumerState<TestsPage> {
     ].join('\n');
     _finish(s, title, status, summary.isEmpty ? status.label : summary, reportDetail: lines);
     if (mounted) setState(() => _drawerFlow = null);
-  }
-
-  void _awaitObservation(TestScenario s, String note) {
-    _results.set(s.id, TestStatus.running, detail: '$note — fiziksel olarak açıldı mı?');
-    if (mounted) setState(() => _awaiting = s.id);
   }
 
   void _observe(TestScenario s, bool opened) {
