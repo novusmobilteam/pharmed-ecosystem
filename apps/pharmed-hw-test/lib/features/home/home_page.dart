@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/cabin_session.dart';
 import '../../core/cabin_type.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
 import '../../widgets/common.dart';
+import '../cabin/cabin_page.dart';
 import '../card_scan/card_scan_page.dart';
 import '../connection/connection_page.dart';
 import '../console/console_page.dart';
@@ -27,6 +29,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   int _index = 0;
 
   static const _connection = (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage());
+  static const _cabin = (icon: Icons.dns_outlined, label: 'Kabin', page: CabinPage());
   static const _lineScan = (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage());
   static const _cardScan = (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage());
   static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
@@ -40,6 +43,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   static List<({IconData icon, String label, Widget page})> _pagesFor(HwCabinType type) => switch (type) {
     HwCabinType.medicineBased => const [
       _connection,
+      _cabin,
       _lineScan,
       _cardScan,
       _masterDrawer,
@@ -48,11 +52,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       _console,
       _report,
     ],
-    HwCabinType.patientBased => const [_connection, _lineScan, _mobileCabin, _rfid, _console, _report],
+    HwCabinType.patientBased => const [_connection, _cabin, _lineScan, _mobileCabin, _rfid, _console, _report],
   };
 
   void _changeCabinType() {
     ref.read(testReportProvider).add('Kabin tipi değiştirildi', StepResult.info);
+    // Tarama sonucu kabin tipine göre yorumlandığı için sıfırlanır.
+    ref.invalidate(cabinSessionProvider);
     ref.read(sessionProvider.notifier).setCabinType(null);
   }
 
