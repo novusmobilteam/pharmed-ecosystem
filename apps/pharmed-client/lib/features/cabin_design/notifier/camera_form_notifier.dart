@@ -1,6 +1,7 @@
 // [SWREQ-CAM-056] [IEC 62304 §5.5]
-// Kabin dizayn ekranındaki kamera formu: tanım, kabin ataması, deneme
-// çekimi, kaydet/sil. Bir form açılışı = bir notifier (panel State'i sahiplenir).
+// Kabin dizayn ekranındaki kamera formu: tanım, kabin ataması, kaydet/sil.
+// Kaydet'te arka planda tek kare alınarak bağlantı doğrulanır; ayrıntılı
+// kamera testi pharmed-hw-test uygulamasındadır. Bir form açılışı = bir notifier (panel State'i sahiplenir).
 // Sınıf: Class B
 
 import 'dart:math';
@@ -56,8 +57,6 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
   static const _unit = 'SW-UNIT-CAM';
   static const _swreq = 'SWREQ-CAM-056';
 
-  static const testOp = OperationKey.custom('camera-form-test');
-  static const snapshotOp = OperationKey.custom('camera-form-snapshot');
   static const saveOp = OperationKey.custom('camera-form-save');
   static const deleteOp = OperationKey.custom('camera-form-delete');
 
@@ -103,32 +102,23 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
   /// Başka bir kameraya atanmış kabin → o kamera (seçilemez).
   CameraDevice? ownerOfCabin(int cabinId) => _otherCameras.firstWhereOrNull((c) => c.cabinIds.contains(cabinId));
 
-  // ── Test durumu ───────────────────────────────────────────────────────────
+  // ── Durum ─────────────────────────────────────────────────────────────────
 
-  CameraTestResult? _testResult;
-  CameraTestResult? get testResult => _testResult;
-
-  /// Testin yapıldığı bağlantı değerleri. Form değişirse test geçersizleşir.
-  String? _testedFingerprint;
-
-  String get _fingerprint => '${_host.trim()}|$_port|${_stream.channel}|${_username.trim()}|${_password.hashCode}';
-
-  bool get isTestValid => _testResult != null && _testedFingerprint == _fingerprint;
-
-  bool get isTesting => isLoading(testOp) || isLoading(snapshotOp);
   bool get isSaving => isLoading(saveOp);
   bool get isDeleting => isLoading(deleteOp);
-  bool get isBusy => isTesting || isSaving || isDeleting;
+  bool get isBusy => isSaving || isDeleting;
 
-  String? get testError => isFailed(testOp) ? message(testOp) : (isFailed(snapshotOp) ? message(snapshotOp) : null);
   String? get saveError => isFailed(saveOp) ? message(saveOp) : (isFailed(deleteOp) ? message(deleteOp) : null);
 
-  /// Test için gereken alanlar dolu mu? (Düzenlemede şifre boş olabilir.)
-  bool get canTest =>
-      !isBusy && _host.trim().isNotEmpty && _username.trim().isNotEmpty && (isEditing || hasNewPassword);
-
-  /// Kaydet ancak MEVCUT değerlerle başarılı test sonrası açılır.
-  bool get canSave => !isBusy && isTestValid && _name.trim().isNotEmpty && _cabinIds.isNotEmpty;
+  /// Kaydet: zorunlu alanlar dolu (düzenlemede şifre boş olabilir → kayıtlı şifre).
+  /// Bağlantı, kaydet sırasında arka planda doğrulanır.
+  bool get canSave =>
+      !isBusy &&
+      _name.trim().isNotEmpty &&
+      _cabinIds.isNotEmpty &&
+      _host.trim().isNotEmpty &&
+      _username.trim().isNotEmpty &&
+      (isEditing || hasNewPassword);
 
   // ── Düzenleme ─────────────────────────────────────────────────────────────
 
@@ -151,58 +141,9 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
     clearOperation(saveOp); // eski kayıt hatası artık geçerli değil
   }
 
-  // ── Test ──────────────────────────────────────────────────────────────────
-
-  /// Bağlantı + anlık görüntü + 3 sn deneme kaydı.
-  Future<void> runTest() async {
-    if (!canTest) return;
-    final config = await _buildConfig(testOp);
-    if (config == null) return;
-
-    final fingerprint = _fingerprint;
-    await execute(
-      testOp,
-      operation: () => _tester.test(config),
-      onData: (result) {
-        _testResult = result;
-        _testedFingerprint = fingerprint;
-      },
-      onFailed: (e) {
-        _testResult = null;
-        _testedFingerprint = null;
-        setFailed(testOp, message: _testFailureMessage(e));
-      },
-      swreq: _swreq,
-    );
-  }
-
-  /// Test penceresindeki "Yenile" — kamerayı ayarlarken sadece görüntüyü tazeler.
-  Future<void> refreshSnapshot() async {
-    final previous = _testResult;
-    if (previous == null || isBusy) return;
-    final config = await _buildConfig(snapshotOp);
-    if (config == null) return;
-
-    await execute(
-      snapshotOp,
-      operation: () => _tester.takeSnapshot(config),
-      onData: (shot) {
-        final (bytes, connectTime) = shot;
-        _testResult = CameraTestResult(
-          snapshot: bytes,
-          connectTime: connectTime,
-          sampleDuration: previous.sampleDuration,
-          sampleBytes: previous.sampleBytes,
-          testedAt: DateTime.now(),
-        );
-      },
-      onFailed: (e) => setFailed(snapshotOp, message: _testFailureMessage(e)),
-      swreq: _swreq,
-    );
-  }
-
-  /// Teknisyene ne yapması gerektiğini söyleyen mesaj (genel "kayıt yapılamadı" değil).
-  String _testFailureMessage(AppException e) {
+  /// Bağlantı kontrolü başarısızsa teknisyene ne yapması gerektiğini söyleyen
+  /// mesaj (genel "kayıt yapılamadı" değil). Diğer hatalar kendi mesajıyla.
+  String _failureMessage(AppException e) {
     final l10n = contextlessL10n();
     if (e is! CameraRecordingException) return e.userMessage;
     return switch (e.reason) {
@@ -239,7 +180,8 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
 
   // ── Kaydet / Sil ──────────────────────────────────────────────────────────
 
-  /// Sıra: doğrula → şifre → tanım. Şifre yazılıp tanım yazılamazsa kalan
+  /// Sıra: doğrula → bağlantı (tek kare) → şifre → tanım. Kameraya
+  /// bağlanılamazsa hiçbir şey yazılmaz. Şifre yazılıp tanım yazılamazsa kalan
   /// şifre zararsızdır (tanımsız kamera kayda katılmaz); tersi olursa
   /// tanımlı ama şifresiz kamera oluşurdu.
   Future<CameraDevice?> save() async {
@@ -252,10 +194,17 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
       return null;
     }
 
+    final config = await _buildConfig(saveOp);
+    if (config == null) return null;
+
     CameraDevice? saved;
     await executeVoid(
       saveOp,
       operation: () async {
+        // [SWREQ-CAM-055] Canlı kayıtla aynı RTSP/ffmpeg yolu: kare alınamıyorsa
+        // kamera operasyon kaydına da katılamaz → kaydetme.
+        final shot = await _tester.takeSnapshot(config);
+        if (shot.isError) return shot;
         if (hasNewPassword) {
           final pw = await _secrets.writePassword(_id, _password);
           if (pw.isError) return pw;
@@ -265,8 +214,8 @@ class CameraFormNotifier extends ChangeNotifier with ApiRequestMixin {
       onSuccess: () {
         saved = device;
         _password = ''; // bellekte tutma; artık güvenli depoda
-        _testedFingerprint = _fingerprint;
       },
+      onFailed: (e) => setFailed(saveOp, message: _failureMessage(e)),
       swreq: _swreq,
     );
     if (saved != null) {

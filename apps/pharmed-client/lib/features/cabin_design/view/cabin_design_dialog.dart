@@ -6,8 +6,6 @@
 //
 // Sınıf: Class B
 
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
@@ -31,7 +29,6 @@ part 'cabin_list_panel.dart';
 part 'new_cabin_panel.dart';
 part 'cabin_settings_view.dart';
 part 'camera_form_panel.dart';
-part 'camera_test_dialog.dart';
 
 class CabinDesignDialog extends ConsumerStatefulWidget {
   const CabinDesignDialog({super.key, this.onPersisted});
