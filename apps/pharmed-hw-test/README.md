@@ -7,6 +7,7 @@ Protokol: [`docs/hardware/rs485-protokol.md`](../../docs/hardware/rs485-protokol
 ## Kullanım
 
 1. **Giriş:** Kullanıcı kendi hesabıyla giriş yapar (ek şifre yok). Çekmece tanımları servisten çekildiği için giriş gerekir.
+   **Kabin tipi:** Girişten sonra **İlaç Bazlı Kabin** ya da **Hasta Bazlı Kabin** seçilir. Menüde yalnızca o kabinle ilgili testler görünür: İlaç Bazlı'da kart taraması, master çekmece ve serum kabini; Hasta Bazlı'da mobil kabin. Bağlantı, hat taraması, RFID, konsol ve rapor iki tipte de vardır. Tip üst çubuktan değiştirilebilir (COM bağlantısı korunur) ve rapora yazılır.
 2. **Bağlantı:** COM porta bağlanılır. Uygulama istasyondan bağımsızdır.
 3. **Hat taraması:** a–p adreslerine `:Y?00c;` gönderilir. Cevap veren yönetim kartları (kabinler) listelenir, ısı/nem ve akü okunur. Satır 00 seçimi de bıraktığı için tarama hatta açık seçim bırakmaz.
 4. **Kart taraması:** Seçilen yönetim kartında satır 01–26 taranır (client'taki `discoverControlCards`). Her kart için ham tip cevabı, tip numarasıyla eşleşen **tüm** servis tanımları ve göz sayısı gösterilir; birden fazla tanım eşleşirse uyarı verilir. Sonuç client'taki kuralla sınıflandırılır: master kabin, serum kartına bağlı kabin (satır 26'daki `.250` çekmece sayılmaz) ya da bağımsız serum kabini (#195). "Kübik gözleri yokla" ile `Z M` komutu sıra 00–04 × port 1–4 için gönderilir ve cevap veren gözler tabloda görünür (16/20 gözlü kübik ayrımı).

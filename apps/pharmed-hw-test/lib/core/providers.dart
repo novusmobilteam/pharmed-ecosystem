@@ -7,6 +7,7 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/pharmed_data.dart';
 import 'package:pharmed_hardware/pharmed_hardware.dart';
 
+import 'cabin_type.dart';
 import 'env.dart';
 import 'report.dart';
 import 'traffic_log.dart';
@@ -88,12 +89,15 @@ final rfidServiceProvider = Provider<IRfidService>((ref) => RfidService());
 // ── Oturum ────────────────────────────────────────────────────────
 
 class SessionState {
-  const SessionState({this.user, this.port});
+  const SessionState({this.user, this.port, this.cabinType});
 
   final AppUser? user;
 
   /// Bağlı COM port; null ise bağlı değil.
   final String? port;
+
+  /// Teknisyenin seçtiği kabin tipi; null ise henüz seçilmedi.
+  final HwCabinType? cabinType;
 
   bool get isLoggedIn => user != null;
 }
@@ -104,11 +108,22 @@ class SessionNotifier extends Notifier<SessionState> {
 
   void setUser(AppUser user) => state = SessionState(user: user);
 
-  void setPort(String? port) => state = SessionState(user: state.user, port: port);
+  void setPort(String? port) => state = SessionState(user: state.user, port: port, cabinType: state.cabinType);
+
+  /// null: seçim ekranına dön (COM bağlantısı korunur).
+  void setCabinType(HwCabinType? type) => state = SessionState(user: state.user, port: state.port, cabinType: type);
 
   void logout() => state = const SessionState();
 }
 
 final sessionProvider = NotifierProvider<SessionNotifier, SessionState>(SessionNotifier.new);
+
+/// Oturumu kapatır: seri port bağlantısı kesilir, token ve oturum temizlenir.
+Future<void> signOut(WidgetRef ref) async {
+  final serial = ref.read(serialServiceProvider);
+  if (serial.isConnected) await serial.disconnect();
+  ref.read(tokenHolderProvider).setToken(null);
+  ref.read(sessionProvider.notifier).logout();
+}
 
 String addressLabel(int addressIndex) => ManagementCard(addressIndex: addressIndex).addressChar.toUpperCase();
