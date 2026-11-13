@@ -9,37 +9,10 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 
 import 'camera.dart';
 
-/// Kurulum ekranındaki deneme çekiminin sonucu.
-class CameraTestResult {
-  const CameraTestResult({
-    required this.snapshot,
-    required this.connectTime,
-    required this.sampleDuration,
-    required this.sampleBytes,
-    required this.testedAt,
-  });
-
-  /// Kameranın o anki görüntüsü (JPEG) — "doğru yere bakıyor mu?" kontrolü.
-  final Uint8List snapshot;
-
-  /// Akışa bağlanıp ilk kareyi almak için geçen süre.
-  final Duration connectTime;
-
-  /// Deneme kaydı: kaydedicinin gerçekten dosyaya yazdığını doğrular.
-  final Duration sampleDuration;
-  final int sampleBytes;
-  final DateTime testedAt;
-
-  /// Yaklaşık bitrate — disk ihtiyacı tahmini için.
-  double get bitrateKbps => sampleDuration.inMilliseconds == 0 ? 0 : sampleBytes * 8 / sampleDuration.inMilliseconds;
-
-  /// Dakikada yaklaşık MB.
-  double get mbPerMinute => bitrateKbps * 60 / 8 / 1024;
-}
-
-/// Kamera kurulumunda bağlantı + anlık görüntü + kısa deneme kaydı.
-/// Canlı kayıtla AYNI yolu (RTSP/ffmpeg, aynı kaydedici) kullanır; test
-/// geçtiyse operasyon kaydı da çalışır. [SWREQ-CAM-055]
+/// Kamera kaydedilirken arka planda bağlantı kontrolü: akıştan tek kare.
+/// Canlı kayıtla AYNI yolu (RTSP/ffmpeg) kullanır; kare alınabiliyorsa
+/// operasyon kaydı da bağlanabilir. Ayrıntılı test (görüntü + deneme kaydı)
+/// pharmed-hw-test uygulamasındadır. [SWREQ-CAM-055]
 class CameraTester {
   CameraTester({required String ffmpegPath, Directory? workDir})
     : _ffmpegPath = ffmpegPath,
@@ -51,48 +24,7 @@ class CameraTester {
   final String _ffmpegPath;
   final Directory _workDir;
 
-  Future<Result<CameraTestResult>> test(CameraConfig config, {Duration sample = const Duration(seconds: 3)}) async {
-    await _workDir.create(recursive: true);
-
-    final snapshot = await takeSnapshot(config);
-    if (snapshot.isError) return Result.error(_errorOf(snapshot));
-    final (bytes, connectTime) = snapshot.data!;
-
-    // Deneme kaydı — canlıdaki kaydedicinin aynısı.
-    final recorder = FfmpegOperationRecorder(config: config, ffmpegPath: _ffmpegPath, outputDir: _workDir);
-    try {
-      final started = await recorder.start(sessionId: 'camtest-${DateTime.now().millisecondsSinceEpoch}');
-      if (started.isError) return Result.error(_errorOf(started));
-      await Future<void>.delayed(sample);
-      final stopped = await recorder.stop();
-      if (stopped.isError) return Result.error(_errorOf(stopped));
-      final file = stopped.data!;
-      unawaited(File(file.path).delete().catchError((_) => File(file.path)));
-
-      final result = CameraTestResult(
-        snapshot: bytes,
-        connectTime: connectTime,
-        sampleDuration: file.duration,
-        sampleBytes: file.sizeBytes,
-        testedAt: DateTime.now(),
-      );
-      MedLogger.info(
-        unit: _unit,
-        swreq: _swreq,
-        message: 'Kamera testi başarılı',
-        context: {
-          'source': config.maskedRtspUrl,
-          'connectMs': connectTime.inMilliseconds,
-          'bitrateKbps': result.bitrateKbps.round(),
-        },
-      );
-      return Result.ok(result);
-    } finally {
-      await recorder.dispose();
-    }
-  }
-
-  /// Akıştan tek kare alır. Kurulumda "Yenile" ile tekrar çağrılır.
+  /// Akıştan tek kare alır; bağlantı süresiyle döner.
   Future<Result<(Uint8List, Duration)>> takeSnapshot(CameraConfig config) async {
     await _workDir.create(recursive: true);
     final out = File(p.join(_workDir.path, 'snap_${DateTime.now().microsecondsSinceEpoch}.jpg'));
@@ -164,6 +96,4 @@ class CameraTester {
     MedLogger.warn(unit: _unit, swreq: _swreq, message: '$message [${reason.name}]', context: {'stderr': diagnostics});
     return Result.error(CameraRecordingException(message: message, reason: reason, diagnostics: diagnostics));
   }
-
-  static AppException _errorOf(Result<Object?> r) => r.when(ok: (_) => const UnexpectedException(), error: (e) => e);
 }

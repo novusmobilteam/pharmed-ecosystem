@@ -92,7 +92,7 @@ final cameraRecorderPoolProvider = Provider<CameraRecorderPool>((ref) {
   );
 });
 
-/// Kurulum ekranındaki deneme çekimi.
+/// Kamera kaydedilirken arka planda bağlantı kontrolü (tek kare).
 final cameraTesterProvider = Provider<CameraTester>((ref) => CameraTester(ffmpegPath: resolveFfmpegPath()));
 
 // ── Koordinatör ─────────────────────────────────────────────────────────────

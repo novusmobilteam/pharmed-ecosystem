@@ -36,11 +36,6 @@ class _CameraFormPanelState extends ConsumerState<_CameraFormPanel> {
     super.dispose();
   }
 
-  Future<void> _openTest() async {
-    unawaited(_form.runTest());
-    await _CameraTestDialog.show(context, _form);
-  }
-
   Future<void> _save() async {
     final saved = await _form.save();
     if (saved != null) await widget.design.onCameraSaved(saved);
@@ -189,9 +184,7 @@ class _CameraFormPanelState extends ConsumerState<_CameraFormPanel> {
                   ],
                 ),
 
-                // ── Test ───────────────────────────────────────────────
                 const SizedBox(height: MedSpacing.sm),
-                _TestStatusLine(form: f),
                 if (f.saveError != null)
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,13 +207,6 @@ class _CameraFormPanelState extends ConsumerState<_CameraFormPanel> {
                         onPressed: f.isBusy ? null : _delete,
                       ),
                     const Spacer(),
-                    MedButton(
-                      label: context.l10n.cabinDesign_camera_testButton,
-                      prefixIcon: Icon(PhosphorIcons.videoCamera()),
-                      variant: MedButtonVariant.secondary,
-                      onPressed: f.canTest ? _openTest : null,
-                    ),
-                    const SizedBox(width: MedSpacing.sm),
                     MedButton(
                       label: context.l10n.common_saveButton,
                       isLoading: f.isSaving,
@@ -310,36 +296,6 @@ class _CabinPickBox extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// Kaydet'in neden kapalı olduğunu söyler: test yok / değerler değişti / geçerli.
-class _TestStatusLine extends StatelessWidget {
-  const _TestStatusLine({required this.form});
-  final CameraFormNotifier form;
-
-  @override
-  Widget build(BuildContext context) {
-    final result = form.testResult;
-    final (icon, color, text) = switch ((result, form.isTestValid)) {
-      (final r?, true) => (
-        Icons.check_circle_outline_rounded,
-        MedColors.green,
-        context.l10n.cabinDesign_camera_testValid(r.connectTime.inMilliseconds, r.mbPerMinute.toStringAsFixed(1)),
-      ),
-      (_?, false) => (Icons.refresh_rounded, MedColors.amber, context.l10n.cabinDesign_camera_testStale),
-      (null, _) => (Icons.info_outline_rounded, MedColors.text4, context.l10n.cabinDesign_camera_testRequiredHint),
-    };
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(text, style: MedTextStyles.bodySm(color: MedColors.text3)),
-        ),
-      ],
     );
   }
 }
