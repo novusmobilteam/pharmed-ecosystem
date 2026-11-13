@@ -5,6 +5,7 @@ import '../../core/cabin_session.dart';
 import '../../core/cabin_type.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
+import '../../core/scenarios.dart';
 import '../../core/serum_definition.dart';
 import '../../widgets/common.dart';
 import '../cabin/cabin_page.dart';
@@ -17,6 +18,7 @@ import '../mobile_cabin/mobile_cabin_page.dart';
 import '../report/report_page.dart';
 import '../rfid/rfid_page.dart';
 import '../serum/serum_page.dart';
+import '../tests/tests_page.dart';
 import '../serum_cabin/serum_cabin_page.dart';
 import 'traffic_panel.dart';
 
@@ -32,6 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   static const _connection = (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage());
   static const _cabin = (icon: Icons.dns_outlined, label: 'Kabin', page: CabinPage());
+  static const _tests = (icon: Icons.checklist, label: 'Testler', page: TestsPage());
   static const _lineScan = (icon: Icons.lan, label: 'Hat taraması', page: LineScanPage());
   static const _cardScan = (icon: Icons.view_list, label: 'Kart taraması', page: CardScanPage());
   static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
@@ -47,6 +50,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     HwCabinType.medicineBased => const [
       _connection,
       _cabin,
+      _tests,
       _lineScan,
       _cardScan,
       _masterDrawer,
@@ -56,7 +60,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       _console,
       _report,
     ],
-    HwCabinType.patientBased => const [_connection, _cabin, _lineScan, _mobileCabin, _rfid, _console, _report],
+    HwCabinType.patientBased => const [_connection, _cabin, _tests, _lineScan, _mobileCabin, _rfid, _console, _report],
   };
 
   void _changeCabinType() {
@@ -64,6 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     // Tarama sonucu kabin tipine göre yorumlandığı için sıfırlanır.
     ref.invalidate(cabinSessionProvider);
     ref.invalidate(serumDefinitionsProvider);
+    ref.invalidate(scenarioResultsProvider);
     ref.read(sessionProvider.notifier).setCabinType(null);
   }
 

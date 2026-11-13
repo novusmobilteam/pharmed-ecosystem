@@ -6,6 +6,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../core/cabin_session.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
+import '../../core/scenarios.dart';
 import '../../core/serum_definition.dart';
 import '../../core/serum_hardware.dart';
 import '../../widgets/common.dart';
@@ -43,6 +44,10 @@ class _SerumPageState extends ConsumerState<SerumPage> {
   SerumHardware get _hw => SerumHardware(serial: ref.read(serialServiceProvider), ops: ref.read(cabinOpsProvider));
 
   TestReport get _report => ref.read(testReportProvider);
+
+  /// Test listesiyle ortak senaryo sonucu.
+  void _scenario(String id, TestStatus status, String detail) =>
+      ref.read(scenarioResultsProvider.notifier).set(id, status, detail: detail);
 
   @override
   void initState() {
@@ -96,6 +101,9 @@ class _SerumPageState extends ConsumerState<SerumPage> {
     }
     await _hw.release(t.addressIndex);
     final opened = SerumHardware.lidIsOpen(status);
+    if (error != null && !opened) {
+      _scenario(ScenarioIds.serumLid(t.addressIndex, l.lidNo), TestStatus.failed, 'Açılamadı: $error');
+    }
     _report.add(
       'Serum kapağı aç — ${_where(t, l)}',
       error == null || opened ? StepResult.info : StepResult.fail,
@@ -115,6 +123,11 @@ class _SerumPageState extends ConsumerState<SerumPage> {
   void _confirmLid(SerumTargetDef t, SerumLidDef l, bool opened) {
     final key = _lidKey(t, l);
     _report.add('Gözlem: ${_where(t, l)} ${opened ? 'açıldı' : 'AÇILMADI'}', opened ? StepResult.ok : StepResult.fail);
+    _scenario(
+      ScenarioIds.serumLid(t.addressIndex, l.lidNo),
+      opened ? TestStatus.passed : TestStatus.failed,
+      opened ? 'Açıldı (teknisyen onayı)' : 'Açılmadı (teknisyen gözlemi)',
+    );
     setState(() {
       _awaitingLid = null;
       _lidState[key] = opened ? TestStatus.passed : TestStatus.failed;
@@ -171,6 +184,11 @@ class _SerumPageState extends ConsumerState<SerumPage> {
     final card = SerumRules.lockCardId(s);
     setState(() => _busy = key);
     final present = await _hw.trayCardPresent(card);
+    _scenario(
+      ScenarioIds.lockCard(t.addressIndex, l.lidNo, s.orderNo),
+      present ? TestStatus.passed : TestStatus.failed,
+      present ? 'Kilit kartı cevap verdi' : 'Kilit kartı cevap vermedi',
+    );
     _report.add(
       'Raf ${s.orderNo} kilit kartı $card ${present ? 'cevap verdi' : 'CEVAP VERMEDİ'} — ${_where(t, l)}',
       present ? StepResult.ok : StepResult.fail,
@@ -258,6 +276,11 @@ class _SerumPageState extends ConsumerState<SerumPage> {
       },
     );
     _report.add('Avadanlık akış testi ${ok ? 'tamamlandı' : 'yarıda kaldı'}', ok ? StepResult.ok : StepResult.fail, detail: what);
+    _scenario(
+      ScenarioIds.trayFlow(t.addressIndex, l.lidNo, s.orderNo, index),
+      ok ? TestStatus.passed : TestStatus.failed,
+      ok ? 'Avadanlık çekildi, yerine itildi; kapak kapandı' : 'Akış testi yarıda kaldı',
+    );
     if (!mounted) return;
     setState(() {
       _busy = null;
