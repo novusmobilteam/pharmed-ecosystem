@@ -23,6 +23,10 @@ import '../../widgets/common.dart';
 // son kart geneli komutu (k/x) ayrıca gösterilir ve `o` sonrası teknisyen
 // fiziksel sonucu işaretler.
 //
+// ÇEK / SAY / İT TESTİ (#263): port LED'i ve +/- tuşu yalnızca avadanlık
+// çekildiğinde (s:02) aktiftir. Test k → o sonrası durumu ve tuş değerini
+// canlı izler: çekme (s:02) → LED sorusu + tuş değeri → yerine itme (s:03).
+//
 // TEK PORT TEŞHİSİ (#257): elle denemelerde o'dan önce x gönderilince kilitler
 // zaten serbest olduğu için o ölçülemiyordu. Teşhis k → s → o → s sırasını
 // tek tuşla çalıştırır, fiziksel gözleme göre olası nedeni rapora yazar ve
@@ -159,6 +163,18 @@ class _ReadingTile extends StatelessWidget {
 ///
 /// Olası neden yalnızca teşhis sırası (k → o) ile anlamlıdır; k ile
 /// enerjilenmemiş kilitlerde `o` tek port açmayı ölçmez (#257).
+/// Çek / say / it testinin aşaması (#263).
+enum _CycleStage {
+  /// `o` gönderildi; avadanlığın çekilmesi (s:02) bekleniyor.
+  waitPull,
+
+  /// Çekildi (s:02): LED ve +/- tuşu denetleniyor; yerine itme (s:03) bekleniyor.
+  pulled,
+
+  /// Bitti (yerine itildi ya da teknisyen durdurdu).
+  done,
+}
+
 const _observations = [
   ('Yalnız hedef serbest (doğru)', true, 'Tek port açma çalışıyor.'),
   (
@@ -215,6 +231,23 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   static const _diagPollCount = 6;
   static const _diagPollInterval = Duration(milliseconds: 500);
 
+  // Çek / say / it testi (#263)
+  Timer? _cycleTimer;
+  _CycleStage? _cycleStage;
+  int? _cyclePort;
+  TrayLockStatus? _cycleStatus;
+  int? _cycleKeypad;
+
+  /// Çekili iken görülen tuş değerleri (değişim sırasıyla).
+  final List<int> _cycleKeypadSeen = [];
+  bool? _cycleLed;
+  bool _cycleKeypadFailed = false;
+  bool _cyclePullMissed = false;
+  final Stopwatch _cycleClock = Stopwatch();
+  String? _cycleVerdict;
+  bool _cycleFinishing = false;
+  bool _cycleSeenUnlocked = false;
+
   // Kart ID taraması
   List<int>? _foundDevices;
 
@@ -236,6 +269,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
 
   @override
   void dispose() {
+    _cycleTimer?.cancel();
     _watch?.cancel();
     _deviceCtrl.dispose();
     super.dispose();
@@ -396,6 +430,204 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     });
   }
 
+  // ── Çek / say / it testi (#263) ───────────────────────────────
+
+  String get _cycleTime => '${(_cycleClock.elapsedMilliseconds / 1000).toStringAsFixed(1)} sn';
+
+  Future<void> _startCycle() async {
+    final deviceId = _deviceId;
+    if (deviceId == null) return showMessage(context, 'Kart ID 1–99 olmalı.', error: true);
+    _watch?.cancel();
+    final port = _port;
+    setState(() {
+      _busy = true;
+      _watch = null;
+      _cycleStage = null;
+      _cyclePort = port;
+      _cycleStatus = null;
+      _cycleKeypad = null;
+      _cycleKeypadSeen.clear();
+      _cycleLed = null;
+      _cycleKeypadFailed = false;
+      _cyclePullMissed = false;
+      _cycleVerdict = null;
+      _cycleFinishing = false;
+      _cycleSeenUnlocked = false;
+      _awaitingObservation = null;
+      _diagnosing = false;
+    });
+    final report = ref.read(testReportProvider);
+    report.add('Çek / say / it testi başladı', StepResult.info, detail: 'Kart $deviceId · port $port · k → o → çek → say → it');
+
+    for (final action in [TrayLockAction.lockAll, TrayLockAction.open]) {
+      final p = action == TrayLockAction.open ? port : null;
+      final (raw, res) = await _tray(deviceId, action, port: p);
+      if (!mounted) return;
+      final ok = res is TrayLockOk;
+      report.add(
+        'Çek/say/it — ${_actionLabel(action)}${p == null ? '' : ' · port $p'}',
+        ok ? StepResult.ok : StepResult.fail,
+        detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: p).title}',
+      );
+      if (!ok) {
+        await _finishCycle('Kart ${_actionLabel(action)} komutunu kabul etmedi — test başlamadı.', StepResult.fail);
+        return;
+      }
+    }
+
+    _cycleClock
+      ..reset()
+      ..start();
+    setState(() => _cycleStage = _CycleStage.waitPull);
+    _cycleTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _pollCycle(deviceId, port));
+  }
+
+  Future<void> _pollCycle(int deviceId, int port) async {
+    if (_polling || !mounted || _cycleStage == null || _cycleStage == _CycleStage.done) return;
+    _polling = true;
+    try {
+      final (sRaw, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+      final (_, t) = await _tray(deviceId, TrayLockAction.keypadValue, port: port);
+      if (!mounted || _cycleStage == null || _cycleStage == _CycleStage.done) return;
+      final report = ref.read(testReportProvider);
+
+      final status = s is TrayLockStatusResponse ? s.status : null;
+      if (status != null && status != _cycleStatus) {
+        report.add(
+          'Çek/say/it — durum değişti ($_cycleTime)',
+          StepResult.info,
+          detail: '${sRaw ?? ''} → ${_Reading.of(s, port: port).title}',
+        );
+      }
+
+      final keypad = t is TrayLockKeypadResponse ? t.value : null;
+      if (keypad != null && keypad != _cycleKeypad && status == TrayLockStatus.pulled) {
+        _cycleKeypadSeen.add(keypad);
+        report.add('Çek/say/it — tuş değeri: $keypad ($_cycleTime)', StepResult.info);
+      }
+
+      setState(() {
+        _cycleStatus = status ?? _cycleStatus;
+        _cycleKeypad = keypad ?? _cycleKeypad;
+      });
+
+      if (status == TrayLockStatus.unlocked) _cycleSeenUnlocked = true;
+      if (_cycleStage == _CycleStage.waitPull && status == TrayLockStatus.idle && _cycleSeenUnlocked) {
+        // Kart çekme beklerken kendiliğinden boşa döndü (zaman aşımı vb.).
+        await _finishCycle(
+          'Kart çekme beklerken boşa döndü (s:01 → s:03, $_cycleTime). Avadanlık çekildiyse kart çekmeyi '
+          'algılamadı (sensör / bağlantı); çekilmediyse testi tekrarlayıp daha hızlı çekin.',
+          StepResult.fail,
+        );
+      } else if (_cycleStage == _CycleStage.waitPull && status == TrayLockStatus.pulled) {
+        report.add('Çek/say/it — kart çekmeyi algıladı (s:02)', StepResult.ok, detail: _cycleTime);
+        setState(() => _cycleStage = _CycleStage.pulled);
+      } else if (_cycleStage == _CycleStage.pulled && status == TrayLockStatus.idle) {
+        report.add('Çek/say/it — kart yerine itmeyi algıladı (s:03)', StepResult.ok, detail: _cycleTime);
+        await _finishCycle(null, null);
+      }
+    } finally {
+      _polling = false;
+    }
+  }
+
+  void _cycleMarkLed(bool lit) {
+    ref
+        .read(testReportProvider)
+        .add(
+          'Çek/say/it — port LED\'i ${lit ? 'yandı' : 'YANMADI'}',
+          lit ? StepResult.ok : StepResult.fail,
+          detail: 'Port $_cyclePort · $_cycleTime',
+        );
+    setState(() => _cycleLed = lit);
+  }
+
+  void _cycleMarkKeypadFailed() {
+    ref
+        .read(testReportProvider)
+        .add(
+          'Çek/say/it — +/- tuşuna basıldı, değer değişmedi',
+          StepResult.fail,
+          detail: 'Okunan: ${_cycleKeypad ?? '—'} · $_cycleTime',
+        );
+    setState(() => _cycleKeypadFailed = true);
+  }
+
+  Future<void> _cyclePullNotSeen() async {
+    ref
+        .read(testReportProvider)
+        .add(
+          'Çek/say/it — avadanlık çekildi ama kart görmedi',
+          StepResult.fail,
+          detail: 'Son durum: ${_cycleStatus == null ? '—' : _statusCode(_cycleStatus!)} · $_cycleTime',
+        );
+    setState(() => _cyclePullMissed = true);
+    await _finishCycle(null, null);
+  }
+
+  static String _statusCode(TrayLockStatus s) => switch (s) {
+    TrayLockStatus.unlocked => 's:01',
+    TrayLockStatus.pulled => 's:02',
+    TrayLockStatus.idle => 's:03',
+  };
+
+  /// Testi bitirir; [verdict] verilmezse toplananlardan yorum üretilir.
+  /// Port hâlâ "açık, çekilmedi" ise `c` ile boşa alınır.
+  Future<void> _finishCycle(String? verdict, StepResult? result) async {
+    if (_cycleFinishing) return;
+    _cycleFinishing = true;
+    _cycleTimer?.cancel();
+    _cycleTimer = null;
+    _cycleClock.stop();
+    final deviceId = _deviceId;
+    final port = _cyclePort;
+    final report = ref.read(testReportProvider);
+    if (deviceId != null && port != null && _cycleStatus == TrayLockStatus.unlocked) {
+      final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
+      report.add(
+        'Çek/say/it — Açmayı iptal (c) · port $port',
+        res is TrayLockOk ? StepResult.ok : StepResult.info,
+        detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
+      );
+    }
+
+    final pulledSeen = _cycleStage == _CycleStage.pulled || (_cycleStage == _CycleStage.done && !_cyclePullMissed);
+    final returned = _cycleStage == _CycleStage.pulled && _cycleStatus == TrayLockStatus.idle;
+    final keypadOk = _cycleKeypadSeen.any((v) => v != 0);
+    final String text;
+    final StepResult outcome;
+    if (verdict != null) {
+      text = verdict;
+      outcome = result ?? StepResult.fail;
+    } else if (_cyclePullMissed || !pulledSeen) {
+      text =
+          'Kart çekmeyi algılamadı (durum ${_cycleStatus == null ? '—' : _statusCode(_cycleStatus!)}\'de kaldı). '
+          'LED ve +/- yalnızca çekildi (s:02) durumunda çalıştığı için yanmamaları bundan. Avadanlık '
+          'algılama sensörü ve bağlantısı kontrol edilmeli.';
+      outcome = StepResult.fail;
+    } else {
+      final problems = [
+        if (_cycleLed == false) 'kart çekmeyi gördüğü hâlde port LED\'i yanmadı (LED / LED bağlantısı)',
+        if (_cycleLed == null) 'LED sorusu cevaplanmadı',
+        if (_cycleKeypadFailed || !keypadOk)
+          'tuş değeri okunamadı (okunan: ${_cycleKeypadSeen.isEmpty ? '—' : _cycleKeypadSeen.join(' → ')}) — '
+              '+/- tuş paneli / bağlantısı',
+        if (!returned) 'yerine itme (s:03) görülmeden durduruldu',
+      ];
+      text = problems.isEmpty
+          ? 'Çekme, LED, tuş (${_cycleKeypadSeen.join(' → ')}) ve yerine itme çalışıyor.'
+          : 'Çekme algılandı; ${problems.join('; ')}.';
+      outcome = problems.isEmpty ? StepResult.ok : StepResult.fail;
+    }
+    report.add('Çek / say / it testi bitti', outcome, detail: text);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _cycleStage = _CycleStage.done;
+      _cycleVerdict = text;
+    });
+  }
+
   /// Kartın bildirdiği durum ile fiziksel gözlemi birlikte yorumlar (#260).
   String _diagHint(String what, bool correct, String hint) {
     if (_diagSeenUnlocked) return hint;
@@ -532,6 +764,78 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
 
   // ── UI ─────────────────────────────────────────────────────────
 
+  Widget _cyclePanel(TextStyle? titleStyle) {
+    final stage = _cycleStage!;
+    final status = _cycleStatus;
+    final statusReading = status == null
+        ? const _Reading(MedTone.neutral, 'Durum bekleniyor…')
+        : _Reading(
+            status == TrayLockStatus.pulled ? MedTone.success : MedTone.info,
+            '${_statusCode(status)} — ${switch (status) {
+              TrayLockStatus.unlocked => 'kilit açık, avadanlık çekilmedi',
+              TrayLockStatus.pulled => 'avadanlık çekildi (LED ve +/- aktif olmalı)',
+              TrayLockStatus.idle => 'boşta / yerine itildi',
+            }}',
+          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Text('Çek / say / it — port $_cyclePort${stage == _CycleStage.done ? '' : ' · $_cycleTime'}', style: titleStyle),
+        _ReadingTile(label: 'Durum', reading: statusReading),
+        _ReadingTile(
+          label: 'Tuş değeri',
+          reading: _Reading(
+            _cycleKeypadSeen.any((v) => v != 0) ? MedTone.success : MedTone.neutral,
+            _cycleKeypad == null ? '—' : '$_cycleKeypad',
+            _cycleKeypadSeen.isEmpty ? null : 'Çekiliyken görülen: ${_cycleKeypadSeen.join(' → ')}',
+          ),
+        ),
+        const SizedBox(height: 4),
+        switch (stage) {
+          _CycleStage.waitPull => Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text('1) Port $_cyclePort avadanlığını ÇEKİN.'),
+              ActionChip(label: const Text('Çektim, kart görmedi'), onPressed: _cyclePullNotSeen),
+              ActionChip(label: const Text('Durdur'), onPressed: () => _finishCycle(null, null)),
+            ],
+          ),
+          _CycleStage.pulled => Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text('2) Port LED\'i yandı mı?'),
+              ChoiceChip(label: const Text('Yandı'), selected: _cycleLed == true, onSelected: (_) => _cycleMarkLed(true)),
+              ChoiceChip(
+                label: const Text('Yanmadı'),
+                selected: _cycleLed == false,
+                onSelected: (_) => _cycleMarkLed(false),
+              ),
+              const Text('3) +/- tuşlarına basın (değer yukarıda canlı).'),
+              ActionChip(
+                label: const Text('Tuş değeri değişmedi'),
+                onPressed: _cycleKeypadFailed ? null : _cycleMarkKeypadFailed,
+              ),
+              const Text('4) Avadanlığı yerine İTİN.'),
+              ActionChip(label: const Text('Durdur'), onPressed: () => _finishCycle(null, null)),
+            ],
+          ),
+          _CycleStage.done => _ReadingTile(
+            label: 'Sonuç',
+            reading: _Reading(
+              _cycleVerdict != null && _cycleVerdict!.endsWith('çalışıyor.') ? MedTone.success : MedTone.error,
+              _cycleVerdict ?? '',
+            ),
+          ),
+        },
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final connected = ref.watch(sessionProvider.select((s) => s.port != null));
@@ -601,6 +905,11 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
                 icon: const Icon(Icons.troubleshoot),
                 label: Text('Tek port teşhisi (port $_port)'),
               ),
+              FilledButton.icon(
+                onPressed: free ? _startCycle : null,
+                icon: const Icon(Icons.swap_vert),
+                label: Text('Çek / say / it testi (port $_port)'),
+              ),
               OutlinedButton.icon(
                 onPressed: free ? _queryAllPorts : null,
                 icon: const Icon(Icons.table_rows),
@@ -620,6 +929,12 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
             'ile boşa alınır.',
             style: TextStyle(fontSize: 12, color: MedColors.text2),
           ),
+          Text(
+            'Çek / say / it testi: k → o, sonra durum ve tuş değeri canlı izlenir. Port LED\'i ve +/- tuşu yalnızca '
+            'avadanlık çekildiğinde (s:02) çalışır.',
+            style: TextStyle(fontSize: 12, color: MedColors.text2),
+          ),
+          if (_cycleStage != null) _cyclePanel(titleStyle),
           if (_diagSteps != null) ...[
             const SizedBox(height: 8),
             Text('Tek port teşhisi', style: titleStyle),
