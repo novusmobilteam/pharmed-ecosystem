@@ -27,6 +27,8 @@ import '../../widgets/common.dart';
 // zaten serbest olduğu için o ölçülemiyordu. Teşhis k → s → o → s sırasını
 // tek tuşla çalıştırır, fiziksel gözleme göre olası nedeni rapora yazar ve
 // portu c ile boşa alır.
+// #260: o sonrası durum ~3 sn sorgulanır; kart s:01 bildirmese de fiziksel
+// gözlem istenir ve yorum kartın bildirdiğiyle birlikte yazılır.
 //
 // OLMASI GEREKEN AKIŞ (x → kapak aç → k → o → çek/it → kapak kapan → x) raf
 // tanımıyla birlikte Serum sayfasında test edilir (core/serum_hardware.dart).
@@ -206,6 +208,13 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   /// Teşhis sonrası yorum.
   String? _diagVerdict;
 
+  /// Teşhiste `o` sonrası kart en az bir kez `s:01` (kilit açık) bildirdi mi.
+  bool _diagSeenUnlocked = false;
+
+  /// `o` sonrası durum kaç kez, hangi aralıkla sorgulanır (#260).
+  static const _diagPollCount = 6;
+  static const _diagPollInterval = Duration(milliseconds: 500);
+
   // Kart ID taraması
   List<int>? _foundDevices;
 
@@ -289,6 +298,9 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   /// Tek port teşhisi (#257): k → s → o → s, ardından fiziksel gözlem.
   /// Kilitler önce k ile enerjilenir; böylece `o`'nun yalnızca hedefi
   /// bırakıp bırakmadığı ölçülür (x sonrası `o` bunu ölçmez).
+  ///
+  /// #260: `o` sonrası durum ~3 sn sorgulanır (kart açılıp hemen boşa dönüyor
+  /// mu görülür) ve kart `s:01` bildirmese de fiziksel gözlem istenir.
   Future<void> _diagnosePort() async {
     final deviceId = _deviceId;
     if (deviceId == null) return showMessage(context, 'Kart ID 1–99 olmalı.', error: true);
@@ -302,14 +314,17 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     });
 
     final report = ref.read(testReportProvider);
-    report.add('Tek port teşhisi başladı', StepResult.info, detail: 'Kart $deviceId · port $port · sıra: k → s → o → s');
+    report.add(
+      'Tek port teşhisi başladı',
+      StepResult.info,
+      detail: 'Kart $deviceId · port $port · sıra: k → s → o → s ×$_diagPollCount',
+    );
 
-    // (komut, port, beklenen sonuç)
+    // (komut, port, beklenen sonuç). o sonrası durum aşağıda ayrıca sorgulanır.
     final plan = <(TrayLockAction, int?, bool Function(TrayLockResponse))>[
       (TrayLockAction.lockAll, null, (r) => r is TrayLockOk),
       (TrayLockAction.status, port, (r) => r is TrayLockStatusResponse && r.status == TrayLockStatus.idle),
       (TrayLockAction.open, port, (r) => r is TrayLockOk),
-      (TrayLockAction.status, port, (r) => r is TrayLockStatusResponse && r.status == TrayLockStatus.unlocked),
     ];
 
     var allOk = true;
@@ -345,16 +360,60 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       return;
     }
 
+    // o sonrası durum: kart s:01'e geçiyor mu, geçip hemen boşa mı dönüyor?
+    var seenUnlocked = false;
+    final statuses = <String>[];
+    for (var i = 0; i < _diagPollCount; i++) {
+      if (i > 0) await Future<void>.delayed(_diagPollInterval);
+      if (!mounted) return;
+      final sw = Stopwatch()..start();
+      final (raw, res) = await _tray(deviceId, TrayLockAction.status, port: port);
+      sw.stop();
+      if (!mounted) return;
+      final unlocked = res is TrayLockStatusResponse && res.status == TrayLockStatus.unlocked;
+      seenUnlocked |= unlocked;
+      statuses.add(raw ?? '(cevap yok)');
+      final reading = _Reading.of(res, port: port);
+      final label = 'Durum (s) · port $port · o sonrası ${i + 1}/$_diagPollCount (${sw.elapsedMilliseconds} ms)';
+      report.add(
+        'Teşhis — $label',
+        unlocked ? StepResult.ok : StepResult.fail,
+        detail: '${raw ?? '(cevap yok)'} → ${reading.title}',
+      );
+      setState(() => _diagSteps = [...?_diagSteps, (label, raw ?? '(cevap yok)', reading)]);
+    }
+    report.add(
+      seenUnlocked ? 'Teşhis — kart kilidi açık bildirdi' : 'Teşhis — kart açma durumuna geçmedi',
+      seenUnlocked ? StepResult.ok : StepResult.fail,
+      detail: 'o sonrası durumlar: ${statuses.join(' ')}',
+    );
+
     setState(() {
       _busy = false;
       _awaitingObservation = port;
       _diagnosing = true;
+      _diagSeenUnlocked = seenUnlocked;
     });
   }
 
-  Future<void> _observe(String what, bool correct, String hint) async {
+  /// Kartın bildirdiği durum ile fiziksel gözlemi birlikte yorumlar (#260).
+  String _diagHint(String what, bool correct, String hint) {
+    if (_diagSeenUnlocked) return hint;
+    if (correct) {
+      return 'Avadanlık açıldı ama kart açık durumu (s:01) bildirmedi — kartın durum bildirimi kontrol edilmeli.';
+    }
+    if (what == _observations[1].$1) {
+      return 'Kart o komutunu kabul etti (okkk) ama açma durumuna hiç geçmedi (o sonrası hep s:03): kilit sürülmedi. '
+          'Sorun kartta — firmware ya da kartın açma koşulu (ör. serum kapağı / avadanlık sensörü). Serum kapağı '
+          'açıkken tekrar deneyin; değişmezse sonucu kart geliştiricisine iletin.';
+    }
+    return 'Kart açma durumuna geçmedi (o sonrası hep s:03). $hint';
+  }
+
+  Future<void> _observe(String what, bool correct, String observationHint) async {
     final port = _awaitingObservation;
     if (port == null) return;
+    final hint = _diagnosing ? _diagHint(what, correct, observationHint) : observationHint;
     final report = ref.read(testReportProvider);
     report.add(
       'Gözlem: kart ${_deviceCtrl.text} · o port $port → $what',
@@ -556,8 +615,9 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Tek port teşhisi: k (tümünü kilitle) → durum → o (portu aç) → durum. Sonra avadanlıkları elle '
-            'deneyip ne olduğunu işaretleyin; yorum rapora yazılır ve port c ile boşa alınır.',
+            'Tek port teşhisi: k (tümünü kilitle) → durum → o (portu aç) → 3 sn boyunca durum. Serum kapağı açıkken '
+            'çalıştırın. Sonra avadanlıkları elle deneyip ne olduğunu işaretleyin; yorum rapora yazılır ve port c '
+            'ile boşa alınır.',
             style: TextStyle(fontSize: 12, color: MedColors.text2),
           ),
           if (_diagSteps != null) ...[
