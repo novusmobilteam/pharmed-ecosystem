@@ -23,6 +23,11 @@ import '../../widgets/common.dart';
 // son kart geneli komutu (k/x) ayrıca gösterilir ve `o` sonrası teknisyen
 // fiziksel sonucu işaretler.
 //
+// TEK PORT TEŞHİSİ (#257): elle denemelerde o'dan önce x gönderilince kilitler
+// zaten serbest olduğu için o ölçülemiyordu. Teşhis k → s → o → s sırasını
+// tek tuşla çalıştırır, fiziksel gözleme göre olası nedeni rapora yazar ve
+// portu c ile boşa alır.
+//
 // OLMASI GEREKEN AKIŞ (x → kapak aç → k → o → çek/it → kapak kapan → x) raf
 // tanımıyla birlikte Serum sayfasında test edilir (core/serum_hardware.dart).
 // Bu bölüm yalnızca elle / ham komutlar içindir (Gelişmiş araçlar).
@@ -148,12 +153,30 @@ class _ReadingTile extends StatelessWidget {
   }
 }
 
-/// `o` sonrası teknisyenin fiziksel gözlemi.
+/// `o` sonrası teknisyenin fiziksel gözlemi: (etiket, doğru mu, olası neden).
+///
+/// Olası neden yalnızca teşhis sırası (k → o) ile anlamlıdır; k ile
+/// enerjilenmemiş kilitlerde `o` tek port açmayı ölçmez (#257).
 const _observations = [
-  ('Yalnız hedef serbest (doğru)', true),
-  ('Hedef kilitli, diğerleri kilitli', false),
-  ('Hedef kilitli, diğerleri SERBEST (ters)', false),
-  ('Hepsi serbest', false),
+  ('Yalnız hedef serbest (doğru)', true, 'Tek port açma çalışıyor.'),
+  (
+    'Hedef kilitli, diğerleri kilitli',
+    false,
+    'Kart açtığını bildiriyor ama çıkışı bırakmıyor. Port uçlarında gerilimi ölçün: o sonrası düşmüyorsa '
+        'kart/firmware (o, k ile enerjilenen çıkışı bırakmıyor), düşüyorsa kablolama veya kilit mekaniği.',
+  ),
+  (
+    'Hedef kilitli, BAŞKA bir avadanlık serbest',
+    false,
+    'Port eşleşmesi kayık: protokoldeki port ile fiziksel avadanlık farklı. Hangi avadanlığın açıldığını not edin.',
+  ),
+  (
+    'Hedef kilitli, diğerleri SERBEST (ters)',
+    false,
+    'Polarite ters: kart o sırasında hedefi enerjili bırakıp diğerlerini serbest bırakıyor '
+        '("enerji = açık" tipi kilit varsayımı). Kilit tipi / kart yazılımı kontrol edilmeli.',
+  ),
+  ('Hepsi serbest', false, 'k kilitleri tutmuyor ya da o tüm kilitleri bırakıyor. Önce k / x testini tekrarlayın.'),
 ];
 
 class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
@@ -172,6 +195,16 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
 
   /// `o` sonrası fiziksel gözlem bekleyen port.
   int? _awaitingObservation;
+
+  /// Gözlem "Tek port teşhisi" sırasından geliyor: gözlemden sonra yorum
+  /// rapora yazılır ve port `c` ile boşa alınır.
+  bool _diagnosing = false;
+
+  /// Teşhis adımlarının sonuçları (etiket, ham, okuma).
+  List<(String, String, _Reading)>? _diagSteps;
+
+  /// Teşhis sonrası yorum.
+  String? _diagVerdict;
 
   // Kart ID taraması
   List<int>? _foundDevices;
@@ -246,21 +279,112 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       _lastLabel = label;
       _lastRaw = raw ?? '(cevap yok)';
       _lastReading = reading;
+      _diagSteps = null;
+      _diagVerdict = null;
       _awaitingObservation = action == TrayLockAction.open && res is TrayLockOk ? port : null;
+      _diagnosing = false;
     });
   }
 
-  void _observe(String what, bool correct) {
+  /// Tek port teşhisi (#257): k → s → o → s, ardından fiziksel gözlem.
+  /// Kilitler önce k ile enerjilenir; böylece `o`'nun yalnızca hedefi
+  /// bırakıp bırakmadığı ölçülür (x sonrası `o` bunu ölçmez).
+  Future<void> _diagnosePort() async {
+    final deviceId = _deviceId;
+    if (deviceId == null) return showMessage(context, 'Kart ID 1–99 olmalı.', error: true);
+    final port = _port;
+    setState(() {
+      _busy = true;
+      _diagSteps = [];
+      _diagVerdict = null;
+      _awaitingObservation = null;
+      _diagnosing = false;
+    });
+
+    final report = ref.read(testReportProvider);
+    report.add('Tek port teşhisi başladı', StepResult.info, detail: 'Kart $deviceId · port $port · sıra: k → s → o → s');
+
+    // (komut, port, beklenen sonuç)
+    final plan = <(TrayLockAction, int?, bool Function(TrayLockResponse))>[
+      (TrayLockAction.lockAll, null, (r) => r is TrayLockOk),
+      (TrayLockAction.status, port, (r) => r is TrayLockStatusResponse && r.status == TrayLockStatus.idle),
+      (TrayLockAction.open, port, (r) => r is TrayLockOk),
+      (TrayLockAction.status, port, (r) => r is TrayLockStatusResponse && r.status == TrayLockStatus.unlocked),
+    ];
+
+    var allOk = true;
+    for (final (action, p, expected) in plan) {
+      final (raw, res) = await _tray(deviceId, action, port: p);
+      if (!mounted) return;
+      final reading = _Reading.of(res, port: p);
+      final ok = expected(res);
+      final label = '${_actionLabel(action)}${p == null ? '' : ' · port $p'}';
+      report.add(
+        'Teşhis — $label',
+        ok ? StepResult.ok : StepResult.fail,
+        detail: '${raw ?? '(cevap yok)'} → ${reading.title}',
+      );
+      setState(() => _diagSteps = [...?_diagSteps, (label, raw ?? '(cevap yok)', reading)]);
+      if (!ok) {
+        allOk = false;
+        break;
+      }
+    }
+
+    if (!mounted) return;
+    if (!allOk) {
+      // Kart beklenen cevabı vermedi; açık kalmış olabilecek portu boşa al.
+      await _tray(deviceId, TrayLockAction.cancel, port: port);
+      const verdict = 'Kart beklenen cevabı vermedi — yukarıdaki adıma bakın. Fiziksel gözlem istenmedi.';
+      report.add('Tek port teşhisi yarıda kaldı', StepResult.fail, detail: verdict);
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _diagVerdict = verdict;
+      });
+      return;
+    }
+
+    setState(() {
+      _busy = false;
+      _awaitingObservation = port;
+      _diagnosing = true;
+    });
+  }
+
+  Future<void> _observe(String what, bool correct, String hint) async {
     final port = _awaitingObservation;
     if (port == null) return;
-    ref
-        .read(testReportProvider)
-        .add(
-          'Gözlem: kart ${_deviceCtrl.text} · o port $port → $what',
-          correct ? StepResult.ok : StepResult.fail,
-          detail: 'Kart geneli son komut: ${_cardModeText()}',
-        );
-    setState(() => _awaitingObservation = null);
+    final report = ref.read(testReportProvider);
+    report.add(
+      'Gözlem: kart ${_deviceCtrl.text} · o port $port → $what',
+      correct ? StepResult.ok : StepResult.fail,
+      detail: [
+        'Kart geneli son komut: ${_cardModeText()}',
+        if (_diagnosing) 'Olası neden: $hint',
+      ].join('\n'),
+    );
+    final diagnosing = _diagnosing;
+    setState(() {
+      _awaitingObservation = null;
+      _diagnosing = false;
+      if (diagnosing) _diagVerdict = hint;
+    });
+    if (!diagnosing) return;
+
+    // Portu boşa al (teşhis kart durumunu açık bırakmasın).
+    final deviceId = _deviceId;
+    if (deviceId == null) return;
+    setState(() => _busy = true);
+    final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
+    report.add(
+      'Teşhis — Açmayı iptal (c) · port $port',
+      res is TrayLockOk ? StepResult.ok : StepResult.info,
+      detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
+    );
+    report.add('Tek port teşhisi bitti', correct ? StepResult.ok : StepResult.fail, detail: '$what — $hint');
+    if (!mounted) return;
+    setState(() => _busy = false);
   }
 
   String _cardModeText() => switch (_cardMode) {
@@ -413,6 +537,11 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
             children: [
               for (final action in TrayLockAction.values)
                 OutlinedButton(onPressed: free ? () => _manual(action) : null, child: Text(_actionLabel(action))),
+              FilledButton.icon(
+                onPressed: free ? _diagnosePort : null,
+                icon: const Icon(Icons.troubleshoot),
+                label: Text('Tek port teşhisi (port $_port)'),
+              ),
               OutlinedButton.icon(
                 onPressed: free ? _queryAllPorts : null,
                 icon: const Icon(Icons.table_rows),
@@ -425,17 +554,45 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
               ),
             ],
           ),
-          if (_lastReading != null) _ReadingTile(label: _lastLabel, reading: _lastReading!, raw: _lastRaw),
+          const SizedBox(height: 6),
+          Text(
+            'Tek port teşhisi: k (tümünü kilitle) → durum → o (portu aç) → durum. Sonra avadanlıkları elle '
+            'deneyip ne olduğunu işaretleyin; yorum rapora yazılır ve port c ile boşa alınır.',
+            style: TextStyle(fontSize: 12, color: MedColors.text2),
+          ),
+          if (_diagSteps != null) ...[
+            const SizedBox(height: 8),
+            Text('Tek port teşhisi', style: titleStyle),
+            for (final (label, raw, reading) in _diagSteps!) _ReadingTile(label: label, reading: reading, raw: raw),
+            if (_diagVerdict != null)
+              _ReadingTile(
+                label: 'Yorum',
+                reading: _Reading(
+                  _diagVerdict == _observations.first.$3 ? MedTone.success : MedTone.error,
+                  _diagVerdict!,
+                ),
+              ),
+          ],
+          if (_lastReading != null && _diagSteps == null)
+            _ReadingTile(label: _lastLabel, reading: _lastReading!, raw: _lastRaw),
           if (_awaitingObservation != null) ...[
             const SizedBox(height: 8),
-            Text('Port $_awaitingObservation açıldı. Fiziksel olarak ne oldu?'),
+            if (!_diagnosing && _cardMode != 'k')
+              _ReadingTile(
+                reading: const _Reading(
+                  MedTone.warning,
+                  'Kilitler k ile enerjilenmeden o gönderildi',
+                  'Kilitler zaten serbestken o tek port açmayı ölçmez. "Tek port teşhisi"ni kullanın.',
+                ),
+              ),
+            Text('Port $_awaitingObservation açıldı. Avadanlıkları elle deneyin — fiziksel olarak ne oldu?'),
             const SizedBox(height: 4),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final (label, correct) in _observations)
-                  ActionChip(label: Text(label), onPressed: () => _observe(label, correct)),
+                for (final (label, correct, hint) in _observations)
+                  ActionChip(label: Text(label), onPressed: () => _observe(label, correct, hint)),
               ],
             ),
           ],
