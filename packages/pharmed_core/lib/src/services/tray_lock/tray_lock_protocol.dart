@@ -6,6 +6,8 @@
 //   Komut  (PC → kart):  <iXX:YZ>   XX = cihaz ID (01-99), Y = port (1-8), Z = komut
 //   Yanıt  (kart → PC):  /xxxxx\
 //
+// Protokol dokümanı: docs/hardware/tray-lock-protokol.md
+//
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';

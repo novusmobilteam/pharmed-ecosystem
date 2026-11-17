@@ -264,6 +264,7 @@ INFO/WARN/ERROR kayıtları diskte bir kuyruğa (`<veri kökü>/log-outbox`) da 
 | Doküman | İçerik |
 | --- | --- |
 | [`docs/hardware/rs485-protokol.md`](docs/hardware/rs485-protokol.md) | Kabin kartları (yönetim, çekmece, kübik) RS485 komutları, checksum, cevap kodları, çoklu kabin kuralları |
+| [`docs/hardware/tray-lock-protokol.md`](docs/hardware/tray-lock-protokol.md) | Serum avadanlık kilit kartı (`<iXX:YZ>`) komutları, durum makinesi (`s:01`/`s:02`/`s:03`), cevap kodları, sahada görülenler |
 
 ## Geliştirme akışı
 
