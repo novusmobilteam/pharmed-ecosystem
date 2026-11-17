@@ -6,6 +6,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 
 import 'cabin_model.dart';
+import 'cubic_probe.dart';
 
 class CabinScanResult {
   const CabinScanResult({required this.snapshot, required this.log, this.definitionsMissing = false});
@@ -79,9 +80,38 @@ class CabinScanner {
           units.add(CabinRules.serumUnit(row: card.rowAddress, rawResponse: raw));
           continue;
         }
+        final rowLabel = card.rowAddress.toString().padLeft(2, '0');
         final matches = configs.where((c) => c.deviceTypeNo == card.databaseTypeId).toList();
-        final config = matches.firstOrNull;
-        final type = config == null ? null : (config.drawerType ?? types[config.drawerTypeId]);
+        DrawerType? typeOf(DrawerConfig c) => c.drawerType ?? types[c.drawerTypeId];
+        var config = matches.firstOrNull;
+        var type = config == null ? null : typeOf(config);
+        int? compartmentCount = type?.compartmentCount;
+        String? probeProblem;
+
+        // #259: kübik çekmece kartı standart tip cevabı verir (16 ve 20 gözlü
+        // kübik aynı görünür). Göz sayısı kübik kartlarından (slave) yoklanır.
+        if (type?.isKubik ?? false) {
+          onProgress?.call('$letter satır $rowLabel: kübik kapaklar yoklanıyor (sıra 00–04 × port 1–4)…');
+          final lids = await probeCubicLidAddresses(ops, address: address, row: card.rowAddress);
+          log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(lids)}');
+          if (lids.isEmpty) {
+            probeProblem = 'Kübik kapaklar cevap vermedi (Z M); göz sayısı tanımdan';
+          } else {
+            final probed = lids.length;
+            if (probed != compartmentCount) {
+              final fitting = matches.where((c) => typeOf(c)?.compartmentCount == probed).firstOrNull;
+              if (fitting != null) {
+                config = fitting;
+                type = typeOf(fitting);
+                log.add('$letter satır $rowLabel: $probed gözlü tanım seçildi (${CabinRules.drawerName(type)})');
+              } else {
+                probeProblem = 'Karttan $probed kapak yoklandı, tanım ${compartmentCount ?? '?'} göz';
+              }
+            }
+            compartmentCount = probed;
+          }
+        }
+
         String? problem;
         if (definitionsMissing) {
           problem = null;
@@ -92,16 +122,19 @@ class CabinScanner {
         } else if (matches.length > 1) {
           problem = '${matches.length} tanım aynı tip numarasında (client ilkini seçer)';
         }
+        if (probeProblem != null) problem = problem == null ? probeProblem : '$problem · $probeProblem';
         units.add(
           CabinUnit(
             row: card.rowAddress,
             kind: CabinRules.drawerKind(type),
             name: type != null ? CabinRules.drawerName(type) : 'Tip ${card.databaseTypeId}',
-            compartmentCount: type?.compartmentCount,
+            compartmentCount: compartmentCount,
             typeNo: card.databaseTypeId,
             rawResponse: raw,
             problem: problem,
-            config: config == null ? null : (config.drawerType != null || type == null ? config : config.copyWith(drawerType: type)),
+            config: config == null
+                ? null
+                : (config.drawerType != null || type == null ? config : config.copyWith(drawerType: type)),
             // Client taramasıyla aynı: birim dozda N göz (compartmentNo 1..N).
             // Kübik kapak adresleri taramada bilinmez; test sırasında yoklanır.
             cells: type == null || type.isKubik
@@ -110,6 +143,9 @@ class CabinScanner {
           ),
         );
       }
+
+      // Kübik yoklaması satır seçti; hatta açık seçim kalmasın.
+      if (units.any((u) => u.kind == UnitKind.kubik)) await _release(address);
 
       if (cards.isEmpty) warnings.add('Yönetim kartı cevap verdi ama satır 01–26\'da kart bulunamadı');
       final serumRows = units.where((u) => u.kind == UnitKind.serum).map((u) => u.rowLabel).toList();

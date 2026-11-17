@@ -20,6 +20,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 
+import 'cubic_probe.dart';
 import 'test_status.dart';
 
 /// Akıştaki tek adım.
@@ -249,30 +250,15 @@ class DrawerFlowRunner {
   /// Kübik kapakları karttan yoklar (`Z M`, port 1–4 × sıra 00–04): cevap
   /// veren kapaklar. Client tanımında göz kaydı yoksa kullanılır.
   Future<List<FlowCell>> probeCubicLids(int address, int row) async {
-    final manager = ManagementCard(addressIndex: address);
-    final cells = <FlowCell>[];
-    for (var index = 0; index <= 4; index++) {
-      for (var port = 1; port <= 4; port++) {
-        String? response;
-        try {
-          response = await ops.sendRawCommand(
-            manager: manager,
-            targetRow: row,
-            commandPayload: CommandBuilder.buildCubicCommand(action: DeviceAction.ping, port: port, row: index),
-          );
-        } catch (_) {}
-        if (response != null && response.contains('ok')) {
-          cells.add(
-            FlowCell(
-              label: 'Kapak port $port · sıra ${index.toString().padLeft(2, '0')}',
-              address: DrawerAddress(row: row, port: port, index: index, isCubic: true),
-            ),
-          );
-        }
-      }
-    }
+    final lids = await probeCubicLidAddresses(ops, address: address, row: row);
     await _release(address);
-    return cells;
+    return [
+      for (final l in lids)
+        FlowCell(
+          label: 'Kapak port ${l.port} · sıra ${l.index.toString().padLeft(2, '0')}',
+          address: DrawerAddress(row: row, port: l.port, index: l.index, isCubic: true),
+        ),
+    ];
   }
 
   /// Kübik çekmece: ana kilit → çekme → kapaklar → kapanış.
