@@ -165,4 +165,5 @@ Seçim bırakılmazsa, aynı satırı seçili tutan başka bir kabin de komutu u
 
 - `T` portları 1–5 için "yalnızca aç/kapat" notu doğrulanmalı.
 - Kübik `a` / `tt` alanlarının anlamı (göz / slave sırası) ve 20 gözlü kübiğin `V` tip cevabı sahada doğrulanmalı.
+  - **Sahada (17.11.2026):** Master kabinde satır 01 ve 10'daki iki kübik de `V` için `.01,` döndü. `Z M` yoklamasında ikisinde de sıra `00` (port 1–4) `hz`, sıra `01`–`04` `ok` cevabı verdi; yani ikisi de 4 slave × 4 göz = 16 göz görünüyor. Biri 20 gözlü olduğuna göre ya 5. slave (sıra `00`) cevap vermiyor ya da 5. slave başka bir adresle konuşuyor. Doğrulanmalı (#267).
 - Orijinal notta "checksum hatası nedeniyle geçersiz" diye listelenen örnek komutlar (`:TO1308;`, `:Z01019;` …) bu dokümana alınmadı; yukarıdaki örnekler koddaki formülle hesaplanmıştır.

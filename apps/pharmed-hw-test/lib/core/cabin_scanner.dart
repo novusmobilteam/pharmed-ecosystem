@@ -92,8 +92,17 @@ class CabinScanner {
         // kübik aynı görünür). Göz sayısı kübik kartlarından (slave) yoklanır.
         if (type?.isKubik ?? false) {
           onProgress?.call('$letter satır $rowLabel: kübik kapaklar yoklanıyor (sıra 00–04 × port 1–4)…');
-          final lids = await probeCubicLidAddresses(ops, address: address, row: card.rowAddress);
-          log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(lids)}');
+          final probe = await probeCubic(ops, address: address, row: card.rowAddress);
+          final lids = probe.lids;
+          log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(probe)}');
+          if (probe.silentSlaves.isNotEmpty && lids.isNotEmpty) {
+            // #267: sessiz slave 16 gözlü kübikte normaldir; 20 gözlüde 5. slave sorunudur.
+            log.add(
+              '$letter satır $rowLabel: sıra ${probe.silentSlaves.map((i) => i.toString().padLeft(2, '0')).join(', ')} '
+              "slave'i cevap vermedi (hz). Çekmece ${lids.length + 4 * probe.silentSlaves.length} gözlüyse "
+              "o slave kartın bağlantısı / adresi kontrol edilmeli.",
+            );
+          }
           if (lids.isEmpty) {
             probeProblem = 'Kübik kapaklar cevap vermedi (Z M); göz sayısı tanımdan';
           } else {
