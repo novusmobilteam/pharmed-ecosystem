@@ -208,10 +208,21 @@ class SerumHardware {
             }
             return false;
           }, const Duration(seconds: 90));
-          final detail = returned
-              ? (seenPulled ? 'Avadanlık çekildi ve yerine itildi' : 'Kart boşa döndü ama "çekildi" hiç görülmedi')
-              : (seenActive ? 'Avadanlık yerine itilmedi — son: $last' : 'Kart kilidi açmadı — son: $last');
-          return (returned, detail);
+          if (returned) {
+            return (
+              true,
+              seenPulled ? 'Avadanlık çekildi ve yerine itildi' : 'Kart boşa döndü ama "çekildi" hiç görülmedi',
+            );
+          }
+          // #257: "yerine itilmedi" yalnızca gerçekten çekildiyse doğrudur.
+          final why = isCancelled() ? 'Durduruldu' : 'Zaman aşımı (90 sn)';
+          final detail = seenPulled
+              ? 'Avadanlık çekildi ama yerine itilmedi'
+              : seenActive
+              ? 'Kart kilidi açık bildirdi ama avadanlık hiç çekilmedi — kilit fiziksel olarak açılmamış olabilir '
+                    '(Gelişmiş araçlar → Tek port teşhisi)'
+              : 'Kart kilidi açmadı';
+          return (false, '$why: $detail — son: $last');
         }) &&
         await step(TrayFlowStep.waitLidClose, () async {
           String? last;
