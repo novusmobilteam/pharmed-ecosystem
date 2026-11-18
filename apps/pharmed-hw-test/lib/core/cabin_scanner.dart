@@ -87,6 +87,7 @@ class CabinScanner {
         var type = config == null ? null : typeOf(config);
         int? compartmentCount = type?.compartmentCount;
         String? probeProblem;
+        var cubicLids = const <CubicLidAddress>[];
 
         // #259: kübik çekmece kartı standart tip cevabı verir (16 ve 20 gözlü
         // kübik aynı görünür). Göz sayısı kübik kartlarından (slave) yoklanır:
@@ -95,6 +96,7 @@ class CabinScanner {
           onProgress?.call('$letter satır $rowLabel: kübik sıra kartları ve gözler yoklanıyor (Z M)…');
           final probe = await probeCubic(ops, address: address, row: card.rowAddress);
           final lids = probe.lids;
+          cubicLids = lids;
           log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(probe)}');
           if (lids.isEmpty) {
             probeProblem = 'Kübik sıra kartları cevap vermedi (Z M); göz sayısı tanımdan';
@@ -138,10 +140,11 @@ class CabinScanner {
                 ? null
                 : (config.drawerType != null || type == null ? config : config.copyWith(drawerType: type)),
             // Client taramasıyla aynı: birim dozda N göz (compartmentNo 1..N).
-            // Kübik kapak adresleri taramada bilinmez; test sırasında yoklanır.
+            // Kübikte gözler karttan yoklanır ([cubicLids]).
             cells: type == null || type.isKubik
                 ? const []
                 : [for (var i = 0; i < (type.compartmentCount ?? 0); i++) DrawerUnit(compartmentNo: i + 1)],
+            cubicLids: cubicLids,
           ),
         );
       }
