@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../core/cubic_probe.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
 import '../../widgets/address_picker.dart';
@@ -17,14 +18,15 @@ class _CardRow {
   final List<DrawerConfig> matches;
   final Map<int, DrawerType> types;
 
-  /// [tt (00-04)][port (1-4)] → ham cevap. null: henüz yoklanmadı.
-  List<List<String?>>? cubicProbe;
+  /// Kübik yoklama ham cevapları: (sıra kartı, göz) → cevap (#267).
+  /// null: henüz yoklanmadı.
+  Map<CubicLidAddress, String?>? cubicProbe;
   bool probing = false;
 
   DrawerType? typeOf(DrawerConfig c) => types[c.drawerTypeId];
 
   int get cubicActiveCount =>
-      cubicProbe?.expand((r) => r).where((r) => r != null && r.contains('ok')).length ?? 0;
+      cubicProbe?.entries.where((e) => e.value != null && e.value!.contains('ok')).length ?? 0;
 }
 
 /// Seçilen yönetim kartındaki kontrol kartlarını client'taki taramayla aynı kodla
@@ -121,35 +123,34 @@ class _CardScanPageState extends ConsumerState<CardScanPage> {
 
   Future<void> _probeCubic(_CardRow row) async {
     final ops = ref.read(cabinOpsProvider);
-    final manager = ManagementCard(addressIndex: _address);
-    setState(() => row.probing = true);
-    final grid = List.generate(5, (_) => List<String?>.filled(4, null));
-    for (var tt = 0; tt <= 4; tt++) {
-      for (var port = 1; port <= 4; port++) {
-        String? response;
-        try {
-          response = await ops.sendRawCommand(
-            manager: manager,
-            targetRow: row.card.rowAddress,
-            commandPayload: CommandBuilder.buildCubicCommand(action: DeviceAction.ping, port: port, row: tt),
-          );
-        } catch (e) {
-          response = 'hata';
-        }
-        grid[tt][port - 1] = response?.trim() ?? '-';
-        if (mounted) setState(() => row.cubicProbe = grid.map((r) => [...r]).toList());
-      }
-    }
+    setState(() {
+      row.probing = true;
+      row.cubicProbe = {};
+    });
+    final probe = await probeCubic(
+      ops,
+      address: _address,
+      row: row.card.rowAddress,
+      onResponse: (at, response) {
+        if (mounted) setState(() => row.cubicProbe = {...?row.cubicProbe, at: response});
+      },
+    );
     await _release();
-    row.cubicProbe = grid;
+    row.cubicProbe = probe.raw;
     ref
         .read(testReportProvider)
         .add(
           'Kübik yoklama (${addressLabel(_address)} / satır ${row.card.rowAddress})',
           StepResult.info,
           detail: [
-            '${row.cubicActiveCount} göz "ok" döndü',
-            for (var tt = 0; tt <= 4; tt++) 'sıra ${tt.toString().padLeft(2, '0')}: ${grid[tt].join('  ')}',
+            describeCubicProbe(probe),
+            for (var card = 1; card <= cubicMaxCard; card++)
+              if (probe.raw.keys.any((k) => k.card == card))
+                'kart $card: ${[
+                  for (var lid = 1; lid <= cubicMaxLid; lid++)
+                    if (probe.raw.containsKey((card: card, lid: lid)))
+                      '${lid.toString().padLeft(2, '0')}=${probe.raw[(card: card, lid: lid)] ?? '-'}',
+                ].join('  ')}',
           ].join('\n'),
         );
     if (mounted) setState(() => row.probing = false);
@@ -262,26 +263,36 @@ class _CardTile extends StatelessWidget {
           if (row.cubicProbe != null) ...[
             const SizedBox(height: 8),
             Table(
-              defaultColumnWidth: const FixedColumnWidth(90),
+              defaultColumnWidth: const FixedColumnWidth(64),
               border: TableBorder.all(color: MedColors.border),
               children: [
                 TableRow(
                   children: [
-                    const Padding(padding: EdgeInsets.all(4), child: Text('sıra \\ port')),
-                    for (var p = 1; p <= 4; p++) Padding(padding: const EdgeInsets.all(4), child: Text('port $p')),
+                    const Padding(padding: EdgeInsets.all(4), child: Text('kart \\ göz')),
+                    for (var lid = 1; lid <= cubicMaxLid; lid++)
+                      Padding(padding: const EdgeInsets.all(4), child: Text(lid.toString().padLeft(2, '0'))),
                   ],
                 ),
-                for (var tt = 0; tt < row.cubicProbe!.length; tt++)
+                for (var card = 1; card <= cubicMaxCard; card++)
                   TableRow(
                     children: [
-                      Padding(padding: const EdgeInsets.all(4), child: Text(tt.toString().padLeft(2, '0'))),
-                      for (final cell in row.cubicProbe![tt])
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          color: cell == null
-                              ? null
-                              : (cell.contains('ok') ? TestStatus.passed.colors.background : TestStatus.failed.colors.background),
-                          child: Text(cell ?? '…', style: mono),
+                      Padding(padding: const EdgeInsets.all(4), child: Text('kart $card')),
+                      for (var lid = 1; lid <= cubicMaxLid; lid++)
+                        Builder(
+                          builder: (_) {
+                            final at = (card: card, lid: lid);
+                            final probed = row.cubicProbe!.containsKey(at);
+                            final cell = row.cubicProbe![at];
+                            return Container(
+                              padding: const EdgeInsets.all(4),
+                              color: !probed
+                                  ? null
+                                  : (cell != null && cell.contains('ok')
+                                        ? TestStatus.passed.colors.background
+                                        : TestStatus.failed.colors.background),
+                              child: Text(probed ? (cell ?? '-') : '', style: mono),
+                            );
+                          },
                         ),
                     ],
                   ),

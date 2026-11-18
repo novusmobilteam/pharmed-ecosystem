@@ -259,7 +259,7 @@ class _TestsPageState extends ConsumerState<TestsPage> {
       status = await runner.runMobileDrawer(flow, address: s.addressIndex, port: s.port!);
     } else if (s.kind == ScenarioKind.cubicDrawer) {
       if (cells.isEmpty) {
-        if (mounted) setState(() => _liveStep = 'Kapaklar karttan yoklanıyor (port 1–4 × sıra 00–04)…');
+        if (mounted) setState(() => _liveStep = 'Gözler karttan yoklanıyor (sıra kartları 1–8 × göz 01–08)…');
         cells = await runner.probeCubicLids(s.addressIndex, s.row);
         notes.add('Kapaklar karttan yoklandı: ${cells.length} kapak cevap verdi');
         if (mounted) setState(() => _liveStep = null);

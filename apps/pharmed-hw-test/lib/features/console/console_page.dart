@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../core/cubic_probe.dart';
 import '../../core/providers.dart';
 import '../../core/report.dart';
 import '../../widgets/common.dart';
@@ -45,7 +46,8 @@ class _ConsolePageState extends ConsumerState<ConsolePage> {
       final command = switch (_kind) {
         _Kind.management => CommandBuilder.buildManagementCommand(addressIndex: _address, row: _int(_row)),
         _Kind.drawer => CommandBuilder.buildDrawerCommand(action: _action, port: _int(_port), drawer: _int(_value)),
-        _Kind.cubic => CommandBuilder.buildCubicCommand(action: _action, port: _int(_port), row: _int(_value)),
+        // #267: a = sıra kartı (1–9), tt = göz (01–99).
+        _Kind.cubic => buildCubicFrame(_action, card: _int(_port), lid: _int(_value)),
         _Kind.raw => _raw.text.trim(),
       };
       if (command.isEmpty) return (command: null, error: 'Komut yazın.');
@@ -124,8 +126,8 @@ class _ConsolePageState extends ConsumerState<ConsolePage> {
                         ],
                         onChanged: (v) => setState(() => _action = v ?? DeviceAction.status),
                       ),
-                      _field(_kind == _Kind.drawer ? 'Port (1–8)' : 'Port (1–4)', _port, 120),
-                      _field(_kind == _Kind.drawer ? 'Göz (00–16, 20)' : 'Sıra (00–04)', _value, 140),
+                      _field(_kind == _Kind.drawer ? 'Port (1–8)' : 'Sıra kartı (1–9)', _port, 140),
+                      _field(_kind == _Kind.drawer ? 'Göz (00–16, 20)' : 'Göz (01–99)', _value, 140),
                     ],
                     if (_kind == _Kind.raw) _field('Komut (ör. :Ya000;)', _raw, 280),
                     _field('Zaman aşımı (ms)', _timeout, 140),
