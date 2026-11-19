@@ -48,4 +48,4 @@ CI: Actions → "Windows Build" → uygulama `hw-test` (ya da `all`). Release'te
 - Mock donanım yoktur; uygulama her zaman gerçek seri port kullanır. macOS'ta port listesi boş görünebilir.
 - Parmak izi SDK DLL'leri build'de `packages/pharmed_hardware/third_party/`'den exe'nin yanına kopyalanır. Kamera testi için ffmpeg ayrıca konur (CI paketlemez).
 - Arayüz yalnız Türkçedir (saha aracı).
-- Pencere sabit boyutludur (1280×720), ekranın ortasında açılır. Boyutlandırma, büyütme ve tam ekran yoktur; yalnızca küçült ve kapat vardır (Windows ve macOS).
+- Pencere boyutlandırılabilir ve büyütülebilir (#272). Windows'ta büyütülmüş açılır; macOS'ta 1280×720 ile ortada açılır. En küçük boyut 1024×640'tır.

@@ -136,11 +136,10 @@ bool Win32Window::Create(const std::wstring& title,
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / 96.0;
 
-  // Saha test aracı sabit boyutlu çalışır: kenardan boyutlandırma
-  // (WS_THICKFRAME) ve büyüt düğmesi (WS_MAXIMIZEBOX) yok; yalnızca küçült ve
-  // kapat kalır. Büyüt düğmesi olmadığı için başlığa çift tıklama ve Win+Yukarı
-  // da pencereyi büyütmez.
-  const DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+  // Normal pencere (#272): boyutlandırılabilir ve büyütülebilir. Görsel
+  // çekmece testi gibi ekranlar için sabit 1280×720 küçük kalıyordu. En küçük
+  // boyut WM_GETMINMAXINFO'da sınırlanır; açılışta büyütülür (Show).
+  const DWORD style = WS_OVERLAPPEDWINDOW;
 
   HWND window = CreateWindow(
       window_class, title.c_str(), style,
@@ -174,7 +173,8 @@ bool Win32Window::Create(const std::wstring& title,
 }
 
 bool Win32Window::Show() {
-  return ShowWindow(window_handle_, SW_SHOWNORMAL);
+  // Açılışta ekranı kaplar; teknisyen isterse küçültüp boyutlandırabilir.
+  return ShowWindow(window_handle_, SW_SHOWMAXIMIZED);
 }
 
 // static
@@ -203,6 +203,17 @@ Win32Window::MessageHandler(HWND hwnd,
                             WPARAM const wparam,
                             LPARAM const lparam) noexcept {
   switch (message) {
+    case WM_GETMINMAXINFO: {
+      // En küçük pencere: 1024×640 (DPI'a göre ölçeklenir); daha küçükte
+      // ekranlar taşar.
+      const double scale = FlutterDesktopGetDpiForMonitor(
+                               MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST)) /
+                           96.0;
+      auto* info = reinterpret_cast<MINMAXINFO*>(lparam);
+      info->ptMinTrackSize.x = Scale(1024, scale);
+      info->ptMinTrackSize.y = Scale(640, scale);
+      return 0;
+    }
     case WM_DESTROY:
       window_handle_ = nullptr;
       Destroy();
