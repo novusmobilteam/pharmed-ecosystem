@@ -5,7 +5,10 @@
 // kendiliğinden yapılır. Satır seçimi, ana kilidi açma ve çekilmesini
 // bekleme gibi ön adımlar teknisyenden istenmez.
 //
-//   • Kübik    → satır = sıra kartı (`a`), sütun = göz (`tt`) — #267.
+//   • Kübik    → sütun = sıra kartı (`a`, soldan sağa), satır = göz (`tt`,
+//                alttan üste; sol en alt = sütun 1 · satır 1) — #267, #274.
+//                5 kartlı kübikte sütun 4 ↔ 5 bağlantısı çapraz olabilir
+//                (sahadaki çekmece); seçenekle yönetilir.
 //                Ana kilit açık değilse önce açılır ve çekilmesi beklenir;
 //                sonra :ZO → `ac` → `kp`. Teknisyen açılan kapağın görseldeki
 //                göz olup olmadığını işaretler (kart/göz ↔ yerleşim eşlemesi).
@@ -78,7 +81,12 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
   bool _cancel = false;
 
   /// Son açılan kübik göz: teknisyenin eşleme gözlemi bekleniyor.
-  ({_DrawerRef drawer, CubicLidAddress lid})? _awaitingMapping;
+  ({_DrawerRef drawer, CubicLidAddress lid, String place})? _awaitingMapping;
+
+  /// Çekmece bazında "sütun 4 ↔ 5 çapraz bağlantı" seçeneği (varsayılan açık).
+  final Map<String, bool> _swap45 = {};
+
+  bool _swapOf(_DrawerRef d) => _swap45[d.key] ?? true;
 
   ICabinOperationService get _ops => ref.read(cabinOpsProvider);
   TestReport get _report => ref.read(testReportProvider);
@@ -216,9 +224,9 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
     );
   });
 
-  Future<void> _openLid(_DrawerRef d, CubicLidAddress lid) {
+  Future<void> _openLid(_DrawerRef d, CubicLidAddress lid, {required String place}) {
     final cell = 'k${lid.card}g${lid.lid}';
-    final label = 'Kart ${lid.card} · göz ${_two(lid.lid)}';
+    final label = '$place (kart ${lid.card} · göz ${_two(lid.lid)})';
     final frame = buildCubicFrame(DeviceAction.open, card: lid.card, lid: lid.lid);
     return _guard(cell, () async {
       final manager = ManagementCard(addressIndex: d.address);
@@ -240,6 +248,18 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
           failure = null;
           break;
         } on CubicLidException catch (e) {
+          // #274: ht → çekmece tam açık değil. Ana kilit yeniden açılır,
+          // çekilmesi beklenir ve bir kez daha denenir.
+          if (e.failure == CubicLidFailure.drawerNotOpen && attempt == 0 && !_cancel) {
+            _report.add('Görsel test — ${d.title} $label', StepResult.info, detail: '$frame → ht: çekmece yeniden açılıyor');
+            if (mounted) setState(() => _master.remove(d.key));
+            if (!await _openMaster(d)) {
+              failure = 'çekmece tam açık değil (ht), yeniden açılamadı';
+              break;
+            }
+            _setLive('$label açılıyor ($frame)…');
+            continue;
+          }
           final max = e.failure == CubicLidFailure.slaveNoResponse ? 2 : 1;
           failure = switch (e.failure) {
             CubicLidFailure.drawerNotOpen => 'çekmece tam açık değil (ht)',
@@ -270,7 +290,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
         return;
       }
       _setCell(d, cell, TestStatus.running, seenOpen ? 'Açık — kapatın' : 'Sensör açık görmedi — kapatın');
-      if (mounted) setState(() => _awaitingMapping = (drawer: d, lid: lid));
+      if (mounted) setState(() => _awaitingMapping = (drawer: d, lid: lid, place: place));
 
       _setLive('$label: kapağı KAPATIN — kapalı (kp) bekleniyor…');
       final closed = await _await<CubicLidStatus>(
@@ -300,7 +320,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
     final m = _awaitingMapping;
     if (m == null) return;
     _report.add(
-      'Görsel test — ${m.drawer.title} kart ${m.lid.card} · göz ${_two(m.lid.lid)} yerleşimi',
+      'Görsel test — ${m.drawer.title} ${m.place} (kart ${m.lid.card} · göz ${_two(m.lid.lid)}) yerleşimi',
       correct ? StepResult.ok : StepResult.fail,
       detail: correct ? 'Görseldeki göz açıldı' : 'BAŞKA bir kapak açıldı — hangisi olduğunu rapora not edin',
     );
@@ -456,8 +476,14 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
   Widget _cubicPanel(_DrawerRef d, bool canAct) {
     final lids = _lidsOf(d);
     final cards = (lids.map((l) => l.card).toSet().toList()..sort());
+    final cardCount = cards.length;
+    final swap = _swapOf(d);
     final master = _master[d.key];
     final fromClient = _probed[d.key] == null && d.unit.cubicLids.isEmpty;
+    // Sütun c → komut gönderilen kart; satır sayısı en çok göz taşıyan kart.
+    final columns = [for (var c = 1; c <= cardCount; c++) c];
+    int cardOf(int column) => cubicCardForColumn(cards[column - 1], swap45: swap, cardCount: cardCount);
+    final rows = lids.isEmpty ? 0 : lids.map((l) => l.lid).reduce((a, b) => a > b ? a : b);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -485,6 +511,12 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
               icon: const Icon(Icons.radar),
               label: const Text('Gözleri karttan yokla'),
             ),
+            if (cardCount >= 5)
+              FilterChip(
+                label: const Text('Sütun 4 ↔ 5 bağlantısı çapraz'),
+                selected: swap,
+                onSelected: _busy != null ? null : (v) => setState(() => _swap45[d.key] = v),
+              ),
           ],
         ),
         const SizedBox(height: 8),
@@ -492,8 +524,9 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
           fromClient
               ? 'Gözler client tanımından (a = compartmentNo, tt = orderNo) — eşleme sahada doğrulanmadı; '
                     'emin olmak için "Gözleri karttan yokla".'
-              : 'Satırlar sıra kartları (a), sütunlar o karttaki gözler (tt). Bir göze dokunun: ana kilit açık '
-                    'değilse önce o açılır, sonra kapak açılır ve kapanması beklenir.',
+              : 'Sütunlar sıra kartları (soldan sağa), satırlar gözler (alttan üste; sol en alt = sütun 1 · satır 1). '
+                    'Bir göze dokunun: ana kilit açık değilse önce o açılır, sonra kapak açılır ve kapanması beklenir.'
+                    '${cardCount >= 5 && swap ? ' Sütun 4 → kart 5, sütun 5 → kart 4.' : ''}',
           style: hintStyle(),
         ),
         const SizedBox(height: 12),
@@ -503,28 +536,54 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
           _drawerFrame(
             Column(
               children: [
-                for (final card in cards)
+                for (var r = rows; r >= 1; r--)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Row(
                       children: [
-                        SizedBox(width: 64, child: Text('Kart $card', style: MedTextStyles.monoSm(color: MedColors.text2))),
-                        for (final lid in lids.where((l) => l.card == card))
+                        SizedBox(width: 56, child: Text('Satır $r', style: monoStyle(fontSize: 11, color: MedColors.text2))),
+                        for (final c in columns)
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(right: 6),
-                              child: _cellTile(
-                                d,
-                                'k${lid.card}g${lid.lid}',
-                                title: 'Göz ${_two(lid.lid)}',
-                                subtitle: buildCubicFrame(DeviceAction.open, card: lid.card, lid: lid.lid),
-                                onTap: canAct ? () => _openLid(d, lid) : null,
+                              child: Builder(
+                                builder: (_) {
+                                  final card = cardOf(c);
+                                  final lid = (card: card, lid: r);
+                                  if (!lids.contains(lid)) return const SizedBox(height: 80);
+                                  final place = 'Sütun $c · satır $r';
+                                  return _cellTile(
+                                    d,
+                                    'k${lid.card}g${lid.lid}',
+                                    title: 'S$c · R$r',
+                                    subtitle:
+                                        'kart ${lid.card} · göz ${_two(lid.lid)}\n'
+                                        '${buildCubicFrame(DeviceAction.open, card: lid.card, lid: lid.lid)}',
+                                    onTap: canAct ? () => _openLid(d, lid, place: place) : null,
+                                  );
+                                },
                               ),
                             ),
                           ),
                       ],
                     ),
                   ),
+                Row(
+                  children: [
+                    const SizedBox(width: 56),
+                    for (final c in columns)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: Text(
+                            'Sütun $c${cardOf(c) != c ? ' → kart ${cardOf(c)}' : ''}',
+                            textAlign: TextAlign.center,
+                            style: monoStyle(fontSize: 11, color: cardOf(c) != c ? MedColors.amber : MedColors.text2),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -535,10 +594,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text(
-                'Kart ${_awaitingMapping!.lid.card} · göz ${_two(_awaitingMapping!.lid.lid)}: '
-                'görseldeki göz mü açıldı?',
-              ),
+              Text('${_awaitingMapping!.place}: görseldeki göz mü açıldı?'),
               ActionChip(label: const Text('Evet, doğru kapak'), onPressed: () => _recordMapping(true)),
               ActionChip(label: const Text('Hayır, başka kapak'), onPressed: () => _recordMapping(false)),
             ],
@@ -625,7 +681,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: SizedBox(
-            height: 64,
+            height: 80,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -635,7 +691,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
                     if (state != null || running) Icon(status.icon, size: 16, color: status.color),
                   ],
                 ),
-                if (subtitle != null) Text(subtitle, style: MedTextStyles.monoXs(color: MedColors.text3)),
+                if (subtitle != null) Text(subtitle, maxLines: 2, style: MedTextStyles.monoXs(color: MedColors.text3)),
                 const Spacer(),
                 if (state != null)
                   Text(state.text, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: status.color)),
