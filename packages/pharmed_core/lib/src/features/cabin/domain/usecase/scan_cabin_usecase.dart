@@ -110,13 +110,11 @@ class ScanCabinUseCase {
         //   if (isSerumHardware) continue;
         // }
 
-        final DrawerConfig? config = allConfigs.cast<DrawerConfig?>().firstWhere(
+        DrawerConfig? config = allConfigs.cast<DrawerConfig?>().firstWhere(
           (c) => c?.deviceTypeNo == typeNo,
           orElse: () => null,
         );
-        final DrawerType? type = config == null
-            ? null
-            : allTypes.cast<DrawerType?>().firstWhere((t) => t?.id == config.drawerTypeId, orElse: () => null);
+        DrawerType? type = config == null ? null : _typeOf(config, allTypes);
 
         // Her kart için ham tip cevabı ve eşleşme sonucu kaydedilir — çekmecenin
         // yanlış tipte tanınması (ör. 20 gözlü kübik → 16) loglardan teşhis edilebilsin.
@@ -140,6 +138,23 @@ class ScanCabinUseCase {
           continue;
         }
         MedLogger.info(unit: 'SW-UNIT-SCAN', swreq: 'SWREQ-SCAN-002', message: 'Kontrol kartı eşleşti', context: cardLog);
+
+        // [#275] Kübik çekmece kartı 16 ve 20 gözlüde aynı tip cevabını
+        // verir (`.01,`). Göz sayısı sıra kartlarından yoklanır; tanımın göz
+        // sayısı tutmuyorsa göz sayısı uyan KÜBİK tanım seçilir (20 gözlü →
+        // POST'ta 20 gözlü tanımın drawrDetailId'si gider).
+        if (type.isKubik) {
+          final resolved = await _resolveCubicConfig(
+            manager: manager,
+            row: card.rowAddress,
+            matched: config,
+            matchedType: type,
+            allConfigs: allConfigs,
+            allTypes: allTypes,
+          );
+          config = resolved.config;
+          type = resolved.type;
+        }
 
         final slot = DrawerSlot(
           address: card.rowAddress.toString().padLeft(2, '0'),
@@ -201,6 +216,90 @@ class ScanCabinUseCase {
       groups.length == 1 &&
       groups.single.isSerum &&
       int.tryParse(groups.single.slot.address ?? '') == DeviceConstants.serumSlaveRow;
+
+  DrawerType? _typeOf(DrawerConfig config, List<DrawerType> allTypes) =>
+      allTypes.cast<DrawerType?>().firstWhere((t) => t?.id == config.drawerTypeId, orElse: () => null);
+
+  /// [#275] Kübik çekmecenin göz sayısını karttan yoklar ve tanımı ona göre
+  /// seçer. Yoklama boş dönerse ya da uyan tanım yoksa [matched] korunur
+  /// (eski davranış) ve loga uyarı düşülür.
+  Future<({DrawerConfig config, DrawerType type})> _resolveCubicConfig({
+    required ManagementCard manager,
+    required int row,
+    required DrawerConfig matched,
+    required DrawerType matchedType,
+    required List<DrawerConfig> allConfigs,
+    required List<DrawerType> allTypes,
+  }) async {
+    final probe = await probeCubicLids(_cabinOperationService, manager: manager, row: row);
+    await _releaseRow(manager.addressIndex);
+
+    final probeLog = {
+      'satir': row,
+      'yoklananGoz': probe.lidCount,
+      'kartBasinaGoz': probe.lidsPerCard.toString(),
+      'tanimGoz': matchedType.compartmentCount,
+      'configId': matched.id,
+    };
+
+    if (probe.lidCount == 0) {
+      MedLogger.warn(
+        unit: 'SW-UNIT-SCAN',
+        swreq: 'SWREQ-SCAN-003',
+        message: 'Kübik sıra kartları cevap vermedi — göz sayısı tanımdan alındı',
+        context: probeLog,
+      );
+      return (config: matched, type: matchedType);
+    }
+    if (probe.lidCount == matchedType.compartmentCount) {
+      MedLogger.info(unit: 'SW-UNIT-SCAN', swreq: 'SWREQ-SCAN-003', message: 'Kübik göz sayısı tanımla uyumlu', context: probeLog);
+      return (config: matched, type: matchedType);
+    }
+
+    // Göz sayısı uyan kübik tanım: önce aynı cihaz tip numarası, sonra herhangi biri.
+    final candidates = [
+      for (final c in allConfigs)
+        if (_typeOf(c, allTypes) case final t? when t.isKubik && t.compartmentCount == probe.lidCount) (config: c, type: t),
+    ]..sort((a, b) {
+        final sa = a.config.deviceTypeNo == matched.deviceTypeNo ? 0 : 1;
+        final sb = b.config.deviceTypeNo == matched.deviceTypeNo ? 0 : 1;
+        return sa.compareTo(sb);
+      });
+
+    if (candidates.isEmpty) {
+      MedLogger.warn(
+        unit: 'SW-UNIT-SCAN',
+        swreq: 'SWREQ-SCAN-003',
+        message: 'Yoklanan kübik göz sayısına uyan tanım yok — eşleşen tanım kullanılacak',
+        context: probeLog,
+      );
+      return (config: matched, type: matchedType);
+    }
+
+    final chosen = candidates.first;
+    MedLogger.info(
+      unit: 'SW-UNIT-SCAN',
+      swreq: 'SWREQ-SCAN-003',
+      message: 'Kübik tanımı yoklanan göz sayısına göre değiştirildi',
+      context: {
+        ...probeLog,
+        'yeniConfigId': chosen.config.id,
+        'yeniTipNo': chosen.config.deviceTypeNo,
+        'yeniTip': chosen.type.name,
+        'adaySayisi': candidates.length,
+      },
+    );
+    return chosen;
+  }
+
+  Future<void> _releaseRow(int managerAddress) async {
+    try {
+      await _serialService.sendAndReceive(
+        CommandBuilder.buildManagementCommand(addressIndex: managerAddress, row: 0),
+        timeout: const Duration(milliseconds: 300),
+      );
+    } catch (_) {}
+  }
 
   Future<List<DrawerConfig>?> _loadDrawerConfigs() async {
     final fresh = await _cabinRepository.getDrawerConfigs(forceRefresh: true);

@@ -172,7 +172,7 @@ class GetCabinVisualizerDataUseCase {
 
       if (isKubik && group.isReturnDrawer && group.units.length > returnCellCount) {
         final normalUnits = group.units.sublist(0, group.units.length - returnCellCount);
-        final orderedNormalUnits = kubikUnitsInVisualOrder(normalUnits);
+        final orderedNormalUnits = kubikUnitsInVisualOrder(normalUnits, columnCount: colCount);
 
         return KubicSlotVisual(
           slotId: slot.id ?? 0,
@@ -182,13 +182,15 @@ class GetCabinVisualizerDataUseCase {
         );
       }
 
-      final orderedCells = isKubik ? kubikUnitsInVisualOrder(group.units) : group.units;
+      // #275: kübik sütun = sıra kartı (16 göz → 4, 20 göz → 5).
+      final kubikColumns = isKubik ? kubikColumnCount(group.units) : colCount;
+      final orderedCells = isKubik ? kubikUnitsInVisualOrder(group.units, columnCount: kubikColumns) : group.units;
 
       if (isKubik) {
         return KubicSlotVisual(
           slotId: slot.id ?? 0,
           cells: List.filled(orderedCells.length, DrawerStatus.empty),
-          columnCount: colCount,
+          columnCount: kubikColumns,
         );
       }
 

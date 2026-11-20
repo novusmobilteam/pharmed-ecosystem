@@ -103,17 +103,23 @@ class CommandBuilder {
     return ':$_drawerPrefix${action.code}$portStr$drawerStr$checksum;';
   }
 
-  /// Kübik kontrol komutu oluşturur
+  /// Kübik kontrol komutu oluşturur: `:Zkattc;`
+  ///
+  /// [port] = `a`: SIRA KARTI no (slave, sahada 1–5 — 16 göz = 4 kart,
+  /// 20 göz = 5 kart). [row] = `tt`: o karttaki GÖZ no (sahada 01–04;
+  /// `00` geçerli göz değildir). hw-test ve eski test uygulamasıyla sahada
+  /// doğrulandı (#267, #275). Aralık alan genişliği kadardır (a tek hane,
+  /// tt iki hane); anlamlı aralık taramadaki `Z M` yoklamasıyla bulunur.
   static String buildCubicCommand({
     required DeviceAction action,
     required int port,
     required int row,
   }) {
-    if (port < 1 || port > 4) {
-      throw ArgumentError('Kübik portu 1-4 arasında olmalı');
+    if (port < 1 || port > 9) {
+      throw ArgumentError('Kübik sıra kartı 1-9 arasında olmalı');
     }
-    if (row < 0 || row > 4) {
-      throw ArgumentError('Kübik sıra no 0-4 arasında olmalı');
+    if (row < 0 || row > 99) {
+      throw ArgumentError('Kübik göz no 0-99 arasında olmalı');
     }
 
     final String portStr = port.toString();

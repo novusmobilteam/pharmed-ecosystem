@@ -234,7 +234,9 @@ class _DrawerView extends StatelessWidget {
     // CabinOverviewPanel'in kullandığı aynı dönüşüm burada da uygulanmalı,
     // aksi halde grid sol-sağ/üst-alt ayna görünür (bkz. kubik grid
     // transpozisyon bug'ı, hardware-services skill).
-    final visualUnits = isKubik ? kubikUnitsInVisualOrder(group.units, columnCount: _crossAxisCount) : group.units;
+    // #275: kübik sütun = sıra kartı (16 göz → 4, 20 göz → 5; iade kutulu → 4).
+    final int cols = isKubik ? kubikGroupColumnCount(group) : _crossAxisCount;
+    final visualUnits = isKubik ? kubikUnitsInVisualOrder(group.units, columnCount: cols) : group.units;
 
     // İade çekmecesi: son sütun fiziksel olarak TEK bir kutuya birleşiyor
     // (bkz. MasterCabinDeviceVisual._KubikPreviewGrid ile aynı fiziksel
@@ -243,7 +245,7 @@ class _DrawerView extends StatelessWidget {
     // hibrit modeli). Bu yüzden o hücrelerde seçim/tıklama YAPILAMAZ —
     // sadece görsel bir "İade" bloğu olarak gösterilir.
     final bool isReturnDrawer = isKubik && group.isReturnDrawer;
-    final int normalColumnCount = isReturnDrawer ? (_crossAxisCount - 1).clamp(1, _crossAxisCount) : _crossAxisCount;
+    final int normalColumnCount = isReturnDrawer ? (cols - 1).clamp(1, cols) : cols;
 
     List<DrawerUnit> normalUnits = visualUnits;
     Set<int> returnUnitIds = const {};
@@ -253,7 +255,7 @@ class _DrawerView extends StatelessWidget {
       final returned = <DrawerUnit>[];
       for (var i = 0; i < visualUnits.length; i++) {
         final unit = visualUnits.elementAt(i);
-        final isLastColumn = (i % _crossAxisCount) == _crossAxisCount - 1;
+        final isLastColumn = (i % cols) == cols - 1;
         if (isLastColumn) {
           returned.add(unit);
         } else {
@@ -349,7 +351,7 @@ class _DrawerView extends StatelessWidget {
 
               if (!isReturnDrawer) return normalGrid;
 
-              final rowCount = (group.compartmentCount / _crossAxisCount).ceil();
+              final rowCount = (group.compartmentCount / cols).ceil();
               final gridHeight = rowCount * _cellHeight + (rowCount - 1) * _spacing;
 
               return Row(
