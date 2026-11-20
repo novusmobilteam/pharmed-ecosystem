@@ -22,7 +22,10 @@ class _DrawerDetailPanel extends StatelessWidget {
               child: _InfoField(
                 label: context.l10n.cabinDesign_detail_typeLabel,
                 value: group.isKubik
-                    ? context.l10n.cabinDesign_detail_typeKubik(4, (group.compartmentCount / 4).ceil())
+                    ? context.l10n.cabinDesign_detail_typeKubik(
+                        kubikGroupColumnCount(group),
+                        (group.compartmentCount / kubikGroupColumnCount(group)).ceil(),
+                      )
                     : context.l10n.cabin_unitDoseTypeLabel,
               ),
             ),

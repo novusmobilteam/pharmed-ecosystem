@@ -114,7 +114,9 @@ Kübik çekmecede iki kart vardır:
 
 > **Sahada (18.11.2026, eski test uygulamasının trafiğiyle):** `a` sıra kartını, `tt` o karttaki gözü seçer. Eski uygulama önce `a=1` ile `tt=01…08`'i yoklayıp kart başına göz sayısını (4), sonra `tt=01` ile `a=1…9`'u yoklayıp kart sayısını buluyor. 20 gözlü kübikte `:ZM5013;` (5. kart, 1. göz) `ok`, 16 gözlüde `hz` döner; ikisi `V` için aynı `.01,` cevabını verir. 16 gözlü = 4 kart × 4 göz, 20 gözlü = 5 kart × 4 göz. Önceki yorum (`a` = göz 1–4, `tt` = slave 00–04) yanlıştı (#267).
 >
-> **Uygulamada:** `CommandBuilder.buildCubicCommand` hâlâ `a` 1–4 / `tt` 0–4 ile sınırlıdır; client 5. karttaki gözleri adresleyemez. hw-test kübik komutlarını kendi üretir (`apps/pharmed-hw-test/lib/core/cubic_probe.dart`); client sahada doğrulamadan sonra güncellenecek.
+> **Uygulamada (#275):** `CommandBuilder.buildCubicCommand` `a` 1–9 / `tt` 00–99 üretir. `DrawerUnit.compartmentNo` = sütun = sıra kartı (`a`), `orderNo` = satır (alttan üste) = göz (`tt`). Client taraması (`ScanCabinUseCase`) kübikte sıra kartlarını ve gözleri `Z M` ile yoklar (`probeCubicLids`) ve göz sayısı tanımla tutmuyorsa göz sayısı uyan kübik tanımı seçer: 20 gözlü kübik `/DrawrDetail` `no: 39` (`/Drawr` 13 "G") ile kaydedilir, kart `.01,` dönse de. hw-test de aynı yöntemle yoklar.
+>
+> **Kablolama:** Üretilen bütün 20 gözlü kübiklerde 4. ve 5. sütun çapraz bağlıdır: 4. sütundaki göz için `a=5`, 5. sütundaki göz için `a=4` gönderilir (`cubicCardForColumn`, `calculateAddressFromAssignment`). Kayıtlı veri değişmez.
 
 **Kart → PC:** `TT`
 

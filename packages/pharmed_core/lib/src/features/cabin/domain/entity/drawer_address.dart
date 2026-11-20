@@ -69,7 +69,9 @@ DrawerAddress calculateAddressFromAssignment(
   final isKubik = config?.drawerType?.isKubik ?? false;
   final rawPort = item.drawerUnit?.compartmentNo ?? 1;
   final port = isKubik
-      ? rawPort // kübikte port sabit 1-4 aralığında, ters çevirme henüz gözlemlenmedi/uygulanmıyor
+      // Kübikte compartmentNo = sütun = sıra kartı (a). 20 gözlüde 4 ↔ 5
+      // sütun çapraz bağlı (#275, bkz. cubic_wiring.dart).
+      ? cubicCardForColumn(rawPort, compartmentCount: config?.drawerType?.compartmentCount)
       : _resolvePhysicalPort(
           rawPort: rawPort,
           totalPorts: config?.drawerType?.compartmentCount,

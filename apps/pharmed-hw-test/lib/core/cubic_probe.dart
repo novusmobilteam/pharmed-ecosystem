@@ -110,7 +110,7 @@ Future<CubicProbe> probeCubic(
 /// Sahadaki 20 gözlü kübikte 4. ve 5. sütunların bağlantısı çapraz yapılmış:
 /// 4. sütun 5. karta, 5. sütun 4. karta bağlı. [swap45] açıkken ve çekmecede
 /// en az 5 kart varken sütun 4 ↔ 5 komutları yer değiştirir.
-int cubicCardForColumn(int column, {required bool swap45, required int cardCount}) {
+int hwCubicCardForColumn(int column, {required bool swap45, required int cardCount}) {
   if (!swap45 || cardCount < 5) return column;
   return switch (column) {
     4 => 5,

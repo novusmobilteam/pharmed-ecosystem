@@ -271,6 +271,14 @@ class MockCabinOperationService implements ICabinOperationService {
       return '.h4,';
     }
 
+    // #275: kübik yoklama (`:ZM a tt c;`) — mock kübik 4 kart × 4 göz (16 göz).
+    final ping = RegExp(r'^:ZM(\d)(\d{2})\d;$').firstMatch(commandPayload);
+    if (ping != null) {
+      final card = int.parse(ping.group(1)!);
+      final lid = int.parse(ping.group(2)!);
+      return card <= 4 && lid >= 1 && lid <= 4 ? '[ok]' : '[hz]';
+    }
+
     if (commandPayload.contains('O')) return 'ok';
     if (commandPayload.contains('S')) {
       _statusPollCount++;

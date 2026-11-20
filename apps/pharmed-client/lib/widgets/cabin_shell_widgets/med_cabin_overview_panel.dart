@@ -115,7 +115,11 @@ class MedCabinLocationDetail {
     this.legendItems = const [],
     this.mergedTrailingState,
     this.mergedTrailingLabel,
+    this.kubikColumns = 4,
   });
+
+  /// Kübik grid sütun sayısı (#275: 16 göz → 4, 20 göz → 5).
+  final int kubikColumns;
 
   final String address;
 
@@ -366,6 +370,7 @@ class _LocationSection extends StatelessWidget {
           const SizedBox(height: 14),
           detail.isKubik
               ? _KubikGrid(
+                  columns: detail.kubikColumns,
                   cellStates: detail.cellStates,
                   mergedTrailingState: detail.mergedTrailingState,
                   mergedTrailingLabel: detail.mergedTrailingLabel,
@@ -390,11 +395,14 @@ class _LocationSection extends StatelessWidget {
 }
 
 class _KubikGrid extends StatelessWidget {
-  const _KubikGrid({required this.cellStates, this.mergedTrailingState, this.mergedTrailingLabel});
+  const _KubikGrid({required this.cellStates, this.mergedTrailingState, this.mergedTrailingLabel, this.columns = 4});
 
   final List<MedCellState> cellStates;
   final MedCellState? mergedTrailingState;
   final String? mergedTrailingLabel;
+
+  /// Sütun sayısı (#275). İade kutulu (merged) grid her zaman 4 sütundur.
+  final int columns;
 
   static const int _cols = 4;
   static const double _cellHeight = 48;
@@ -415,8 +423,8 @@ class _KubikGrid extends StatelessWidget {
         child: GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _cols,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
             crossAxisSpacing: _spacing,
             mainAxisSpacing: _spacing,
             mainAxisExtent: _cellHeight,

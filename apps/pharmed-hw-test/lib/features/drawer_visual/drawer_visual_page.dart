@@ -482,7 +482,7 @@ class _DrawerVisualPageState extends ConsumerState<DrawerVisualPage> {
     final fromClient = _probed[d.key] == null && d.unit.cubicLids.isEmpty;
     // Sütun c → komut gönderilen kart; satır sayısı en çok göz taşıyan kart.
     final columns = [for (var c = 1; c <= cardCount; c++) c];
-    int cardOf(int column) => cubicCardForColumn(cards[column - 1], swap45: swap, cardCount: cardCount);
+    int cardOf(int column) => hwCubicCardForColumn(cards[column - 1], swap45: swap, cardCount: cardCount);
     final rows = lids.isEmpty ? 0 : lids.map((l) => l.lid).reduce((a, b) => a > b ? a : b);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
