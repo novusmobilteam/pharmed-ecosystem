@@ -192,10 +192,12 @@ class _MiniDrawerShape extends StatelessWidget {
 
   Widget _kubikGrid() {
     final cellCount = item.units.length > 0 ? item.units.length : 16;
+    // #275: 16 göz → 4 sütun, 20 göz → 5.
+    final columns = item.units.isNotEmpty ? kubikColumnCount(item.units) : 4;
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columns,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
       ),

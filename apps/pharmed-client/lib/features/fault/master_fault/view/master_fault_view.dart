@@ -205,7 +205,8 @@ class _MasterFaultViewState extends ConsumerState<MasterFaultView> {
 /// Göz etiketi: "Çekmece adı · G-3". Numara, iç yerleşim panelindeki
 /// numarayla aynı sırayı izler (kübikte görsel sıra, iade sütunu hariç).
 String _cellLocationLabel(DrawerGroup group, DrawerUnit unit) {
-  const columns = 4;
+  // #275: sütun = sıra kartı (16 göz → 4, 20 göz → 5; iade kutulu → 4).
+  final columns = kubikGroupColumnCount(group);
   var units = group.isKubik ? kubikUnitsInVisualOrder(group.units, columnCount: columns) : group.units;
   if (group.isKubik && group.isReturnDrawer) {
     units = [

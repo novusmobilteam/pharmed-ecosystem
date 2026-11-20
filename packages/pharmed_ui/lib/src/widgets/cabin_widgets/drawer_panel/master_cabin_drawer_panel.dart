@@ -247,8 +247,9 @@ class _MasterKubicView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final allUnits = group.units;
-    const crossAxisCount = 4;
     final hasReturnBox = group.isReturnDrawer && allUnits.length > _returnCellCount;
+    // #275: sütun = sıra kartı (16 göz → 4, 20 göz → 5); iade kutulu kübik 4.
+    final crossAxisCount = hasReturnBox ? 4 : kubikColumnCount(allUnits);
 
     final rawNormalUnits = hasReturnBox ? allUnits.sublist(0, allUnits.length - _returnCellCount) : allUnits;
     // Aynı görsel sıralama mantığı burada da uygulanıyor — kullanıcının
@@ -257,7 +258,7 @@ class _MasterKubicView extends StatelessWidget {
     // fonksiyonu). İade kutusu ayrımı (rawNormalUnits'in "son 4" varsayımı)
     // henüz visual-order'dan ÖNCEKİ ham sırayı kullanıyor — test sırasında
     // ayrıca gözden geçirilecek.
-    final normalUnits = kubikUnitsInVisualOrder(rawNormalUnits);
+    final normalUnits = kubikUnitsInVisualOrder(rawNormalUnits, columnCount: crossAxisCount);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

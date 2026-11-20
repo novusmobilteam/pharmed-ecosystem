@@ -48,7 +48,7 @@ class CabinOperationEntryBody extends StatelessWidget {
 
     if (target.isKubik) {
       final units = drawerGroup?.units ?? const [];
-      final visualUnits = kubikUnitsInVisualOrder(units, columnCount: 4);
+      final visualUnits = kubikUnitsInVisualOrder(units);
       final unitIndex = visualUnits.indexWhere((u) => u.id == target.assignment.drawerUnit?.id);
       return CabinCubicEntryCard(
         target: target,
