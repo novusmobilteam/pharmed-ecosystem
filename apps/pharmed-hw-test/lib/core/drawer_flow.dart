@@ -247,16 +247,17 @@ class DrawerFlowRunner {
     } catch (_) {}
   }
 
-  /// Kübik kapakları karttan yoklar (`Z M`, port 1–4 × sıra 00–04): cevap
-  /// veren kapaklar. Client tanımında göz kaydı yoksa kullanılır.
+  /// Kübik gözleri karttan yoklar (`Z M`: önce sıra kartları, sonra her
+  /// kartın gözleri — #267). Client tanımında göz kaydı yoksa kullanılır.
+  /// Adreste `port` = sıra kartı (`a`), `index` = göz (`tt`).
   Future<List<FlowCell>> probeCubicLids(int address, int row) async {
-    final lids = await probeCubicLidAddresses(ops, address: address, row: row);
+    final probe = await probeCubic(ops, address: address, row: row);
     await _release(address);
     return [
-      for (final l in lids)
+      for (final l in probe.lids)
         FlowCell(
-          label: 'Kapak port ${l.port} · sıra ${l.index.toString().padLeft(2, '0')}',
-          address: DrawerAddress(row: row, port: l.port, index: l.index, isCubic: true),
+          label: 'Kart ${l.card} · göz ${l.lid.toString().padLeft(2, '0')}',
+          address: DrawerAddress(row: row, port: l.card, index: l.lid, isCubic: true),
         ),
     ];
   }
@@ -296,7 +297,8 @@ class DrawerFlowRunner {
         final openLid = flow._add('Kapağı aç', group: lid.label);
         final cmd = await flow._command(openLid, () async {
           await _openLidWithRetry(manager, a);
-          return 'Komut kabul edildi (port ${a.port} · sıra ${a.index.toString().padLeft(2, '0')})';
+          return 'Komut kabul edildi (${buildCubicFrame(DeviceAction.open, card: a.port, lid: a.index)} · '
+              'kart ${a.port} · göz ${a.index.toString().padLeft(2, '0')})';
         });
         if (cmd != TestStatus.passed) {
           flow.outcomes.add('${lid.label}: açma komutu başarısız');
@@ -307,7 +309,7 @@ class DrawerFlowRunner {
         final lidOpen = flow._add('Kapak açıldı mı (ac)', failLabel: 'Kapak açılmadı', group: lid.label);
         final opened = await flow._wait<CubicLidStatus>(
           lidOpen,
-          ops.streamMasterCubicLidStatus(manager: manager, row: a.row, port: a.port, lidIndex: a.index),
+          streamCubicLidStatus(ops, manager: manager, row: a.row, card: a.port, lid: a.index),
           onEvent: (s) {
             if (s == CubicLidStatus.open) seenOpen = true;
             return s == CubicLidStatus.open;
@@ -325,7 +327,7 @@ class DrawerFlowRunner {
         final lidClose = flow._add('Kapağı kapatın — kapalı (kp) bekleniyor', failLabel: 'Kapak kapanmadı', group: lid.label);
         final closed = await flow._wait<CubicLidStatus>(
           lidClose,
-          ops.streamMasterCubicLidStatus(manager: manager, row: a.row, port: a.port, lidIndex: a.index),
+          streamCubicLidStatus(ops, manager: manager, row: a.row, card: a.port, lid: a.index),
           // Client: "kapandı" yalnız ac görüldükten sonra okunan kp.
           onEvent: (s) {
             if (s == CubicLidStatus.open) seenOpen = true;
@@ -506,7 +508,9 @@ class DrawerFlowRunner {
   Future<void> _openLidWithRetry(ManagementCard manager, DrawerAddress a) async {
     for (var attempt = 0; ; attempt++) {
       try {
-        await ops.openMasterCubicDrawer(manager: manager, row: a.row, port: a.port, lidIndex: a.index);
+        // #267: a = sıra kartı (1–9), tt = göz; core builder a 1–4 / tt 0–4
+        // ile sınırlı olduğu için komut hw-test'te üretilir.
+        await openCubicLid(ops, manager: manager, row: a.row, card: a.port, lid: a.index);
         return;
       } on CubicLidException catch (e) {
         final maxRetries = switch (e.failure) {

@@ -89,13 +89,15 @@ class CabinScanner {
         String? probeProblem;
 
         // #259: kübik çekmece kartı standart tip cevabı verir (16 ve 20 gözlü
-        // kübik aynı görünür). Göz sayısı kübik kartlarından (slave) yoklanır.
+        // kübik aynı görünür). Göz sayısı kübik kartlarından (slave) yoklanır:
+        // a = sıra kartı, tt = göz (#267).
         if (type?.isKubik ?? false) {
-          onProgress?.call('$letter satır $rowLabel: kübik kapaklar yoklanıyor (sıra 00–04 × port 1–4)…');
-          final lids = await probeCubicLidAddresses(ops, address: address, row: card.rowAddress);
-          log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(lids)}');
+          onProgress?.call('$letter satır $rowLabel: kübik sıra kartları ve gözler yoklanıyor (Z M)…');
+          final probe = await probeCubic(ops, address: address, row: card.rowAddress);
+          final lids = probe.lids;
+          log.add('$letter satır $rowLabel: kübik yoklama (Z M) → ${describeCubicProbe(probe)}');
           if (lids.isEmpty) {
-            probeProblem = 'Kübik kapaklar cevap vermedi (Z M); göz sayısı tanımdan';
+            probeProblem = 'Kübik sıra kartları cevap vermedi (Z M); göz sayısı tanımdan';
           } else {
             final probed = lids.length;
             if (probed != compartmentCount) {
@@ -105,7 +107,7 @@ class CabinScanner {
                 type = typeOf(fitting);
                 log.add('$letter satır $rowLabel: $probed gözlü tanım seçildi (${CabinRules.drawerName(type)})');
               } else {
-                probeProblem = 'Karttan $probed kapak yoklandı, tanım ${compartmentCount ?? '?'} göz';
+                probeProblem = 'Karttan $probed göz yoklandı, tanım ${compartmentCount ?? '?'} göz';
               }
             }
             compartmentCount = probed;

@@ -108,11 +108,13 @@ Kübik çekmecede iki kart vardır:
 | --- | --- |
 | `Z` | Sabit. |
 | `k` | Komut: `O` aç, `S` durum, `M` orada mısın?, `V` tip. |
-| `a` | Port: `1`–`4`. |
-| `tt` | Kübik sıra no: `00`–`04`. |
+| `a` | **Sıra kartı (slave) no:** `1`–`5` (en fazla 5 kart). Orijinal notta "port 1–4" yazar. |
+| `tt` | **O karttaki göz no:** `01`–`04`. `00` geçerli göz değildir (`hz` döner). Orijinal notta "kübik sıra no 00–04" yazar. |
 | `c` | `(ASCII('Z') + ASCII(k) + a + tt) % 10` — orijinal notta formül `T` ile yazılmış; uygulama `Z` kullanır. |
 
-> **Yorum (sahada doğrulanacak):** 5 slave × 4 göz yapısıyla birlikte okunduğunda `tt` (00–04) slave sırası, `a` (1–4) o slave'deki göz gibi görünüyor. Bu durumda 16 gözlü kübik 4 slave'li, 20 gözlü kübik 5 slave'li bir yapıdır ve göz sayısı `Z M` ile hangi slave'lerin cevap verdiğinden çıkarılabilir.
+> **Sahada (18.11.2026, eski test uygulamasının trafiğiyle):** `a` sıra kartını, `tt` o karttaki gözü seçer. Eski uygulama önce `a=1` ile `tt=01…08`'i yoklayıp kart başına göz sayısını (4), sonra `tt=01` ile `a=1…9`'u yoklayıp kart sayısını buluyor. 20 gözlü kübikte `:ZM5013;` (5. kart, 1. göz) `ok`, 16 gözlüde `hz` döner; ikisi `V` için aynı `.01,` cevabını verir. 16 gözlü = 4 kart × 4 göz, 20 gözlü = 5 kart × 4 göz. Önceki yorum (`a` = göz 1–4, `tt` = slave 00–04) yanlıştı (#267).
+>
+> **Uygulamada:** `CommandBuilder.buildCubicCommand` hâlâ `a` 1–4 / `tt` 0–4 ile sınırlıdır; client 5. karttaki gözleri adresleyemez. hw-test kübik komutlarını kendi üretir (`apps/pharmed-hw-test/lib/core/cubic_probe.dart`); client sahada doğrulamadan sonra güncellenecek.
 
 **Kart → PC:** `TT`
 
@@ -126,7 +128,7 @@ Kübik çekmecede iki kart vardır:
 | `ht` | Çekmece açık değilken kübik aç komutu geldi; kübik açılamaz. |
 | `hz` | Master, slave'den 250 ms içinde cevap alamadı; slave kartta sorun olabilir. |
 
-Örnekler: `:ZO1011;` · `:ZM1019;` · `:ZS1015;` (port 1, sıra 01).
+Örnekler: `:ZO1011;` · `:ZM1019;` · `:ZS1015;` (kart 1, göz 01) · `:ZM5013;` (kart 5, göz 01).
 
 ## Uygulamada kullanılan ek satırlar
 
@@ -164,5 +166,5 @@ Seçim bırakılmazsa, aynı satırı seçili tutan başka bir kabin de komutu u
 ## Açık noktalar
 
 - `T` portları 1–5 için "yalnızca aç/kapat" notu doğrulanmalı.
-- Kübik `a` / `tt` alanlarının anlamı (göz / slave sırası) ve 20 gözlü kübiğin `V` tip cevabı sahada doğrulanmalı.
+- ~~Kübik `a` / `tt` alanlarının anlamı~~ — sahada çözüldü: `a` = sıra kartı, `tt` = göz (yukarıya bakın). 20 gözlü kübiğin `V` tip cevabı da `.01,`; göz sayısı yalnızca yoklamayla bulunur. Açma (`O`) komutunun 5. kartta çalıştığı doğrulanmalı.
 - Orijinal notta "checksum hatası nedeniyle geçersiz" diye listelenen örnek komutlar (`:TO1308;`, `:Z01019;` …) bu dokümana alınmadı; yukarıdaki örnekler koddaki formülle hesaplanmıştır.
