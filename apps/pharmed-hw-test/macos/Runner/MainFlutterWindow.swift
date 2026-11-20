@@ -2,21 +2,18 @@ import Cocoa
 import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
-  /// Windows runner ile aynı sabit içerik boyutu.
-  private static let fixedContentSize = NSSize(width: 1280, height: 720)
+  /// Açılış ve en küçük içerik boyutu (Windows runner ile aynı — #272).
+  private static let initialContentSize = NSSize(width: 1280, height: 720)
+  private static let minContentSize = NSSize(width: 1024, height: 640)
 
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     self.contentViewController = flutterViewController
 
-    // Sabit boyutlu pencere: boyutlandırma ve tam ekran yok, yalnızca
-    // küçült ve kapat. Büyüt (yeşil) düğmesi devre dışı kalır.
-    self.styleMask.remove(.resizable)
-    self.collectionBehavior.insert(.fullScreenNone)
-    self.setContentSize(MainFlutterWindow.fixedContentSize)
-    self.contentMinSize = MainFlutterWindow.fixedContentSize
-    self.contentMaxSize = MainFlutterWindow.fixedContentSize
-    self.standardWindowButton(.zoomButton)?.isEnabled = false
+    // Boyutlandırılabilir pencere (#272); en küçük boyut sınırlı.
+    self.styleMask.insert(.resizable)
+    self.setContentSize(MainFlutterWindow.initialContentSize)
+    self.contentMinSize = MainFlutterWindow.minContentSize
     self.center()
 
     RegisterGeneratedPlugins(registry: flutterViewController)
