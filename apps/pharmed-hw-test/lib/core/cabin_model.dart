@@ -14,6 +14,8 @@
 
 import 'package:pharmed_core/pharmed_core.dart';
 
+import 'cubic_probe.dart';
+
 /// Tanımın nereden geldiği.
 enum CabinSource {
   clientCache('Client tanımı'),
@@ -64,6 +66,7 @@ class CabinUnit {
     this.slotId,
     this.config,
     this.cells = const [],
+    this.cubicLids = const [],
   });
 
   /// Kart satırı (01–26). Serum kabini kapakları ve mobil çekmeceler satır 26'dadır.
@@ -104,6 +107,10 @@ class CabinUnit {
   /// client taramasıyla aynı şekilde üretilir, kübikte boştur (kapaklar
   /// test sırasında karttan yoklanır).
   final List<DrawerUnit> cells;
+
+  /// Kübikte taramada karttan yoklanan gözler (a = sıra kartı, tt = göz —
+  /// #267). Client tanımında boştur; adresler [cells]'ten gelir.
+  final List<CubicLidAddress> cubicLids;
 
   String get rowLabel => row.toString().padLeft(2, '0');
 

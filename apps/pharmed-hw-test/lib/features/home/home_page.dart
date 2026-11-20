@@ -12,6 +12,7 @@ import '../advanced/advanced_page.dart';
 import '../cabin/cabin_page.dart';
 import '../connection/connection_page.dart';
 import '../drawer_test/drawer_test_page.dart';
+import '../drawer_visual/drawer_visual_page.dart';
 import '../mobile_cabin/mobile_cabin_page.dart';
 import '../peripherals/peripherals_page.dart';
 import '../report/report_page.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _connection = (icon: Icons.usb, label: 'Bağlantı', page: ConnectionPage());
   static const _cabin = (icon: Icons.dns_outlined, label: 'Kabin', page: CabinPage());
   static const _tests = (icon: Icons.checklist, label: 'Testler', page: TestsPage());
-  static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: DrawerTestPage());
+  static const _masterDrawer = (icon: Icons.inventory_2, label: 'Master çekmece', page: _MasterDrawerTabs());
   static const _mobileCabin = (icon: Icons.local_shipping, label: 'Mobil kabin', page: MobileCabinPage());
   static const _serum = (icon: Icons.water_drop, label: 'Serum', page: SerumPage());
   static const _rfid = (icon: Icons.sensors, label: 'RFID', page: RfidPage());
@@ -157,6 +158,31 @@ class _InfoChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Chip(avatar: Icon(icon, size: 18, color: color), label: Text(text, style: TextStyle(color: color))),
+    );
+  }
+}
+
+/// Master çekmece: görsel test (#270) + elle adres.
+class _MasterDrawerTabs extends StatelessWidget {
+  const _MasterDrawerTabs();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+            tabAlignment: TabAlignment.start,
+            isScrollable: true,
+            tabs: [
+              Tab(icon: Icon(Icons.grid_view), text: 'Görsel'),
+              Tab(icon: Icon(Icons.edit_note), text: 'Elle adres'),
+            ],
+          ),
+          Expanded(child: TabBarView(children: [DrawerVisualPage(), DrawerTestPage()])),
+        ],
+      ),
     );
   }
 }

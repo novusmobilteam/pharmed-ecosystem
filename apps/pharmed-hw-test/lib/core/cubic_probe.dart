@@ -104,6 +104,21 @@ Future<CubicProbe> probeCubic(
   return CubicProbe(cards: cards, lids: lids, raw: raw);
 }
 
+/// Görsel yerleşim (#274): sütun = sıra kartı (soldan sağa), satır = o
+/// karttaki göz (alttan üste; sol en alt = sütun 1 · satır 1).
+///
+/// Sahadaki 20 gözlü kübikte 4. ve 5. sütunların bağlantısı çapraz yapılmış:
+/// 4. sütun 5. karta, 5. sütun 4. karta bağlı. [swap45] açıkken ve çekmecede
+/// en az 5 kart varken sütun 4 ↔ 5 komutları yer değiştirir.
+int cubicCardForColumn(int column, {required bool swap45, required int cardCount}) {
+  if (!swap45 || cardCount < 5) return column;
+  return switch (column) {
+    4 => 5,
+    5 => 4,
+    _ => column,
+  };
+}
+
 /// Rapor için özet: "20 göz · 5 sıra kartı (1: 4, 2: 4, 3: 4, 4: 4, 5: 4)".
 String describeCubicProbe(CubicProbe probe) {
   if (probe.cards.isEmpty) {
