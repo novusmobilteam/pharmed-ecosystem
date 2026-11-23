@@ -23,7 +23,8 @@ class TrayReading {
     TrayLockStatusResponse(:final status) => switch (status) {
       TrayLockStatus.unlocked => const TrayReading(TestStatus.warning, 'Kilit açık, çekilmedi'),
       TrayLockStatus.pulled => const TrayReading(TestStatus.running, 'Çekildi'),
-      TrayLockStatus.idle => const TrayReading(TestStatus.pending, 'Boşta'),
+      TrayLockStatus.pushed => const TrayReading(TestStatus.warning, 'Yerine itildi, close (c) bekleniyor (s:03)'),
+      TrayLockStatus.idle => const TrayReading(TestStatus.pending, 'Boşta (s:00)'),
     },
     TrayLockKeypadResponse(:final value) => TrayReading(TestStatus.info, 'Al-Ver tuş değeri: $value'),
     TrayLockErrorResponse(:final failure) => TrayReading(TestStatus.failed, failureText(failure)),
@@ -48,6 +49,7 @@ enum TrayFlowStep {
   lockAll('Tüm kilitleri enerjile (k)'),
   openTray('Hedef avadanlığın kilidini aç (o)'),
   waitTrayReturn('Avadanlığın çekilip yerine itilmesini bekle'),
+  closeTray('Portu kapat (c): s:03 → s:00'),
   waitLidClose('Kapağın kapanmasını bekle'),
   releaseAtEnd('Bitiş: tüm kilitleri serbest bırak (x)');
 
@@ -169,6 +171,7 @@ class SerumHardware {
       return false;
     }
 
+    TrayLockStatus? lastTrayStatus;
     var ok =
         await step(TrayFlowStep.releaseAll, () => trayCmd(TrayLockAction.unlockAll)) &&
         await step(TrayFlowStep.openLid, () async {
@@ -196,22 +199,26 @@ class SerumHardware {
           var seenActive = false;
           var seenPulled = false;
           var last = '-';
+          // #277: yeni firmware'de yerine itme s:03 (close bekleniyor); s:00
+          // (boşta) yalnızca kart kendiliğinden kapandıysa görülür.
           final returned = await waitUntil(() async {
             final (_, res) = await tray(deviceId, TrayLockAction.status, port: trayPort);
             final reading = TrayReading.of(res);
             last = reading.text;
             onLive?.call(reading);
             if (res case TrayLockStatusResponse(:final status)) {
-              if (status != TrayLockStatus.idle) seenActive = true;
+              if (status == TrayLockStatus.unlocked || status == TrayLockStatus.pulled) seenActive = true;
               if (status == TrayLockStatus.pulled) seenPulled = true;
-              return seenActive && status == TrayLockStatus.idle;
+              lastTrayStatus = status;
+              return seenActive && (status == TrayLockStatus.pushed || status == TrayLockStatus.idle);
             }
             return false;
           }, const Duration(seconds: 90));
           if (returned) {
+            final how = lastTrayStatus == TrayLockStatus.pushed ? ' (s:03)' : ' — kart kendiliğinden boşa döndü (s:00)';
             return (
               true,
-              seenPulled ? 'Avadanlık çekildi ve yerine itildi' : 'Kart boşa döndü ama "çekildi" hiç görülmedi',
+              seenPulled ? 'Avadanlık çekildi ve yerine itildi$how' : 'Kart çekmeyi görmeden döndü$how',
             );
           }
           // #257: "yerine itilmedi" yalnızca gerçekten çekildiyse doğrudur.
@@ -223,6 +230,21 @@ class SerumHardware {
                     '(Gelişmiş araçlar → Tek port teşhisi)'
               : 'Kart kilidi açmadı';
           return (false, '$why: $detail — son: $last');
+        }) &&
+        await step(TrayFlowStep.closeTray, () async {
+          // #277: s:03'te CLOSE (c) ile port kapatılır → s:00.
+          if (lastTrayStatus == TrayLockStatus.idle) return (true, 'Kart zaten boşta (s:00) — close gerekmedi');
+          final (closed, closeDetail) = await trayCmd(TrayLockAction.cancel, p: trayPort);
+          if (!closed) return (false, 'Close kabul edilmedi: $closeDetail');
+          var last = '-';
+          final idle = await waitUntil(() async {
+            final (_, res) = await tray(deviceId, TrayLockAction.status, port: trayPort);
+            final reading = TrayReading.of(res);
+            last = reading.text;
+            onLive?.call(reading);
+            return res is TrayLockStatusResponse && res.status == TrayLockStatus.idle;
+          }, const Duration(seconds: 5));
+          return (idle, idle ? 'Port kapatıldı: $closeDetail → s:00' : 'Close sonrası s:00 görülmedi — son: $last');
         }) &&
         await step(TrayFlowStep.waitLidClose, () async {
           String? last;

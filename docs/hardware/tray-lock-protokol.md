@@ -51,24 +51,28 @@ Serum bölmesindeki avadanlık (tepsi) rafları için elektromanyetik kilit kart
 | `/noo6\` | Bilinmeyen komut karakteri. |
 | `/s:01\` | Durum: kilit açıldı, çekmece henüz çekilmedi (`STATE_UNLOCKED`). |
 | `/s:02\` | Durum: çekmece çekildi, göz aktif, `+`/`−` yapılıyor (`STATE_OPEN`). |
-| `/s:03\` | Durum: kapalı / idle (`STATE_IDLE`). |
+| `/s:03\` | Durum: çekmece yerine itildi, port kapatma (`c`) bekleniyor (yeni firmware, #277). |
+| `/s:00\` | Durum: işlem yok / close tamam (`STATE_IDLE`, yeni firmware). |
 | `/t:xx\` | Tuş değeri (`00`–`99`). |
 
 > Orijinal notta "çekmece" kelimesi avadanlık için kullanılmıştır.
+
+> **Firmware güncellemesi (#277, 11.2026):** Üreticinin AlverTest v1.0 test uygulamasındaki anlamlar esas alınmıştır: `s:00` "işlem yok, close tamam", `s:01` kilit açık, `s:02` çekildi / göz aktif, `s:03` "çekmece itildi, close bekleniyor". Eski firmware'de `s:03` boşta anlamına geliyordu; yeni firmware'de boşta `s:00`'dır ve itilen avadanlık, port `c` ile kapatılana kadar `s:03`'te kalır (diğer kartlardaki komut temizleme ile aynı mantık).
 
 ## Durum makinesi
 
 Kart tek durumludur: aynı anda yalnızca bir portta açma işlemi yürür.
 
 ```
-            o (port N)                 çekme (switch)            itme (switch)
-STATE_IDLE ───────────► STATE_UNLOCKED ──────────────► STATE_OPEN ─────────────► STATE_IDLE
-  s:03                    s:01                           s:02                       s:03
+            o (port N)                 çekme (switch)            itme (switch)              c (close)
+STATE_IDLE ───────────► STATE_UNLOCKED ──────────────► STATE_OPEN ─────────────► PUSHED ──────────► STATE_IDLE
+  s:00                    s:01                           s:02                       s:03                s:00
      ▲                       │ c (iptal)
      └───────────────────────┘
 ```
 
-- `STATE_OPEN → STATE_IDLE` geçişi (yerine itme) notta yazılmamıştır; switch ile algılandığı varsayılır. Kart bunu kendiliğinden bildirmez, durum `s` ile sorgulanır.
+- Yerine itme switch ile algılanır; kart bunu kendiliğinden bildirmez, durum `s` ile sorgulanır.
+- **Yeni firmware (#277):** itilen port `s:03`'te kalır. PC `s:03`'ü görünce `c` gönderir (`/okkk\`), kart `s:00`'a döner. Port kapatılmadan yeni bir `o` gönderilmemelidir.
 
 ## Komutlar
 
@@ -81,17 +85,18 @@ STATE_IDLE ───────────► STATE_UNLOCKED ─────�
 - Seçilen portun mosfeti enerjisiz yapılır (kilit açılır, avadanlık çekilebilir).
 - Sistem `STATE_UNLOCKED` durumuna geçer.
 
-### `c` — işlemi iptal et
+### `c` — iptal / portu kapat (CLOSE)
 
 Örnek: `<i01:3c>`.
 
-- Yalnızca `STATE_UNLOCKED` durumunda çalışır (avadanlık henüz çekilmemişken).
-- Avadanlık çekilmişse (`STATE_OPEN`) çalışmaz (`/noo5\`).
-- Sistem `STATE_IDLE` durumuna döner.
+- `STATE_UNLOCKED` (`s:01`) durumunda açmayı iptal eder (avadanlık henüz çekilmemişken).
+- Yeni firmware'de itildi (`s:03`) durumunda portu kapatır (#277). Üreticinin "00 gönder" diye tarif ettiği komut temizleme budur: `c` sonrası kart `s:00`'a döner.
+- Avadanlık çekiliyken (`STATE_OPEN`, `s:02`) çalışmaz (`/noo5\`).
+- Sistem `STATE_IDLE` (`s:00`) durumuna döner.
 
 ### `s` — durum sorgula
 
-Örnek: `<i01:3s>`. İlgili portun durumunu döner: `/s:01\`, `/s:02\` ya da `/s:03\`.
+Örnek: `<i01:3s>`. İlgili portun durumunu döner: `/s:00\`, `/s:01\`, `/s:02\` ya da `/s:03\`.
 
 ### `t` — tuş değeri
 
@@ -129,8 +134,8 @@ Cevap: `/okkk\` ya da geçersiz ID için `/noo1\`.
 - **Kod:** `TrayLockProtocol.build` komutu üretir, `TrayLockProtocol.parse` cevabı `TrayLockOk` / `TrayLockStatusResponse` / `TrayLockKeypadResponse` / `TrayLockErrorResponse` olarak ayrıştırır.
 - **Hat paylaşımı:** Kabin kartlarıyla aynı `SerialCommunicationService` ve aynı kilit (mutex) kullanılır; ayrı port açılmaz.
 - **Kart geneli komutlar:** `k` ve `x` port olarak `0` ile gönderilir (`<i01:0k>`). Sahada `/okkk\` dönüyor.
-- **`s` kilidin fiziksel durumunu göstermez.** Kartın o porttaki işlem durumunu gösterir. `k` ya da `x` sonrası her zaman `s:03` döner; kilitlerin enerjili mi serbest mi olduğu `s` ile okunamaz. hw-test bu yüzden son kart geneli komutu (`k`/`x`) ayrıca gösterir.
-- **Serum akışı (olması gereken):** kilitler normalde serbest → serum kapağı açılır → `k` → `o` (hedef port) → çekme (`s:02`) → `+`/`−` ile sayım (`t`) → yerine itme (`s:03`) → kapak kapanır → `x`.
+- **`s` kilidin fiziksel durumunu göstermez.** Kartın o porttaki işlem durumunu gösterir. `k` ya da `x` sonrası her zaman boşta döner (yeni firmware'de `s:00`); kilitlerin enerjili mi serbest mi olduğu `s` ile okunamaz. hw-test bu yüzden son kart geneli komutu (`k`/`x`) ayrıca gösterir.
+- **Serum akışı (olması gereken):** kilitler normalde serbest → serum kapağı açılır → `k` → `o` (hedef port) → çekme (`s:02`) → `+`/`−` ile sayım (`t`) → yerine itme (`s:03`) → `c` ile port kapatma (`s:00`) → kapak kapanır → `x`.
 - **hw-test araçları:** elle komut, kart ID taraması (1–16), bütün portları sorgula, canlı durum, tek port teşhisi (`k` → `s` → `o` → durum ×6 + fiziksel gözlem), çek / say / it testi (`k` → `o` → canlı `s` + `t` → LED sorusu).
 
 ## Sahada görülenler
@@ -141,6 +146,7 @@ Cevap: `/okkk\` ya da geçersiz ID için `/noo1\`.
 | 16.10.2026 | `o` ile hedef port serbest kaldı, diğerleri kilitlendi; **port LED'i kendiliğinden yandı**. `t` panelden `+`/`−` ile girilen değeri okudu. |
 | 12.11.2026 | `k` / `x` doğru çalıştı. `o` kabul edildi (`s:01`) ama fiziksel olarak hedef açılmadı (#221). |
 | 17.11.2026 | Kilit kablolaması düzeltildi; tek port açma çalışıyor. **Cevap süreleri:** `o` / `k` / `x` / `c` ≈ 600 ms, `s` / `t` ≈ 100 ms; `o`'dan hemen sonraki `s` bazen 0,6–1,1 sn. **`s:01` davranışı tutarsız:** bazı denemelerde 30 sn'den uzun sabit kaldı, bazılarında 2–4 sn sonra (≈ 0,8–1 sn süren bir cevapla) `s:03`'e döndü, bazılarında `o`'dan hemen sonra `s:03` geldi. Avadanlık çekildiği hâlde **`s:02` hiç görülmedi**. `t` her zaman `00` döndü, port LED'i yanmadı (#263). |
+| 23.11.2026 | Üretici firmware'i güncelledi ve AlverTest v1.0 test uygulamasını gönderdi: itilen avadanlık `s:03`'te kalıyor, port `c` ile kapatılıyor (`s:00`). hw-test bu akışa göre güncellendi (#277); saha doğrulaması bekleniyor. |
 
 ## Açık noktalar
 

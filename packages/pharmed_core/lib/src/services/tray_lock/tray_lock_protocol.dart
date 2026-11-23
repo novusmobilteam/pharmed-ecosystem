@@ -8,6 +8,11 @@
 //
 // Protokol dokümanı: docs/hardware/tray-lock-protokol.md
 //
+// Yeni firmware (Kasım 2026, #277): yerine itilen avadanlık `s:03`'te
+// (itildi, close bekleniyor) kalır; port `c` (CLOSE) ile kapatılır → `s:00`
+// (işlem yok, close tamam). Kart üreticisinin AlverTest v1.0 uygulamasıyla
+// aynı anlamlar.
+//
 // Sınıf: Class B
 
 import 'package:pharmed_core/pharmed_core.dart';
@@ -18,7 +23,9 @@ enum TrayLockAction {
   /// Yalnızca IDLE'da çalışır → STATE_UNLOCKED.
   open('o'),
 
-  /// Açma işlemini iptal eder. Yalnızca UNLOCKED'da (henüz çekilmemişken) → IDLE.
+  /// CLOSE: UNLOCKED'da (henüz çekilmemişken) açmayı iptal eder; yeni
+  /// firmware'de PUSHED'da (`s:03`, yerine itildi) portu kapatır. İkisinde de
+  /// → IDLE (`s:00`). Çekiliyken (STATE_OPEN) çalışmaz (`noo5`).
   cancel('c'),
 
   /// Portun durumunu sorgular.
@@ -49,7 +56,11 @@ enum TrayLockStatus {
   /// `/s:02\` — avadanlık çekildi, göz aktif (+/- yapılabilir).
   pulled,
 
-  /// `/s:03\` — kapalı / idle.
+  /// `/s:03\` — avadanlık yerine itildi, close (`c`) bekleniyor (yeni
+  /// firmware, #277). Eski firmware'de `s:03` boşta anlamına geliyordu.
+  pushed,
+
+  /// `/s:00\` — işlem yok, close tamam (boşta).
   idle,
 }
 
@@ -136,6 +147,8 @@ abstract final class TrayLockProtocol {
       case 's:02':
         return const TrayLockStatusResponse(TrayLockStatus.pulled);
       case 's:03':
+        return const TrayLockStatusResponse(TrayLockStatus.pushed);
+      case 's:00':
         return const TrayLockStatusResponse(TrayLockStatus.idle);
     }
 

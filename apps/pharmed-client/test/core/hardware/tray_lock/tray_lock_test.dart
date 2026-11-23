@@ -40,7 +40,9 @@ void main() {
       expect(TrayLockProtocol.parse(r'/okkk\'), isA<TrayLockOk>());
       expect((TrayLockProtocol.parse(r'/s:01\') as TrayLockStatusResponse).status, TrayLockStatus.unlocked);
       expect((TrayLockProtocol.parse(r'/s:02\') as TrayLockStatusResponse).status, TrayLockStatus.pulled);
-      expect((TrayLockProtocol.parse(r'/s:03\') as TrayLockStatusResponse).status, TrayLockStatus.idle);
+      // #277: yeni firmware — 03 = itildi (close bekleniyor), 00 = boşta.
+      expect((TrayLockProtocol.parse(r'/s:03\') as TrayLockStatusResponse).status, TrayLockStatus.pushed);
+      expect((TrayLockProtocol.parse(r'/s:00\') as TrayLockStatusResponse).status, TrayLockStatus.idle);
       expect((TrayLockProtocol.parse(r'/t:07\') as TrayLockKeypadResponse).value, 7);
     });
 
