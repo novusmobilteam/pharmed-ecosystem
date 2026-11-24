@@ -41,6 +41,9 @@ class _SerumPageState extends ConsumerState<SerumPage> {
   final Map<TrayFlowStep, (TestStatus, String)> _flow = {};
   TrayReading? _flowLive;
 
+  /// #277: `o` ile açılıp itilmesi (s:03) beklenen avadanlıklar.
+  final Set<String> _trayWatching = {};
+
   SerumHardware get _hw => SerumHardware(serial: ref.read(serialServiceProvider), ops: ref.read(cabinOpsProvider));
 
   TestReport get _report => ref.read(testReportProvider);
@@ -58,6 +61,7 @@ class _SerumPageState extends ConsumerState<SerumPage> {
   @override
   void dispose() {
     _flowCancel = true;
+    _trayWatching.clear();
     super.dispose();
   }
 
@@ -228,11 +232,46 @@ class _SerumPageState extends ConsumerState<SerumPage> {
       _busy = null;
       _readings[key] = reading;
     });
+    if (action == TrayLockAction.open && res is TrayLockOk) _autoCloseAfterPush(key, card, port);
+  }
+
+  /// #277: açılan avadanlık yerine itilince (s:03) port otomatik `c` ile
+  /// kapatılır → s:00. Kullanıcıdan elle kapatma beklenmez (client akışı).
+  /// Kart boşa dönerse (s:00, iptal vb.) ya da 10 dk geçerse izleme biter.
+  Future<void> _autoCloseAfterPush(String key, int card, int port) async {
+    if (!_trayWatching.add(key)) return;
+    final deadline = DateTime.now().add(const Duration(minutes: 10));
+    try {
+      while (mounted && _trayWatching.contains(key) && DateTime.now().isBefore(deadline)) {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted || _busy == key) continue;
+        final (raw, res) = await _hw.tray(card, TrayLockAction.status, port: port);
+        if (!mounted) return;
+        setState(() => _readings[key] = TrayReading.of(res));
+        if (res is! TrayLockStatusResponse) continue;
+        if (res.status == TrayLockStatus.idle) return;
+        if (res.status != TrayLockStatus.pushed) continue;
+        _report.add('Avadanlık yerine itildi (s:03) · kart $card port $port', StepResult.ok, detail: raw ?? '');
+        final (cRaw, cRes) = await _hw.tray(card, TrayLockAction.cancel, port: port);
+        _report.add(
+          'Avadanlık otomatik port kapatma (c) · kart $card port $port',
+          cRes is TrayLockOk ? StepResult.ok : StepResult.fail,
+          detail: '${cRaw ?? '(cevap yok)'} → ${TrayReading.of(cRes).text}',
+        );
+        if (cRes is TrayLockOk) {
+          final (_, after) = await _hw.tray(card, TrayLockAction.status, port: port);
+          if (mounted) setState(() => _readings[key] = TrayReading.of(after));
+          return;
+        }
+      }
+    } finally {
+      _trayWatching.remove(key);
+    }
   }
 
   static String _trayActionLabel(TrayLockAction a) => switch (a) {
     TrayLockAction.open => 'kilidi aç (o)',
-    TrayLockAction.cancel => 'açmayı iptal (c)',
+    TrayLockAction.cancel => 'iptal / portu kapat (c)',
     TrayLockAction.status => 'durum (s)',
     TrayLockAction.keypadValue => 'tuş değeri (t)',
     TrayLockAction.lockAll => 'tümünü kilitle (k)',
@@ -649,7 +688,7 @@ class _SerumPageState extends ConsumerState<SerumPage> {
                 PopupMenuItem(value: 'flow', enabled: idle, child: const Text('Akış testi (kapak + kilit)')),
                 const PopupMenuDivider(),
                 PopupMenuItem(value: 'o', enabled: idle, child: const Text('Kilidi aç (o)')),
-                PopupMenuItem(value: 'c', enabled: idle, child: const Text('Açmayı iptal (c)')),
+                PopupMenuItem(value: 'c', enabled: idle, child: const Text('İptal / portu kapat (c)')),
                 PopupMenuItem(value: 's', enabled: idle, child: const Text('Durum (s)')),
                 PopupMenuItem(value: 't', enabled: idle, child: const Text('Al-Ver tuş değeri (t)')),
                 const PopupMenuDivider(),

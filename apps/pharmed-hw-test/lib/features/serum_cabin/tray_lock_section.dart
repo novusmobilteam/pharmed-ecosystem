@@ -270,6 +270,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
 
   // Canlı durum
   Timer? _watch;
+  int? _watchPort;
   bool _polling = false;
   _Reading? _liveReading;
   int? _liveKeypad;
@@ -310,7 +311,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     TrayLockAction.lockAll => 'Tümünü kilitle (k)',
     TrayLockAction.unlockAll => 'Tümünü serbest bırak (x)',
     TrayLockAction.open => 'Portu aç (o)',
-    TrayLockAction.cancel => 'Açmayı iptal (c)',
+    TrayLockAction.cancel => 'İptal / portu kapat (c)',
     TrayLockAction.status => 'Durum (s)',
     TrayLockAction.keypadValue => 'Tuş değeri (t)',
   };
@@ -341,6 +342,28 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       _awaitingObservation = action == TrayLockAction.open && res is TrayLockOk ? port : null;
       _diagnosing = false;
     });
+    // #277: açılan port, itildiğinde (s:03) otomatik kapatılsın diye izlenir.
+    if (action == TrayLockAction.open && res is TrayLockOk && port != null) {
+      if (_watch != null && _watchPort != port) _toggleWatch(); // eski portun izlemesini bırak
+      if (_watch == null) _toggleWatch();
+    }
+  }
+
+  /// #277: izlenen port s:03'e (itildi) geçince c otomatik gönderilir → s:00.
+  /// Kullanıcıdan elle kapatma beklenmez; client'taki akışın aynısıdır.
+  Future<void> _autoClosePort(int deviceId, int port, String? statusRaw) async {
+    final report = ref.read(testReportProvider);
+    report.add(
+      'Kart $deviceId · port $port yerine itildi (s:03)',
+      StepResult.ok,
+      detail: statusRaw ?? '/s:03\\',
+    );
+    final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
+    report.add(
+      'Kart $deviceId · Otomatik port kapatma (c) · port $port',
+      res is TrayLockOk ? StepResult.ok : StepResult.fail,
+      detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
+    );
   }
 
   /// Tek port teşhisi (#257): k → s → o → s, ardından fiziksel gözlem.
@@ -816,11 +839,18 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     final deviceId = _deviceId;
     if (deviceId == null) return;
     final port = _port;
+    _watchPort = port;
     _watch = Timer.periodic(const Duration(milliseconds: 500), (_) async {
       if (_polling || !mounted) return;
       _polling = true;
       try {
-        final (_, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+        final (sRaw, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+        if (s is TrayLockStatusResponse && s.status == TrayLockStatus.pushed) {
+          await _autoClosePort(deviceId, port, sRaw);
+          if (!mounted) return;
+          setState(() => _liveReading = _Reading.of(s, port: port));
+          return;
+        }
         final (_, t) = await _tray(deviceId, TrayLockAction.keypadValue, port: port);
         if (!mounted) return;
         setState(() {
