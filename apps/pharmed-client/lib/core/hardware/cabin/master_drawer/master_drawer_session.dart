@@ -99,11 +99,16 @@ abstract class IMasterDrawerSession implements Listenable {
 //     acknowledgeLidClosedManually ile devam edebilir.
 //
 // SERUM AVADANLIK KİLİDİ (openSerumTray) — kübik kapağın birebir eşi:
-//   OpeningLid ─(s:01/02)→ Opened ─confirmLidClose→ WaitingForLidClose ─(s:03)→ LidClosed
-//                              └────────────(s:03, onay yok)────────────→ LidClosed
+//   OpeningLid ─(s:01/02)→ Opened ─confirmLidClose→ WaitingForLidClose ─(s:03 → c)→ LidClosed
+//                              └────────────(s:03 → c, onay yok)────────────→ LidClosed
 //   • k (tümünü kilitle) + o (hedef portu aç) → durum polling ile izlenir.
 //   • "Yerine itildi" kararı yalnızca açık (01/02) GÖRÜLDÜKTEN sonra gelen 03 ile.
-//   • Hiç çekilmeden onaylanırsa açma iptal edilir (c) → 03 → LidClosed.
+//   • [#279] Yeni firmware: itilen port 03'te (close bekleniyor) kalır; oturum
+//     03'ü görünce portu OTOMATİK c ile kapatır (→ 00) ve LidClosed'a geçer.
+//     Kapatılmazsa kart yeni o'yu kabul etmez (noo4). Kullanıcıdan işlem
+//     beklenmez. Kapatma başarısızsa loglanır; bir sonraki unlock meşgul
+//     dönerse servis portu kapatıp tekrar dener.
+//   • Hiç çekilmeden onaylanırsa açma iptal edilir (c) → 00 → LidClosed.
 //   • 01/02 süre içinde gelmezse LidFailed(trayUnlockFailed); art arda okuma
 //     hatasında LidFailed(traySensorLost) — izleme sürer, okuma gelirse devam.
 //   • [#219] Kilitler NORMALDE SERBESTTİR: kapak açıkken k + o ile enerjilenen
@@ -535,14 +540,57 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
           _setStage(_lidCloseConfirmed ? const MasterDrawerWaitingForLidClose() : const MasterDrawerOpened());
         }
 
-      // #277: yeni firmware'de 03 = itildi (close bekleniyor), 00 = boşta.
-      // Client akışı (03'te close) hw-test doğrulamasından sonra güncellenecek;
-      // şimdilik ikisi de eski 03 (boşta) gibi ele alınır.
+      // #279: 03 = yerine itildi, port kapatılmayı bekliyor → otomatik c.
       case TrayLockStatus.pushed:
+        // Açık görülmeden okunan 03: bu açmaya ait değil — yerine itme sayılmaz.
+        if (!_traySeenActive) return;
+        final address = _lastTrayAddress;
+        if (address == null) return;
+        unawaited(_closePushedTray(address));
+
+      // 00 = boşta: iptal (c) sonrası ya da kart kendiliğinden boşa döndü.
       case TrayLockStatus.idle:
-        // Açık görülmeden okunan 03: kilit henüz açılmadı — yerine itme sayılmaz.
         if (!_traySeenActive) return;
         _onTrayReturned();
+    }
+  }
+
+  /// #279: yerine itilen avadanlığın portunu c ile kapatır (03 → 00) ve
+  /// avadanlığı kapandı sayar. İlk deneme başarısızsa bir kez tekrarlanır;
+  /// yine olmazsa loglanır ve akış sürdürülür (avadanlık fiziksel olarak
+  /// yerinde; sonraki açmada servis portu kapatıp tekrar dener).
+  bool _trayClosing = false;
+
+  Future<void> _closePushedTray(SerumTrayAddress address) async {
+    if (_trayClosing) return;
+    _trayClosing = true;
+    try {
+      for (var attempt = 1; attempt <= 2; attempt++) {
+        try {
+          await _trayLock.closePort(deviceId: address.deviceId, port: address.port);
+          MedLogger.info(
+            unit: 'MasterDrawerSession',
+            swreq: 'SWREQ-HW-TRAY-002',
+            message: 'Avadanlık yerine itildi, port kapatıldı (c)',
+            context: {'address': address.toString(), 'attempt': attempt},
+          );
+          break;
+        } on TrayLockException catch (e) {
+          if (attempt == 2) {
+            MedLogger.warn(
+              unit: 'MasterDrawerSession',
+              swreq: 'SWREQ-HW-TRAY-002',
+              message: 'Yerine itilen avadanlığın portu kapatılamadı',
+              context: {'address': address.toString(), 'failure': e.failure.name, 'detail': e.detail},
+            );
+          }
+        }
+      }
+      // Bu arada başka bir avadanlık açıldıysa ya da izleme bittiyse stage'e dokunma.
+      if (_traySub == null || _lastTrayAddress != address) return;
+      _onTrayReturned();
+    } finally {
+      _trayClosing = false;
     }
   }
 
@@ -554,7 +602,7 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
   }
 
   /// Kullanıcı aktif avadanlığı onayladı. Hiç çekilmediyse açma iptal edilir
-  /// (kilit kapanır → 03 → LidClosed); çekildiyse yerine itilmesi beklenir.
+  /// (kilit kapanır → 00 → LidClosed); çekildiyse yerine itilmesi beklenir.
   void _confirmTrayClose() {
     if (_stage is! MasterDrawerOpened) return;
     _lidCloseConfirmed = true;

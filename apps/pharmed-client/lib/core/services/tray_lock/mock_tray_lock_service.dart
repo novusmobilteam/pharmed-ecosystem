@@ -2,11 +2,12 @@
 // Serum kabini avadanlık kilit kartı servisi — mock implementasyon.
 //
 // Kartın durum makinesini birebir taklit eder (kart başına tek aktif port):
-//   IDLE ──o(port)──▶ UNLOCKED ──(çekildi)──▶ PULLED ──(geri itildi)──▶ IDLE
+//   IDLE ──o(port)──▶ UNLOCKED ──(çekildi)──▶ PULLED ──(geri itildi)──▶ PUSHED ──c──▶ IDLE
 //               ◀──────c(port)──────┘
+//   IDLE = s:00, PUSHED = s:03 (yeni firmware, #279: port c ile kapatılır)
 //   k / x  : PULLED değilse IDLE'a döner, PULLED'da `trayOpen`
 //   o      : IDLE değilse `busy`
-//   c      : UNLOCKED değilse — PULLED'da `alreadyPulled`, IDLE'da başarılı (no-op)
+//   c      : UNLOCKED/PUSHED → IDLE; PULLED'da `alreadyPulled`, IDLE'da başarılı (no-op)
 //
 // Fiziksel çekme/geri itme otomatik simüle edilir: açıldıktan [pullDelay]
 // sonra PULLED, ondan [returnDelay] sonra IDLE. Test/elle kontrol için
@@ -97,6 +98,17 @@ class MockTrayLockService implements ITrayLockService {
   }
 
   @override
+  Future<void> closePort({required int deviceId, required int port}) async {
+    await _delay();
+    _checkPort(port);
+    final card = _card(deviceId);
+    if (card.activePort != port) return;
+    if (card.state == TrayLockStatus.pulled) throw const TrayLockException(TrayLockFailure.alreadyPulled);
+    card.reset(locked: true);
+    debugPrint('MOCK TRAY[$deviceId]: port $port kapatıldı (c)');
+  }
+
+  @override
   Future<TrayLockStatus> getStatus({required int deviceId, required int port}) async {
     await _delay();
     _checkPort(port);
@@ -135,12 +147,15 @@ class MockTrayLockService implements ITrayLockService {
     debugPrint('MOCK TRAY[$deviceId]: port ${card.activePort} çekildi');
   }
 
-  /// Çekilmiş avadanlığın geri itildiğini simüle eder (PULLED → IDLE).
+  /// Çekilmiş avadanlığın geri itildiğini simüle eder (PULLED → PUSHED, s:03).
+  /// Port [closePort] ile kapatılana kadar kart meşgul kalır (#279).
   void simulateReturn({required int deviceId}) {
     final card = _card(deviceId);
     if (card.state != TrayLockStatus.pulled) return;
-    debugPrint('MOCK TRAY[$deviceId]: port ${card.activePort} geri itildi');
-    card.reset(locked: true);
+    debugPrint('MOCK TRAY[$deviceId]: port ${card.activePort} geri itildi (s:03)');
+    card.timer?.cancel();
+    card.timer = null;
+    card.state = TrayLockStatus.pushed;
   }
 
   /// Panelden +/- ile girilen değeri simüle eder.

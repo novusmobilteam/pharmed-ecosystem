@@ -68,7 +68,7 @@ void main() {
     late MockTrayLockService svc;
     setUp(() => svc = MockTrayLockService(autoSimulate: false, commandDelay: Duration.zero));
 
-    test('aç → çek → geri it', () async {
+    test('aç → çek → geri it → c ile kapat', () async {
       await svc.lockAll(deviceId: 1);
       await svc.unlock(deviceId: 1, port: 3);
       expect(await svc.getStatus(deviceId: 1, port: 3), TrayLockStatus.unlocked);
@@ -78,7 +78,14 @@ void main() {
       expect(await svc.getStatus(deviceId: 1, port: 3), TrayLockStatus.pulled);
 
       svc.simulateReturn(deviceId: 1);
+      expect(await svc.getStatus(deviceId: 1, port: 3), TrayLockStatus.pushed);
+      // #279: kapatılmadan yeni açma reddedilir.
+      expect(await _thrown(() => svc.unlock(deviceId: 1, port: 5)), TrayLockFailure.busy);
+
+      await svc.closePort(deviceId: 1, port: 3);
       expect(await svc.getStatus(deviceId: 1, port: 3), TrayLockStatus.idle);
+      await svc.unlock(deviceId: 1, port: 5);
+      expect(await svc.getStatus(deviceId: 1, port: 5), TrayLockStatus.unlocked);
     });
 
     test('açıkken başka port → busy', () async {
