@@ -33,24 +33,26 @@ final class SerumTrayAddress {
   ///
   /// EŞLEME KURALLARI (backend port dönmediği sürece yerleşimden hesaplanır):
   ///   - deviceId = raf sırası (orderNo; Raf 1 en üst → kart 01)
-  ///   - port     = avadanlığın kapladığı EN SAĞDAKİ alanın numarası;
-  ///                alanlar sağdan sola 1..8 numaralanır.
-  ///     Örn. sağdan sola [büyük, orta, küçük] → portlar 1, 5, 7.
+  ///   - port     = avadanlığın raftaki SIRASI (sağdan sola 1..n), boyuttan
+  ///                bağımsız. Avadanlıklar kilit kartına ardışık portlarla
+  ///                bağlanır (#281, saha 24.11.2026):
+  ///                8 küçük → 1–8, 4 orta → 1–4, 2 büyük → 1–2,
+  ///                1 büyük + 4 küçük → 1–5.
+  ///     Örn. sağdan sola [büyük, orta, küçük] → portlar 1, 2, 3.
+  ///     (Önceki kural "en sağdaki alan" idi: 1, 5, 7 — yanlış.)
   static SerumTrayAddress? resolve({required List<SerumShelfLayout> shelves, required int cellId}) {
     for (final shelf in shelves) {
-      var areaOffset = 0;
-      for (final tray in shelf.trays) {
+      for (final (index, tray) in shelf.trays.indexed) {
         if (tray.id == cellId) {
           // Açık rafta kilit kartı kullanılmaz.
           if (!shelf.isLocked || shelf.isOpenShelf) return null;
           return SerumTrayAddress(
             deviceId: shelf.orderNo,
-            port: areaOffset + 1,
+            port: index + 1,
             cellId: cellId,
             isTakeGiveEnabled: shelf.isTakeGiveVerified,
           );
         }
-        areaOffset += tray.size.areaSize;
       }
     }
     return null;
