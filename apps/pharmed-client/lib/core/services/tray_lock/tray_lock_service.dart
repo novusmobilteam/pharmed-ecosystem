@@ -43,9 +43,30 @@ class TrayLockService implements ITrayLockService {
       _expectOk(deviceId, TrayLockAction.cancel, port: port);
 
   @override
+  Future<void> closePort({required int deviceId, required int port}) =>
+      _expectOk(deviceId, TrayLockAction.cancel, port: port);
+
+  @override
   Future<void> unlock({required int deviceId, required int port}) async {
-    final response = await _send(deviceId, TrayLockAction.open, port: port);
+    var response = await _send(deviceId, TrayLockAction.open, port: port);
     if (response is TrayLockOk) return;
+
+    // #279: yeni firmware'de itilip kapatılmamış port (s:03) kartı meşgul
+    // tutar. Hedef port s:03'teyse kapatılıp açma bir kez daha denenir.
+    if (response is TrayLockErrorResponse && response.failure == TrayLockFailure.busy) {
+      final status = await _tryGetStatus(deviceId, port);
+      if (status == TrayLockStatus.pushed) {
+        MedLogger.warn(
+          unit: _unit,
+          swreq: _swreq,
+          message: 'Kapatılmamış avadanlık portu (s:03) kapatılıp açma tekrarlanıyor',
+          context: {'deviceId': deviceId, 'port': port},
+        );
+        await closePort(deviceId: deviceId, port: port);
+        response = await _send(deviceId, TrayLockAction.open, port: port);
+        if (response is TrayLockOk) return;
+      }
+    }
 
     // Onay alınamadı: yanıt kaybolmuş ya da seri katmanın otomatik tekrarı
     // ikinci bir `o` göndermiş olabilir (ikincisi `noo4` döner). Komut kartta

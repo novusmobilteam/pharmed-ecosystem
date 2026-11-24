@@ -73,6 +73,7 @@ STATE_IDLE ───────────► STATE_UNLOCKED ─────�
 
 - Yerine itme switch ile algılanır; kart bunu kendiliğinden bildirmez, durum `s` ile sorgulanır.
 - **Yeni firmware (#277):** itilen port `s:03`'te kalır. PC `s:03`'ü görünce `c` gönderir (`/okkk\`), kart `s:00`'a döner. Port kapatılmadan yeni bir `o` gönderilmemelidir.
+- **Uygulama:** hw-test (#278) ve client (#279) `s:03`'ü görünce `c`'yi otomatik gönderir; kullanıcıdan işlem beklenmez. Client'ta `ITrayLockService.closePort` bu komuttur; `unlock` hedef port `s:03`'te kaldığı için `/noo4\` alırsa portu kapatıp `o`'yu bir kez daha dener.
 
 ## Komutlar
 
@@ -147,7 +148,7 @@ Cevap: `/okkk\` ya da geçersiz ID için `/noo1\`.
 | 12.11.2026 | `k` / `x` doğru çalıştı. `o` kabul edildi (`s:01`) ama fiziksel olarak hedef açılmadı (#221). |
 | 17.11.2026 | Kilit kablolaması düzeltildi; tek port açma çalışıyor. **Cevap süreleri:** `o` / `k` / `x` / `c` ≈ 600 ms, `s` / `t` ≈ 100 ms; `o`'dan hemen sonraki `s` bazen 0,6–1,1 sn. **`s:01` davranışı tutarsız:** bazı denemelerde 30 sn'den uzun sabit kaldı, bazılarında 2–4 sn sonra (≈ 0,8–1 sn süren bir cevapla) `s:03`'e döndü, bazılarında `o`'dan hemen sonra `s:03` geldi. Avadanlık çekildiği hâlde **`s:02` hiç görülmedi**. `t` her zaman `00` döndü, port LED'i yanmadı (#263). |
 | 23.11.2026 | Üretici firmware'i güncelledi ve AlverTest v1.0 test uygulamasını gönderdi: itilen avadanlık `s:03`'te kalıyor, port `c` ile kapatılıyor (`s:00`). hw-test bu akışa göre güncellendi (#277); saha doğrulaması bekleniyor. |
-| 24.11.2026 | Saha: `o` → `s:01` → `s:02` → itme → `s:03`'te kalıyor; `s:03`'teyken yeni `o` → `/noo4\`. `c` → `/okkk\` → `s:00`, ardından `o` tekrar çalışıyor. Port kapatma kullanıcıya bırakılmamalı: `s:03` görülünce PC `c`'yi otomatik gönderir. |
+| 24.11.2026 | Saha: `o` → `s:01` → `s:02` → itme → `s:03`'te kalıyor; `s:03`'teyken yeni `o` → `/noo4\`. `c` → `/okkk\` → `s:00`, ardından `o` tekrar çalışıyor. Port kapatma kullanıcıya bırakılmamalı: `s:03` görülünce PC `c`'yi otomatik gönderir. Otomatik kapatmalı hw-test sahada sorunsuz çalıştı (#278). |
 
 ## Açık noktalar
 

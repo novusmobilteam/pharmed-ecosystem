@@ -32,11 +32,18 @@ abstract interface class ITrayLockService {
   ///
   /// Yanıt kaybolup komut kartta uygulanmış olabileceği için, onay
   /// alınamazsa port durumu sorgulanır; port zaten açılmışsa başarılı sayılır.
+  /// Kart, kapatılmamış (s:03) bir port yüzünden meşgulse o port [closePort]
+  /// ile kapatılıp açma bir kez daha denenir (#279).
   Future<void> unlock({required int deviceId, required int port});
 
   /// Henüz çekilmemiş bir açmayı iptal eder (port tekrar kilitlenir).
   /// Avadanlık çekildiyse [TrayLockFailure.alreadyPulled].
   Future<void> cancelUnlock({required int deviceId, required int port});
+
+  /// #279: Yerine itilmiş (s:03) [port]'u kapatır (`c` / CLOSE) → kart boşa
+  /// döner (s:00). Yeni firmware'de port kapatılmadan kart yeni `o` kabul
+  /// etmez ([TrayLockFailure.busy]). Kart zaten boştaysa da başarılıdır.
+  Future<void> closePort({required int deviceId, required int port});
 
   /// [port]'un anlık durumu.
   Future<TrayLockStatus> getStatus({required int deviceId, required int port});
