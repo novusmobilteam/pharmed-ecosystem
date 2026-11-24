@@ -535,6 +535,10 @@ class MasterDrawerSession extends ChangeNotifier implements IMasterDrawerSession
           _setStage(_lidCloseConfirmed ? const MasterDrawerWaitingForLidClose() : const MasterDrawerOpened());
         }
 
+      // #277: yeni firmware'de 03 = itildi (close bekleniyor), 00 = boşta.
+      // Client akışı (03'te close) hw-test doğrulamasından sonra güncellenecek;
+      // şimdilik ikisi de eski 03 (boşta) gibi ele alınır.
+      case TrayLockStatus.pushed:
       case TrayLockStatus.idle:
         // Açık görülmeden okunan 03: kilit henüz açılmadı — yerine itme sayılmaz.
         if (!_traySeenActive) return;

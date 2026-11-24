@@ -18,7 +18,7 @@ import '../../widgets/common.dart';
 //   s: portun İŞLEM durumu   t: Al-Ver tuş değeri
 //
 // ÖNEMLİ (#221 saha): `s` kilidin FİZİKSEL durumunu değil kartın o porttaki
-// işlem durumunu döner. k/x sonrası kart her zaman "boşta" (s:03) döner —
+// işlem durumunu döner. k/x sonrası kart her zaman "boşta" (s:00) döner —
 // kilitlerin enerjili/serbest olduğu `s` ile görülemez. Bu yüzden ekranda
 // son kart geneli komutu (k/x) ayrıca gösterilir ve `o` sonrası teknisyen
 // fiziksel sonucu işaretler.
@@ -26,6 +26,10 @@ import '../../widgets/common.dart';
 // ÇEK / SAY / İT TESTİ (#263): port LED'i ve +/- tuşu yalnızca avadanlık
 // çekildiğinde (s:02) aktiftir. Test k → o sonrası durumu ve tuş değerini
 // canlı izler: çekme (s:02) → LED sorusu + tuş değeri → yerine itme (s:03).
+//
+// PORT KAPATMA (#277, yeni firmware): yerine itilen avadanlık s:03'te
+// (close bekleniyor) kalır; port `c` (CLOSE) ile kapatılır → s:00 (boşta).
+// Test s:03'ü görünce c gönderir ve s:00'ı bekler.
 //
 // TEK PORT TEŞHİSİ (#257): elle denemelerde o'dan önce x gönderilince kilitler
 // zaten serbest olduğu için o ölçülemiyordu. Teşhis k → s → o → s sırasını
@@ -76,10 +80,15 @@ class _Reading {
           'Avadanlık fiziksel olarak serbest değilse kilit kartın komutuna uymuyor demektir.',
         ),
         TrayLockStatus.pulled => _Reading(MedTone.info, '${p}avadanlık ÇEKİLDİ (s:02)'),
+        TrayLockStatus.pushed => _Reading(
+          MedTone.warning,
+          '${p}avadanlık YERİNE İTİLDİ — port kapatma (c) bekleniyor (s:03)',
+          'Yeni firmware\'de port, c (CLOSE) gönderilene kadar s:03\'te kalır; c sonrası s:00 (boşta) beklenir.',
+        ),
         TrayLockStatus.idle => _Reading(
           MedTone.neutral,
-          '${p}kart boşta — bu portta açma işlemi yok (s:03)',
-          's:03 kilidin fiziksel durumunu göstermez. k / x sonrası kart her zaman boşta döner; '
+          '${p}kart boşta — bu portta açma işlemi yok (s:00)',
+          's:00 kilidin fiziksel durumunu göstermez. k / x sonrası kart her zaman boşta döner; '
               'kilitlerin enerjili mi serbest mi olduğu için "Kart geneli" satırına bakın.',
         ),
       },
@@ -168,7 +177,8 @@ enum _CycleStage {
   /// `o` gönderildi; avadanlığın çekilmesi (s:02) bekleniyor.
   waitPull,
 
-  /// Çekildi (s:02): LED ve +/- tuşu denetleniyor; yerine itme (s:03) bekleniyor.
+  /// Çekildi (s:02): LED ve +/- tuşu denetleniyor; yerine itme (s:03) bekleniyor,
+  /// ardından c ile port kapatılır (s:00, #277).
   pulled,
 
   /// Bitti (yerine itildi ya da teknisyen durdurdu).
@@ -248,6 +258,10 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   bool _cycleFinishing = false;
   bool _cycleSeenUnlocked = false;
 
+  /// Yerine itme (s:03) görüldü mü ve c ile s:00'a kapatıldı mı (#277).
+  bool _cyclePushedSeen = false;
+  bool? _cycleClosed;
+
   // Kart ID taraması
   List<int>? _foundDevices;
 
@@ -256,6 +270,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
 
   // Canlı durum
   Timer? _watch;
+  int? _watchPort;
   bool _polling = false;
   _Reading? _liveReading;
   int? _liveKeypad;
@@ -296,7 +311,7 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     TrayLockAction.lockAll => 'Tümünü kilitle (k)',
     TrayLockAction.unlockAll => 'Tümünü serbest bırak (x)',
     TrayLockAction.open => 'Portu aç (o)',
-    TrayLockAction.cancel => 'Açmayı iptal (c)',
+    TrayLockAction.cancel => 'İptal / portu kapat (c)',
     TrayLockAction.status => 'Durum (s)',
     TrayLockAction.keypadValue => 'Tuş değeri (t)',
   };
@@ -327,6 +342,28 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       _awaitingObservation = action == TrayLockAction.open && res is TrayLockOk ? port : null;
       _diagnosing = false;
     });
+    // #277: açılan port, itildiğinde (s:03) otomatik kapatılsın diye izlenir.
+    if (action == TrayLockAction.open && res is TrayLockOk && port != null) {
+      if (_watch != null && _watchPort != port) _toggleWatch(); // eski portun izlemesini bırak
+      if (_watch == null) _toggleWatch();
+    }
+  }
+
+  /// #277: izlenen port s:03'e (itildi) geçince c otomatik gönderilir → s:00.
+  /// Kullanıcıdan elle kapatma beklenmez; client'taki akışın aynısıdır.
+  Future<void> _autoClosePort(int deviceId, int port, String? statusRaw) async {
+    final report = ref.read(testReportProvider);
+    report.add(
+      'Kart $deviceId · port $port yerine itildi (s:03)',
+      StepResult.ok,
+      detail: statusRaw ?? '/s:03\\',
+    );
+    final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
+    report.add(
+      'Kart $deviceId · Otomatik port kapatma (c) · port $port',
+      res is TrayLockOk ? StepResult.ok : StepResult.fail,
+      detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
+    );
   }
 
   /// Tek port teşhisi (#257): k → s → o → s, ardından fiziksel gözlem.
@@ -453,6 +490,8 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       _cycleVerdict = null;
       _cycleFinishing = false;
       _cycleSeenUnlocked = false;
+      _cyclePushedSeen = false;
+      _cycleClosed = null;
       _awaitingObservation = null;
       _diagnosing = false;
     });
@@ -515,15 +554,35 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       if (_cycleStage == _CycleStage.waitPull && status == TrayLockStatus.idle && _cycleSeenUnlocked) {
         // Kart çekme beklerken kendiliğinden boşa döndü (zaman aşımı vb.).
         await _finishCycle(
-          'Kart çekme beklerken boşa döndü (s:01 → s:03, $_cycleTime). Avadanlık çekildiyse kart çekmeyi '
+          'Kart çekme beklerken boşa döndü (s:01 → s:00, $_cycleTime). Avadanlık çekildiyse kart çekmeyi '
           'algılamadı (sensör / bağlantı); çekilmediyse testi tekrarlayıp daha hızlı çekin.',
           StepResult.fail,
         );
       } else if (_cycleStage == _CycleStage.waitPull && status == TrayLockStatus.pulled) {
         report.add('Çek/say/it — kart çekmeyi algıladı (s:02)', StepResult.ok, detail: _cycleTime);
         setState(() => _cycleStage = _CycleStage.pulled);
+      } else if (status == TrayLockStatus.pushed &&
+          (_cycleStage == _CycleStage.pulled || _cycleStage == _CycleStage.waitPull)) {
+        // #277: yerine itildi (s:03) → c ile port kapatılır, s:00 beklenir.
+        if (_cycleStage == _CycleStage.waitPull) {
+          report.add(
+            'Çek/say/it — kart çekmeyi (s:02) bildirmeden itildi durumuna geçti (s:03)',
+            StepResult.fail,
+            detail: _cycleTime,
+          );
+        } else {
+          report.add('Çek/say/it — kart yerine itmeyi algıladı (s:03)', StepResult.ok, detail: _cycleTime);
+        }
+        _cyclePushedSeen = true;
+        _cycleClosed = await _closePort(deviceId, port);
+        await _finishCycle(null, null);
       } else if (_cycleStage == _CycleStage.pulled && status == TrayLockStatus.idle) {
-        report.add('Çek/say/it — kart yerine itmeyi algıladı (s:03)', StepResult.ok, detail: _cycleTime);
+        // Eski firmware: itilince doğrudan boşa döner (s:03 görülmeden).
+        report.add(
+          'Çek/say/it — kart s:03 göstermeden boşa döndü (s:00)',
+          StepResult.info,
+          detail: 'Eski firmware davranışı olabilir · $_cycleTime',
+        );
         await _finishCycle(null, null);
       }
     } finally {
@@ -568,8 +627,37 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
   static String _statusCode(TrayLockStatus s) => switch (s) {
     TrayLockStatus.unlocked => 's:01',
     TrayLockStatus.pulled => 's:02',
-    TrayLockStatus.idle => 's:03',
+    TrayLockStatus.pushed => 's:03',
+    TrayLockStatus.idle => 's:00',
   };
+
+  /// #277: s:03'teki portu c (CLOSE) ile kapatır ve s:00'ı bekler (≤ 5 sn).
+  Future<bool> _closePort(int deviceId, int port) async {
+    final report = ref.read(testReportProvider);
+    final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
+    report.add(
+      'Çek/say/it — Port kapat (c) · port $port',
+      res is TrayLockOk ? StepResult.ok : StepResult.fail,
+      detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
+    );
+    if (res is! TrayLockOk) return false;
+    final deadline = DateTime.now().add(const Duration(seconds: 5));
+    String last = '—';
+    while (DateTime.now().isBefore(deadline)) {
+      final (sRaw, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+      last = sRaw ?? '(cevap yok)';
+      if (s is TrayLockStatusResponse) {
+        if (mounted) setState(() => _cycleStatus = s.status);
+        if (s.status == TrayLockStatus.idle) {
+          report.add('Çek/say/it — port kapandı (s:00)', StepResult.ok, detail: '$last · $_cycleTime');
+          return true;
+        }
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+    }
+    report.add('Çek/say/it — c sonrası s:00 görülmedi', StepResult.fail, detail: 'Son: $last');
+    return false;
+  }
 
   /// Testi bitirir; [verdict] verilmezse toplananlardan yorum üretilir.
   /// Port hâlâ "açık, çekilmedi" ise `c` ile boşa alınır.
@@ -582,17 +670,22 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     final deviceId = _deviceId;
     final port = _cyclePort;
     final report = ref.read(testReportProvider);
-    if (deviceId != null && port != null && _cycleStatus == TrayLockStatus.unlocked) {
+    if (deviceId != null &&
+        port != null &&
+        _cycleClosed == null &&
+        (_cycleStatus == TrayLockStatus.unlocked || _cycleStatus == TrayLockStatus.pushed)) {
+      // Açık kalan (s:01) ya da itilip kapatılmamış (s:03) port c ile kapatılır.
       final (raw, res) = await _tray(deviceId, TrayLockAction.cancel, port: port);
       report.add(
-        'Çek/say/it — Açmayı iptal (c) · port $port',
+        'Çek/say/it — ${_cycleStatus == TrayLockStatus.pushed ? 'Port kapat' : 'Açmayı iptal'} (c) · port $port',
         res is TrayLockOk ? StepResult.ok : StepResult.info,
         detail: '${raw ?? '(cevap yok)'} → ${_Reading.of(res, port: port).title}',
       );
     }
 
     final pulledSeen = _cycleStage == _CycleStage.pulled || (_cycleStage == _CycleStage.done && !_cyclePullMissed);
-    final returned = _cycleStage == _CycleStage.pulled && _cycleStatus == TrayLockStatus.idle;
+    final returned =
+        _cyclePushedSeen || (_cycleStage == _CycleStage.pulled && _cycleStatus == TrayLockStatus.idle);
     final keypadOk = _cycleKeypadSeen.any((v) => v != 0);
     final String text;
     final StepResult outcome;
@@ -613,9 +706,11 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
           'tuş değeri okunamadı (okunan: ${_cycleKeypadSeen.isEmpty ? '—' : _cycleKeypadSeen.join(' → ')}) — '
               '+/- tuş paneli / bağlantısı',
         if (!returned) 'yerine itme (s:03) görülmeden durduruldu',
+        if (_cyclePushedSeen && _cycleClosed == false) 'itildikten sonra c ile port kapatılamadı (s:00 görülmedi)',
+        if (returned && !_cyclePushedSeen) 'kart s:03 bildirmeden boşa döndü (eski firmware?)',
       ];
       text = problems.isEmpty
-          ? 'Çekme, LED, tuş (${_cycleKeypadSeen.join(' → ')}) ve yerine itme çalışıyor.'
+          ? 'Çekme, LED, tuş (${_cycleKeypadSeen.join(' → ')}), yerine itme (s:03) ve port kapatma (c → s:00) çalışıyor.'
           : 'Çekme algılandı; ${problems.join('; ')}.';
       outcome = problems.isEmpty ? StepResult.ok : StepResult.fail;
     }
@@ -635,11 +730,11 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
       return 'Avadanlık açıldı ama kart açık durumu (s:01) bildirmedi — kartın durum bildirimi kontrol edilmeli.';
     }
     if (what == _observations[1].$1) {
-      return 'Kart o komutunu kabul etti (okkk) ama açma durumuna hiç geçmedi (o sonrası hep s:03): kilit sürülmedi. '
+      return 'Kart o komutunu kabul etti (okkk) ama açma durumuna hiç geçmedi (o sonrası hep s:00): kilit sürülmedi. '
           'Sorun kartta — firmware ya da kartın açma koşulu (ör. serum kapağı / avadanlık sensörü). Serum kapağı '
           'açıkken tekrar deneyin; değişmezse sonucu kart geliştiricisine iletin.';
     }
-    return 'Kart açma durumuna geçmedi (o sonrası hep s:03). $hint';
+    return 'Kart açma durumuna geçmedi (o sonrası hep s:00). $hint';
   }
 
   Future<void> _observe(String what, bool correct, String observationHint) async {
@@ -744,11 +839,18 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
     final deviceId = _deviceId;
     if (deviceId == null) return;
     final port = _port;
+    _watchPort = port;
     _watch = Timer.periodic(const Duration(milliseconds: 500), (_) async {
       if (_polling || !mounted) return;
       _polling = true;
       try {
-        final (_, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+        final (sRaw, s) = await _tray(deviceId, TrayLockAction.status, port: port);
+        if (s is TrayLockStatusResponse && s.status == TrayLockStatus.pushed) {
+          await _autoClosePort(deviceId, port, sRaw);
+          if (!mounted) return;
+          setState(() => _liveReading = _Reading.of(s, port: port));
+          return;
+        }
         final (_, t) = await _tray(deviceId, TrayLockAction.keypadValue, port: port);
         if (!mounted) return;
         setState(() {
@@ -774,7 +876,8 @@ class _TrayLockSectionState extends ConsumerState<TrayLockSection> {
             '${_statusCode(status)} — ${switch (status) {
               TrayLockStatus.unlocked => 'kilit açık, avadanlık çekilmedi',
               TrayLockStatus.pulled => 'avadanlık çekildi (LED ve +/- aktif olmalı)',
-              TrayLockStatus.idle => 'boşta / yerine itildi',
+              TrayLockStatus.pushed => 'yerine itildi, port kapatılıyor (c)',
+              TrayLockStatus.idle => 'boşta (port kapalı)',
             }}',
           );
     return Column(
