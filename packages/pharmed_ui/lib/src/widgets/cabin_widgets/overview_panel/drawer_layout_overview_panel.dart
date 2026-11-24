@@ -99,7 +99,8 @@ class DrawerLayoutOverviewPanel extends StatelessWidget {
   }
 
   Widget _kubikGrid(BuildContext context) {
-    const columnCount = 4;
+    // #275: sütun = sıra kartı (16 göz → 4, 20 göz → 5; iade kutulu → 4).
+    final columnCount = kubikGroupColumnCount(item.group);
 
     // Seçim paneliyle AYNI görsel sıra — ham unit sırası fiziksel düzenle
     // eşleşmiyor (bkz. CabinOverviewSelectionPanel / kübik transpozisyon).

@@ -63,7 +63,8 @@ class MasterCabinDeviceVisual extends StatelessWidget {
               group: group,
               isSelected: onSlotTap != null && group.slot.id == selectedSlotId,
               onTap: onSlotTap != null ? () => onSlotTap!(group) : null,
-              kubikColumnCount: _kubikColumnCount,
+              // #275: 16 göz → 4 sütun, 20 göz → 5 (iade kutulu → 4).
+              kubikColumnCount: group.isReturnDrawer ? _kubikColumnCount : kubikColumnCountFor(group.compartmentCount),
               cellSpacing: _cellSpacing,
             ),
             if (group != groups.last) const SizedBox(height: MedSpacing.md),

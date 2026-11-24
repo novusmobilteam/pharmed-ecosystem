@@ -46,7 +46,7 @@ class CabinIntakeEntryList extends StatelessWidget {
 
   _IntakeCell _kubikCell() {
     final units = drawerGroup?.units ?? const <DrawerUnit>[];
-    final visualUnits = kubikUnitsInVisualOrder(units, columnCount: 4);
+    final visualUnits = kubikUnitsInVisualOrder(units);
     final unitIndex = visualUnits.indexWhere((u) => u.id == target.assignment.drawerUnit?.id);
 
     return _IntakeCell(
