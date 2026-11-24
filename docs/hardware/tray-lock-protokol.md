@@ -22,7 +22,8 @@ Serum bölmesindeki avadanlık (tepsi) rafları için elektromanyetik kilit kart
 
 - Bağlantı: RS485, 9600 baud, 8N1. Kabin kartlarıyla **aynı hat** kullanılır.
 - Kilit mantığı: **mosfet enerjili = kilitli**, enerjisiz = serbest. Elektrik kesilince bütün avadanlıklar serbest kalır (fail-open).
-- Bir kart bir rafa karşılık gelir; port `1`–`8` raftaki avadanlık konumudur.
+- Bir kart bir rafa karşılık gelir (kart ID = raf sırası).
+- **Port = raftaki avadanlık sırası (sağdan sola `1`..`n`), boyuttan bağımsız.** Avadanlıklar karta ardışık portlarla bağlanır: 8 küçük → `1`–`8`, 4 orta → `1`–`4`, 2 büyük → `1`–`2`, 1 büyük + 4 küçük → `1`–`5`. Kodda `SerumTrayAddress.resolve` (#281). Önceki "avadanlığın kapladığı en sağdaki alan" kuralı (4 orta → 1, 3, 5, 7) yanlıştı: 2.–4. avadanlıklar açılıyor gibi görünse de kapanışları algılanmıyordu.
 
 ## Komut ve cevap formatı
 
@@ -149,6 +150,7 @@ Cevap: `/okkk\` ya da geçersiz ID için `/noo1\`.
 | 17.11.2026 | Kilit kablolaması düzeltildi; tek port açma çalışıyor. **Cevap süreleri:** `o` / `k` / `x` / `c` ≈ 600 ms, `s` / `t` ≈ 100 ms; `o`'dan hemen sonraki `s` bazen 0,6–1,1 sn. **`s:01` davranışı tutarsız:** bazı denemelerde 30 sn'den uzun sabit kaldı, bazılarında 2–4 sn sonra (≈ 0,8–1 sn süren bir cevapla) `s:03`'e döndü, bazılarında `o`'dan hemen sonra `s:03` geldi. Avadanlık çekildiği hâlde **`s:02` hiç görülmedi**. `t` her zaman `00` döndü, port LED'i yanmadı (#263). |
 | 23.11.2026 | Üretici firmware'i güncelledi ve AlverTest v1.0 test uygulamasını gönderdi: itilen avadanlık `s:03`'te kalıyor, port `c` ile kapatılıyor (`s:00`). hw-test bu akışa göre güncellendi (#277); saha doğrulaması bekleniyor. |
 | 24.11.2026 | Saha: `o` → `s:01` → `s:02` → itme → `s:03`'te kalıyor; `s:03`'teyken yeni `o` → `/noo4\`. `c` → `/okkk\` → `s:00`, ardından `o` tekrar çalışıyor. Port kapatma kullanıcıya bırakılmamalı: `s:03` görülünce PC `c`'yi otomatik gönderir. Otomatik kapatmalı hw-test sahada sorunsuz çalıştı (#278). |
+| 24.11.2026 | Client, 4 orta avadanlık: 1. avadanlık sorunsuz; 2.–4. avadanlıkta (port 3, 5, 7 gönderiliyordu) yerine itme algılanmadı, LED sönmedi, sıradaki açılamadı. Avadanlıklar boyuttan bağımsız ardışık portlara bağlı → port = avadanlık sırası (#281). |
 
 ## Açık noktalar
 

@@ -121,7 +121,8 @@ void main() {
   });
 
   group('SerumTrayAddress.resolve', () {
-    // Raf 2 kilitli: sağdan sola [büyük(4), orta(2), küçük(1)] → port 1, 5, 7.
+    // Raf 2 kilitli: sağdan sola [büyük, orta, küçük] → port 1, 2, 3 (#281:
+    // boyuttan bağımsız ardışık port).
     final shelves = [
       const SerumShelfLayout(orderNo: 1, trays: [SerumTray(id: 10, size: SerumTraySize.small)]),
       const SerumShelfLayout(
@@ -136,10 +137,26 @@ void main() {
       const SerumShelfLayout(orderNo: 3),
     ];
 
-    test('port = en sağdaki alan, cihaz = raf sırası', () {
+    test('port = avadanlık sırası (boyuttan bağımsız), cihaz = raf sırası', () {
       expect(SerumTrayAddress.resolve(shelves: shelves, cellId: 20), const SerumTrayAddress(deviceId: 2, port: 1, cellId: 20));
-      expect(SerumTrayAddress.resolve(shelves: shelves, cellId: 21)?.port, 5);
-      expect(SerumTrayAddress.resolve(shelves: shelves, cellId: 22)?.port, 7);
+      expect(SerumTrayAddress.resolve(shelves: shelves, cellId: 21)?.port, 2);
+      expect(SerumTrayAddress.resolve(shelves: shelves, cellId: 22)?.port, 3);
+    });
+
+    List<int?> portsOf(List<SerumTraySize> sizes) {
+      final shelf = SerumShelfLayout(
+        orderNo: 1,
+        lockType: SerumShelfLockType.locked,
+        trays: [for (var i = 0; i < sizes.length; i++) SerumTray(id: i + 1, size: sizes[i])],
+      );
+      return [for (var i = 0; i < sizes.length; i++) SerumTrayAddress.resolve(shelves: [shelf], cellId: i + 1)?.port];
+    }
+
+    test('saha kuralı: avadanlıklar ardışık portlara bağlı (#281)', () {
+      expect(portsOf(List.filled(8, SerumTraySize.small)), [1, 2, 3, 4, 5, 6, 7, 8]);
+      expect(portsOf(List.filled(4, SerumTraySize.medium)), [1, 2, 3, 4]);
+      expect(portsOf(List.filled(2, SerumTraySize.large)), [1, 2]);
+      expect(portsOf([SerumTraySize.large, ...List.filled(4, SerumTraySize.small)]), [1, 2, 3, 4, 5]);
     });
 
     test('kilitsiz raf ya da bilinmeyen avadanlık → null', () {
@@ -212,7 +229,7 @@ void main() {
     final unlocked10 = trayAssignment(10, shelf1, 1);
 
     test('forAssignment yalnızca kilitli raftaki avadanlığı çözer', () {
-      expect(SerumTrayAddress.forAssignment(locked21, groups), const SerumTrayAddress(deviceId: 2, port: 5, cellId: 21));
+      expect(SerumTrayAddress.forAssignment(locked21, groups), const SerumTrayAddress(deviceId: 2, port: 2, cellId: 21));
       expect(SerumTrayAddress.forAssignment(unlocked10, groups), isNull);
       expect(SerumTrayAddress.forAssignment(MedicineAssignment(cabinDrawerId: 1701), groups), isNull);
     });
@@ -232,7 +249,7 @@ void main() {
       expect(job.isSerumTrayJob, isTrue);
       expect(job.staysOpenAcrossTargets, isTrue);
       expect(job.targets.map((t) => t.assignment.cabinDrawerDetailId), [10, 20, 21]);
-      expect(job.targets.map((t) => t.serumTray?.port), [null, 1, 5]);
+      expect(job.targets.map((t) => t.serumTray?.port), [null, 1, 2]);
     });
 
     test('seçim: serum avadanlığı raf değil avadanlık bazında', () {

@@ -4,8 +4,8 @@
 //     Master içindeki serum bölmesi port 1'de, serum kabininde kapak N → port N.
 //     Açma client ile aynı servis metoduyla yapılır (openMasterSerumDrawer).
 //   • Avadanlık kilit kartı: `<iXX:YZ>` protokolü (TrayLockProtocol), satır
-//     seçimi gerekmez. Kart ID = raf sırası, port = avadanlığın en sağdaki
-//     alanı (SerumTrayAddress kuralı).
+//     seçimi gerekmez. Kart ID = raf sırası, port = avadanlığın raftaki
+//     sırası, boyuttan bağımsız (SerumTrayAddress kuralı, #281).
 
 import 'package:pharmed_core/pharmed_core.dart';
 
