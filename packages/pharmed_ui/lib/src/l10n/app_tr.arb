@@ -840,6 +840,64 @@
   "@wizard_retryButton": {
     "description": "Button on the wizard error screen to go back and retry"
   },
+  "wizard_restore_checkingMessage": "Bu cihaz için kayıtlı kurulum aranıyor…",
+  "@wizard_restore_checkingMessage": {
+    "description": "Loading message shown before the setup wizard while the kiosk asks the backend (Station/byMac) whether this device already has a registered station and cabins"
+  },
+  "wizard_restore_foundTitle": "Kayıtlı Kurulum Bulundu",
+  "@wizard_restore_foundTitle": {
+    "description": "Title of the screen shown when the backend reports a station and cabins already registered to this device's MAC address"
+  },
+  "wizard_restore_foundDescription": "Bu bilgisayar {stationName} istasyonuna kayıtlı ve {count} kabin bağlı. Sihirbazı yeniden yapmadan bu kurulumla devam edebilirsiniz.",
+  "@wizard_restore_foundDescription": {
+    "description": "Explanation on the existing-setup screen: which station the device is registered to and how many cabins are attached",
+    "placeholders": {
+      "stationName": {
+        "type": "String",
+        "description": "Name of the station registered to this device"
+      },
+      "count": {
+        "type": "int",
+        "description": "Number of cabins attached to the station"
+      }
+    }
+  },
+  "wizard_restore_primaryBadge": "Ana kabin",
+  "@wizard_restore_primaryBadge": {
+    "description": "Badge on the existing-setup screen marking the cabin (address a) connected to this computer"
+  },
+  "wizard_restore_passiveBadge": "Pasif",
+  "@wizard_restore_passiveBadge": {
+    "description": "Badge on the existing-setup screen for a cabin that is passive in the system"
+  },
+  "wizard_restore_noDesignWarning": "Ana kabinin çekmece tasarımı kayıtlı değil; önceki kurulum yarıda kalmış olabilir.",
+  "@wizard_restore_noDesignWarning": {
+    "description": "Warning on the existing-setup screen when the main cabin has no saved drawer design (hasDesign = false)"
+  },
+  "wizard_restore_passiveWarning": "Ana kabin sistemde pasif durumda.",
+  "@wizard_restore_passiveWarning": {
+    "description": "Warning on the existing-setup screen when the main cabin is passive"
+  },
+  "wizard_restore_continueButton": "Bu Kurulumla Devam Et",
+  "@wizard_restore_continueButton": {
+    "description": "Primary button on the existing-setup screen that restores the local setup from the registered station and cabins"
+  },
+  "wizard_restore_newSetupButton": "Yeni Kurulum Yap",
+  "@wizard_restore_newSetupButton": {
+    "description": "Secondary button on the existing-setup screen that ignores the registered setup and opens the wizard from step 1"
+  },
+  "wizard_restore_newSetupHint": "Yeni kurulum bu istasyona ek bir kabin kaydı oluşturur.",
+  "@wizard_restore_newSetupHint": {
+    "description": "Hint under the new-setup button on the existing-setup screen warning that the wizard creates another cabin record"
+  },
+  "wizard_restore_checkErrorTitle": "Kayıtlı Kurulum Kontrol Edilemedi",
+  "@wizard_restore_checkErrorTitle": {
+    "description": "Title of the error screen when the Station/byMac request fails before the setup wizard"
+  },
+  "wizard_restore_proceedToSetupButton": "Kuruluma Geç",
+  "@wizard_restore_proceedToSetupButton": {
+    "description": "Button on the existing-setup check error screen that opens the setup wizard without the check"
+  },
   "settings_title": "Ayarlar",
   "@settings_title": {
     "description": "Title label in the settings modal header"

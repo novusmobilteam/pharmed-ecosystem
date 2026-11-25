@@ -663,6 +663,50 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wizard_retryButton => 'Retour et réessayer';
 
   @override
+  String get wizard_restore_checkingMessage => 'Recherche d\'une installation existante pour cet appareil…';
+
+  @override
+  String get wizard_restore_foundTitle => 'Installation existante trouvée';
+
+  @override
+  String wizard_restore_foundDescription(String stationName, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cabines',
+      one: '1 cabine',
+    );
+    return 'Cet ordinateur est enregistré sur la station $stationName avec $_temp0. Vous pouvez continuer avec cette installation sans relancer l\'assistant.';
+  }
+
+  @override
+  String get wizard_restore_primaryBadge => 'Cabine principale';
+
+  @override
+  String get wizard_restore_passiveBadge => 'Passive';
+
+  @override
+  String get wizard_restore_noDesignWarning => 'La disposition des tiroirs de la cabine principale n\'a pas été enregistrée ; l\'installation précédente a peut-être été interrompue.';
+
+  @override
+  String get wizard_restore_passiveWarning => 'La cabine principale est passive dans le système.';
+
+  @override
+  String get wizard_restore_continueButton => 'Continuer avec cette installation';
+
+  @override
+  String get wizard_restore_newSetupButton => 'Nouvelle installation';
+
+  @override
+  String get wizard_restore_newSetupHint => 'Une nouvelle installation crée un enregistrement de cabine supplémentaire pour cette station.';
+
+  @override
+  String get wizard_restore_checkErrorTitle => 'Impossible de vérifier l\'installation existante';
+
+  @override
+  String get wizard_restore_proceedToSetupButton => 'Passer à l\'installation';
+
+  @override
   String get settings_title => 'Paramètres';
 
   @override

@@ -69,4 +69,11 @@ class MockStationRepository implements IStationRepository {
     await Future.delayed(const Duration(milliseconds: 400));
     return const Result.ok([]);
   }
+
+  /// Mock'ta kayıtlı kurulum yok: kiosk her zaman sihirbazı açar.
+  @override
+  Future<Result<StationInstallation>> getStationInstallation(String macAddress) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return const Result.ok(StationInstallation.empty);
+  }
 }

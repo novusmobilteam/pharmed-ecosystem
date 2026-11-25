@@ -10,4 +10,8 @@ abstract interface class IStationRepository {
   Future<Result<Station?>> getStation(int stationId);
   Future<Result<Station?>> getCurrentStation(String macAddress);
   Future<Result<void>> updateStationMacAddress(int stationId);
+
+  /// [SWREQ-SETUP-RESTORE-001] MAC'e kayıtlı istasyon ve kabinleri. Kayıt
+  /// yoksa [StationInstallation.empty] döner.
+  Future<Result<StationInstallation>> getStationInstallation(String macAddress);
 }

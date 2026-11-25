@@ -274,6 +274,28 @@
   "wizard_successDashboardButton": "Aller au tableau de bord",
   "wizard_errorTitle": "Échec de l'enregistrement",
   "wizard_retryButton": "Retour et réessayer",
+  "wizard_restore_checkingMessage": "Recherche d'une installation existante pour cet appareil…",
+  "wizard_restore_foundTitle": "Installation existante trouvée",
+  "wizard_restore_foundDescription": "Cet ordinateur est enregistré sur la station {stationName} avec {count, plural, one{1 cabine} other{{count} cabines}}. Vous pouvez continuer avec cette installation sans relancer l'assistant.",
+  "@wizard_restore_foundDescription": {
+    "placeholders": {
+      "stationName": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_restore_primaryBadge": "Cabine principale",
+  "wizard_restore_passiveBadge": "Passive",
+  "wizard_restore_noDesignWarning": "La disposition des tiroirs de la cabine principale n'a pas été enregistrée ; l'installation précédente a peut-être été interrompue.",
+  "wizard_restore_passiveWarning": "La cabine principale est passive dans le système.",
+  "wizard_restore_continueButton": "Continuer avec cette installation",
+  "wizard_restore_newSetupButton": "Nouvelle installation",
+  "wizard_restore_newSetupHint": "Une nouvelle installation crée un enregistrement de cabine supplémentaire pour cette station.",
+  "wizard_restore_checkErrorTitle": "Impossible de vérifier l'installation existante",
+  "wizard_restore_proceedToSetupButton": "Passer à l'installation",
   "settings_title": "Paramètres",
   "settings_systemConfigTitle": "CONFIGURATION SYSTÈME",
   "settings_appearanceLabel": "Apparence",

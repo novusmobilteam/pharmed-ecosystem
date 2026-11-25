@@ -66,7 +66,7 @@ class FinishCabinSetupUseCase {
           );
         }
 
-        await _appSettingsCache.saveCurrentCabinId(cabinId);
+        await _appSettingsCache.saveCurrentCabinId(cabinId, stationId: config.stationScope.station.id);
 
         // 2. Mobil kabin → manuel çekmece yapısını kaydet
         if (config.cabinType == CabinType.mobile) {

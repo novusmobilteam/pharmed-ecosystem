@@ -367,6 +367,10 @@ final getCurrentStationUseCaseProvider = Provider((ref) {
   return GetCurrentStationUseCase(ref.read(stationRepositoryProvider));
 });
 
+final getStationInstallationUseCaseProvider = Provider((ref) {
+  return GetStationInstallationUseCase(ref.read(stationRepositoryProvider));
+});
+
 final loginWitnessUseCaseProvider = Provider((ref) {
   return WitnessUserLoginUseCase(ref.read(userManagerProvider));
 });
