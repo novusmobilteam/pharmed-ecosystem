@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { API_BASE_URL } from '../api';
+import { API_BASE_URL, API_REQUEST_BASE } from '../api';
 import { login } from '../auth';
 
 /** Yönetici girişi — log servisleri yalnızca aktif yöneticiye açık. */
@@ -17,7 +17,7 @@ export function Login() {
           setBusy(true);
           setError(undefined);
           try {
-            await login(API_BASE_URL!, String(f.get('email') ?? '').trim(), String(f.get('password') ?? ''));
+            await login(API_REQUEST_BASE!, String(f.get('email') ?? '').trim(), String(f.get('password') ?? ''));
           } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
           } finally {
