@@ -85,4 +85,14 @@ class StationRemoteDataSource extends BaseRemoteDataSource {
       emptyLog: 'İstasyon bulunamadı',
     );
   }
+
+  /// [SWREQ-SETUP-RESTORE-001] MAC'e kayıtlı istasyon ve bağlı kabinler.
+  Future<Result<StationInstallationDTO?>> getStationInstallation(String macAddress) async {
+    return fetchRequest(
+      path: '$_base/byMac/${Uri.encodeComponent(macAddress)}',
+      parser: BaseRemoteDataSource.singleParser(StationInstallationDTO.fromJson),
+      successLog: 'İstasyon kurulumu getirildi',
+      emptyLog: 'Bu MAC adresine kayıtlı istasyon yok',
+    );
+  }
 }

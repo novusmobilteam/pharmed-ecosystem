@@ -10,6 +10,7 @@ import 'package:pharmed_ui/pharmed_ui.dart';
 import '../../auth/auth.dart';
 import '../notifier/setup_wizard_notifier.dart';
 import '../state/setup_wizard_state.dart';
+import 'installation_restore_view.dart';
 import 'step1_view.dart';
 import 'step2_view.dart';
 import 'step3_view.dart';
@@ -31,6 +32,12 @@ class SetupWizardScreen extends ConsumerWidget {
         children: [
           Expanded(
             child: switch (uiState) {
+              WizardCheckingInstallation() => const InstallationCheckingView(),
+              WizardInstallationFound(:final installation, :final isRestoring) => InstallationFoundView(
+                installation: installation,
+                isRestoring: isRestoring,
+              ),
+              WizardInstallationCheckError(:final message) => InstallationCheckErrorView(message: message),
               WizardActive() => WizardActiveView(state: uiState),
               WizardSaving() => const _WizardSavingView(),
               WizardSaved(:final cabinId, :final cabinName) => WizardSuccessView(

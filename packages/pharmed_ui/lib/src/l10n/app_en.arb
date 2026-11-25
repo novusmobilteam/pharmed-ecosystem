@@ -471,6 +471,28 @@
   "@wizard_errorTitle": {},
   "wizard_retryButton": "Go Back and Retry",
   "@wizard_retryButton": {},
+  "wizard_restore_checkingMessage": "Checking for an existing setup on this device…",
+  "wizard_restore_foundTitle": "Existing Setup Found",
+  "wizard_restore_foundDescription": "This computer is registered to the {stationName} station with {count, plural, one{1 cabin} other{{count} cabins}}. You can continue with this setup without running the wizard again.",
+  "@wizard_restore_foundDescription": {
+    "placeholders": {
+      "stationName": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wizard_restore_primaryBadge": "Main cabin",
+  "wizard_restore_passiveBadge": "Passive",
+  "wizard_restore_noDesignWarning": "The drawer layout of the main cabin was not saved; the previous setup may have been interrupted.",
+  "wizard_restore_passiveWarning": "The main cabin is passive in the system.",
+  "wizard_restore_continueButton": "Continue with This Setup",
+  "wizard_restore_newSetupButton": "Start New Setup",
+  "wizard_restore_newSetupHint": "A new setup creates an additional cabin record for this station.",
+  "wizard_restore_checkErrorTitle": "Could Not Check Existing Setup",
+  "wizard_restore_proceedToSetupButton": "Go to Setup",
   "settings_title": "Settings",
   "@settings_title": {},
   "settings_systemConfigTitle": "SYSTEM CONFIGURATION",

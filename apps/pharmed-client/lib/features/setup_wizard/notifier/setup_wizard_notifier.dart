@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
+import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:pharmed_utils/pharmed_utils.dart';
 
 import '../../../core/cache/app_settings_cache.dart';
@@ -14,11 +15,81 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
   @override
   SetupWizardState build() {
     init();
-    return WizardActive(currentStep: 1, completedSteps: {});
+    return const WizardCheckingInstallation();
   }
 
   Future<void> init() async {
     macAddress = await DeviceInfo.getMacAddress();
+    await checkInstallation();
+  }
+
+  // MARK: Kayıtlı kurulumu geri yükleme
+
+  /// [SWREQ-SETUP-RESTORE-003]
+  /// Yerel kurulum kaydı yokken çağrılır: cihazın MAC adresine kayıtlı istasyon
+  /// ve kabin varsa kullanıcıya geri yüklemeyi önerir, yoksa sihirbazı açar.
+  Future<void> checkInstallation() async {
+    state = const WizardCheckingInstallation();
+
+    final result = await ref.read(getStationInstallationUseCaseProvider).call();
+
+    switch (result) {
+      case Ok(value: final installation):
+        if (installation.isRestorable) {
+          MedLogger.info(
+            unit: 'SW-UNIT-SETUP',
+            swreq: 'SWREQ-SETUP-RESTORE-003',
+            message: 'Bu cihaza kayıtlı kurulum bulundu',
+            context: {
+              'stationId': installation.station?.id,
+              'cabinIds': installation.cabins.map((c) => c.cabin.id).toList(),
+            },
+          );
+          state = WizardInstallationFound(installation: installation);
+        } else {
+          startNewSetup();
+        }
+      case Error(error: final error):
+        state = WizardInstallationCheckError(message: error.message);
+    }
+  }
+
+  /// [SWREQ-SETUP-RESTORE-004]
+  /// Bulunan kurulumu yerel kayda yazar: kabin tipi, ana kabin (`no = a`),
+  /// istasyon ve COM port. Çekmece tasarımı dashboard'da kabin ID'siyle çekilir.
+  Future<void> restoreInstallation() async {
+    final current = state;
+    if (current is! WizardInstallationFound || current.isRestoring) return;
+
+    final installation = current.installation;
+    final primary = installation.primaryCabin?.cabin;
+    final cabinId = primary?.id;
+    final cabinType = primary?.type;
+    if (primary == null || cabinId == null || cabinType == null) return;
+
+    state = WizardInstallationFound(installation: installation, isRestoring: true);
+
+    await appSettingsCache.markSetupComplete(deviceMode: cabinType.name);
+    await appSettingsCache.saveCurrentCabinId(cabinId, stationId: installation.station?.id);
+    final comPort = primary.comPort;
+    if (comPort != null) await appSettingsCache.saveComPort(comPort.label);
+
+    ref.invalidate(cachedDeviceModeProvider);
+    ref.invalidate(deviceModeProvider);
+
+    MedLogger.info(
+      unit: 'SW-UNIT-SETUP',
+      swreq: 'SWREQ-SETUP-RESTORE-004',
+      message: 'Kayıtlı kurulum geri yüklendi',
+      context: {'stationId': installation.station?.id, 'cabinId': cabinId, 'deviceMode': cabinType.name},
+    );
+
+    state = WizardSaved(cabinId: cabinId, cabinName: primary.name ?? '');
+  }
+
+  /// Kayıtlı kurulumu kullanmadan sihirbazı ilk adımdan açar.
+  void startNewSetup() {
+    state = WizardActive(currentStep: 1, completedSteps: {});
   }
 
   WizardActive? get _active => state is WizardActive ? state as WizardActive : null;
@@ -88,7 +159,7 @@ class SetupWizardNotifier extends Notifier<SetupWizardState> {
     switch (result) {
       case Ok(value: final cabinId):
         await appSettingsCache.markSetupComplete(deviceMode: config.cabinType.name);
-        await appSettingsCache.saveCurrentCabinId(cabinId);
+        await appSettingsCache.saveCurrentCabinId(cabinId, stationId: config.stationScope.station.id);
 
         final comPort = config.basicInfo.comPort;
         if (comPort != null && comPort.isNotEmpty) {

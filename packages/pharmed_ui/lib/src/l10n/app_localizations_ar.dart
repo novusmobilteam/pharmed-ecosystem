@@ -651,6 +651,50 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wizard_retryButton => 'العودة وإعادة المحاولة';
 
   @override
+  String get wizard_restore_checkingMessage => 'Checking for an existing setup on this device…';
+
+  @override
+  String get wizard_restore_foundTitle => 'Existing Setup Found';
+
+  @override
+  String wizard_restore_foundDescription(String stationName, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cabins',
+      one: '1 cabin',
+    );
+    return 'This computer is registered to the $stationName station with $_temp0. You can continue with this setup without running the wizard again.';
+  }
+
+  @override
+  String get wizard_restore_primaryBadge => 'Main cabin';
+
+  @override
+  String get wizard_restore_passiveBadge => 'Passive';
+
+  @override
+  String get wizard_restore_noDesignWarning => 'The drawer layout of the main cabin was not saved; the previous setup may have been interrupted.';
+
+  @override
+  String get wizard_restore_passiveWarning => 'The main cabin is passive in the system.';
+
+  @override
+  String get wizard_restore_continueButton => 'Continue with This Setup';
+
+  @override
+  String get wizard_restore_newSetupButton => 'Start New Setup';
+
+  @override
+  String get wizard_restore_newSetupHint => 'A new setup creates an additional cabin record for this station.';
+
+  @override
+  String get wizard_restore_checkErrorTitle => 'Could Not Check Existing Setup';
+
+  @override
+  String get wizard_restore_proceedToSetupButton => 'Go to Setup';
+
+  @override
   String get settings_title => 'الإعدادات';
 
   @override

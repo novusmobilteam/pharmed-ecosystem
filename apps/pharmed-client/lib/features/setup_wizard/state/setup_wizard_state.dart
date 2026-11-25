@@ -3,8 +3,32 @@
 // Her adımın detay state'i kendi notifier'ında.
 // Sınıf: Class B
 
+import 'package:pharmed_core/pharmed_core.dart';
+
 sealed class SetupWizardState {
   const SetupWizardState();
+}
+
+/// [SWREQ-SETUP-RESTORE-003] Sihirbaz açılmadan önce bu cihazın MAC adresine
+/// kayıtlı bir kurulum olup olmadığı kontrol ediliyor.
+final class WizardCheckingInstallation extends SetupWizardState {
+  const WizardCheckingInstallation();
+}
+
+/// [SWREQ-SETUP-RESTORE-003] Kayıtlı kurulum bulundu — kullanıcı geri yüklemeyi
+/// ya da yeni kurulumu seçer.
+final class WizardInstallationFound extends SetupWizardState {
+  const WizardInstallationFound({required this.installation, this.isRestoring = false});
+
+  final StationInstallation installation;
+  final bool isRestoring;
+}
+
+/// [SWREQ-SETUP-RESTORE-003] Kayıtlı kurulum kontrol edilemedi.
+final class WizardInstallationCheckError extends SetupWizardState {
+  const WizardInstallationCheckError({required this.message});
+
+  final String message;
 }
 
 /// Wizard aktif — kullanıcı adımları dolduruyor

@@ -1,6 +1,7 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_data/src/models/api_response/api_response.dart';
 import 'package:pharmed_data/src/features/station/datasource/station_remote_datasource.dart';
+import 'package:pharmed_data/src/features/cabin/mapper/cabin_mapper.dart';
 import 'package:pharmed_data/src/features/station/mapper/station_mapper.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
@@ -80,5 +81,29 @@ class StationRepositoryImpl implements IStationRepository {
   Future<Result<void>> updateStationMacAddress(int stationId) async {
     final result = await _dataSource.updateStationMacAddress(stationId);
     return result.when(ok: (_) => const Result.ok(null), error: (e) => Result.error(e));
+  }
+
+  @override
+  Future<Result<StationInstallation>> getStationInstallation(String macAddress) async {
+    final result = await _dataSource.getStationInstallation(macAddress);
+    return result.when(
+      ok: (dto) {
+        if (dto == null) return const Result.ok(StationInstallation.empty);
+        const cabinMapper = CabinMapper();
+        final cabins = [
+          for (final cabinDto in dto.cabins)
+            InstalledCabin(
+              cabin: cabinMapper.toEntity(cabinDto),
+              hasDesign: dto.cabinHasDesign[cabinDto.id] ?? true,
+            ),
+        ]..sort((a, b) => (a.cabin.no ?? '').compareTo(b.cabin.no ?? ''));
+        return Result.ok(StationInstallation(station: _mapper.toEntityOrNull(dto.station), cabins: cabins));
+      },
+      // Sözleşmede "bulunamadı" 200 + boş gövdedir; backend 404 dönerse de
+      // kayıtlı kurulum yok sayılır (kiosk bugünkü gibi sihirbazı açar).
+      error: (e) => e is ServiceException && e.statusCode == 404
+          ? const Result.ok(StationInstallation.empty)
+          : Result.error(e),
+    );
   }
 }

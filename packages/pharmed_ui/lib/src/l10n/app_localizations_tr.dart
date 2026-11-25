@@ -654,6 +654,44 @@ class AppLocalizationsTr extends AppLocalizations {
   String get wizard_retryButton => 'Geri Dön ve Tekrar Dene';
 
   @override
+  String get wizard_restore_checkingMessage => 'Bu cihaz için kayıtlı kurulum aranıyor…';
+
+  @override
+  String get wizard_restore_foundTitle => 'Kayıtlı Kurulum Bulundu';
+
+  @override
+  String wizard_restore_foundDescription(String stationName, int count) {
+    return 'Bu bilgisayar $stationName istasyonuna kayıtlı ve $count kabin bağlı. Sihirbazı yeniden yapmadan bu kurulumla devam edebilirsiniz.';
+  }
+
+  @override
+  String get wizard_restore_primaryBadge => 'Ana kabin';
+
+  @override
+  String get wizard_restore_passiveBadge => 'Pasif';
+
+  @override
+  String get wizard_restore_noDesignWarning => 'Ana kabinin çekmece tasarımı kayıtlı değil; önceki kurulum yarıda kalmış olabilir.';
+
+  @override
+  String get wizard_restore_passiveWarning => 'Ana kabin sistemde pasif durumda.';
+
+  @override
+  String get wizard_restore_continueButton => 'Bu Kurulumla Devam Et';
+
+  @override
+  String get wizard_restore_newSetupButton => 'Yeni Kurulum Yap';
+
+  @override
+  String get wizard_restore_newSetupHint => 'Yeni kurulum bu istasyona ek bir kabin kaydı oluşturur.';
+
+  @override
+  String get wizard_restore_checkErrorTitle => 'Kayıtlı Kurulum Kontrol Edilemedi';
+
+  @override
+  String get wizard_restore_proceedToSetupButton => 'Kuruluma Geç';
+
+  @override
   String get settings_title => 'Ayarlar';
 
   @override

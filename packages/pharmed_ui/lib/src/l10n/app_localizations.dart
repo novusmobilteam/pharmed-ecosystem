@@ -1302,6 +1302,78 @@ abstract class AppLocalizations {
   /// **'Go Back and Retry'**
   String get wizard_retryButton;
 
+  /// Loading message shown before the setup wizard while the kiosk asks the backend (Station/byMac) whether this device already has a registered station and cabins
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for an existing setup on this device…'**
+  String get wizard_restore_checkingMessage;
+
+  /// Title of the screen shown when the backend reports a station and cabins already registered to this device's MAC address
+  ///
+  /// In en, this message translates to:
+  /// **'Existing Setup Found'**
+  String get wizard_restore_foundTitle;
+
+  /// Explanation on the existing-setup screen: which station the device is registered to and how many cabins are attached
+  ///
+  /// In en, this message translates to:
+  /// **'This computer is registered to the {stationName} station with {count, plural, one{1 cabin} other{{count} cabins}}. You can continue with this setup without running the wizard again.'**
+  String wizard_restore_foundDescription(String stationName, int count);
+
+  /// Badge on the existing-setup screen marking the cabin (address a) connected to this computer
+  ///
+  /// In en, this message translates to:
+  /// **'Main cabin'**
+  String get wizard_restore_primaryBadge;
+
+  /// Badge on the existing-setup screen for a cabin that is passive in the system
+  ///
+  /// In en, this message translates to:
+  /// **'Passive'**
+  String get wizard_restore_passiveBadge;
+
+  /// Warning on the existing-setup screen when the main cabin has no saved drawer design (hasDesign = false)
+  ///
+  /// In en, this message translates to:
+  /// **'The drawer layout of the main cabin was not saved; the previous setup may have been interrupted.'**
+  String get wizard_restore_noDesignWarning;
+
+  /// Warning on the existing-setup screen when the main cabin is passive
+  ///
+  /// In en, this message translates to:
+  /// **'The main cabin is passive in the system.'**
+  String get wizard_restore_passiveWarning;
+
+  /// Primary button on the existing-setup screen that restores the local setup from the registered station and cabins
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with This Setup'**
+  String get wizard_restore_continueButton;
+
+  /// Secondary button on the existing-setup screen that ignores the registered setup and opens the wizard from step 1
+  ///
+  /// In en, this message translates to:
+  /// **'Start New Setup'**
+  String get wizard_restore_newSetupButton;
+
+  /// Hint under the new-setup button on the existing-setup screen warning that the wizard creates another cabin record
+  ///
+  /// In en, this message translates to:
+  /// **'A new setup creates an additional cabin record for this station.'**
+  String get wizard_restore_newSetupHint;
+
+  /// Title of the error screen when the Station/byMac request fails before the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Could Not Check Existing Setup'**
+  String get wizard_restore_checkErrorTitle;
+
+  /// Button on the existing-setup check error screen that opens the setup wizard without the check
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Setup'**
+  String get wizard_restore_proceedToSetupButton;
+
   /// No description provided for @settings_title.
   ///
   /// In en, this message translates to:
