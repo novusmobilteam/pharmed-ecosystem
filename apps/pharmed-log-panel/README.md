@@ -18,9 +18,11 @@ VITE_API_BASE_URL=https://agena.novusyazilim.com npm run dev
 VITE_API_BASE_URL=https://agena.novusyazilim.com npm run build
 ```
 
+`npm run dev` sırasında panel istekleri kendi adresine (`/api/...`) gönderir, Vite bunları `VITE_API_BASE_URL`'e iletir (`vite.config.ts`). Tarayıcı aynı kaynakla konuştuğu için CORS preflight göndermez; backend'in CORS ayarı geliştirmeyi etkilemez. Proxy'yi kapatıp doğrudan bağlanmak için `VITE_API_PROXY=false` verilir. `build` ve `preview` proxy kullanmaz.
+
 Bu durumda panel açılışta **yönetici girişi** ister (`POST /api/Login/login`). Token tarayıcıda saklanır; süresi dolunca ya da backend 401 dönünce giriş ekranına dönülür. Yönetici olmayan hesapla giriş yapılamaz.
 
-`dist/` klasörü herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanabilir; yönlendirme hash tabanlı olduğu için sunucu tarafında ek ayar gerekmez. Backend farklı bir adreste olduğu için CORS'un panelin adresine açık olması gerekir.
+`dist/` klasörü herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanabilir; yönlendirme hash tabanlı olduğu için sunucu tarafında ek ayar gerekmez. Backend farklı bir adreste olduğu için CORS'un panelin adresine açık olması gerekir (backend'in `OPTIONS` isteklerine 500 dönmemesi dahil, bkz. #283).
 
 ## Kullanılan servisler
 

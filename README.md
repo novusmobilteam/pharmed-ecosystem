@@ -239,10 +239,11 @@ cd apps/pharmed-log-panel
 npm install
 npm run dev                                       # http://localhost:5173 — sahte veri
 npm run build                                     # dist/ — statik dosyalar
+VITE_API_BASE_URL=https://agena.novusyazilim.com npm run dev      # gerçek backend, Vite proxy üzerinden
 VITE_API_BASE_URL=https://agena.novusyazilim.com npm run build    # gerçek backend'e bağlı build
 ```
 
-`VITE_API_BASE_URL` verilmezse panel sahte veriyle çalışır; verilirse yönetici girişi ister (`/api/Login/login`) ve `FrontendLog` / `BackendLog` servislerinden okur. Değer `/api` olmadan sunucu kökü olmalı. `dist/` herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanır; yönlendirme hash tabanlı olduğu için sunucuda ek ayar gerekmez. Ekranlar, kullanılan servisler ve teşhis kataloğu: `apps/pharmed-log-panel/README.md`.
+`VITE_API_BASE_URL` verilmezse panel sahte veriyle çalışır; verilirse yönetici girişi ister (`/api/Login/login`) ve `FrontendLog` / `BackendLog` servislerinden okur. Değer `/api` olmadan sunucu kökü olmalı. `npm run dev` istekleri Vite proxy ile backend'e iletir, bu yüzden geliştirmede CORS gerekmez (`VITE_API_PROXY=false` ile kapatılır); yayınlanan `dist/` için backend'de CORS açık olmalı. `dist/` herhangi bir statik sunucudan (IIS sanal dizini dahil) yayınlanır; yönlendirme hash tabanlı olduğu için sunucuda ek ayar gerekmez. Ekranlar, kullanılan servisler ve teşhis kataloğu: `apps/pharmed-log-panel/README.md`.
 
 ## Cihazdaki loglar
 
