@@ -59,7 +59,7 @@ class RefundDTO {
     return RefundDTO(
       id: json['id'] as int?,
       type: json['type'] as int?,
-      quantity: json['quantity'] as double?,
+      quantity: (json['quantity'] as num?)?.toDouble(),
       returnFormId: json['returnFormId'] as int?,
       prescriptionDetailId: json['prescriptionDetailId'] as int?,
       prescriptionDetail: json['prescriptionDetail'] != null
