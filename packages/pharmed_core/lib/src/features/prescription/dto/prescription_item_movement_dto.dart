@@ -39,7 +39,7 @@ class PrescriptionItemMovementDto {
       cabinDrawerDetailId: json['CabinDrawrDetailId'] as int?,
       createdAt: json['createdDate'] != null ? DateTime.tryParse(json['createdDate']) : null,
       user: json['user'] != null ? UserDto.fromJson(json['user']) : null,
-      quantity: json['quantity'] as double?,
+      quantity: (json['quantity'] as num?)?.toDouble(),
       stationId: json['stationId'] as int?,
       prescriptionItem: json['prescriptionDetail'] != null
           ? PrescriptionItemDto.fromJson(json['prescriptionDetail'])
