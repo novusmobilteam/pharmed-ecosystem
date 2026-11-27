@@ -701,10 +701,17 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
                     ),
                   const Divider(height: 1, color: Color(0xFFEEF0F4)),
                   Expanded(
+                    // Başlık satırı her durumda gösterilir; yükleme ve "veri yok"
+                    // durumu başlıkların altında, tablo gövdesinde görünür.
                     child: _showFullLoading
-                        ? (widget.loadingWidget ?? const Center(child: CircularProgressIndicator.adaptive()))
+                        ? _buildTableArea(
+                            const [],
+                            cols,
+                            placeholder:
+                                widget.loadingWidget ?? const Center(child: CircularProgressIndicator.adaptive()),
+                          )
                         : _data.isEmpty
-                        ? (widget.emptyWidget ?? _defaultEmpty())
+                        ? _buildTableArea(const [], cols, placeholder: Center(child: widget.emptyWidget ?? _defaultEmpty()))
                         : _withInfiniteScroll(_buildTableArea(filteredData, cols)),
                   ),
                   if (_scrollLoadingEnabled && _effectiveLoadingMore) const LinearProgressIndicator(minHeight: 2),
@@ -764,9 +771,11 @@ class _MedTableState<T extends Object> extends State<MedTable<T>> {
     );
   }
 
-  Widget _buildTableArea(List<T> filteredData, List<_ColMeta<T>> cols) {
+  /// [placeholder] verilirse satırlar yerine gövdede gösterilir (yükleme / veri yok).
+  Widget _buildTableArea(List<T> filteredData, List<_ColMeta<T>> cols, {Widget? placeholder}) {
     return _TableBody<T>(
       data: filteredData,
+      placeholder: placeholder,
       cols: cols,
       totalFlex: _totalFlex,
       sortColIndex: _sortColIndex,
