@@ -8363,6 +8363,10 @@
   "@cabinOperation_openShelfMedicineCount": {"description": "Short label inside a serum open shelf in the cabin visual: number of medicines assigned to the shelf", "placeholders": {"count": {"type": "int"}}},
   "cabinOperation_openShelfEmpty": "Bu rafa henüz ilaç atanmamış.",
   "@cabinOperation_openShelfEmpty": {"description": "Shown in the open shelf dialog when the shelf has no medicine assignments"},
+  "cabinOperation_serumTrayTitle": "Raf {shelfNo} · A-{stepNo}",
+  "@cabinOperation_serumTrayTitle": {"description": "Title of the dialog listing the medicines in a serum tray on an unlocked shelf (several medicines per tray); stepNo is the tray order on the shelf counted from the right", "placeholders": {"shelfNo": {"type": "int"}, "stepNo": {"type": "int"}}},
+  "cabinOperation_serumTrayEmpty": "Bu avadanlığa henüz ilaç atanmamış.",
+  "@cabinOperation_serumTrayEmpty": {"description": "Shown in the serum tray medicines dialog when the tray has no medicine assignments"},
   "cabinOperation_openShelfAddMedicine": "İlaç Ekle",
   "@cabinOperation_openShelfAddMedicine": {"description": "Button in the open shelf dialog (drug assignment) that starts assigning a new medicine to the open shelf"},
   "cabinOperation_openShelfDeleteNotSupported": "Bu açık rafta başka ilaçlar da var; tek bir ilacın ataması şu an silinemiyor.",
@@ -11787,9 +11791,9 @@
 "@cabinDesign_serum_lidHasAssignmentsError": {
   "description": "Error when trying to delete a serum lid that still has medicine assignments"
 },
-"cabinOperation_openShelfDeleteRemovedOthersWarning": "Atama silindi, ancak servis açık raftaki diğer {count} ilacın atamasını da sildi. Açık raf için tekil silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.",
+"cabinOperation_openShelfDeleteRemovedOthersWarning": "Atama silindi, ancak servis aynı yerdeki diğer {count} ilacın atamasını da sildi. Tekil atama silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.",
 "@cabinOperation_openShelfDeleteRemovedOthersWarning": {
-  "description": "Warning after deleting one open-shelf assignment when the service also deleted the other medicines' assignments on that shelf",
+  "description": "Warning after deleting one assignment in a serum location holding several medicines (open shelf or unlocked-shelf tray) when the service also deleted the other medicines' assignments there",
   "placeholders": { "count": { "type": "int" } }
 }
 }

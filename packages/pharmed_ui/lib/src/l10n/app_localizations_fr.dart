@@ -7273,6 +7273,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun médicament n\'est encore affecté à cette étagère.';
 
   @override
+  String cabinOperation_serumTrayTitle(int shelfNo, int stepNo) {
+    return 'Étagère $shelfNo · A-$stepNo';
+  }
+
+  @override
+  String get cabinOperation_serumTrayEmpty => 'Aucun médicament n\'est encore affecté à ce plateau.';
+
+  @override
   String get cabinOperation_openShelfAddMedicine => 'Ajouter un médicament';
 
   @override
@@ -9784,6 +9792,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
-    return 'L\'affectation a été supprimée, mais le service a aussi supprimé les affectations de $count autre(s) médicament(s) de l\'étagère ouverte. Un service de suppression unitaire est nécessaire pour les étagères ouvertes ; veuillez en informer votre administrateur système.';
+    return 'L\'affectation a été supprimée, mais le service a aussi supprimé les affectations de $count autre(s) médicament(s) au même emplacement. Un service de suppression unitaire est nécessaire ; veuillez en informer votre administrateur système.';
   }
 }

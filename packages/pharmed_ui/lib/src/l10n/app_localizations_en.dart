@@ -7106,6 +7106,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'No medicine has been assigned to this shelf yet.';
 
   @override
+  String cabinOperation_serumTrayTitle(int shelfNo, int stepNo) {
+    return 'Shelf $shelfNo · A-$stepNo';
+  }
+
+  @override
+  String get cabinOperation_serumTrayEmpty => 'No medicine has been assigned to this tray yet.';
+
+  @override
   String get cabinOperation_openShelfAddMedicine => 'Add Medicine';
 
   @override
@@ -9572,6 +9580,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
-    return 'The assignment was deleted, but the service also deleted the assignments of $count other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.';
+    return 'The assignment was deleted, but the service also deleted the assignments of $count other medicine(s) in the same location. A single-assignment delete service is needed; please inform your system administrator.';
   }
 }

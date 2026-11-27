@@ -219,7 +219,7 @@ class GetIntakeItemsUseCase {
   MedicineAssignment? _resolveAssignment(CabinTargetedPrescriptionItem task, List<MedicineAssignment> allAssignments) {
     final targetDetailId = task.stock?.cabinDrawerDetailId; // ← göze özel, doğru anahtar
 
-    // Serum Açık Raf'ta aynı avadanlıkta (DrawerCell) birden çok ilaç atanır —
+    // Serum Açık Raf'ta ve kilitsiz raftaki avadanlıkta (DrawerCell) birden çok ilaç atanabilir —
     // avadanlık tek başına ayırt etmez, ilaç da eşleşmeli. Diğer gözlerde tek
     // atama olduğundan bu süzgeç sonucu değiştirmez.
     MedicineAssignment? pick(bool Function(MedicineAssignment a) inCell) {

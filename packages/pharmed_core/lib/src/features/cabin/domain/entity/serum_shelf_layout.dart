@@ -54,6 +54,11 @@ class SerumShelfLayout {
   /// Raf avadanlıksız "Açık Raf" mı (tek `openShelf` kaydı). Açık rafta
   /// avadanlık eklenmez, kilit ve Al-Ver kullanılmaz; birden çok ilaç atanabilir.
   bool get isOpenShelf => trays.any((t) => t.size.isOpenShelf);
+
+  /// Bu raftaki avadanlıklara birden çok ilaç atanabilir mi: Açık Raf ve
+  /// kilitsiz raftaki her avadanlık. Kilitli rafta kilit kartı avadanlığı tek
+  /// başına açar ve Al-Ver miktarı avadanlık bazında doğrular — tek ilaç.
+  bool get allowsMultipleMedicines => isOpenShelf || !isLocked;
   bool get isPersisted => id != null;
   int get usedArea => trays.fold(0, (sum, t) => sum + t.size.areaSize);
   int get remainingArea => totalArea - usedArea;

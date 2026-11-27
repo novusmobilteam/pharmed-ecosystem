@@ -1678,6 +1678,8 @@
     "cabinOperation_openShelfTitle",
     "cabinOperation_openShelfMedicineCount",
     "cabinOperation_openShelfEmpty",
+    "cabinOperation_serumTrayTitle",
+    "cabinOperation_serumTrayEmpty",
     "cabinOperation_openShelfAddMedicine",
     "cabinOperation_openShelfDeleteNotSupported",
     "assignment_idle_kicker",

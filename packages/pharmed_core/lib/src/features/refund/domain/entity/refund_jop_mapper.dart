@@ -88,7 +88,7 @@ abstract final class RefundJobMapper {
 
   static List<RefundUnitGroup> _groupByUnit(List<RefundableItem> items) {
     // Anahtar: (iade çekmecesi mi, serum avadanlığı mı, birim/avadanlık id,
-    // serumda ilaç id). Serum Açık Raf'ta aynı avadanlıkta birden çok ilaç
+    // serumda ilaç id). Serum Açık Raf'ta / kilitsiz raftaki avadanlıkta birden çok ilaç
     // bulunur — farklı ilaçlar ayrı hedef olmalı (her biri kendi atamasıyla).
     final byUnit = <(bool, bool, int, int?), List<RefundableItem>>{};
 

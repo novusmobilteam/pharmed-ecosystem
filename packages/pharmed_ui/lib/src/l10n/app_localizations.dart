@@ -12481,6 +12481,18 @@ abstract class AppLocalizations {
   /// **'No medicine has been assigned to this shelf yet.'**
   String get cabinOperation_openShelfEmpty;
 
+  /// Title of the dialog listing the medicines in a serum tray on an unlocked shelf (several medicines per tray); stepNo is the tray order on the shelf counted from the right
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf {shelfNo} · A-{stepNo}'**
+  String cabinOperation_serumTrayTitle(int shelfNo, int stepNo);
+
+  /// Shown in the serum tray medicines dialog when the tray has no medicine assignments
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine has been assigned to this tray yet.'**
+  String get cabinOperation_serumTrayEmpty;
+
   /// No description provided for @cabinOperation_openShelfAddMedicine.
   ///
   /// In en, this message translates to:
@@ -16600,7 +16612,7 @@ abstract class AppLocalizations {
   /// No description provided for @cabinOperation_openShelfDeleteRemovedOthersWarning.
   ///
   /// In en, this message translates to:
-  /// **'The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.'**
+  /// **'The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) in the same location. A single-assignment delete service is needed; please inform your system administrator.'**
   String cabinOperation_openShelfDeleteRemovedOthersWarning(int count);
 }
 

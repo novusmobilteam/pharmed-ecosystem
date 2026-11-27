@@ -21,25 +21,27 @@ enum AssignmentQuantityError {
 ///   - Normal göz (kübik / birim doz): yalnızca [unitId] (DrawerUnit).
 ///   - Serum avadanlığı: [unitId] = raf (DrawerUnit), [cellId] = avadanlık (DrawerCell).
 ///     Serumda bir rafta birden fazla atama olduğu için raf tek başına yetmez.
-///   - Serum Açık Raf: avadanlıkta birden çok ilaç olabilir; [assignmentId]
-///     mevcut bir atamayı, [isOpenShelf] && assignmentId == null yeni atamayı
-///     (aynı rafa ilaç ekleme) belirtir.
+///   - Çoklu ilaçlı avadanlık (Açık Raf ve kilitsiz raftaki avadanlıklar —
+///     bkz. SerumShelfLayout.allowsMultipleMedicines): avadanlıkta birden çok
+///     ilaç olabilir; [assignmentId] mevcut bir atamayı, [isMultiMedicine] &&
+///     assignmentId == null yeni atamayı (aynı avadanlığa ilaç ekleme) belirtir.
 final class AssignmentTarget {
-  const AssignmentTarget({required this.unitId, this.cellId, this.assignmentId, this.isOpenShelf = false});
+  const AssignmentTarget({required this.unitId, this.cellId, this.assignmentId, this.isMultiMedicine = false});
 
   final int unitId;
   final int? cellId;
   final int? assignmentId;
-  final bool isOpenShelf;
+  final bool isMultiMedicine;
 
   bool get isSerumTray => cellId != null;
 
   /// [a] bu hedefin ataması mı. Serumda avadanlık eşleşmesi yeterlidir —
   /// serum ataması cabinDrawrId'siz kaydedildiği için cevapta raf id'si boş
-  /// gelebilir. Diğer çekmecelerde göz (cabinDrawrId) eşleşmeli. Açık Raf'ta
-  /// avadanlık ayırt etmez: atama id'si eşleşmeli, yeni atamada hiçbiri eşleşmez.
+  /// gelebilir. Diğer çekmecelerde göz (cabinDrawrId) eşleşmeli. Çoklu ilaçlı
+  /// avadanlıkta avadanlık ayırt etmez: atama id'si eşleşmeli, yeni atamada
+  /// hiçbiri eşleşmez.
   bool matches(MedicineAssignment a) {
-    if (isOpenShelf) return assignmentId != null && a.id == assignmentId;
+    if (isMultiMedicine) return assignmentId != null && a.id == assignmentId;
     final cell = cellId;
     return cell != null ? a.ownsCell(cell) : a.cabinDrawerId == unitId;
   }
@@ -51,10 +53,10 @@ final class AssignmentTarget {
           other.unitId == unitId &&
           other.cellId == cellId &&
           other.assignmentId == assignmentId &&
-          other.isOpenShelf == isOpenShelf;
+          other.isMultiMedicine == isMultiMedicine;
 
   @override
-  int get hashCode => Object.hash(unitId, cellId, assignmentId, isOpenShelf);
+  int get hashCode => Object.hash(unitId, cellId, assignmentId, isMultiMedicine);
 }
 
 sealed class DrugAssignmentUiState {

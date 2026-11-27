@@ -19,7 +19,7 @@ class AssignmentSelection {
 
   /// Serum ataması id → avadanlık (cabinDrawerDetailId). Serumda seçim ATAMA
   /// bazındadır: normal avadanlıkta tek atama olduğu için avadanlık seçmekle
-  /// aynıdır; Açık Raf'ta ise aynı avadanlıkta birden çok ilaç bulunur ve
+  /// aynıdır; Açık Raf'ta ve kilitsiz raftaki avadanlıkta ise birden çok ilaç bulunabilir ve
   /// her biri ayrı seçilir.
   final Map<int, int> _serumAssignmentCells = {};
 
@@ -108,7 +108,7 @@ class AssignmentSelection {
     return all.where((a) => a.cabinDrawerDetailId == null && unitIds.contains(a.cabinDrawerId));
   }
 
-  /// [cellId]'li serum avadanlığının ataması. Açık Raf'ta birden çok atama
+  /// [cellId]'li serum avadanlığının ataması. Açık Raf'ta ve kilitsiz rafta birden çok atama
   /// olabilir — orada [serumAssignments] kullanılmalı.
   static MedicineAssignment? serumAssignment(int cellId, Iterable<MedicineAssignment> all) {
     for (final a in all) {
@@ -117,7 +117,7 @@ class AssignmentSelection {
     return null;
   }
 
-  /// [cellId]'li serum avadanlığının TÜM atamaları (Açık Raf'ta birden çok).
+  /// [cellId]'li serum avadanlığının TÜM atamaları (Açık Raf / kilitsiz rafta birden çok).
   static List<MedicineAssignment> serumAssignments(int cellId, Iterable<MedicineAssignment> all) =>
       all.where((a) => a.cabinDrawerDetailId == cellId).toList();
 

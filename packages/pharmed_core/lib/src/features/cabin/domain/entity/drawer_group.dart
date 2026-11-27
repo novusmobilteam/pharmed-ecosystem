@@ -1,6 +1,26 @@
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+/// Serum avadanlığının yeri: rafı, kendisi ve raftaki sırası (sağdan 1..n).
+typedef SerumTrayLocation = ({SerumShelfLayout shelf, SerumTray tray, int stepNo});
+
+/// Çekmece listesi üzerinde serum avadanlığı araması.
+extension SerumTrayLookup on Iterable<DrawerGroup> {
+  /// [cellId]'li avadanlığın yeri (hangi serum çekmecesinde olursa olsun).
+  SerumTrayLocation? serumTrayLocation(int cellId) {
+    for (final group in this) {
+      if (!group.isSerum) continue;
+      final location = group.serumTrayLocation(cellId);
+      if (location != null) return location;
+    }
+    return null;
+  }
+
+  /// [cellId]'li avadanlığa birden çok ilaç atanabilir mi (bkz.
+  /// [SerumShelfLayout.allowsMultipleMedicines]). Avadanlık bulunamazsa false.
+  bool allowsMultipleMedicines(int cellId) => serumTrayLocation(cellId)?.shelf.allowsMultipleMedicines ?? false;
+}
+
 class DrawerGroup {
   final DrawerSlot slot;
   final List<DrawerUnit> units;
@@ -25,6 +45,17 @@ class DrawerGroup {
 
   /// Tip no 250 ise Serumdur
   bool get isSerum => slot.drawerConfig?.deviceTypeNo == 250;
+
+  /// [cellId]'li avadanlığın rafı ve raftaki sırası (`stepNo`, sağdan 1..n).
+  /// Serum dışı çekmecede ya da avadanlık bu çekmecede değilse null.
+  SerumTrayLocation? serumTrayLocation(int cellId) {
+    for (final shelf in serumShelves ?? const <SerumShelfLayout>[]) {
+      for (final (i, tray) in shelf.trays.indexed) {
+        if (tray.id == cellId) return (shelf: shelf, tray: tray, stepNo: i + 1);
+      }
+    }
+    return null;
+  }
 
   /// Serum çekmecesindeki kayıtlı avadanlıkların (DrawerCell) id'leri.
   Set<int> get serumTrayIds => {

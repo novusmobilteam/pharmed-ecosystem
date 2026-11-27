@@ -1,8 +1,10 @@
 // [SWREQ-CLI-CABIN-SERUM-OPEN-001] [IEC 62304 §5.5]
-// Serum Açık Raf: avadanlıksız rafta birden çok ilaç atanır. Kabin görselinde
-// raf tek blok olarak çizilir; dokununca bu pencere raftaki ilaçları listeler.
-//   - İşlem seçim ekranları (dolum/sayım/boşaltma/imha): çoklu seçim ([onToggle]).
-//   - İlaç atama: mevcut atamayı düzenleme ([onOpen]) ve rafa ilaç ekleme ([onAdd]).
+// Serumda çoklu ilaçlı yerler: Açık Raf (avadanlıksız raf, tek blok) ve
+// kilitsiz raftaki avadanlıklar (#295) — bkz. SerumShelfLayout.allowsMultipleMedicines.
+// Kabin görselinde dokununca bu pencere oradaki ilaçları listeler.
+//   - İşlem seçim ekranları (dolum/sayım/boşaltma/imha): ilaç bazında seçim
+//     ([onToggle]) — bkz. [onSerumTrayTapForSelection].
+//   - İlaç atama: mevcut atamayı düzenleme ([onOpen]) ve ilaç ekleme ([onAdd]).
 // Sınıf: Class B
 
 import 'package:flutter/material.dart';
@@ -10,9 +12,45 @@ import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+/// İşlem seçim ekranlarında (dolum/sayım/boşaltma/imha) serum avadanlığına
+/// dokunma. Avadanlıkta birden çok ilaç varsa ya da Açık Raf ise ilaç listesi
+/// penceresi açılır ve ilaçlar ayrı seçilir; tek ilaçlı avadanlık doğrudan
+/// [onToggleTray] ile seçilir.
+void onSerumTrayTapForSelection({
+  required BuildContext context,
+  required Iterable<DrawerGroup> groups,
+  required DrawerUnit shelf,
+  required SerumTray tray,
+  required List<MedicineAssignment> assignments,
+  required ValueChanged<int> onToggleTray,
+  required ValueChanged<MedicineAssignment> onToggle,
+  bool Function(MedicineAssignment assignment)? isSelected,
+  bool Function(MedicineAssignment assignment)? canSelect,
+}) {
+  final cellId = tray.id;
+  if (cellId == null) return;
+  final inTray = AssignmentSelection.serumAssignments(cellId, assignments);
+  if (!tray.size.isOpenShelf && inTray.length <= 1) {
+    onToggleTray(cellId);
+    return;
+  }
+  showOpenShelfDialog(
+    context: context,
+    shelfNo: shelf.orderNo ?? 0,
+    trayStepNo: tray.size.isOpenShelf ? null : groups.serumTrayLocation(cellId)?.stepNo,
+    assignments: inTray,
+    isSelected: isSelected,
+    canSelect: canSelect,
+    onToggle: onToggle,
+  );
+}
+
+/// [trayStepNo] verilirse pencere avadanlık içindir (başlık "Raf N · A-n");
+/// verilmezse Açık Raf içindir.
 Future<void> showOpenShelfDialog({
   required BuildContext context,
   required int shelfNo,
+  int? trayStepNo,
   required List<MedicineAssignment> assignments,
   bool Function(MedicineAssignment assignment)? isSelected,
   bool Function(MedicineAssignment assignment)? canSelect,
@@ -24,6 +62,7 @@ Future<void> showOpenShelfDialog({
     context: context,
     builder: (_) => _OpenShelfDialog(
       shelfNo: shelfNo,
+      trayStepNo: trayStepNo,
       assignments: assignments,
       isSelected: isSelected,
       canSelect: canSelect,
@@ -37,6 +76,7 @@ Future<void> showOpenShelfDialog({
 class _OpenShelfDialog extends StatefulWidget {
   const _OpenShelfDialog({
     required this.shelfNo,
+    this.trayStepNo,
     required this.assignments,
     this.isSelected,
     this.canSelect,
@@ -46,6 +86,7 @@ class _OpenShelfDialog extends StatefulWidget {
   });
 
   final int shelfNo;
+  final int? trayStepNo;
   final List<MedicineAssignment> assignments;
   final bool Function(MedicineAssignment)? isSelected;
   final bool Function(MedicineAssignment)? canSelect;
@@ -77,6 +118,7 @@ class _OpenShelfDialogState extends State<_OpenShelfDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final stepNo = widget.trayStepNo;
     final items = [...widget.assignments]
       ..sort((a, b) => (a.medicine?.name ?? '').toLowerCase().compareTo((b.medicine?.name ?? '').toLowerCase()));
 
@@ -94,7 +136,14 @@ class _OpenShelfDialogState extends State<_OpenShelfDialog> {
                 children: [
                   Icon(PhosphorIcons.rows(), size: 18, color: MedColors.blue),
                   const SizedBox(width: MedSpacing.sm),
-                  Expanded(child: Text(l10n.cabinOperation_openShelfTitle(widget.shelfNo), style: MedTextStyles.titleMd())),
+                  Expanded(
+                    child: Text(
+                      stepNo == null
+                          ? l10n.cabinOperation_openShelfTitle(widget.shelfNo)
+                          : l10n.cabinOperation_serumTrayTitle(widget.shelfNo, stepNo),
+                      style: MedTextStyles.titleMd(),
+                    ),
+                  ),
                   Text(
                     l10n.cabinOperation_openShelfMedicineCount(items.length),
                     style: MedTextStyles.bodySm(color: MedColors.text3),
@@ -106,7 +155,7 @@ class _OpenShelfDialogState extends State<_OpenShelfDialog> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: MedSpacing.xl),
                   child: Text(
-                    l10n.cabinOperation_openShelfEmpty,
+                    stepNo == null ? l10n.cabinOperation_openShelfEmpty : l10n.cabinOperation_serumTrayEmpty,
                     textAlign: TextAlign.center,
                     style: MedTextStyles.bodyMd(color: MedColors.text3),
                   ),

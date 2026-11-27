@@ -84,15 +84,21 @@ class _DrugAssignmentViewState extends ConsumerState<DrugAssignmentView> {
           onCellTap: (unit) => notifier.onCellTap(unit, null),
           onSerumTrayTap: (shelf, tray) {
             final cellId = tray.id;
-            if (cellId == null || !tray.size.isOpenShelf) {
+            final existing = cellId == null
+                ? const <MedicineAssignment>[]
+                : AssignmentSelection.serumAssignments(cellId, assignments);
+            // Tek ilaçlı (kilitli raf) avadanlık ya da henüz ilaç atanmamış
+            // avadanlık doğrudan açılır.
+            if (cellId == null || !scope.viewedGroups.allowsMultipleMedicines(cellId) || existing.isEmpty) {
               notifier.onSerumTrayTap(shelf, tray);
               return;
             }
-            // Açık Raf: raftaki ilaçlardan biri düzenlenir ya da rafa yeni ilaç eklenir.
+            // Çoklu ilaçlı avadanlık / Açık Raf: ilaçlardan biri düzenlenir ya da yeni ilaç eklenir.
             showOpenShelfDialog(
               context: context,
               shelfNo: shelf.orderNo ?? 0,
-              assignments: AssignmentSelection.serumAssignments(cellId, assignments),
+              trayStepNo: tray.size.isOpenShelf ? null : scope.viewedGroups.serumTrayLocation(cellId)?.stepNo,
+              assignments: existing,
               onOpen: (a) => notifier.onSerumTrayTap(shelf, tray, existing: a),
               onAdd: () => notifier.onSerumTrayTap(shelf, tray),
             );

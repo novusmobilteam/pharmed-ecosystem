@@ -7043,6 +7043,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cabinOperation_openShelfEmpty => 'Bu rafa henüz ilaç atanmamış.';
 
   @override
+  String cabinOperation_serumTrayTitle(int shelfNo, int stepNo) {
+    return 'Raf $shelfNo · A-$stepNo';
+  }
+
+  @override
+  String get cabinOperation_serumTrayEmpty => 'Bu avadanlığa henüz ilaç atanmamış.';
+
+  @override
   String get cabinOperation_openShelfAddMedicine => 'İlaç Ekle';
 
   @override
@@ -9479,6 +9487,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String cabinOperation_openShelfDeleteRemovedOthersWarning(int count) {
-    return 'Atama silindi, ancak servis açık raftaki diğer $count ilacın atamasını da sildi. Açık raf için tekil silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.';
+    return 'Atama silindi, ancak servis aynı yerdeki diğer $count ilacın atamasını da sildi. Tekil atama silme servisi gerekiyor; lütfen sistem yöneticinize bildirin.';
   }
 }

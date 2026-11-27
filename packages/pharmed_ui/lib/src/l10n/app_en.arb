@@ -5026,6 +5026,10 @@
   "cabinOperation_openShelfMedicineCount": "{count} medicines",
   "@cabinOperation_openShelfMedicineCount": {"placeholders": {"count": {"type": "int"}}},
   "cabinOperation_openShelfEmpty": "No medicine has been assigned to this shelf yet.",
+  "cabinOperation_serumTrayTitle": "Shelf {shelfNo} · A-{stepNo}",
+  "@cabinOperation_serumTrayTitle": {"description": "Title of the dialog listing the medicines in a serum tray on an unlocked shelf (several medicines per tray); stepNo is the tray order on the shelf counted from the right", "placeholders": {"shelfNo": {"type": "int"}, "stepNo": {"type": "int"}}},
+  "cabinOperation_serumTrayEmpty": "No medicine has been assigned to this tray yet.",
+  "@cabinOperation_serumTrayEmpty": {"description": "Shown in the serum tray medicines dialog when the tray has no medicine assignments"},
   "cabinOperation_openShelfAddMedicine": "Add Medicine",
   "cabinOperation_openShelfDeleteNotSupported": "This open shelf holds other medicines too; a single medicine's assignment cannot be deleted for now.",
   "assignment_idle_kicker": "CABINET CONFIGURATION",
@@ -6839,7 +6843,7 @@
     "placeholders": { "cabinName": { "type": "String" } }
   },
   "cabinDesign_serum_lidHasAssignmentsError": "This lid has medicine assignments; remove them before deleting it.",
-  "cabinOperation_openShelfDeleteRemovedOthersWarning": "The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) on the open shelf. A single-assignment delete service is needed for open shelves; please inform your system administrator.",
+  "cabinOperation_openShelfDeleteRemovedOthersWarning": "The assignment was deleted, but the service also deleted the assignments of {count} other medicine(s) in the same location. A single-assignment delete service is needed; please inform your system administrator.",
   "@cabinOperation_openShelfDeleteRemovedOthersWarning": {
     "placeholders": { "count": { "type": "int" } }
   }
