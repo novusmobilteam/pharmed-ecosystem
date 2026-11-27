@@ -13,6 +13,18 @@
 //   - Hatalı işlem sonrası reconnect güvenlidir
 //   - OS handle'ı serbest bırakmak için dispose zinciri garantili
 //
+// OTOMATİK KURTARMA (boşta kalınca iletişim kopması):
+//   libserialport'un SerialPortReader isolate'i ilk okuma hatasında
+//   (sp_input_waiting < 0 — ör. Windows USB askıya alma sonrası) hatayı
+//   gönderip döngüden ÇIKAR ve bir daha veri okumaz. Port OS'ta açık
+//   kaldığından isConnected true döner, üst katmanlar yeniden bağlanmaz ve
+//   her komut zaman aşımına düşer. Bu yüzden:
+//     • Okuyucu hata/kapanış verirse "ölü" işaretlenir.
+//     • Uzun süre hiç bayt gelmeden art arda yanıtsız komutlar "sessiz hat"
+//       sayılır.
+//   Her iki durumda da bir sonraki komut öncesi aynı porta şeffafça yeniden
+//   bağlanılır. Bilinçli disconnect() sonrası kurtarma yapılmaz.
+//
 // Sınıf: Class B
 
 import 'dart:async';
@@ -36,6 +48,34 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   /// Son gönderilen komutun byte'ları — echo filtresi için.
   Uint8List? _lastSentBytes;
+
+  // ── Otomatik kurtarma durumu ─────────────────────────────────────────────
+
+  /// Son başarılı bağlantının port adı. null → bilinçli disconnect / hiç bağlanılmadı;
+  /// bu durumda otomatik kurtarma yapılmaz.
+  String? _portName;
+
+  /// Okuyucu isolate'i hata verip durdu mu (bkz. dosya başı notu).
+  bool _readerDead = false;
+
+  /// Art arda yanıtsız (tüm denemeleri zaman aşımına düşen) komut sayısı.
+  int _consecutiveSilentCommands = 0;
+
+  /// Hattan son bayt alınan an (echo dahil — okuyucunun canlı olduğunu gösterir).
+  DateTime _lastRxAt = DateTime.now();
+
+  /// Devam eden kurtarma — eşzamanlı çağıranlar aynısını bekler.
+  Future<void>? _recovery;
+
+  /// Sessiz hat eşikleri. Hatta olmayan adreslerin taranması da yanıtsız
+  /// komut üretir; ikisi birlikte sağlanmadan kurtarmaya girilmez.
+  static const _silentCommandThreshold = 5;
+  static const _silenceWindow = Duration(seconds: 30);
+
+  /// Başarısız kurtarma sonrası yeni denemeye kadar beklenecek süre — port yokken
+  /// durum polling'i her komutta portu açmaya çalışıp hattı boğmasın.
+  static const _recoveryBackoff = Duration(seconds: 3);
+  DateTime? _lastFailedRecoveryAt;
 
   // RS485 timing sabitleri — Python scriptiyle eşleşir
   static const _rs485DelayBeforeTxMs = 1;
@@ -93,6 +133,8 @@ class SerialCommunicationService implements ISerialCommunicationService {
     //   context: {'istenen': portName},
     // );
 
+    // Yeni bir bağlantı isteği: başarısız olursa eski porta otomatik dönülmesin.
+    _portName = null;
     await _forceCleanup();
     await _reclaimStalePort(portName);
 
@@ -163,12 +205,27 @@ class SerialCommunicationService implements ISerialCommunicationService {
       _port!.flush(SerialPortBuffer.output);
     } catch (_) {}
 
+    _portName = portName;
+    _readerDead = false;
+    _consecutiveSilentCommands = 0;
+    _lastRxAt = DateTime.now();
+
     _reader = SerialPortReader(_port!);
     _subscription = _reader?.stream.listen(
       _onDataReceived,
       onError: (Object e) {
-        debugPrint('⚠️ Port okuma hatası: $e');
+        // libserialport okuyucu isolate'i hatadan sonra durur — bir daha veri gelmez.
+        _readerDead = true;
+        MedLogger.warn(
+          unit: 'SW-UNIT-SER',
+          swreq: 'SWREQ-HW-SER-002',
+          message: 'Port okuyucu hata verdi — sonraki komutta yeniden bağlanılacak',
+          context: {'port': portName, 'error': e.toString()},
+        );
         _cancelPendingCompleter(contextlessL10n().hw_serial_readErrorWithDetail(e.toString()));
+      },
+      onDone: () {
+        _readerDead = true;
       },
     );
 
@@ -190,12 +247,18 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   @override
   Future<String?> sendAndReceive(String command, {Duration? timeout, int retryCount = 1}) async {
+    await _recoverIfNeeded();
+
     if (!isConnected) {
       throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
     }
     // debugPrint(command);
 
     await _waitForAvailability();
+    if (!isConnected) {
+      // Beklerken başka bir çağrının kurtarması başarısız olmuş olabilir.
+      throw SerialPortException(message: contextlessL10n().core_serialNoConnectionError);
+    }
     _isBusy = true;
     _completer = Completer<String?>();
     _buffer.clear();
@@ -233,6 +296,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
           final effectiveTimeout = timeout ?? const Duration(milliseconds: 1000);
           final response = await _completer!.future.timeout(effectiveTimeout);
+          _consecutiveSilentCommands = 0;
 
           // MedLogger.info(
           //   unit: 'SW-UNIT-SER',
@@ -256,6 +320,7 @@ class SerialCommunicationService implements ISerialCommunicationService {
             await Future.delayed(const Duration(milliseconds: 150));
             continue;
           }
+          _consecutiveSilentCommands++;
           return null;
         }
       }
@@ -270,6 +335,9 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   Future<void> _waitForAvailability() async {
+    final recovery = _recovery;
+    if (recovery != null) await recovery;
+
     int waitCount = 0;
     const maxWait = 100;
 
@@ -308,6 +376,10 @@ class SerialCommunicationService implements ISerialCommunicationService {
   }
 
   void _onDataReceived(Uint8List data) {
+    // Herhangi bir bayt (echo dahil) okuyucunun canlı olduğunu gösterir.
+    _lastRxAt = DateTime.now();
+    _consecutiveSilentCommands = 0;
+
     if (_completer == null || _completer!.isCompleted) return;
 
     try {
@@ -380,8 +452,87 @@ class SerialCommunicationService implements ISerialCommunicationService {
 
   @override
   Future<void> disconnect() async {
+    // Bilinçli kapanış — otomatik kurtarma bu porta geri bağlanmasın.
+    _portName = null;
     await _forceCleanup();
     debugPrint('🔌 Seri port bağlantısı kapatıldı.');
+  }
+
+  bool get _isLinkSilent =>
+      _consecutiveSilentCommands >= _silentCommandThreshold &&
+      DateTime.now().difference(_lastRxAt) > _silenceWindow;
+
+  /// Okuyucu ölmüş, port kapanmış ya da hat uzun süredir sessizse, son bağlanılan
+  /// porta yeniden bağlanır. Eşzamanlı çağıranlar aynı kurtarmayı bekler.
+  Future<void> _recoverIfNeeded() async {
+    final inFlight = _recovery;
+    if (inFlight != null) return inFlight;
+
+    final portName = _portName;
+    if (portName == null) return;
+
+    final portLost = !isConnected;
+    final silent = _isLinkSilent;
+    if (!portLost && !_readerDead && !silent) return;
+
+    final lastFailed = _lastFailedRecoveryAt;
+    if (lastFailed != null && DateTime.now().difference(lastFailed) < _recoveryBackoff) return;
+
+    final recovery = _recover(
+      portName,
+      reason: portLost ? 'portKapali' : (_readerDead ? 'okuyucuDurdu' : 'hatSessiz'),
+    );
+    _recovery = recovery;
+    try {
+      await recovery;
+    } finally {
+      _recovery = null;
+    }
+  }
+
+  Future<void> _recover(String portName, {required String reason}) async {
+    // Süren bir komut varsa bitmesini (veya zaman aşımını) bekle.
+    var waitCount = 0;
+    while (_isBusy && waitCount < 100) {
+      await Future.delayed(const Duration(milliseconds: 50));
+      waitCount++;
+    }
+
+    MedLogger.warn(
+      unit: 'SW-UNIT-SER',
+      swreq: 'SWREQ-HW-SER-002',
+      message: 'Seri port otomatik yeniden bağlanıyor',
+      context: {
+        'port': portName,
+        'neden': reason,
+        'yanitsizKomut': _consecutiveSilentCommands,
+        'sonVeriSn': DateTime.now().difference(_lastRxAt).inSeconds,
+      },
+    );
+
+    try {
+      // connectToPort ile aynı sıra: önce kendi handle'ımızı bırak, sonra OS'ta
+      // asılı kalan handle'ı geri al, sonra yeniden aç.
+      await _forceCleanup();
+      await _reclaimStalePort(portName);
+      await _attemptConnection(portName);
+      _lastFailedRecoveryAt = null;
+      MedLogger.info(
+        unit: 'SW-UNIT-SER',
+        swreq: 'SWREQ-HW-SER-002',
+        message: 'Seri port otomatik yeniden bağlandı',
+        context: {'port': portName},
+      );
+    } catch (e) {
+      // _portName korunur: kablo/cihaz geri gelince sonraki komut yine dener.
+      _lastFailedRecoveryAt = DateTime.now();
+      MedLogger.error(
+        unit: 'SW-UNIT-SER',
+        swreq: 'SWREQ-HW-SER-002',
+        message: 'Seri port otomatik yeniden bağlanamadı',
+        context: {'port': portName, 'error': e.toString()},
+      );
+    }
   }
 
   Future<void> _forceCleanup() async {
