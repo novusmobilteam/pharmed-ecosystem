@@ -18,6 +18,7 @@ class _TableBody<T extends Object> extends StatelessWidget {
     required this.horizontalScroll,
     this.minRowWidth,
     this.rowColor,
+    this.placeholder,
   });
 
   final List<T> data;
@@ -36,6 +37,10 @@ class _TableBody<T extends Object> extends StatelessWidget {
   final bool horizontalScroll;
   final double? minRowWidth;
   final Color? Function(T item)? rowColor;
+
+  /// Satırlar yerine gövdede gösterilecek içerik (yükleme / veri yok). null ise
+  /// boş [data] için "sonuç yok" (arama/filtre) gösterilir.
+  final Widget? placeholder;
 
   static const double _multiColW = 44.0;
   static const double _singleColW = 32.0;
@@ -160,7 +165,10 @@ class _TableBody<T extends Object> extends StatelessWidget {
             ),
             const Divider(height: 1, color: Color(0xFFEEF0F4)),
             Expanded(
-              child: data.isEmpty
+              // Alçak tablolarda (diyalog vb.) boş durum taşmasın diye kaydırılabilir.
+              child: placeholder != null
+                  ? Center(child: SingleChildScrollView(child: placeholder))
+                  : data.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
