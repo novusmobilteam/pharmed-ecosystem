@@ -13483,6 +13483,24 @@ abstract class AppLocalizations {
   /// **'Station information could not be retrieved. Check your connection and try again.'**
   String get stationAccess_verifyErrorDescription;
 
+  /// Title shown after login when the server has no station bound to this device's MAC address (local setup is no longer valid)
+  ///
+  /// In en, this message translates to:
+  /// **'This Device Is Not Registered to a Station'**
+  String get stationAccess_notRegisteredTitle;
+
+  /// Description under the station-not-registered title; the user is asked to run the device setup again
+  ///
+  /// In en, this message translates to:
+  /// **'No station matching this device's address was found on the server. Run the setup again to use this device.'**
+  String get stationAccess_notRegisteredDescription;
+
+  /// Button on the station-not-registered screen that clears the local setup and opens the setup wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Setup'**
+  String get stationAccess_goToSetupButton;
+
   /// No description provided for @dashboard_activeStationLabel.
   ///
   /// In en, this message translates to:

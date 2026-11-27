@@ -5344,6 +5344,12 @@
 "stationAccess_logoutButton": "Log Out",
 "stationAccess_verifyErrorTitle": "Station Access Could Not Be Verified",
 "stationAccess_verifyErrorDescription": "Station information could not be retrieved. Check your connection and try again.",
+"stationAccess_notRegisteredTitle": "This Device Is Not Registered to a Station",
+"@stationAccess_notRegisteredTitle": {"description": "Title shown after login when the server has no station bound to this device's MAC address (local setup is no longer valid)"},
+"stationAccess_notRegisteredDescription": "No station matching this device's address was found on the server. Run the setup again to use this device.",
+"@stationAccess_notRegisteredDescription": {"description": "Description under the station-not-registered title; the user is asked to run the device setup again"},
+"stationAccess_goToSetupButton": "Go to Setup",
+"@stationAccess_goToSetupButton": {"description": "Button on the station-not-registered screen that clears the local setup and opens the setup wizard"},
 "dashboard_activeStationLabel": "Station: {stationName}",
 "@dashboard_activeStationLabel": {
   "placeholders": { "stationName": { "type": "String" } }

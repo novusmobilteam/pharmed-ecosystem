@@ -7893,6 +7893,15 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de récupérer les informations de la station. Vérifiez votre connexion et réessayez.';
 
   @override
+  String get stationAccess_notRegisteredTitle => 'Cet appareil n\'est rattaché à aucune station';
+
+  @override
+  String get stationAccess_notRegisteredDescription => 'Aucune station correspondant à l\'adresse de cet appareil n\'a été trouvée sur le serveur. Refaites l\'installation pour utiliser cet appareil.';
+
+  @override
+  String get stationAccess_goToSetupButton => 'Aller à l\'installation';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'Station: $stationName';
   }

@@ -18,6 +18,10 @@ import '../../../core/providers/providers.dart';
 /// servis seçim ekranı dahi gösterilmez.
 /// Fail-safe: yetki doğrulanamayan her durum (istasyon null, liste boş,
 /// istek hatası) "izin yok" olarak ele alınır; dashboard'a asla geçilmez.
+///
+/// [#297] Sunucu cihazın MAC adresine bağlı istasyon bulamazsa (404) cihaz
+/// kurulumu geçersizdir → [StationAccessStatus.notRegistered]; kapı kuruluma
+/// yönlendirir. Diğer hatalar (ağ, 5xx) "doğrulanamadı / tekrar dene" kalır.
 
 final activeServiceNotifierProvider = ChangeNotifierProvider<ActiveServiceNotifier>((ref) {
   return ActiveServiceNotifier(getCurrentStation: ref.read(getCurrentStationUseCaseProvider));
@@ -33,6 +37,10 @@ enum StationAccessStatus {
 
   /// Kullanıcının bu istasyonda yetkisi yok — tüm akış kilitli.
   denied,
+
+  /// [#297] Sunucuda bu cihazın MAC adresine bağlı istasyon yok (404) —
+  /// yerel kurulum geçersiz, cihaz yeniden kurulmalı.
+  notRegistered,
 }
 
 class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
@@ -66,6 +74,7 @@ class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
 
   bool get isAccessGranted => _accessStatus == StationAccessStatus.granted;
   bool get isAccessDenied => _accessStatus == StationAccessStatus.denied;
+  bool get isStationNotRegistered => _accessStatus == StationAccessStatus.notRegistered;
 
   /// Birden fazla servis var ve henüz seçim yapılmadıysa true — bu true
   /// olduğu sürece gate ekranı (ServiceSelectionView) gösterilir.
@@ -110,6 +119,18 @@ class ActiveServiceNotifier extends ChangeNotifier with ApiRequestMixin {
         _availableServices = station?.services ?? [];
         _activeService = _availableServices.length == 1 ? _availableServices.first : null;
         MedLogger.setSessionValue('serviceId', _activeService?.id);
+        notifyListeners();
+      },
+      onFailed: (error) {
+        if (_checkedUserId != user.id) return;
+        if (error is! ServiceException || error.statusCode != 404) return;
+        _accessStatus = StationAccessStatus.notRegistered;
+        MedLogger.warn(
+          unit: 'SW-UNIT-UI',
+          swreq: 'SWREQ-CORE-AUTH-002',
+          message: 'Cihazın MAC adresine bağlı istasyon bulunamadı — kuruluma yönlendirilecek',
+          context: {'userId': user.id, 'error': error.message},
+        );
         notifyListeners();
       },
     );

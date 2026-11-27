@@ -7642,6 +7642,15 @@ class AppLocalizationsTr extends AppLocalizations {
       'İstasyon bilgisi alınamadı. Bağlantınızı kontrol edip tekrar deneyin.';
 
   @override
+  String get stationAccess_notRegisteredTitle => 'Bu Cihaz Bir İstasyona Kayıtlı Değil';
+
+  @override
+  String get stationAccess_notRegisteredDescription => 'Sunucuda bu cihazın adresiyle eşleşen bir istasyon bulunamadı. Cihazı kullanabilmek için kurulumu yeniden yapın.';
+
+  @override
+  String get stationAccess_goToSetupButton => 'Kuruluma Git';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'İstasyon: $stationName';
   }

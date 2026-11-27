@@ -3,13 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pharmed_core/pharmed_core.dart';
 import 'package:pharmed_ui/pharmed_ui.dart';
 
+import '../../../core/cache/app_settings_cache.dart';
+import '../../../core/setup/app_setup_notifier.dart';
 import '../../auth/auth.dart';
+import '../../setup_wizard/notifier/setup_wizard_notifier.dart';
 import '../../dashboard/dashboard.dart';
 import '../view/service_selection_screen.dart';
 import '../view/station_access_denied_screen.dart';
 import 'active_service_notifier.dart';
 
 /// [SWREQ-CORE-AUTH-002] Login sonrası ilk kapı:
+///   0) Cihaz sunucuda bir istasyona kayıtlı mı? (değilse → StationNotRegisteredScreen → kurulum)
 ///   1) Kullanıcının güncel istasyonda yetkisi var mı? (yoksa → StationAccessDeniedScreen)
 ///   2) İstasyon birden fazla servise hizmet veriyor mu? (evet → ServiceSelectionScreen)
 ///   3) Dashboard
@@ -25,6 +29,22 @@ class _ActiveServiceGateState extends ConsumerState<ActiveServiceGate> {
   void _initialize(AppUser user) => ref.read(activeServiceNotifierProvider).initialize(user);
 
   void _logout() => ref.read(authNotifierProvider.notifier).logout();
+
+  /// [#297] Cihaz sunucuda kayıtlı değil: yerel kurulum kaydı silinir ve
+  /// kurulum sihirbazı açılır (sihirbaz önce MAC ile kayıtlı kurulum arar).
+  Future<void> _goToSetup() async {
+    MedLogger.warn(
+      unit: 'SW-UNIT-UI',
+      swreq: 'SWREQ-CORE-003',
+      message: 'Cihaz istasyona kayıtlı değil — yerel kurulum sıfırlanıp sihirbaz açılıyor',
+    );
+    await ref.read(appSettingsCacheProvider).resetSetup();
+    if (!mounted) return;
+    ref.read(activeServiceNotifierProvider).reset();
+    // Sihirbaz bu oturumda daha önce açıldıysa eski durumuyla açılmasın.
+    ref.invalidate(setupWizardNotifierProvider);
+    ref.read(appSetupStatusProvider.notifier).markIncomplete();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +71,9 @@ class _ActiveServiceGateState extends ConsumerState<ActiveServiceGate> {
           return StationAccessVerifyErrorScreen(onRetry: () => _initialize(user), onLogout: _logout);
         }
         return const _GateLoading();
+
+      case StationAccessStatus.notRegistered:
+        return StationNotRegisteredScreen(onGoToSetup: _goToSetup, onLogout: _logout);
 
       case StationAccessStatus.denied:
         return StationAccessDeniedScreen(user: user, station: activeService.station, onLogout: _logout);

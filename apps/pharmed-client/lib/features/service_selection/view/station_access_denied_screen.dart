@@ -52,6 +52,40 @@ class StationAccessDeniedScreen extends StatelessWidget {
   }
 }
 
+/// [#297] Sunucuda bu cihazın MAC adresine bağlı istasyon yok (404). Yerel
+/// kurulum geçersiz — kullanıcı kuruluma yönlendirilir ya da çıkış yapar.
+class StationNotRegisteredScreen extends StatelessWidget {
+  const StationNotRegisteredScreen({super.key, required this.onGoToSetup, required this.onLogout});
+
+  final VoidCallback onGoToSetup;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return _LockScaffold(
+      icon: Icons.link_off_outlined,
+      accent: MedColors.amber,
+      title: l10n.stationAccess_notRegisteredTitle,
+      description: l10n.stationAccess_notRegisteredDescription,
+      actions: [
+        MedButton(
+          label: l10n.stationAccess_logoutButton,
+          prefixIcon: Icon(PhosphorIcons.signOut()),
+          variant: MedButtonVariant.secondary,
+          onPressed: onLogout,
+        ),
+        MedButton(
+          label: l10n.stationAccess_goToSetupButton,
+          prefixIcon: Icon(PhosphorIcons.gearSix()),
+          onPressed: onGoToSetup,
+        ),
+      ],
+    );
+  }
+}
+
 /// İstasyon / yetki bilgisi alınamadığında gösterilir. Yetki doğrulanamadığı
 /// için kullanıcı içeri alınmaz; yalnızca tekrar dene veya çıkış.
 class StationAccessVerifyErrorScreen extends StatelessWidget {
