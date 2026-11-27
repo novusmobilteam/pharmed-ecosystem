@@ -43,22 +43,17 @@ class MasterCensusSelectionView extends ConsumerWidget {
             if (id != null) selection.toggleUnit(id);
           },
           selectedCellIds: selection.selectedSerumCellIds,
-          onSerumTrayTap: (shelf, tray) {
-            final id = tray.id;
-            if (id == null) return;
-            if (!tray.size.isOpenShelf) {
-              selection.toggleSerumTray(id);
-              return;
-            }
-            // Açık Raf: raftaki ilaçlar listelenir, her biri ayrı seçilir.
-            showOpenShelfDialog(
-              context: context,
-              shelfNo: shelf.orderNo ?? 0,
-              assignments: AssignmentSelection.serumAssignments(id, selection.assignments),
-              isSelected: selection.isSelected,
-              onToggle: selection.toggleAssignment,
-            );
-          },
+          // Çoklu ilaçlı avadanlık / Açık Raf: ilaçlar pencereden ayrı seçilir.
+          onSerumTrayTap: (shelf, tray) => onSerumTrayTapForSelection(
+            context: context,
+            groups: scope.viewedGroups,
+            shelf: shelf,
+            tray: tray,
+            assignments: selection.assignments,
+            onToggleTray: selection.toggleSerumTray,
+            onToggle: selection.toggleAssignment,
+            isSelected: selection.isSelected,
+          ),
         ),
       ),
       right: CabinSelectionContentShell(

@@ -137,8 +137,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
   /// DrawerUnit'i, [tray] avadanlık (DrawerCell). Aynı avadanlığa tekrar
   /// dokunulursa Idle'a döner.
   ///
-  /// Açık Raf'ta [existing] verilirse o atama düzenlenir, verilmezse rafa yeni
-  /// ilaç eklenir (view, rafın ilaç listesinden seçtirir).
+  /// Çoklu ilaçlı avadanlıkta (Açık Raf, kilitsiz raf) [existing] verilirse o
+  /// atama düzenlenir, verilmezse avadanlığa yeni ilaç eklenir (view,
+  /// avadanlığın ilaç listesinden seçtirir).
   void onSerumTrayTap(DrawerUnit shelf, SerumTray tray, {MedicineAssignment? existing}) {
     final current = state;
     if (current is! DrugAssignmentIdle && current is! DrugAssignmentCellSelected) return;
@@ -146,15 +147,15 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final unitId = shelf.id;
     final cellId = tray.id;
     if (unitId == null || cellId == null) return;
-    final isOpenShelf = tray.size.isOpenShelf;
+    final groups = _extractGroups(current);
+    final isMultiMedicine = groups.allowsMultipleMedicines(cellId);
     final target = AssignmentTarget(
       unitId: unitId,
       cellId: cellId,
-      isOpenShelf: isOpenShelf,
-      assignmentId: isOpenShelf ? existing?.id : null,
+      isMultiMedicine: isMultiMedicine,
+      assignmentId: isMultiMedicine ? existing?.id : null,
     );
 
-    final groups = _extractGroups(current);
     final assignments = _extractAssignments(current);
     final cabinId = _extractCabinId(current);
 
@@ -196,7 +197,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final unitId = serumShelfId ?? assignment.cabinDrawerId;
     final selectedGroup = _findGroupForUnit(unitId, current.groups);
     if (unitId == null || selectedGroup == null) return;
-    final isOpenShelf = cellId != null && _isOpenShelfCell(cellId, current.groups);
+    final isMultiMedicine = cellId != null && current.groups.allowsMultipleMedicines(cellId);
 
     // Tablodan başka bir kabinin ataması düzenlenince iç yerleşim o kabine geçer.
     scope.view(scope.cabinIdOfSlot(selectedGroup.slot.id) ?? scope.cabinIdOf(assignment));
@@ -209,8 +210,8 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
       target: AssignmentTarget(
         unitId: unitId,
         cellId: cellId,
-        isOpenShelf: isOpenShelf,
-        assignmentId: isOpenShelf ? assignment.id : null,
+        isMultiMedicine: isMultiMedicine,
+        assignmentId: isMultiMedicine ? assignment.id : null,
       ),
       selectedStepNo: null,
     );
@@ -265,18 +266,6 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     final current = state;
     if (current is! DrugAssignmentCellSelected) return;
     state = DrugAssignmentIdle(groups: current.groups, assignments: current.assignments, cabinId: current.cabinId);
-  }
-
-  /// [cellId] avadanlığı bir Açık Raf mı (kabin görselindeki serum yerleşiminden).
-  bool _isOpenShelfCell(int cellId, List<DrawerGroup> groups) {
-    for (final group in groups.where((g) => g.isSerum)) {
-      for (final shelf in group.serumShelves ?? const <SerumShelfLayout>[]) {
-        for (final tray in shelf.trays) {
-          if (tray.id == cellId) return tray.size.isOpenShelf;
-        }
-      }
-    }
-    return false;
   }
 
   /// Avadanlığın (DrawerCell) bulunduğu serum rafının DrawerUnit id'si.
@@ -507,8 +496,8 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     // Serumda yalnızca seçili avadanlığın ataması silinir (raf bazlı silme
     // raftaki diğer avadanlık atamalarını da silerdi).
     final cellId = current.target.cellId;
-    // [#207/#215] Açık Raf'ta birden fazla ilaç varsa avadanlık bazlı silme
-    // hepsini siler; atama kendi kimliğiyle (DELETE /CabinDrawrQuantity/{id})
+    // [#207/#215/#295] Çoklu ilaçlı avadanlıkta (Açık Raf, kilitsiz raf) başka
+    // ilaç varsa avadanlık bazlı silme hepsini siler; atama kendi kimliğiyle (DELETE /CabinDrawrQuantity/{id})
     // silinir. Servisin yalnız bu atamayı silip silmediği sonradan doğrulanır.
     final othersOnShelf = cellId == null
         ? const <MedicineAssignment>[]
@@ -516,9 +505,9 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
             cellId,
             current.assignments,
           ).where((a) => a.id != current.assignment.id).toList();
-    final openShelfShared = current.target.isOpenShelf && othersOnShelf.isNotEmpty;
+    final sharedTray = current.target.isMultiMedicine && othersOnShelf.isNotEmpty;
     final assignmentId = current.assignment.id;
-    final result = openShelfShared && assignmentId != null
+    final result = sharedTray && assignmentId != null
         ? await _deleteAssignment.byId(assignmentId)
         : cellId != null
         ? await _deleteAssignment.serumTray(cellId)
@@ -526,11 +515,11 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
 
     if (result.isError) {
       final e = result.when(ok: (_) => const UnexpectedException(), error: (e) => e);
-      if (openShelfShared) {
+      if (sharedTray) {
         MedLogger.warn(
           unit: 'SW-UNIT-ASSIGNMENT',
           swreq: 'SWREQ-CLI-ASSIGN-OPEN-SHELF',
-          message: 'Açık raf tekil atama silme servisten reddedildi',
+          message: 'Çoklu ilaçlı avadanlıkta tekil atama silme servisten reddedildi',
           context: {'assignmentId': current.assignment.id, 'cabinDrawerId': current.assignment.cabinDrawerId},
         );
       }
@@ -539,7 +528,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     }
 
     final next = await _loadIdle();
-    final removedOthers = openShelfShared ? _missingAfterDelete(othersOnShelf, next) : 0;
+    final removedOthers = sharedTray ? _missingAfterDelete(othersOnShelf, next) : 0;
     if (removedOthers > 0 && next is DrugAssignmentIdle) {
       state = DrugAssignmentError(
         message: contextlessL10n().cabinOperation_openShelfDeleteRemovedOthersWarning(removedOthers),
@@ -550,7 +539,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
     state = next;
   }
 
-  /// [#207] Silmeden sonra açık raftaki diğer atamalardan kaç tanesi kayboldu?
+  /// [#207] Silmeden sonra aynı avadanlıktaki diğer atamalardan kaç tanesi kayboldu?
   /// > 0 → servis tekil silme yapmıyor; backend'den yeni servis gerekir.
   int _missingAfterDelete(List<MedicineAssignment> others, DrugAssignmentUiState next) {
     final remaining = _extractAssignments(next).map((a) => a.id).toSet();
@@ -560,7 +549,7 @@ class DrugAssignmentNotifier extends Notifier<DrugAssignmentUiState> {
         unit: 'SW-UNIT-ASSIGNMENT',
         swreq: 'SWREQ-CLI-ASSIGN-OPEN-SHELF',
         rule: 'OPEN_SHELF_DELETE_REMOVED_OTHERS',
-        message: 'Açık raf silme diğer ilaçların atamalarını da sildi',
+        message: 'Çoklu ilaçlı avadanlıkta silme diğer ilaçların atamalarını da sildi',
         context: {'silinenDiger': missing, 'digerIdler': others.map((a) => a.id).toList()},
       );
     }

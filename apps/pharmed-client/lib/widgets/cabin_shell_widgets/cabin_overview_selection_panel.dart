@@ -536,14 +536,14 @@ class _SerumTrayCell extends StatelessWidget {
   final CabinWorkingStatus status;
   final int stepNo;
 
-  /// Avadanlığın atamaları — normal avadanlıkta en fazla bir, Açık Raf'ta
-  /// birden çok ilaç.
+  /// Avadanlığın atamaları — kilitli rafta en fazla bir; Açık Raf'ta ve
+  /// kilitsiz raftaki avadanlıkta birden çok ilaç olabilir.
   final List<MedicineAssignment> assignments;
   final bool isOpenShelf;
   final bool isSelected;
   final VoidCallback? onTap;
 
-  /// Hücrede gösterilecek metin: tek ilaçta adı, Açık Raf'ta birden çoksa sayı.
+  /// Hücrede gösterilecek metin: tek ilaçta adı, birden çoksa ilaç sayısı.
   String _label(BuildContext context) {
     final named = assignments.where((a) => a.medicine != null).toList();
     if (named.isEmpty) return context.l10n.drawerStatus_empty;

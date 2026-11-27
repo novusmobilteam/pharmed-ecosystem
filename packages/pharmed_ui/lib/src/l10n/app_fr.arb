@@ -4458,6 +4458,9 @@
   "cabinOperation_openShelfMedicineCount": "{count} médicaments",
   "@cabinOperation_openShelfMedicineCount": {"placeholders": {"count": {"type": "int"}}},
   "cabinOperation_openShelfEmpty": "Aucun médicament n'est encore affecté à cette étagère.",
+  "cabinOperation_serumTrayTitle": "Étagère {shelfNo} · A-{stepNo}",
+  "@cabinOperation_serumTrayTitle": {"placeholders": {"shelfNo": {"type": "int"}, "stepNo": {"type": "int"}}},
+  "cabinOperation_serumTrayEmpty": "Aucun médicament n'est encore affecté à ce plateau.",
   "cabinOperation_openShelfAddMedicine": "Ajouter un médicament",
   "cabinOperation_openShelfDeleteNotSupported": "Cette étagère ouverte contient d'autres médicaments ; l'affectation d'un seul médicament ne peut pas être supprimée pour le moment.",
   "assignment_idle_kicker": "CONFIGURATION DE L'ARMOIRE",
@@ -5768,7 +5771,7 @@
     "placeholders": { "cabinName": { "type": "String" } }
   },
   "cabinDesign_serum_lidHasAssignmentsError": "Cette porte a des affectations de médicaments ; supprimez-les avant de la supprimer.",
-  "cabinOperation_openShelfDeleteRemovedOthersWarning": "L'affectation a été supprimée, mais le service a aussi supprimé les affectations de {count} autre(s) médicament(s) de l'étagère ouverte. Un service de suppression unitaire est nécessaire pour les étagères ouvertes ; veuillez en informer votre administrateur système.",
+  "cabinOperation_openShelfDeleteRemovedOthersWarning": "L'affectation a été supprimée, mais le service a aussi supprimé les affectations de {count} autre(s) médicament(s) au même emplacement. Un service de suppression unitaire est nécessaire ; veuillez en informer votre administrateur système.",
   "@cabinOperation_openShelfDeleteRemovedOthersWarning": {
     "placeholders": { "count": { "type": "int" } }
   }
