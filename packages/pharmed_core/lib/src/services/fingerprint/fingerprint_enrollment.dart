@@ -50,7 +50,7 @@ class FingerprintSource {
       FingerprintSource(
         format: format,
         scannerVendor: info.vendor,
-        scannerModel: info.model,
+        scannerModel: info.wireModel,
         livenessActive: info.livenessActive,
       );
 

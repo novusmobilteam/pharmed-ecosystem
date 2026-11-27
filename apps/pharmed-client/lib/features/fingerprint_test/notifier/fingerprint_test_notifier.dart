@@ -316,7 +316,7 @@ class FingerprintTestNotifier extends ChangeNotifier {
       'capturedAt': capture.capturedAt.toUtc().toIso8601String(),
       // Sunucu, şablonun hangi okuyucudan geldiğini bilsin (kalite ölçekleri üreticiye göre farklı).
       'scannerVendor': scannerInfo?.vendor,
-      'scannerModel': scannerInfo?.model,
+      'scannerModel': scannerInfo?.wireModel,
       'livenessActive': scannerInfo?.livenessActive,
     };
 

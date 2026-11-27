@@ -399,6 +399,8 @@ class SecuGenFingerprintScanner implements IFingerprintScanner {
   static FingerprintScannerInfo _infoOf(SecuGenDeviceInfo d) => FingerprintScannerInfo(
     vendor: vendor,
     model: secuGenModelName(d.devName),
+    // Sunucuda SecuGen için "Hamster U10" tanımlı (önceden DTO'da sabitti).
+    serviceModel: 'Hamster U10',
     scannerType: d.devName,
     livenessActive: d.livenessActive,
     serial: d.serial,

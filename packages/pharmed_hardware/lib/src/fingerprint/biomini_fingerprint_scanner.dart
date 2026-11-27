@@ -424,6 +424,7 @@ class BioMiniFingerprintScanner implements IFingerprintScanner {
     // LFD parametresi açılışta cihaza yazılamasaydı open() zaten başarısız olurdu.
     livenessActive: settings.lfdActive,
     model: bioMiniModelName(d.scannerType),
+    serviceModel: bioMiniServiceModel(d.scannerType),
     scannerType: d.scannerType,
     serial: d.serial,
     sdkVersion: d.sdkVersion,

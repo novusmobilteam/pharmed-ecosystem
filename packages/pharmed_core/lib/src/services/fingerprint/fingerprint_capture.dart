@@ -92,6 +92,7 @@ class FingerprintScannerInfo {
     this.livenessActive = false,
     this.serial,
     this.sdkVersion,
+    this.serviceModel,
   });
 
   /// Üretici: 'suprema', 'secugen', 'mock'. Servise gönderilen gövdede ve loglarda kullanılır.
@@ -109,6 +110,13 @@ class FingerprintScannerInfo {
 
   final String? serial;
   final String? sdkVersion;
+
+  /// Servise `scannerModel` olarak gönderilen kod (backend'de tanımlı değer,
+  /// örn. "BM-SLIM2S"). Tanımsızsa okunabilir [model] gönderilir.
+  final String? serviceModel;
+
+  /// Servis gövdesindeki `scannerModel` değeri.
+  String get wireModel => serviceModel ?? model;
 
   @override
   String toString() =>

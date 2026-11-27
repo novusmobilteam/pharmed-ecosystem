@@ -207,6 +207,13 @@ String readCString(Pointer<Uint8> ptr, int maxLength) {
 }
 
 /// SDK tip kodunu model adına çevirir. Bilinmeyen kodlar ham değerle döner.
+/// Servise `scannerModel` olarak gönderilen, backend'de tanımlı model kodu.
+/// Tanımsız modellerde null — okunabilir ad gönderilir.
+String? bioMiniServiceModel(int scannerType) => switch (scannerType) {
+  Ufs.scannerTypeBms2s => 'BM-SLIM2S',
+  _ => null,
+};
+
 String bioMiniModelName(int scannerType) => switch (scannerType) {
   Ufs.scannerTypeBms => 'BioMini Slim',
   Ufs.scannerTypeBms2 => 'BioMini Slim 2',
