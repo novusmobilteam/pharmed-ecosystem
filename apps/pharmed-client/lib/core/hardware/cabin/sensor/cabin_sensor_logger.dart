@@ -28,6 +28,11 @@ class CabinSensorLogger {
   /// Saatte 12 kayıt; ısı/nem trendi için fazlasıyla yeterli.
   static const _sampleInterval = Duration(minutes: 5);
 
+  /// Başarısız kayıttan sonra yeniden deneme gecikmesi. [#297] Sensör stream'i
+  /// birkaç saniyede bir okuma ürettiği için hemen yeniden denemek (ör. cihaz
+  /// istasyona kayıtlı değilken) sunucuya sürekli istek atıyordu.
+  static const _retryAfterError = Duration(minutes: 1);
+
   DateTime? _lastSaved;
 
   /// Yavaş yanıt sırasında ikinci istek açılmasını engeller.
@@ -61,10 +66,10 @@ class CabinSensorLogger {
 
       final result = await _saveSensorValues(reading: reading, cabinId: cabinId);
 
-      // Hata → aralığı sıfırla, bir sonraki okumada yeniden dene.
+      // Hata → [_retryAfterError] sonra yeniden dene (tam aralığı beklemeden).
       // Kuyruk tutulmuyor; tek okumanın kaybı kritik değil.
       if (result is Error) {
-        _lastSaved = null;
+        _lastSaved = DateTime.now().subtract(_sampleInterval - _retryAfterError);
       }
     } finally {
       _inFlight = false;

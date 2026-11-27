@@ -9878,6 +9878,18 @@
 "@stationAccess_verifyErrorDescription": {
   "description": "Description shown under the station access verify error title."
 },
+"stationAccess_notRegisteredTitle": "Bu Cihaz Bir İstasyona Kayıtlı Değil",
+"@stationAccess_notRegisteredTitle": {
+  "description": "Title shown after login when the server has no station bound to this device's MAC address (local setup is no longer valid)"
+},
+"stationAccess_notRegisteredDescription": "Sunucuda bu cihazın adresiyle eşleşen bir istasyon bulunamadı. Cihazı kullanabilmek için kurulumu yeniden yapın.",
+"@stationAccess_notRegisteredDescription": {
+  "description": "Description under the station-not-registered title; the user is asked to run the device setup again"
+},
+"stationAccess_goToSetupButton": "Kuruluma Git",
+"@stationAccess_goToSetupButton": {
+  "description": "Button on the station-not-registered screen that clears the local setup and opens the setup wizard"
+},
 "dashboard_activeStationLabel": "İstasyon: {stationName}",
 "@dashboard_activeStationLabel": {
   "description": "Label showing the currently active station on the dashboard's active station/service card (Madde 72).",

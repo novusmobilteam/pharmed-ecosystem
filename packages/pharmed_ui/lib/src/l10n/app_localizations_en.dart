@@ -7713,6 +7713,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Station information could not be retrieved. Check your connection and try again.';
 
   @override
+  String get stationAccess_notRegisteredTitle => 'This Device Is Not Registered to a Station';
+
+  @override
+  String get stationAccess_notRegisteredDescription => 'No station matching this device\'s address was found on the server. Run the setup again to use this device.';
+
+  @override
+  String get stationAccess_goToSetupButton => 'Go to Setup';
+
+  @override
   String dashboard_activeStationLabel(String stationName) {
     return 'Station: $stationName';
   }

@@ -4734,6 +4734,9 @@
 "stationAccess_logoutButton": "Se déconnecter",
 "stationAccess_verifyErrorTitle": "Impossible de vérifier l'accès à la station",
 "stationAccess_verifyErrorDescription": "Impossible de récupérer les informations de la station. Vérifiez votre connexion et réessayez.",
+"stationAccess_notRegisteredTitle": "Cet appareil n'est rattaché à aucune station",
+"stationAccess_notRegisteredDescription": "Aucune station correspondant à l'adresse de cet appareil n'a été trouvée sur le serveur. Refaites l'installation pour utiliser cet appareil.",
+"stationAccess_goToSetupButton": "Aller à l'installation",
 "dashboard_activeStationLabel": "Station: {stationName}",
 "@dashboard_activeStationLabel": {
   "placeholders": { "stationName": { "type": "String" } }
